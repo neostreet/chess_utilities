@@ -11,14 +11,14 @@ int square_attacks_square(struct game *gamept,int square1,int square2)
   int color;
 
   if (square1 == square2)
-    return FALSE;
+    return false;
 
   piece = get_piece1(gamept,square1);
 
   if (!piece)
-    return FALSE;
+    return false;
 
-  retval = FALSE;
+  retval = false;
 
   if (piece < 0) {
     piece *= -1;
@@ -72,17 +72,17 @@ int pawn_attacks_square(struct game *gamept,int square1,int color,int square2)
   if (color == WHITE) {
     if (rank2 == rank1 + 1) {
       if ((file2 == file1 - 1) || (file2 == file1 + 1))
-        return TRUE;
+        return true;
     }
   }
   else {
     if (rank2 == rank1 - 1) {
       if ((file2 == file1 - 1) || (file2 == file1 + 1))
-        return TRUE;
+        return true;
     }
   }
 
-  return FALSE;
+  return false;
 }
 
 int rook_attacks_square(struct game *gamept,int square1,int square2)
@@ -119,7 +119,7 @@ int rook_attacks_square(struct game *gamept,int square1,int square2)
     }
 
     if (work_file == file2)
-      return TRUE;
+      return true;
   }
   else if (file1 == file2) {
     if (rank1 > rank2) {
@@ -140,10 +140,10 @@ int rook_attacks_square(struct game *gamept,int square1,int square2)
     }
 
     if (work_rank == rank2)
-      return TRUE;
+      return true;
   }
 
-  return FALSE;
+  return false;
 }
 
 int knight_attacks_square(struct game *gamept,int square1,int square2)
@@ -164,11 +164,11 @@ int knight_attacks_square(struct game *gamept,int square1,int square2)
   file_diff = ABS_VAL(file1,file2);
 
   if ((rank_diff == 2) && (file_diff == 1))
-    return TRUE;
+    return true;
   else if ((rank_diff == 1) && (file_diff == 2))
-    return TRUE;
+    return true;
 
-  return FALSE;
+  return false;
 }
 
 int bishop_attacks_square(struct game *gamept,int square1,int square2)
@@ -195,7 +195,7 @@ int bishop_attacks_square(struct game *gamept,int square1,int square2)
   file_diff = ABS_VAL(file1,file2);
 
   if (rank_diff != file_diff)
-    return FALSE;
+    return false;
 
   if (rank1 > rank2)
     rank_incr = -1;
@@ -221,20 +221,20 @@ int bishop_attacks_square(struct game *gamept,int square1,int square2)
   }
 
   if (n == rank_diff - 1)
-    return TRUE;
+    return true;
 
-  return FALSE;
+  return false;
 }
 
 int queen_attacks_square(struct game *gamept,int square1,int square2)
 {
   if (rook_attacks_square(gamept,square1,square2))
-    return TRUE;
+    return true;
 
   if (bishop_attacks_square(gamept,square1,square2))
-    return TRUE;
+    return true;
 
-  return FALSE;
+  return false;
 }
 
 int king_attacks_square(struct game *gamept,int square1,int square2)
@@ -255,7 +255,7 @@ int king_attacks_square(struct game *gamept,int square1,int square2)
   file_diff = ABS_VAL(file1,file2);
 
   if ((rank_diff <= 1) && (file_diff <= 1))
-    return TRUE;
+    return true;
 
-  return FALSE;
+  return false;
 }

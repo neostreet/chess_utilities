@@ -72,11 +72,11 @@ int line_number(char *word,int wordlen)
       if ((word[n] == '.') && (n == wordlen - 1))
         break;
 
-      return FALSE;
+      return false;
     }
   }
 
-  return TRUE;
+  return true;
 }
 
 int get_piece_type_ix(int chara)
@@ -125,7 +125,7 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
   int n;
   char word[WORDLEN];
   int wordlen;
-  int bHaveFirstWord;
+  bool bHaveFirstWord;
   int direction;
   int word_no;
   int dbg;
@@ -150,10 +150,10 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
       return 3;
     }
 
-    bHaveFirstWord = FALSE;
+    bHaveFirstWord = false;
   }
   else
-    bHaveFirstWord = TRUE;
+    bHaveFirstWord = true;
 
   set_initial_board(gamept);
 
@@ -253,7 +253,7 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
     if (got_error)
       break;
 
-    update_board(gamept,FALSE);
+    update_board(gamept,false);
     gamept->curr_move++;
   }
 
@@ -336,9 +336,9 @@ int ignore_character(int chara)
     (chara == 'x') ||
     (chara == '=') ||
     (chara == '+'))
-    return TRUE;
+    return true;
 
-  return FALSE;
+  return false;
 }
 
 int get_word(FILE *fptr,char *word,int maxlen,int *wordlenpt)

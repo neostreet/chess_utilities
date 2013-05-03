@@ -23,16 +23,16 @@ int queenside_castle(struct game *gamept)
     SPECIAL_MOVE_QUEENSIDE_CASTLE);
 }
 
-char decode_piece(int piece,int bShowBlack)
+char decode_piece(int piece,bool bShowBlack)
 {
-  int bBlack;
+  bool bBlack;
 
   if (piece < 0) {
-    bBlack = TRUE;
+    bBlack = true;
     piece *= -1;
   }
   else
-    bBlack = FALSE;
+    bBlack = false;
 
   if (!piece)
     return '.';
@@ -58,7 +58,7 @@ char get_decoded_piece(struct game *gamept)
 
   piece = get_piece1(gamept,
     gamept->moves[gamept->curr_move-1].to);
-  return decode_piece(piece,FALSE);
+  return decode_piece(piece,false);
 }
 
 void print_game(struct game *gamept)
@@ -74,7 +74,7 @@ void print_game(struct game *gamept)
     sprintf_move(gamept,buf,20);
     printf(fmt_str,buf);
 
-    update_board(gamept,FALSE);
+    update_board(gamept,false);
   }
 }
 
@@ -91,10 +91,10 @@ void fprintf_move(FILE *fptr,struct game *gamept)
 
 void sprintf_move(struct game *gamept,char *buf,int buf_len)
 {
-  int bWhite;
+  bool bWhite;
   int put_count;
   char decoded_piece;
-  int bDone;
+  bool bDone;
   int from;
   int from_file;
   int to;
@@ -144,14 +144,14 @@ void sprintf_move(struct game *gamept,char *buf,int buf_len)
         buf[put_count++] = 'a' + from_file;
         buf[put_count++] = 'x';
         buf[put_count++] = 'a' + to_file;
-        bDone = TRUE;
+        bDone = true;
       }
       else
-        bDone = FALSE;
+        bDone = false;
     }
     else {
       buf[put_count++] = decoded_piece;
-      bDone = FALSE;
+      bDone = false;
 
       if (gamept->moves[gamept->curr_move-1].special_move_info &
         SPECIAL_MOVE_CAPTURE)

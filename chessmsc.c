@@ -9,18 +9,18 @@ extern char fmt_str[];
 
 static int format_square(int square)
 {
-  int bBlack;
+  bool bBlack;
   int return_char;
 
   if (!square)
     return (int)'.';
 
   if (square < 0) {
-    bBlack = TRUE;
+    bBlack = true;
     square *= -1;
   }
   else
-    bBlack = FALSE;
+    bBlack = false;
 
   if (square == 1)
     return_char = 'P';
@@ -66,7 +66,7 @@ void fprint_game_bin(struct game *gamept,char *filename)
 
     fprintf_move(fptr,gamept);
 
-    update_board(gamept,FALSE);
+    update_board(gamept,false);
   }
 
   fclose(fptr);
@@ -91,7 +91,7 @@ void fprint_game(struct game *gamept,char *filename)
     sprintf_move(gamept,buf,20);
     fprintf(fptr,fmt_str,buf);
 
-    update_board(gamept,FALSE);
+    update_board(gamept,false);
   }
 
   fclose(fptr);
