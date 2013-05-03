@@ -30,7 +30,6 @@ int get_to_position(char *word,int wordlen,int *to_filept,int *to_rankpt);
 
 void set_initial_board(struct game *gamept);
 void update_board(struct game *gamept,short bCalcCounts);
-void de_update_board(struct game *gamept,short bCalcCounts);
 int get_piece1(struct game *gamept,int board_offset);
 int get_piece2(struct game *gamept,int row,int column);
 void set_piece1(struct game *gamept,int board_offset,int piece);

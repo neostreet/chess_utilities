@@ -469,12 +469,6 @@ void update_board(struct game *gamept,short bCalcCounts)
     calculate_seirawan_counts(gamept);
 }
 
-void de_update_board(struct game *gamept,short bCalcCounts)
-{
-  if (bCalcCounts)
-    calculate_seirawan_counts(gamept);
-}
-
 int get_piece1(struct game *gamept,int board_offset)
 {
   unsigned int bit_offset;
