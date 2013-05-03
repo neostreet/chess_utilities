@@ -410,10 +410,60 @@ int get_word(FILE *fptr,char *word,int maxlen,int *wordlenpt)
 
 void update_board(struct game *gamept,short bCalcCounts)
 {
-  set_piece1(gamept,gamept->moves[gamept->curr_move].to,
-    get_piece1(gamept,gamept->moves[gamept->curr_move].from));
+  int dbg;
+  bool bDone;
 
-  set_piece1(gamept,gamept->moves[gamept->curr_move].from,0);  /* vacate previous square */
+  bDone = false;
+
+  if (gamept->moves[gamept->curr_move].special_move_info) {
+    switch (gamept->moves[gamept->curr_move].special_move_info) {
+      case SPECIAL_MOVE_KINGSIDE_CASTLE:
+        if (gamept->curr_move & 0x1) {
+          // black
+          set_piece1(gamept,62,-6);
+          set_piece1(gamept,61,-2);
+          set_piece1(gamept,60,0);
+          set_piece1(gamept,63,0);
+        }
+        else {
+          // white
+          set_piece1(gamept,6,6);
+          set_piece1(gamept,5,2);
+          set_piece1(gamept,4,0);
+          set_piece1(gamept,7,0);
+        }
+
+        bDone = true;
+
+        break;
+      case SPECIAL_MOVE_QUEENSIDE_CASTLE:
+        if (gamept->curr_move & 0x1) {
+          // black
+          set_piece1(gamept,58,-6);
+          set_piece1(gamept,59,-2);
+          set_piece1(gamept,60,0);
+          set_piece1(gamept,56,0);
+        }
+        else {
+          // white
+          set_piece1(gamept,2,6);
+          set_piece1(gamept,3,2);
+          set_piece1(gamept,4,0);
+          set_piece1(gamept,0,0);
+        }
+
+        bDone = true;
+
+        break;
+    }
+  }
+
+  if (!bDone) {
+    set_piece1(gamept,gamept->moves[gamept->curr_move].to,
+      get_piece1(gamept,gamept->moves[gamept->curr_move].from));
+
+    set_piece1(gamept,gamept->moves[gamept->curr_move].from,0);  /* vacate previous square */
+  }
 
   if (bCalcCounts)
     calculate_seirawan_counts(gamept);
