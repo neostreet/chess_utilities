@@ -455,6 +455,38 @@ void update_board(struct game *gamept,short bCalcCounts)
         bDone = true;
 
         break;
+      case SPECIAL_MOVE_PROMOTION_QUEEN:
+        if (gamept->curr_move & 0x1)
+          // black
+          set_piece1(gamept,gamept->moves[gamept->curr_move].from,QUEEN_ID * -1);
+        else
+          set_piece1(gamept,gamept->moves[gamept->curr_move].from,QUEEN_ID);
+
+        break;
+      case SPECIAL_MOVE_PROMOTION_ROOK:
+        if (gamept->curr_move & 0x1)
+          // black
+          set_piece1(gamept,gamept->moves[gamept->curr_move].from,ROOK_ID * -1);
+        else
+          set_piece1(gamept,gamept->moves[gamept->curr_move].from,ROOK_ID);
+
+        break;
+      case SPECIAL_MOVE_PROMOTION_KNIGHT:
+        if (gamept->curr_move & 0x1)
+          // black
+          set_piece1(gamept,gamept->moves[gamept->curr_move].from,KNIGHT_ID * -1);
+        else
+          set_piece1(gamept,gamept->moves[gamept->curr_move].from,KNIGHT_ID);
+
+        break;
+      case SPECIAL_MOVE_PROMOTION_BISHOP:
+        if (gamept->curr_move & 0x1)
+          // black
+          set_piece1(gamept,gamept->moves[gamept->curr_move].from,BISHOP_ID * -1);
+        else
+          set_piece1(gamept,gamept->moves[gamept->curr_move].from,BISHOP_ID);
+
+        break;
     }
   }
 

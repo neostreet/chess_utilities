@@ -152,7 +152,7 @@ int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen)
   else if (file - capture_file != 1)
     return 12;
 
-  if ((wordlen == 2) || (wordlen == 3)) {
+  if ((wordlen >= 2) && (wordlen <= 4)) {
     if (direction == 1)
       rank = 1;
     else
@@ -164,14 +164,38 @@ int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen)
       if ((get_piece2(gamept,rank,file) == direction) &&
         (get_piece2(gamept,rank+direction,capture_file) * direction < 0)) {
 
-        if (wordlen == 3)
+        if ((wordlen == 3) || (wordlen == 4))
           if (word[2] - '1' != rank+direction)
             continue;
 
-        gamept->moves[gamept->curr_move].special_move_info =
-          SPECIAL_MOVE_CAPTURE;
         gamept->moves[gamept->curr_move].from = POS_OF(rank,file);
         gamept->moves[gamept->curr_move].to = POS_OF(rank+direction,capture_file);
+
+        if (wordlen == 4) {
+          switch (word[3]) {
+            case 'Q':
+              gamept->moves[gamept->curr_move].special_move_info +=
+                SPECIAL_MOVE_PROMOTION_QUEEN;
+
+              break;
+            case 'R':
+              gamept->moves[gamept->curr_move].special_move_info +=
+                SPECIAL_MOVE_PROMOTION_ROOK;
+
+              break;
+            case 'N':
+              gamept->moves[gamept->curr_move].special_move_info +=
+                SPECIAL_MOVE_PROMOTION_KNIGHT;
+
+              break;
+            case 'B':
+              gamept->moves[gamept->curr_move].special_move_info +=
+                SPECIAL_MOVE_PROMOTION_BISHOP;
+
+              break;
+          }
+        }
+
         return 0;
       }
     }
@@ -190,7 +214,7 @@ int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen)
       if ((get_piece2(gamept,rank,file) == direction) &&
         (get_piece2(gamept,rank,capture_file) * direction < 0)) {
         gamept->moves[gamept->curr_move].special_move_info =
-          SPECIAL_MOVE_CAPTURE | SPECIAL_MOVE_EN_PASSANT;
+          SPECIAL_MOVE_EN_PASSANT;
         gamept->moves[gamept->curr_move].from = POS_OF(rank,file);
         gamept->moves[gamept->curr_move].to = POS_OF(rank+direction,capture_file);
         return 0;
@@ -287,8 +311,7 @@ int do_piece_move(struct game *gamept,int direction,char *word,int wordlen)
 
   if (to_piece != 0) {
     /* a capture; move the captured piece off the board: */
-    gamept->moves[gamept->curr_move].special_move_info =
-      SPECIAL_MOVE_CAPTURE;
+    ;
   }
   else
     gamept->moves[gamept->curr_move].special_move_info = 0;

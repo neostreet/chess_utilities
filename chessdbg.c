@@ -134,28 +134,11 @@ void sprintf_move(struct game *gamept,char *buf,int buf_len)
   else {
     decoded_piece = get_decoded_piece(gamept);
 
-    if (decoded_piece == 'P') {
-      if (gamept->moves[gamept->curr_move-1].special_move_info &
-        SPECIAL_MOVE_CAPTURE) {
-        from = gamept->moves[gamept->curr_move-1].from;
-        from_file = FILE_OF(from);
-        to = gamept->moves[gamept->curr_move-1].to;
-        to_file = FILE_OF(to);
-        buf[put_count++] = 'a' + from_file;
-        buf[put_count++] = 'x';
-        buf[put_count++] = 'a' + to_file;
-        bDone = true;
-      }
-      else
-        bDone = false;
-    }
+    if (decoded_piece == 'P')
+      bDone = false;
     else {
       buf[put_count++] = decoded_piece;
       bDone = false;
-
-      if (gamept->moves[gamept->curr_move-1].special_move_info &
-        SPECIAL_MOVE_CAPTURE)
-        buf[put_count++] = 'x';
     }
 
     if (!bDone) {
