@@ -111,13 +111,28 @@ int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen)
         if (wordlen != 3)
           return 6;
 
-        which_piece = get_piece_id_ix(word[2]);
+        switch (word[2]) {
+          case 'Q':
+            gamept->moves[gamept->curr_move].special_move_info =
+              SPECIAL_MOVE_PROMOTION_QUEEN;
 
-        if (which_piece == NUM_PIECE_TYPES)
-          return 7;
+            break;
+          case 'R':
+            gamept->moves[gamept->curr_move].special_move_info =
+              SPECIAL_MOVE_PROMOTION_ROOK;
 
-        gamept->moves[gamept->curr_move].special_move_info =
-          which_piece + 2;
+            break;
+          case 'N':
+            gamept->moves[gamept->curr_move].special_move_info =
+              SPECIAL_MOVE_PROMOTION_KNIGHT;
+
+            break;
+          case 'B':
+            gamept->moves[gamept->curr_move].special_move_info =
+              SPECIAL_MOVE_PROMOTION_BISHOP;
+
+            break;
+        }
       }
     }
     else {
@@ -126,13 +141,28 @@ int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen)
         if (wordlen != 3)
           return 8;
 
-        which_piece = get_piece_id_ix(word[2]);
+        switch (word[2]) {
+          case 'Q':
+            gamept->moves[gamept->curr_move].special_move_info =
+              SPECIAL_MOVE_PROMOTION_QUEEN;
 
-        if (which_piece == NUM_PIECE_TYPES)
-          return 9;
+            break;
+          case 'R':
+            gamept->moves[gamept->curr_move].special_move_info =
+              SPECIAL_MOVE_PROMOTION_ROOK;
 
-        gamept->moves[gamept->curr_move].special_move_info =
-          (which_piece + 2) * -1;
+            break;
+          case 'N':
+            gamept->moves[gamept->curr_move].special_move_info =
+              SPECIAL_MOVE_PROMOTION_KNIGHT;
+
+            break;
+          case 'B':
+            gamept->moves[gamept->curr_move].special_move_info =
+              SPECIAL_MOVE_PROMOTION_BISHOP;
+
+            break;
+        }
       }
     }
 
@@ -174,22 +204,22 @@ int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen)
         if (wordlen == 4) {
           switch (word[3]) {
             case 'Q':
-              gamept->moves[gamept->curr_move].special_move_info +=
+              gamept->moves[gamept->curr_move].special_move_info =
                 SPECIAL_MOVE_PROMOTION_QUEEN;
 
               break;
             case 'R':
-              gamept->moves[gamept->curr_move].special_move_info +=
+              gamept->moves[gamept->curr_move].special_move_info =
                 SPECIAL_MOVE_PROMOTION_ROOK;
 
               break;
             case 'N':
-              gamept->moves[gamept->curr_move].special_move_info +=
+              gamept->moves[gamept->curr_move].special_move_info =
                 SPECIAL_MOVE_PROMOTION_KNIGHT;
 
               break;
             case 'B':
-              gamept->moves[gamept->curr_move].special_move_info +=
+              gamept->moves[gamept->curr_move].special_move_info =
                 SPECIAL_MOVE_PROMOTION_BISHOP;
 
               break;
