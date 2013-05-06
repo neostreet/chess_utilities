@@ -104,7 +104,7 @@ void set_initial_board(struct game *gamept)
   }
 
   for (n = 0; n < NUM_BOARD_SQUARES; n++) {
-    piece = get_piece1(gamept,n);
+    piece = get_piece1(gamept->board,n);
 
     if (!piece)
       continue;
@@ -422,17 +422,17 @@ void update_board(struct game *gamept,short bCalcCounts)
       case SPECIAL_MOVE_KINGSIDE_CASTLE:
         if (gamept->curr_move & 0x1) {
           // black
-          set_piece1(gamept,62,-6);
-          set_piece1(gamept,61,-2);
-          set_piece1(gamept,60,0);
-          set_piece1(gamept,63,0);
+          set_piece1(gamept->board,62,-6);
+          set_piece1(gamept->board,61,-2);
+          set_piece1(gamept->board,60,0);
+          set_piece1(gamept->board,63,0);
         }
         else {
           // white
-          set_piece1(gamept,6,6);
-          set_piece1(gamept,5,2);
-          set_piece1(gamept,4,0);
-          set_piece1(gamept,7,0);
+          set_piece1(gamept->board,6,6);
+          set_piece1(gamept->board,5,2);
+          set_piece1(gamept->board,4,0);
+          set_piece1(gamept->board,7,0);
         }
 
         bDone = true;
@@ -441,17 +441,17 @@ void update_board(struct game *gamept,short bCalcCounts)
       case SPECIAL_MOVE_QUEENSIDE_CASTLE:
         if (gamept->curr_move & 0x1) {
           // black
-          set_piece1(gamept,58,-6);
-          set_piece1(gamept,59,-2);
-          set_piece1(gamept,60,0);
-          set_piece1(gamept,56,0);
+          set_piece1(gamept->board,58,-6);
+          set_piece1(gamept->board,59,-2);
+          set_piece1(gamept->board,60,0);
+          set_piece1(gamept->board,56,0);
         }
         else {
           // white
-          set_piece1(gamept,2,6);
-          set_piece1(gamept,3,2);
-          set_piece1(gamept,4,0);
-          set_piece1(gamept,0,0);
+          set_piece1(gamept->board,2,6);
+          set_piece1(gamept->board,3,2);
+          set_piece1(gamept->board,4,0);
+          set_piece1(gamept->board,0,0);
         }
 
         bDone = true;
@@ -460,56 +460,56 @@ void update_board(struct game *gamept,short bCalcCounts)
       case SPECIAL_MOVE_PROMOTION_QUEEN:
         if (gamept->curr_move & 0x1)
           // black
-          set_piece1(gamept,gamept->moves[gamept->curr_move].from,QUEEN_ID * -1);
+          set_piece1(gamept->board,gamept->moves[gamept->curr_move].from,QUEEN_ID * -1);
         else
-          set_piece1(gamept,gamept->moves[gamept->curr_move].from,QUEEN_ID);
+          set_piece1(gamept->board,gamept->moves[gamept->curr_move].from,QUEEN_ID);
 
         break;
       case SPECIAL_MOVE_PROMOTION_ROOK:
         if (gamept->curr_move & 0x1)
           // black
-          set_piece1(gamept,gamept->moves[gamept->curr_move].from,ROOK_ID * -1);
+          set_piece1(gamept->board,gamept->moves[gamept->curr_move].from,ROOK_ID * -1);
         else
-          set_piece1(gamept,gamept->moves[gamept->curr_move].from,ROOK_ID);
+          set_piece1(gamept->board,gamept->moves[gamept->curr_move].from,ROOK_ID);
 
         break;
       case SPECIAL_MOVE_PROMOTION_KNIGHT:
         if (gamept->curr_move & 0x1)
           // black
-          set_piece1(gamept,gamept->moves[gamept->curr_move].from,KNIGHT_ID * -1);
+          set_piece1(gamept->board,gamept->moves[gamept->curr_move].from,KNIGHT_ID * -1);
         else
-          set_piece1(gamept,gamept->moves[gamept->curr_move].from,KNIGHT_ID);
+          set_piece1(gamept->board,gamept->moves[gamept->curr_move].from,KNIGHT_ID);
 
         break;
       case SPECIAL_MOVE_PROMOTION_BISHOP:
         if (gamept->curr_move & 0x1)
           // black
-          set_piece1(gamept,gamept->moves[gamept->curr_move].from,BISHOP_ID * -1);
+          set_piece1(gamept->board,gamept->moves[gamept->curr_move].from,BISHOP_ID * -1);
         else
-          set_piece1(gamept,gamept->moves[gamept->curr_move].from,BISHOP_ID);
+          set_piece1(gamept->board,gamept->moves[gamept->curr_move].from,BISHOP_ID);
 
         break;
       case SPECIAL_MOVE_EN_PASSANT:
         rank = RANK_OF(gamept->moves[gamept->curr_move].from);
         file = FILE_OF(gamept->moves[gamept->curr_move].to);
-        set_piece1(gamept,POS_OF(rank,file),0);
+        set_piece1(gamept->board,POS_OF(rank,file),0);
 
         break;
     }
   }
 
   if (!bDone) {
-    set_piece1(gamept,gamept->moves[gamept->curr_move].to,
-      get_piece1(gamept,gamept->moves[gamept->curr_move].from));
+    set_piece1(gamept->board,gamept->moves[gamept->curr_move].to,
+      get_piece1(gamept->board,gamept->moves[gamept->curr_move].from));
 
-    set_piece1(gamept,gamept->moves[gamept->curr_move].from,0);  /* vacate previous square */
+    set_piece1(gamept->board,gamept->moves[gamept->curr_move].from,0);  /* vacate previous square */
   }
 
   if (bCalcCounts)
     calculate_seirawan_counts(gamept);
 }
 
-int get_piece1(struct game *gamept,int board_offset)
+int get_piece1(unsigned char *board,int board_offset)
 {
   unsigned int bit_offset;
   unsigned short piece;
@@ -517,7 +517,7 @@ int get_piece1(struct game *gamept,int board_offset)
 
   bit_offset = board_offset * BITS_PER_BOARD_SQUARE;
 
-  piece = get_bits(BITS_PER_BOARD_SQUARE,gamept->board,bit_offset);
+  piece = get_bits(BITS_PER_BOARD_SQUARE,board,bit_offset);
   piece_int = piece;
 
   if (piece & 0x8)
@@ -526,28 +526,28 @@ int get_piece1(struct game *gamept,int board_offset)
   return piece_int;
 }
 
-int get_piece2(struct game *gamept,int row,int column)
+int get_piece2(unsigned char *board,int row,int column)
 {
   int board_offset;
 
   board_offset = row * 8 + column;
-  return get_piece1(gamept,board_offset);
+  return get_piece1(board,board_offset);
 }
 
-void set_piece1(struct game *gamept,int board_offset,int piece)
+void set_piece1(unsigned char *board,int board_offset,int piece)
 {
   unsigned int bit_offset;
 
   bit_offset = board_offset * BITS_PER_BOARD_SQUARE;
-  set_bits(BITS_PER_BOARD_SQUARE,gamept->board,bit_offset,piece);
+  set_bits(BITS_PER_BOARD_SQUARE,board,bit_offset,piece);
 }
 
-void set_piece2(struct game *gamept,int row,int column,int piece)
+void set_piece2(unsigned char *board,int row,int column,int piece)
 {
   int board_offset;
 
   board_offset = row * 8 + column;
-  set_piece1(gamept,board_offset,piece);
+  set_piece1(board,board_offset,piece);
 }
 
 void calculate_seirawan_counts(struct game *gamept)
@@ -569,7 +569,7 @@ void calculate_seirawan_counts(struct game *gamept)
       direction = -1;
 
     for (n = 0; n < NUM_BOARD_SQUARES; n++) {
-      piece = get_piece1(gamept,n);
+      piece = get_piece1(gamept->board,n);
 
       if (piece * direction > 0) {
         if (piece < 0) {

@@ -41,7 +41,7 @@ void print_bd(struct game *gamept)
 
   for (m = 0; m < 8; m++) {
     for (n = 0; n < 8; n++) {
-      square = get_piece2(gamept,7 - m,n);
+      square = get_piece2(gamept->board,7 - m,n);
       printf("%c ",format_square(square));
     }
 
@@ -109,7 +109,7 @@ void fprint_bd(struct game *gamept,char *filename)
 
   for (m = 0; m < 8; m++) {
     for (n = 0; n < 8; n++) {
-      square = get_piece2(gamept,7 - m,n);
+      square = get_piece2(gamept->board,7 - m,n);
       fprintf(fptr,"%c ",format_square(square));
     }
 

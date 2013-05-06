@@ -13,7 +13,7 @@ int square_attacks_square(struct game *gamept,int square1,int square2)
   if (square1 == square2)
     return false;
 
-  piece = get_piece1(gamept,square1);
+  piece = get_piece1(gamept->board,square1);
 
   if (!piece)
     return false;
@@ -105,7 +105,7 @@ int rook_attacks_square(struct game *gamept,int square1,int square2)
       for (work_file = file1 - 1; work_file > file2; work_file--) {
         work_pos = POS_OF(rank1,work_file);
 
-        if (get_piece1(gamept,work_pos))
+        if (get_piece1(gamept->board,work_pos))
           break;
       }
     }
@@ -113,7 +113,7 @@ int rook_attacks_square(struct game *gamept,int square1,int square2)
       for (work_file = file1 + 1; work_file < file2; work_file++) {
         work_pos = POS_OF(rank1,work_file);
 
-        if (get_piece1(gamept,work_pos))
+        if (get_piece1(gamept->board,work_pos))
           break;
       }
     }
@@ -126,7 +126,7 @@ int rook_attacks_square(struct game *gamept,int square1,int square2)
       for (work_rank = rank1 - 1; work_rank > rank2; work_rank--) {
         work_pos = POS_OF(work_rank,file1);
 
-        if (get_piece1(gamept,work_pos))
+        if (get_piece1(gamept->board,work_pos))
           break;
       }
     }
@@ -134,7 +134,7 @@ int rook_attacks_square(struct game *gamept,int square1,int square2)
       for (work_rank = rank1 + 1; work_rank < rank2; work_rank++) {
         work_pos = POS_OF(work_rank,file1);
 
-        if (get_piece1(gamept,work_pos))
+        if (get_piece1(gamept->board,work_pos))
           break;
       }
     }
@@ -216,7 +216,7 @@ int bishop_attacks_square(struct game *gamept,int square1,int square2)
 
     work_pos = POS_OF(work_rank,work_file);
 
-    if (get_piece1(gamept,work_pos))
+    if (get_piece1(gamept->board,work_pos))
       break;
   }
 
