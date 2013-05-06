@@ -77,6 +77,7 @@ int main(int argc,char **argv)
 
     set_initial_board(&curr_game);
     curr_game.curr_move = 0;
+    putchar(0x0a);
     print_bd(&curr_game);
 
     for (n = 0; n < curr_game.num_moves; n++) {
@@ -101,10 +102,13 @@ int main(int argc,char **argv)
       curr_game.curr_move++;
     }
 
+    putchar(0x0a);
     print_bd(&curr_game);
   }
-  else
+  else {
+    putchar(0x0a);
     print_bd(&curr_game);
+  }
 
   return 0;
 }

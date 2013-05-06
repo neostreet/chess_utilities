@@ -230,6 +230,35 @@ int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen)
       }
     }
 
+    // handle en passant captures
+    if (wordlen == 3) {
+      if (direction == -1) {
+        // black
+        if (word[2] == '3') {
+          if ((get_piece2(gamept,3,file) == direction) &&
+              (get_piece2(gamept,3,capture_file) == direction * -1)) {
+            gamept->moves[gamept->curr_move].from = POS_OF(3,file);
+            gamept->moves[gamept->curr_move].to = POS_OF(2,capture_file);
+            gamept->moves[gamept->curr_move].special_move_info =
+              SPECIAL_MOVE_EN_PASSANT;
+            return 0;
+          }
+        }
+      }
+      else {
+        // white
+        if (word[2] == '6') {
+          if ((get_piece2(gamept,4,file) == direction) &&
+              (get_piece2(gamept,4,capture_file) == direction * -1)) {
+            gamept->moves[gamept->curr_move].from = POS_OF(4,file);
+            gamept->moves[gamept->curr_move].to = POS_OF(5,capture_file);
+            gamept->moves[gamept->curr_move].special_move_info =
+              SPECIAL_MOVE_EN_PASSANT;
+          }
+        }
+      }
+    }
+
     return 13;
   }
 

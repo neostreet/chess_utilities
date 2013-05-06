@@ -412,6 +412,8 @@ void update_board(struct game *gamept,short bCalcCounts)
 {
   int dbg;
   bool bDone;
+  int rank;
+  int file;
 
   bDone = false;
 
@@ -485,6 +487,12 @@ void update_board(struct game *gamept,short bCalcCounts)
           set_piece1(gamept,gamept->moves[gamept->curr_move].from,BISHOP_ID * -1);
         else
           set_piece1(gamept,gamept->moves[gamept->curr_move].from,BISHOP_ID);
+
+        break;
+      case SPECIAL_MOVE_EN_PASSANT:
+        rank = RANK_OF(gamept->moves[gamept->curr_move].from);
+        file = FILE_OF(gamept->moves[gamept->curr_move].to);
+        set_piece1(gamept,POS_OF(rank,file),0);
 
         break;
     }
