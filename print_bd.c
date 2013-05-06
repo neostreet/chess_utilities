@@ -7,7 +7,7 @@
 #include "chess.mac"
 
 static char usage[] =
-"usage: prgame (-debug) (-qnn) [white | black] filename\n";
+"usage: prgame (-debug) (-qnn [white | black]) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -23,7 +23,7 @@ int main(int argc,char **argv)
   int retval;
   struct game curr_game;
 
-  if ((argc < 3) || (argc > 5)) {
+  if ((argc < 2) || (argc > 5)) {
     printf(usage);
     return 1;
   }
@@ -40,24 +40,32 @@ int main(int argc,char **argv)
       break;
   }
 
-  if (argc - curr_arg != 2) {
-    printf(usage);
-    return 2;
-  }
+  if (quiz_number != -1) {
+    if (argc - curr_arg != 2) {
+      printf(usage);
+      return 2;
+    }
 
-  if (!strcmp(argv[curr_arg],"white"))
-    bBlack = false;
-  else if (!strcmp(argv[curr_arg],"black"))
-    bBlack = true;
+    if (!strcmp(argv[curr_arg],"white"))
+      bBlack = false;
+    else if (!strcmp(argv[curr_arg],"black"))
+      bBlack = true;
+    else {
+      printf(usage);
+      return 3;
+    }
+  }
   else {
-    printf(usage);
-    return 3;
+    if (argc - curr_arg != 1) {
+      printf(usage);
+      return 2;
+    }
   }
 
-  retval = read_game(argv[curr_arg+1],&curr_game,err_msg);
+  retval = read_game(argv[argc-1],&curr_game,err_msg);
 
   if (retval) {
-    printf("read_game of %s failed: %d\n",argv[curr_arg+1],retval);
+    printf("read_game of %s failed: %d\n",argv[argc-1],retval);
     printf("curr_move = %d\n",curr_game.curr_move);
     return 4;
   }
