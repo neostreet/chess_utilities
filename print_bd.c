@@ -7,7 +7,7 @@
 #include "chess.mac"
 
 static char usage[] =
-"usage: prgame (-debug) (-qnn [white | black]) filename\n";
+"usage: print_bd (-debug) (-qnn [white | black]) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
