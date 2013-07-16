@@ -41,7 +41,11 @@ void print_bd(struct game *gamept)
 
   for (m = 0; m < 8; m++) {
     for (n = 0; n < 8; n++) {
-      square = get_piece2(gamept->board,7 - m,n);
+      if (!gamept->orientation)
+        square = get_piece2(gamept->board,7 - m,n);
+      else
+        square = get_piece2(gamept->board,m,7 - n);
+
       printf("%c ",format_square(square));
     }
 

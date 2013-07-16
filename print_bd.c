@@ -7,7 +7,7 @@
 #include "chess.mac"
 
 static char usage[] =
-"usage: print_bd (-debug) (-qnn [white | black]) filename\n";
+"usage: print_bd (-debug) (-toggle) (-qnn [white | black]) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -17,23 +17,27 @@ int main(int argc,char **argv)
   int n;
   int curr_arg;
   bool bDebug;
+  bool bToggle;
   int quiz_number;
   bool bBlack;
   int initial_move;
   int retval;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 5)) {
+  if ((argc < 2) || (argc > 6)) {
     printf(usage);
     return 1;
   }
 
   bDebug = false;
+  bToggle = false;
   quiz_number = -1;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
       bDebug = true;
+    else if (!strcmp(argv[curr_arg],"-toggle"))
+      bToggle = true;
     else if (!strncmp(argv[curr_arg],"-qn",3))
       sscanf(&argv[curr_arg][3],"%d",&quiz_number);
     else
@@ -69,6 +73,9 @@ int main(int argc,char **argv)
     printf("curr_move = %d\n",curr_game.curr_move);
     return 4;
   }
+
+  if (bToggle)
+    curr_game.orientation ^= 1;
 
   if (bDebug) {
     for (n = 0; n < curr_game.num_moves; n++) {
