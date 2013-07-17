@@ -101,6 +101,11 @@ int main(int argc,char **argv)
     if (bBlack)
       initial_move++;
 
+    if (initial_move > curr_game.num_moves) {
+      printf("initial_move must be <= %d\n",curr_game.num_moves);
+      return 5;
+    }
+
     set_initial_board(&curr_game);
     curr_game.curr_move = 0;
 
