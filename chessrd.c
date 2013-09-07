@@ -50,7 +50,7 @@ static char *bad_piece_move[] = {
   "bad king move"
 };
 
-static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
+void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int fen2pos(char *line,int line_len,unsigned char *pos_buf,int *black_to_play);
 
 short force_value_of(short piece)
@@ -609,7 +609,7 @@ int read_fen(FILE *fptr,struct game *gamept)
   return 0;
 }
 
-static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen)
+void GetLine(FILE *fptr,char *line,int *line_len,int maxllen)
 {
   int chara;
   int local_line_len;
@@ -749,6 +749,71 @@ static int fen2pos(char *line,int line_len,unsigned char *pos_buf,int *black_to_
     if (m < 7)
       p++;
   }
+
+  return 0;
+}
+
+#define MAX_LINE_LEN 256
+static char line[MAX_LINE_LEN];
+
+int read_initial_board_file(char *filename)
+{
+  int m;
+  int n;
+  FILE *fptr;
+  int line_len;
+  int line_no;
+  int chara;
+  int piece;
+
+  if ((fptr = fopen(filename,"r")) == NULL)
+    return 1;
+
+  line_no = 0;
+
+  for ( ; ; ) {
+    GetLine(fptr,line,&line_len,MAX_LINE_LEN);
+
+    if (feof(fptr))
+      break;
+
+    if (line_len != 15)
+      return 2;
+
+    for (n = 0; n < NUM_FILES; n++) {
+      chara = line[n*2];
+
+      if (chara == '.') {
+        piece = 0;
+        set_piece2(initial_board,7 - line_no,n,piece);
+      }
+      else {
+        if (chara == 'p')
+          set_piece2(initial_board,7 - line_no,n,1);
+        else if (chara == 'P')
+          set_piece2(initial_board,7 - line_no,n,-1);
+        else {
+          for (m = 0; m < NUM_PIECE_TYPES; m++) {
+            if (chara == piece_ids[m]) {
+              piece = (m + 2) * -1;
+              break;
+            }
+            else if (chara == piece_ids[m] - 'A' + 'a') {
+              piece = (m + 2);
+              break;
+            }
+          }
+
+          if (m < NUM_PIECE_TYPES)
+            set_piece2(initial_board,7 - line_no,n,piece);
+        }
+      }
+    }
+
+    line_no++;
+  }
+
+  fclose(fptr);
 
   return 0;
 }

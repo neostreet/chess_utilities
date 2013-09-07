@@ -7,10 +7,13 @@
 #include "chess.mac"
 
 static char usage[] =
-"usage: print_bd (-debug) (-toggle) (-qnn [white | black]) filename\n";
+"usage: print_bd (-debug) (-toggle) (-initial_boardfilename) (-qnn [white | black]) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
+
+void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
+int read_initial_board_file(char *filename);
 
 int main(int argc,char **argv)
 {
@@ -24,7 +27,7 @@ int main(int argc,char **argv)
   int retval;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 6)) {
+  if ((argc < 2) || (argc > 7)) {
     printf(usage);
     return 1;
   }
@@ -38,6 +41,14 @@ int main(int argc,char **argv)
       bDebug = true;
     else if (!strcmp(argv[curr_arg],"-toggle"))
       bToggle = true;
+    else if (!strncmp(argv[curr_arg],"-initial_board",14)) {
+      retval = read_initial_board_file(&argv[curr_arg][14]);
+
+      if (retval) {
+        printf("read_initial_board_file() failed: %d\n",retval);
+        return 2;
+      }
+    }
     else if (!strncmp(argv[curr_arg],"-qn",3))
       sscanf(&argv[curr_arg][3],"%d",&quiz_number);
     else
@@ -47,7 +58,7 @@ int main(int argc,char **argv)
   if (quiz_number != -1) {
     if (argc - curr_arg != 2) {
       printf(usage);
-      return 2;
+      return 3;
     }
 
     if (!strcmp(argv[curr_arg],"white"))
@@ -56,13 +67,13 @@ int main(int argc,char **argv)
       bBlack = true;
     else {
       printf(usage);
-      return 3;
+      return 4;
     }
   }
   else {
     if (argc - curr_arg != 1) {
       printf(usage);
-      return 2;
+      return 5;
     }
   }
 
@@ -71,7 +82,7 @@ int main(int argc,char **argv)
   if (retval) {
     printf("read_game of %s failed: %d\n",argv[argc-1],retval);
     printf("curr_move = %d\n",curr_game.curr_move);
-    return 4;
+    return 6;
   }
 
   if (bToggle)
@@ -103,7 +114,7 @@ int main(int argc,char **argv)
 
     if (initial_move > curr_game.num_moves) {
       printf("initial_move must be <= %d\n",curr_game.num_moves);
-      return 5;
+      return 7;
     }
 
     set_initial_board(&curr_game);
