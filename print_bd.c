@@ -14,7 +14,7 @@ char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
 
 void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
-int read_initial_board_file(char *filename);
+int populate_initial_board_from_board_file(char *filename);
 
 int main(int argc,char **argv)
 {
@@ -46,10 +46,10 @@ int main(int argc,char **argv)
     else if (!strcmp(argv[curr_arg],"-toggle"))
       bToggle = true;
     else if (!strncmp(argv[curr_arg],"-initial_board",14)) {
-      retval = read_initial_board_file(&argv[curr_arg][14]);
+      retval = populate_initial_board_from_board_file(&argv[curr_arg][14]);
 
       if (retval) {
-        printf("read_initial_board_file() failed: %d\n",retval);
+        printf("populate_initial_board_from_board_file() failed: %d\n",retval);
         return 2;
       }
     }

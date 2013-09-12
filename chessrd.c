@@ -756,7 +756,7 @@ static int fen2pos(char *line,int line_len,unsigned char *pos_buf,int *black_to_
 #define MAX_LINE_LEN 256
 static char line[MAX_LINE_LEN];
 
-int read_initial_board_file(char *filename)
+int populate_board_from_board_file(unsigned char *board,char *filename)
 {
   int m;
   int n;
@@ -785,13 +785,13 @@ int read_initial_board_file(char *filename)
 
       if (chara == '.') {
         piece = 0;
-        set_piece2(initial_board,7 - line_no,n,piece);
+        set_piece2(board,7 - line_no,n,piece);
       }
       else {
         if (chara == 'p')
-          set_piece2(initial_board,7 - line_no,n,1);
+          set_piece2(board,7 - line_no,n,1);
         else if (chara == 'P')
-          set_piece2(initial_board,7 - line_no,n,-1);
+          set_piece2(board,7 - line_no,n,-1);
         else {
           for (m = 0; m < NUM_PIECE_TYPES; m++) {
             if (chara == piece_ids[m]) {
@@ -805,7 +805,7 @@ int read_initial_board_file(char *filename)
           }
 
           if (m < NUM_PIECE_TYPES)
-            set_piece2(initial_board,7 - line_no,n,piece);
+            set_piece2(board,7 - line_no,n,piece);
         }
       }
     }
@@ -816,6 +816,11 @@ int read_initial_board_file(char *filename)
   fclose(fptr);
 
   return 0;
+}
+
+int populate_initial_board_from_board_file(char *filename)
+{
+  return populate_board_from_board_file(initial_board,filename);
 }
 
 int write_board_to_binfile(unsigned char *board,char *filename)
