@@ -137,6 +137,16 @@ int main(int argc,char **argv)
       curr_game.curr_move++;
     }
 
+    if (bSpaceAndForce) {
+      calculate_seirawan_counts(&curr_game);
+      refresh_force_count(&curr_game);
+
+      printf("Space: %d - %d\n",
+        curr_game.seirawan_count[0],curr_game.seirawan_count[1]);
+      printf("Force: %d - %d\n",
+        curr_game.force_count[0],curr_game.force_count[1]);
+    }
+
     putchar(0x0a);
     print_bd(&curr_game);
   }
