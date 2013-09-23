@@ -7,8 +7,8 @@
 #include "chess.mac"
 
 static char usage[] =
-"usage: print_bd (-debug) (-toggle) (-initial_boardfilename) (-board_binfilename)\n"
-"  (-qnn [white | black]) filename\n";
+"usage: print_bd (-debug) (-toggle) (-space_and_force) (-initial_boardfilename)\n"
+"  (-board_binfilename) (-qnn [white | black]) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -22,6 +22,7 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bDebug;
   bool bToggle;
+  bool bSpaceAndForce;
   bool bBoardBin;
   int board_bin_arg;
   int quiz_number;
@@ -30,13 +31,14 @@ int main(int argc,char **argv)
   int retval;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 8)) {
+  if ((argc < 2) || (argc > 9)) {
     printf(usage);
     return 1;
   }
 
   bDebug = false;
   bToggle = false;
+  bSpaceAndForce = false;
   quiz_number = -1;
   bBoardBin = false;
 
@@ -45,6 +47,8 @@ int main(int argc,char **argv)
       bDebug = true;
     else if (!strcmp(argv[curr_arg],"-toggle"))
       bToggle = true;
+    else if (!strcmp(argv[curr_arg],"-space_and_force"))
+      bSpaceAndForce = true;
     else if (!strncmp(argv[curr_arg],"-initial_board",14)) {
       retval = populate_initial_board_from_board_file(&argv[curr_arg][14]);
 
@@ -137,6 +141,15 @@ int main(int argc,char **argv)
     print_bd(&curr_game);
   }
   else {
+    if (bSpaceAndForce) {
+      refresh_force_count(&curr_game);
+
+      printf("Space: %d - %d\n",
+        curr_game.seirawan_count[0],curr_game.seirawan_count[1]);
+      printf("Force: %d - %d\n",
+        curr_game.force_count[0],curr_game.force_count[1]);
+    }
+
     putchar(0x0a);
     print_bd(&curr_game);
   }
