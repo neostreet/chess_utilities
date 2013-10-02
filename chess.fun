@@ -17,10 +17,10 @@ int populate_board_from_board_file(unsigned char *board,char *filename);
 int write_board_to_binfile(unsigned char *board,char *filename);
 void refresh_force_count(struct game *gamept);
 
-int do_castle(struct game *gamept,int direction,char *word,int wordlen);
-int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen);
+int do_castle(struct game *gamept,int direction,char *word,int wordlen,struct move *move_ptr);
+int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen,struct move *move_ptr);
 int get_piece_id_ix(char piece);
-int do_piece_move(struct game *gamept,int direction,char *word,int wordlen);
+int do_piece_move(struct game *gamept,int direction,char *word,int wordlen,struct move *move_ptr);
 int allow_user_moves(struct game *gamept);
 
 int rook_move(struct game *,int,int,int,int);

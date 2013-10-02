@@ -36,7 +36,6 @@
 2 * FORCE_VALUE_KNIGHT + 2 * FORCE_VALUE_BISHOP + 8 * FORCE_VALUE_PAWN)
 
 #define WORDLEN 80
-#define MAX_MOVES 400
 
 #define WIDTH_IN_PIXELS 50
 #define XLEN WIDTH_IN_PIXELS
@@ -95,7 +94,7 @@ struct game {
   int num_moves;
   int curr_move;
   unsigned char board[CHARS_IN_BOARD];  /* 8 columns * 8 rows / 2 (nibbles per char) */
-  struct move moves[MAX_MOVES];
+  vector<struct move> moves;
   short seirawan_count[NUM_PLAYERS];
   short force_count[NUM_PLAYERS];
 };

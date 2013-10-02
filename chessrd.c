@@ -1,3 +1,7 @@
+#include <vector>
+
+using namespace std;
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -118,6 +122,7 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
   int dbg;
   int retval;
   int got_error;
+  struct move move;
 
   if ((fptr = fopen(filename,"r")) == NULL)
     return 1;
@@ -197,7 +202,7 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
     switch(word[0]) {
       case 'O':
       case '0':
-        retval = do_castle(gamept,direction,word,wordlen);
+        retval = do_castle(gamept,direction,word,wordlen,&move);
 
         if (retval) {
           /*printf(corrupted_msg);*/
@@ -213,7 +218,7 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
       case 'B':
       case 'Q':
       case 'K':
-        retval = do_piece_move(gamept,direction,word,wordlen);
+        retval = do_piece_move(gamept,direction,word,wordlen,&move);
 
         if (retval) {
           /*printf(corrupted_msg);*/
@@ -225,7 +230,7 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
         break;
 
       default:
-        retval = do_pawn_move(gamept,direction,word,wordlen);
+        retval = do_pawn_move(gamept,direction,word,wordlen,&move);
 
         if (retval) {
           /*printf(corrupted_msg);*/
@@ -239,6 +244,8 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
 
     if (got_error)
       break;
+
+    gamept->moves.push_back(move);
 
     update_board(gamept,false);
     gamept->curr_move++;
@@ -270,7 +277,9 @@ int read_binary_game(char *filename,struct game *gamept)
 
   bytes_to_read = gamept->num_moves * sizeof (struct move);
 
-  bytes_read = read(fhndl,(char *)gamept->moves,bytes_to_read);
+  //bytes_read = read(fhndl,(char *)gamept->moves,bytes_to_read);
+
+  bytes_read = 0;
 
   if (bytes_read != bytes_to_read) {
     close(fhndl);
@@ -303,7 +312,9 @@ int write_binary_game(char *filename,struct game *gamept)
 
   bytes_to_write = gamept->num_moves * sizeof (struct move);
 
-  bytes_written = write(fhndl,(char *)gamept->moves,bytes_to_write);
+  //bytes_written = write(fhndl,(char *)gamept->moves,bytes_to_write);
+
+  bytes_written = 0;
 
   if (bytes_written != bytes_to_write) {
     close(fhndl);
