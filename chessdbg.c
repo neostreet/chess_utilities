@@ -71,8 +71,13 @@ void print_game(struct game *gamept)
        gamept->curr_move <= gamept->num_moves;
        gamept->curr_move++) {
 
-    sprintf_move(gamept,buf,20);
-    printf(fmt_str,buf);
+    if (gamept->curr_move) {
+      sprintf_move(gamept,buf,20,true);
+      printf("%s",buf);
+
+      if (!(gamept->curr_move % 2))
+        putchar(0x0a);
+    }
 
     if (gamept->curr_move < gamept->num_moves)
       update_board(gamept,false);
@@ -90,7 +95,7 @@ void fprintf_move(FILE *fptr,struct game *gamept)
     gamept->moves[gamept->curr_move].special_move_info);
 }
 
-void sprintf_move(struct game *gamept,char *buf,int buf_len)
+void sprintf_move(struct game *gamept,char *buf,int buf_len,bool bInline)
 {
   bool bWhite;
   int put_count;
@@ -114,12 +119,16 @@ void sprintf_move(struct game *gamept,char *buf,int buf_len)
     return;
   }
 
-  bWhite = !((gamept->black_to_play + gamept->curr_move-1) % 2);
+  bWhite = !((gamept->curr_move-1) % 2);
 
-  sprintf(buf,"%2d. ",((gamept->curr_move-1) / 2) + 1);
-  put_count = 4;
+  if (bWhite || !bInline) {
+    sprintf(buf,"%2d. ",((gamept->curr_move-1) / 2) + 1);
+    put_count = 4;
+  }
+  else
+    put_count = 0;
 
-  if (!bWhite) {\
+  if (!bInline && !bWhite) {
     sprintf(&buf[put_count],"...  ");
     put_count += 5;
   }
@@ -151,8 +160,14 @@ void sprintf_move(struct game *gamept,char *buf,int buf_len)
     }
   }
 
-  for ( ; put_count < buf_len - 1; put_count++)
-    buf[put_count] = ' ';
+  if (!bInline) {
+    for ( ; put_count < buf_len - 1; put_count++)
+      buf[put_count] = ' ';
+  }
+  else if (bWhite) {
+    for ( ; put_count < 12; put_count++)
+      buf[put_count] = ' ';
+  }
 
   buf[put_count] = 0;
 }

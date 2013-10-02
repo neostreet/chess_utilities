@@ -92,10 +92,11 @@ void fprint_game(struct game *gamept,char *filename)
        gamept->curr_move <= gamept->num_moves;
        gamept->curr_move++) {
 
-    sprintf_move(gamept,buf,20);
-    fprintf(fptr,fmt_str,buf);
+    sprintf_move(gamept,buf,20,true);
+    fprintf(fptr,"%s",buf);
 
-    update_board(gamept,false);
+    if (gamept->curr_move < gamept->num_moves)
+      update_board(gamept,false);
   }
 
   fclose(fptr);
