@@ -263,3 +263,54 @@ int king_attacks_square(struct game *gamept,int square1,int square2)
 
   return false;
 }
+
+bool player_to_move_is_in_check(struct game *gamept)
+{
+  int n;
+  int player_to_move;
+  int other_player;
+  int king_to_find;
+  int other_king;
+  int king_offset;
+  int piece;
+
+  if (!(gamept->curr_move % 2)) {
+    player_to_move = WHITE;
+    other_player = BLACK;
+    king_to_find = KING_ID;
+    other_king = KING_ID * -1;
+  }
+  else {
+    player_to_move = BLACK;
+    other_player = WHITE;
+    king_to_find = KING_ID * -1;
+    other_king = KING_ID;
+  }
+
+  // first, find your own king
+
+  king_offset = -1;
+
+  for (n = 0; n < gamept->num_pieces[player_to_move]; n++) {
+    piece = get_piece1(gamept->board,(int)gamept->piece_offsets[player_to_move][n]);
+
+    if (piece == king_to_find) {
+      king_offset = (int)gamept->piece_offsets[player_to_move][n];
+      break;
+    }
+  }
+
+  if (n == gamept->num_pieces[player_to_move])
+    return false; // should never happen
+
+  for (n = 0; n < gamept->num_pieces[other_player]; n++) {
+    piece = get_piece1(gamept->board,(int)gamept->piece_offsets[other_player][n]);
+
+    if (piece != other_king) {
+      if (square_attacks_square(gamept,(int)gamept->piece_offsets[other_player][n],king_offset))
+        return true;
+    }
+  }
+
+  return false;
+}

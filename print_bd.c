@@ -36,6 +36,7 @@ int main(int argc,char **argv)
   int initial_move;
   int retval;
   struct game curr_game;
+  bool bCheck;
 
   if ((argc < 2) || (argc > 10)) {
     printf(usage);
@@ -178,6 +179,10 @@ int main(int argc,char **argv)
 
   if (bPrintPieces)
     print_pieces(&curr_game);
+
+  bCheck = player_to_move_is_in_check(&curr_game);
+
+  printf("%d\n",bCheck);
 
   return 0;
 }
