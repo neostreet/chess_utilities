@@ -34,8 +34,14 @@ int do_castle(struct game *gamept,int direction,char *word,int wordlen,struct mo
     if (get_piece2(gamept->board,rank,5) || get_piece2(gamept->board,rank,6))
       return 3;
 
-    move_ptr->special_move_info =
-      SPECIAL_MOVE_KINGSIDE_CASTLE;
+    if (direction == 1) {  /* if white's move: */
+      move_ptr->from = 4;
+      move_ptr->to = 6;
+    }
+    else {
+      move_ptr->from = 60;
+      move_ptr->to = 62;
+    }
   }
   else if (wordlen == 5) {  /* queenside castle */
     /* make sure there is a rook in the corner: */
@@ -46,8 +52,14 @@ int do_castle(struct game *gamept,int direction,char *word,int wordlen,struct mo
     if (get_piece2(gamept->board,rank,1) || get_piece2(gamept->board,rank,2) || get_piece2(gamept->board,rank,3))
       return 5;
 
-    move_ptr->special_move_info =
-      SPECIAL_MOVE_QUEENSIDE_CASTLE;
+    if (direction == 1) {  /* if white's move: */
+      move_ptr->from = 4;
+      move_ptr->to = 2;
+    }
+    else {
+      move_ptr->from = 60;
+      move_ptr->to = 58;
+    }
   }
   else
     return 6;

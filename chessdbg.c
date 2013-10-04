@@ -15,16 +15,44 @@ extern char piece_ids[]; /* "RNBQK" */
 static char buf[20];
 char fmt_str[] = "%s\n";
 
-int kingside_castle(struct game *gamept)
+bool kingside_castle(struct game *gamept)
 {
-  return (gamept->moves[gamept->curr_move-1].special_move_info &
-    SPECIAL_MOVE_KINGSIDE_CASTLE);
+  if (!((gamept->curr_move-1) % 2)) {
+    // white
+
+    if ((gamept->moves[gamept->curr_move-1].from == 4) &&
+      (gamept->moves[gamept->curr_move-1].to == 6))
+      return true;
+  }
+  else {
+    // black
+
+    if ((gamept->moves[gamept->curr_move-1].from == 60) &&
+      (gamept->moves[gamept->curr_move-1].to == 62))
+      return true;
+  }
+
+  return false;
 }
 
-int queenside_castle(struct game *gamept)
+bool queenside_castle(struct game *gamept)
 {
-  return (gamept->moves[gamept->curr_move-1].special_move_info &
-    SPECIAL_MOVE_QUEENSIDE_CASTLE);
+  if (!((gamept->curr_move-1) % 2)) {
+    // white
+
+    if ((gamept->moves[gamept->curr_move-1].from == 4) &&
+      (gamept->moves[gamept->curr_move-1].to == 2))
+      return true;
+  }
+  else {
+    // black
+
+    if ((gamept->moves[gamept->curr_move-1].from == 60) &&
+      (gamept->moves[gamept->curr_move-1].to == 58))
+      return true;
+  }
+
+  return false;
 }
 
 char decode_piece(int piece,bool bShowBlack)

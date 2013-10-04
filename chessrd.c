@@ -439,49 +439,12 @@ void update_board(struct game *gamept,short bCalcCounts)
   bool bDone;
   int rank;
   int file;
+  int piece;
 
   bDone = false;
 
   if (gamept->moves[gamept->curr_move].special_move_info) {
     switch (gamept->moves[gamept->curr_move].special_move_info) {
-      case SPECIAL_MOVE_KINGSIDE_CASTLE:
-        if (gamept->curr_move & 0x1) {
-          // black
-          set_piece1(gamept->board,62,-6);
-          set_piece1(gamept->board,61,-2);
-          set_piece1(gamept->board,60,0);
-          set_piece1(gamept->board,63,0);
-        }
-        else {
-          // white
-          set_piece1(gamept->board,6,6);
-          set_piece1(gamept->board,5,2);
-          set_piece1(gamept->board,4,0);
-          set_piece1(gamept->board,7,0);
-        }
-
-        bDone = true;
-
-        break;
-      case SPECIAL_MOVE_QUEENSIDE_CASTLE:
-        if (gamept->curr_move & 0x1) {
-          // black
-          set_piece1(gamept->board,58,-6);
-          set_piece1(gamept->board,59,-2);
-          set_piece1(gamept->board,60,0);
-          set_piece1(gamept->board,56,0);
-        }
-        else {
-          // white
-          set_piece1(gamept->board,2,6);
-          set_piece1(gamept->board,3,2);
-          set_piece1(gamept->board,4,0);
-          set_piece1(gamept->board,0,0);
-        }
-
-        bDone = true;
-
-        break;
       case SPECIAL_MOVE_PROMOTION_QUEEN:
         if (gamept->curr_move & 0x1)
           // black
@@ -524,10 +487,45 @@ void update_board(struct game *gamept,short bCalcCounts)
   }
 
   if (!bDone) {
-    set_piece1(gamept->board,gamept->moves[gamept->curr_move].to,
-      get_piece1(gamept->board,gamept->moves[gamept->curr_move].from));
+    piece = get_piece1(gamept->board,gamept->moves[gamept->curr_move].from);
+
+    set_piece1(gamept->board,gamept->moves[gamept->curr_move].to,piece);
 
     set_piece1(gamept->board,gamept->moves[gamept->curr_move].from,0);  /* vacate previous square */
+
+    // now move the rook if this was a castling move
+    if (piece == KING_ID) {
+      // white
+
+      if ((gamept->moves[gamept->curr_move].from == 4) &&
+        (gamept->moves[gamept->curr_move].to == 6)) {
+        // kingside castle
+        set_piece1(gamept->board,5,ROOK_ID);
+        set_piece1(gamept->board,7,0);
+      }
+      else if ((gamept->moves[gamept->curr_move].from == 4) &&
+        (gamept->moves[gamept->curr_move].to == 2)) {
+        // kingside castle
+        set_piece1(gamept->board,3,ROOK_ID);
+        set_piece1(gamept->board,0,0);
+      }
+    }
+    else if (piece == KING_ID * -1) {
+      // black
+
+      if ((gamept->moves[gamept->curr_move].from == 60) &&
+        (gamept->moves[gamept->curr_move].to == 62)) {
+        // kingside castle
+        set_piece1(gamept->board,61,ROOK_ID * -1);
+        set_piece1(gamept->board,63,0);
+      }
+      else if ((gamept->moves[gamept->curr_move].from == 60) &&
+        (gamept->moves[gamept->curr_move].to == 58)) {
+        // kingside castle
+        set_piece1(gamept->board,59,ROOK_ID * -1);
+        set_piece1(gamept->board,56,0);
+      }
+    }
   }
 
   if (bCalcCounts)
