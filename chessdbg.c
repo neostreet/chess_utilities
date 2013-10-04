@@ -175,3 +175,14 @@ void sprintf_move(struct game *gamept,char *buf,int buf_len,bool bInline)
 
   buf[put_count] = 0;
 }
+
+void print_from_to(struct game *gamept)
+{
+  int n;
+  printf(fmt_str,gamept->title);
+
+  set_initial_board(gamept);
+
+  for (n = 0; n < gamept->num_moves; n++)
+    printf("%d %d\n",gamept->moves[n].from,gamept->moves[n].to);
+}
