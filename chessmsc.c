@@ -128,3 +128,27 @@ void fprint_bd(struct game *gamept,char *filename)
 
   fclose(fptr);
 }
+
+void print_pieces(struct game *gamept)
+{
+  int m;
+  int n;
+  int piece;
+
+  for (m = 0; m < NUM_PLAYERS; m++) {
+    if (!m)
+      printf("White pieces: ");
+    else
+      printf("Black pieces: ");
+
+    for (n = 0; n < gamept->num_pieces[m]; n++) {
+      piece = get_piece1(gamept->board,(int)gamept->piece_offsets[m][n]);
+      printf("%c",format_square(piece));
+
+      if (n < gamept->num_pieces[m] - 1)
+        putchar(' ');
+      else
+        putchar(0x0a);
+    }
+  }
+}

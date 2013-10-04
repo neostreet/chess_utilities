@@ -105,6 +105,33 @@ void set_initial_board(struct game *gamept)
     gamept->seirawan_count[n] = 0;
 
   refresh_force_count(gamept);
+  set_piece_offsets(gamept);
+}
+
+void set_piece_offsets(struct game *gamept)
+{
+  int m;
+  int n;
+  int p;
+  int piece;
+
+  for (n = 0; n < NUM_PLAYERS; n++)
+    gamept->num_pieces[n] = 0;
+
+  p = 0;
+
+  for (m = 0; m < NUM_RANKS; m++) {
+    for (n = 0; n < NUM_FILES; n++) {
+      piece = get_piece2(gamept->board,m,n);
+
+      if (piece > 0)
+        gamept->piece_offsets[WHITE][gamept->num_pieces[WHITE]++] = p;
+      else if (piece < 0)
+        gamept->piece_offsets[BLACK][gamept->num_pieces[BLACK]++] = p;
+
+      p++;
+    }
+  }
 }
 
 int read_game(char *filename,struct game *gamept,char *err_msg)
@@ -505,6 +532,8 @@ void update_board(struct game *gamept,short bCalcCounts)
 
   if (bCalcCounts)
     calculate_seirawan_counts(gamept);
+
+  set_piece_offsets(gamept);
 }
 
 int get_piece1(unsigned char *board,int board_offset)

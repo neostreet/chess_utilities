@@ -32,6 +32,8 @@ int king_move(struct game *,int,int,int,int);
 int get_to_position(char *word,int wordlen,int *to_filept,int *to_rankpt);
 
 void set_initial_board(struct game *gamept);
+void set_piece_offsets(struct game *gamept);
+void print_pieces(struct game *gamept);
 void update_board(struct game *gamept,short bCalcCounts);
 int get_piece1(unsigned char *board,int board_offset);
 int get_piece2(unsigned char *board,int row,int column);

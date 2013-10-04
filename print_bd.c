@@ -13,7 +13,7 @@ using namespace std;
 
 static char usage[] =
 "usage: print_bd (-debug) (-toggle) (-space_and_force) (-initial_boardfilename)\n"
-"  (-board_binfilename) (-qnn [white | black]) filename\n";
+"  (-board_binfilename) (-print_pieces) (-qnn [white | black]) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -29,6 +29,7 @@ int main(int argc,char **argv)
   bool bToggle;
   bool bSpaceAndForce;
   bool bBoardBin;
+  bool bPrintPieces;
   int board_bin_arg;
   int quiz_number;
   bool bBlack;
@@ -36,7 +37,7 @@ int main(int argc,char **argv)
   int retval;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 9)) {
+  if ((argc < 2) || (argc > 10)) {
     printf(usage);
     return 1;
   }
@@ -46,6 +47,7 @@ int main(int argc,char **argv)
   bSpaceAndForce = false;
   quiz_number = -1;
   bBoardBin = false;
+  bPrintPieces = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -62,6 +64,8 @@ int main(int argc,char **argv)
         return 2;
       }
     }
+    else if (!strcmp(argv[curr_arg],"-print_pieces"))
+      bPrintPieces = true;
     else if (!strncmp(argv[curr_arg],"-board_bin",10)) {
       bBoardBin = true;
       board_bin_arg = curr_arg;
@@ -171,6 +175,9 @@ int main(int argc,char **argv)
 
   if (bBoardBin)
     write_board_to_binfile(curr_game.board,&argv[board_bin_arg][10]);
+
+  if (bPrintPieces)
+    print_pieces(&curr_game);
 
   return 0;
 }
