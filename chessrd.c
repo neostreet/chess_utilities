@@ -444,7 +444,7 @@ void update_board(struct game *gamept,short bCalcCounts)
   bDone = false;
 
   if (gamept->moves[gamept->curr_move].special_move_info) {
-    switch (gamept->moves[gamept->curr_move].special_move_info) {
+    switch (gamept->moves[gamept->curr_move].special_move_info & 0x1f) {
       case SPECIAL_MOVE_PROMOTION_QUEEN:
         if (gamept->curr_move & 0x1)
           // black
