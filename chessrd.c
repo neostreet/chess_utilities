@@ -183,6 +183,8 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
   word_no = 0;
   got_error = 0;
 
+  gamept->moves.clear();
+
   for ( ; ; ) {
     if (word_no || !bHaveFirstWord)
       end_of_file = get_word(fptr,word,WORDLEN,&wordlen);
@@ -532,6 +534,12 @@ void update_board(struct game *gamept,short bCalcCounts)
     calculate_seirawan_counts(gamept);
 
   set_piece_offsets(gamept);
+
+  // now check if this move has put the other player in check
+  if (player_is_in_check(!((gamept->curr_move + 1) % 2),gamept)) {
+    // mark this move as a check
+    gamept->moves[gamept->curr_move].special_move_info |= SPECIAL_MOVE_CHECK;
+  }
 }
 
 int get_piece1(unsigned char *board,int board_offset)

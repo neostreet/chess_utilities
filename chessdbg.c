@@ -192,6 +192,9 @@ void sprintf_move(struct game *gamept,char *buf,int buf_len,bool bInline)
     }
   }
 
+  if (gamept->moves[gamept->curr_move-1].special_move_info & SPECIAL_MOVE_CHECK)
+    buf[put_count++] = '+';
+
   if (!bInline) {
     for ( ; put_count < buf_len - 1; put_count++)
       buf[put_count] = ' ';
@@ -211,6 +214,8 @@ void print_from_to(struct game *gamept)
 
   set_initial_board(gamept);
 
-  for (n = 0; n < gamept->num_moves; n++)
-    printf("%d %d\n",gamept->moves[n].from,gamept->moves[n].to);
+  for (n = 0; n < gamept->num_moves; n++) {
+    printf("%2d %2d %02x\n",gamept->moves[n].from,gamept->moves[n].to,
+      gamept->moves[n].special_move_info);
+  }
 }

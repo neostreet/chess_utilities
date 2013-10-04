@@ -58,4 +58,4 @@ int knight_attacks_square(struct game *gampt,int square1,int square2);
 int bishop_attacks_square(struct game *gampt,int square1,int square2);
 int queen_attacks_square(struct game *gampt,int square1,int square2);
 int king_attacks_square(struct game *gampt,int square1,int square2);
-bool player_to_move_is_in_check(struct game *gamept);
+bool player_is_in_check(bool bWhite,struct game *gamept);

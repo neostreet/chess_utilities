@@ -264,7 +264,7 @@ int king_attacks_square(struct game *gamept,int square1,int square2)
   return false;
 }
 
-bool player_to_move_is_in_check(struct game *gamept)
+bool player_is_in_check(bool bWhite,struct game *gamept)
 {
   int n;
   int player_to_move;
@@ -274,7 +274,7 @@ bool player_to_move_is_in_check(struct game *gamept)
   int king_offset;
   int piece;
 
-  if (!(gamept->curr_move % 2)) {
+  if (bWhite) {
     player_to_move = WHITE;
     other_player = BLACK;
     king_to_find = KING_ID;
