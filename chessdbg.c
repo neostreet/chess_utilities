@@ -184,6 +184,9 @@ void sprintf_move(struct game *gamept,char *buf,int buf_len,bool bInline)
     }
 
     if (!bDone) {
+      if (gamept->moves[gamept->curr_move-1].special_move_info & SPECIAL_MOVE_CAPTURE)
+        buf[put_count++] = 'x';
+
       to = gamept->moves[gamept->curr_move-1].to;
       to_file = FILE_OF(to);
       to_rank = RANK_OF(to);
