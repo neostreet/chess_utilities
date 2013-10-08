@@ -93,6 +93,11 @@ char get_decoded_piece(struct game *gamept)
   return decode_piece(piece,false);
 }
 
+char get_from_file(struct game *gamept)
+{
+  return 'a' + FILE_OF(gamept->moves[gamept->curr_move-1].from);
+}
+
 void print_game(struct game *gamept)
 {
   printf(fmt_str,gamept->title);
@@ -184,8 +189,12 @@ void sprintf_move(struct game *gamept,char *buf,int buf_len,bool bInline)
     }
 
     if (!bDone) {
-      if (gamept->moves[gamept->curr_move-1].special_move_info & SPECIAL_MOVE_CAPTURE)
+      if (gamept->moves[gamept->curr_move-1].special_move_info & SPECIAL_MOVE_CAPTURE) {
+        if (decoded_piece == 'P')
+          buf[put_count++] = get_from_file(gamept);
+
         buf[put_count++] = 'x';
+      }
 
       to = gamept->moves[gamept->curr_move-1].to;
       to_file = FILE_OF(to);
