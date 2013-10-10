@@ -17,18 +17,18 @@ char fmt_str[] = "%s\n";
 
 bool kingside_castle(struct game *gamept)
 {
-  if (!((gamept->curr_move-1) % 2)) {
+  if (!((gamept->curr_move) % 2)) {
     // white
 
-    if ((gamept->moves[gamept->curr_move-1].from == 4) &&
-      (gamept->moves[gamept->curr_move-1].to == 6))
+    if ((gamept->moves[gamept->curr_move].from == 4) &&
+      (gamept->moves[gamept->curr_move].to == 6))
       return true;
   }
   else {
     // black
 
-    if ((gamept->moves[gamept->curr_move-1].from == 60) &&
-      (gamept->moves[gamept->curr_move-1].to == 62))
+    if ((gamept->moves[gamept->curr_move].from == 60) &&
+      (gamept->moves[gamept->curr_move].to == 62))
       return true;
   }
 
@@ -37,18 +37,18 @@ bool kingside_castle(struct game *gamept)
 
 bool queenside_castle(struct game *gamept)
 {
-  if (!((gamept->curr_move-1) % 2)) {
+  if (!((gamept->curr_move) % 2)) {
     // white
 
-    if ((gamept->moves[gamept->curr_move-1].from == 4) &&
-      (gamept->moves[gamept->curr_move-1].to == 2))
+    if ((gamept->moves[gamept->curr_move].from == 4) &&
+      (gamept->moves[gamept->curr_move].to == 2))
       return true;
   }
   else {
     // black
 
-    if ((gamept->moves[gamept->curr_move-1].from == 60) &&
-      (gamept->moves[gamept->curr_move-1].to == 58))
+    if ((gamept->moves[gamept->curr_move].from == 60) &&
+      (gamept->moves[gamept->curr_move].to == 58))
       return true;
   }
 
@@ -89,36 +89,47 @@ char get_decoded_piece(struct game *gamept)
   int piece;
 
   piece = get_piece1(gamept->board,
-    gamept->moves[gamept->curr_move-1].to);
+    gamept->moves[gamept->curr_move].from);
   return decode_piece(piece,false);
 }
 
 char get_from_file(struct game *gamept)
 {
-  return 'a' + FILE_OF(gamept->moves[gamept->curr_move-1].from);
+  return 'a' + FILE_OF(gamept->moves[gamept->curr_move].from);
 }
 
 void print_game(struct game *gamept)
 {
+  int n;
+  int save_len;
+
   printf(fmt_str,gamept->title);
 
   set_initial_board(gamept);
 
   for (gamept->curr_move = 0;
-       gamept->curr_move <= gamept->num_moves;
+       gamept->curr_move < gamept->num_moves;
        gamept->curr_move++) {
 
-    if (gamept->curr_move) {
-      sprintf_move(gamept,buf,20,true);
-      printf("%s",buf);
+    sprintf_move(gamept,buf,20,true);
 
-      if (!(gamept->curr_move % 2))
-        putchar(0x0a);
+    if (gamept->curr_move % 2) {
+      for (n = save_len; n < 12; n++)
+        putchar(' ');
     }
+    else
+      save_len = strlen(buf);
 
-    if (gamept->curr_move < gamept->num_moves)
-      update_board(gamept,false);
+    printf("%s",buf);
+
+    if (gamept->curr_move % 2)
+      putchar(0x0a);
+
+    update_board(gamept,false);
   }
+
+  if (gamept->num_moves % 2)
+    putchar(0x0a);
 }
 
 void fprintf_move(FILE *fptr,struct game *gamept)
@@ -144,23 +155,11 @@ void sprintf_move(struct game *gamept,char *buf,int buf_len,bool bInline)
   int to_file;
   int to_rank;
 
-  if (!gamept->curr_move) {
-    strcpy(buf,"Starting position");
-    put_count = strlen(buf);
-
-    for ( ; put_count < buf_len - 1; put_count++)
-      buf[put_count] = ' ';
-
-    buf[put_count] = 0;
-
-    return;
-  }
-
-  bWhite = !((gamept->curr_move-1) % 2);
+  bWhite = !((gamept->curr_move) % 2);
 
   if (bWhite || !bInline) {
-    sprintf(buf,"%2d. ",((gamept->curr_move-1) / 2) + 1);
-    put_count = 4;
+    sprintf(buf,"%2d. ",((gamept->curr_move) / 2) + 1);
+    put_count = strlen(buf);
   }
   else
     put_count = 0;
@@ -189,14 +188,14 @@ void sprintf_move(struct game *gamept,char *buf,int buf_len,bool bInline)
     }
 
     if (!bDone) {
-      if (gamept->moves[gamept->curr_move-1].special_move_info & SPECIAL_MOVE_CAPTURE) {
+      if (gamept->moves[gamept->curr_move].special_move_info & SPECIAL_MOVE_CAPTURE) {
         if (decoded_piece == 'P')
           buf[put_count++] = get_from_file(gamept);
 
         buf[put_count++] = 'x';
       }
 
-      to = gamept->moves[gamept->curr_move-1].to;
+      to = gamept->moves[gamept->curr_move].to;
       to_file = FILE_OF(to);
       to_rank = RANK_OF(to);
       buf[put_count++] = 'a' + to_file;
@@ -204,15 +203,11 @@ void sprintf_move(struct game *gamept,char *buf,int buf_len,bool bInline)
     }
   }
 
-  if (gamept->moves[gamept->curr_move-1].special_move_info & SPECIAL_MOVE_CHECK)
+  if (gamept->moves[gamept->curr_move].special_move_info & SPECIAL_MOVE_CHECK)
     buf[put_count++] = '+';
 
   if (!bInline) {
     for ( ; put_count < buf_len - 1; put_count++)
-      buf[put_count] = ' ';
-  }
-  else if (bWhite) {
-    for ( ; put_count < 12; put_count++)
       buf[put_count] = ' ';
   }
 
