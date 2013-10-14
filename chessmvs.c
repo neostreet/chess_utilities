@@ -272,6 +272,7 @@ int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen,struct
             move_ptr->to = POS_OF(5,capture_file);
             move_ptr->special_move_info =
               SPECIAL_MOVE_EN_PASSANT;
+            return 0;
           }
         }
       }
