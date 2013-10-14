@@ -13,7 +13,7 @@ using namespace std;
 
 static char usage[] =
 "usage: print_bd (-debug) (-toggle) (-space_and_force) (-initial_boardfilename)\n"
-"  (-board_binfilename) (-print_pieces) (-qnn [white | black]) filename\n";
+"  (-board_binfilename) (-print_pieces) (-qnn) [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
