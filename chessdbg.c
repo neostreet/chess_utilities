@@ -213,13 +213,12 @@ void sprintf_move(struct game *gamept,char *buf,int buf_len,bool bInline)
 
 void print_from_to(struct game *gamept)
 {
-  int n;
   printf(fmt_str,gamept->title);
 
   set_initial_board(gamept);
 
-  for (n = 0; n < gamept->num_moves; n++) {
-    printf("%2d %2d %02x\n",gamept->moves[n].from,gamept->moves[n].to,
-      gamept->moves[n].special_move_info);
+  for (gamept->curr_move = 0; gamept->curr_move < gamept->num_moves; gamept->curr_move++) {
+    printf("%2d %2d\n",gamept->moves[gamept->curr_move].from,gamept->moves[gamept->curr_move].to);
+    print_special_moves(gamept);
   }
 }
