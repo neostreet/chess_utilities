@@ -281,30 +281,7 @@ int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen,struct
     return 13;
   }
 
-  /* en passant case: */
-  if (wordlen == 6) {
-    if (!strcmp(&word[wordlen - 4],"e.p.")) {
-      if (direction == 1)
-        rank = 4;
-      else
-        rank = 3;
-
-      if ((get_piece2(gamept->board,rank,file) == direction) &&
-        (get_piece2(gamept->board,rank,capture_file) * direction < 0)) {
-        move_ptr->special_move_info =
-          SPECIAL_MOVE_EN_PASSANT;
-        move_ptr->from = POS_OF(rank,file);
-        move_ptr->to = POS_OF(rank+direction,capture_file);
-        return 0;
-      }
-      else
-        return 14;
-    }
-  }
-  else
-    return 15;
-
-  return 0;
+  return 14;
 }
 
 int get_piece_id_ix(char piece)
