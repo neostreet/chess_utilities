@@ -158,6 +158,7 @@ int main(int argc,char **argv)
 
     putchar(0x0a);
     print_bd(&curr_game);
+    print_special_moves(&curr_game);
   }
   else {
     if (bSpaceAndForce) {
@@ -178,8 +179,6 @@ int main(int argc,char **argv)
 
   if (bPrintPieces)
     print_pieces(&curr_game);
-
-  printf("%d\n",curr_game.moves[curr_game.curr_move - 1].special_move_info);
 
   return 0;
 }
