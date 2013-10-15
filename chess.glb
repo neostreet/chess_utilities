@@ -14,3 +14,11 @@ GLOBAL int highlight_rank;
 GLOBAL int highlight_file;
 
 GLOBAL int move_start_piece;
+
+#ifdef MAKE_GLOBALS_HERE
+char piece_ids[] = "RNBQK";
+char fmt_str[] = "%s\n";
+#else
+extern char piece_ids[];
+extern char fmt_str[];
+#endif

@@ -10,10 +10,7 @@ using namespace std;
 #include "chess.glb"
 #include "chess.mac"
 
-extern char piece_ids[]; /* "RNBQK" */
-
 static char buf[20];
-char fmt_str[] = "%s\n";
 
 bool kingside_castle(struct game *gamept)
 {

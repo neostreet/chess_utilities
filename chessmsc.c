@@ -9,9 +9,6 @@ using namespace std;
 #include "chess.fun"
 #include "chess.mac"
 
-extern char piece_ids[]; /* "RNBQK" */
-extern char fmt_str[];
-
 static int format_square(int square)
 {
   bool bBlack;

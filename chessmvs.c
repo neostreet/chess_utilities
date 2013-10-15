@@ -307,8 +307,6 @@ int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen,struct
   return 0;
 }
 
-char piece_ids[] = "RNBQK";
-
 int get_piece_id_ix(char piece)
 {
   int which_piece;

@@ -44,8 +44,6 @@ static char corrupted_msg[] = "game corrupted\n";
 static char bad_castle[] = "bad castle";
 static char bad_pawn_move[] = "bad pawn move";
 
-extern char piece_ids[]; /* "RNBQK" */
-
 static char *bad_piece_move[] = {
   "bad rook move",
   "bad knight move",
