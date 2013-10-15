@@ -257,8 +257,8 @@ int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen,struct
               (get_piece2(gamept->board,3,capture_file) == direction * -1)) {
             move_ptr->from = POS_OF(3,file);
             move_ptr->to = POS_OF(2,capture_file);
-            move_ptr->special_move_info =
-              SPECIAL_MOVE_EN_PASSANT;
+            move_ptr->special_move_info |=
+              SPECIAL_MOVE_CAPTURE | SPECIAL_MOVE_EN_PASSANT;
             return 0;
           }
         }
@@ -270,8 +270,8 @@ int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen,struct
               (get_piece2(gamept->board,4,capture_file) == direction * -1)) {
             move_ptr->from = POS_OF(4,file);
             move_ptr->to = POS_OF(5,capture_file);
-            move_ptr->special_move_info =
-              SPECIAL_MOVE_EN_PASSANT;
+            move_ptr->special_move_info |=
+              SPECIAL_MOVE_CAPTURE | SPECIAL_MOVE_EN_PASSANT;
             return 0;
           }
         }
