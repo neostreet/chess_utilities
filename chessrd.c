@@ -226,6 +226,8 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
     else
       direction = 1;            /* white's move */
 
+    move.special_move_info = 0;
+
     switch(word[0]) {
       case 'O':
       case '0':
