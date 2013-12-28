@@ -141,14 +141,23 @@ int main(int argc,char **argv)
 
           switch (wwld) {
             case WHITE_WIN:
+              if (bDebug)
+                printf("%6.2lf %s\n",(double)1,filename);
+
               wins++;
 
               break;
             case WHITE_LOSS:
+              if (bDebug)
+                printf("%6.2lf %s\n",(double)0,filename);
+
               losses++;
 
               break;
             case WHITE_DRAW:
+              if (bDebug)
+                printf("%6.2lf %s\n",(double).5,filename);
+
               draws++;
 
               break;
@@ -161,14 +170,23 @@ int main(int argc,char **argv)
 
           switch (wwld) {
             case WHITE_WIN:
+              if (bDebug)
+                printf("%6.2lf %s\n",(double)0,filename);
+
               losses++;
 
               break;
             case WHITE_LOSS:
+              if (bDebug)
+                printf("%6.2lf %s\n",(double)1,filename);
+
               wins++;
 
               break;
             case WHITE_DRAW:
+              if (bDebug)
+                printf("%6.2lf %s\n",(double).5,filename);
+
               draws++;
 
               break;
@@ -189,9 +207,12 @@ int main(int argc,char **argv)
 
   total_games = wins + losses + draws;
 
-  printf("%3d wins\n",wins);
-  printf("%3d losses\n",losses);
-  printf("%3d draws\n",draws);
+  if (bDebug)
+    putchar(0x0a);
+
+  printf("%6d wins\n",wins);
+  printf("%6d losses\n",losses);
+  printf("%6d draws\n",draws);
 
   points = (double)wins + ((double)(0.5) * (double)draws);
 
