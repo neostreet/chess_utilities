@@ -13,7 +13,7 @@ static char filename[MAX_FILENAME_LEN];
 #define MAX_LINE_LEN 1024
 static char line[MAX_LINE_LEN];
 
-static char usage[] = "usage: fchess_score (-debug) player_name filename\n";
+static char usage[] = "usage: fchess_score (-verbose) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -37,7 +37,7 @@ int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
-  bool bDebug;
+  bool bVerbose;
   int player_name_ix;
   int player_name_len;
   FILE *fptr0;
@@ -58,11 +58,11 @@ int main(int argc,char **argv)
     return 1;
   }
 
-  bDebug = false;
+  bVerbose = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-debug"))
-      bDebug = true;
+    if (!strcmp(argv[curr_arg],"-verbose"))
+      bVerbose = true;
     else
       break;
   }
@@ -141,21 +141,21 @@ int main(int argc,char **argv)
 
           switch (wwld) {
             case WHITE_WIN:
-              if (bDebug)
+              if (bVerbose)
                 printf("%6.2lf %s\n",(double)1,filename);
 
               wins++;
 
               break;
             case WHITE_LOSS:
-              if (bDebug)
+              if (bVerbose)
                 printf("%6.2lf %s\n",(double)0,filename);
 
               losses++;
 
               break;
             case WHITE_DRAW:
-              if (bDebug)
+              if (bVerbose)
                 printf("%6.2lf %s\n",(double).5,filename);
 
               draws++;
@@ -170,21 +170,21 @@ int main(int argc,char **argv)
 
           switch (wwld) {
             case WHITE_WIN:
-              if (bDebug)
+              if (bVerbose)
                 printf("%6.2lf %s\n",(double)0,filename);
 
               losses++;
 
               break;
             case WHITE_LOSS:
-              if (bDebug)
+              if (bVerbose)
                 printf("%6.2lf %s\n",(double)1,filename);
 
               wins++;
 
               break;
             case WHITE_DRAW:
-              if (bDebug)
+              if (bVerbose)
                 printf("%6.2lf %s\n",(double).5,filename);
 
               draws++;
@@ -207,7 +207,7 @@ int main(int argc,char **argv)
 
   total_games = wins + losses + draws;
 
-  if (bDebug)
+  if (bVerbose)
     putchar(0x0a);
 
   printf("%6d wins\n",wins);
