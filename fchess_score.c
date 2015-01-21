@@ -1,12 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 
-enum white_win_loss_draw {
-  WHITE_WIN,
-  WHITE_LOSS,
-  WHITE_DRAW
-};
-
 #define MAX_FILENAME_LEN 256
 static char filename[MAX_FILENAME_LEN];
 
@@ -45,12 +39,12 @@ int main(int argc,char **argv)
   FILE *fptr;
   int line_len;
   int line_no;
+  bool bPlayerIsWhite;
   int wins;
   int losses;
   int draws;
   int total_games;
   int ix;
-  enum white_win_loss_draw wwld;
   double points;
 
   if (argc < 3) {
@@ -110,24 +104,54 @@ int main(int argc,char **argv)
           line,line_len,
           white_wins,WHITE_WINS_LEN,
           &ix)) {
-          wwld = WHITE_WIN;
+
+          if (bPlayerIsWhite) {
+            if (bVerbose)
+              printf("%6.2lf %s\n",(double)1,filename);
+
+            wins++;
+          }
+          else {
+            if (bVerbose)
+              printf("%6.2lf %s\n",(double)0,filename);
+
+            losses++;
+          }
         }
         else if (Contains(true,
           line,line_len,
           black_wins,BLACK_WINS_LEN,
           &ix)) {
-          wwld = WHITE_LOSS;
+
+          if (!bPlayerIsWhite) {
+            if (bVerbose)
+              printf("%6.2lf %s\n",(double)1,filename);
+
+            wins++;
+          }
+          else {
+            if (bVerbose)
+              printf("%6.2lf %s\n",(double)0,filename);
+
+            losses++;
+          }
         }
         else if (Contains(true,
           line,line_len,
           draw,DRAW_LEN,
           &ix)) {
-          wwld = WHITE_DRAW;
+
+          if (bVerbose)
+            printf("%6.2lf %s\n",(double).5,filename);
+
+          draws++;
         }
         else {
           printf("%s: couldn't determine result\n",filename);
           return 5;
         }
+
+        break;
       }
       else if (Contains(true,
         line,line_len,
@@ -139,58 +163,14 @@ int main(int argc,char **argv)
           white,WHITE_LEN,
           &ix)) {
 
-          switch (wwld) {
-            case WHITE_WIN:
-              if (bVerbose)
-                printf("%6.2lf %s\n",(double)1,filename);
-
-              wins++;
-
-              break;
-            case WHITE_LOSS:
-              if (bVerbose)
-                printf("%6.2lf %s\n",(double)0,filename);
-
-              losses++;
-
-              break;
-            case WHITE_DRAW:
-              if (bVerbose)
-                printf("%6.2lf %s\n",(double).5,filename);
-
-              draws++;
-
-              break;
-          }
+          bPlayerIsWhite = true;
         }
         else if (Contains(true,
           line,line_len,
           black,BLACK_LEN,
           &ix)) {
 
-          switch (wwld) {
-            case WHITE_WIN:
-              if (bVerbose)
-                printf("%6.2lf %s\n",(double)0,filename);
-
-              losses++;
-
-              break;
-            case WHITE_LOSS:
-              if (bVerbose)
-                printf("%6.2lf %s\n",(double)1,filename);
-
-              wins++;
-
-              break;
-            case WHITE_DRAW:
-              if (bVerbose)
-                printf("%6.2lf %s\n",(double).5,filename);
-
-              draws++;
-
-              break;
-          }
+          bPlayerIsWhite = false;
         }
         else {
           printf("%s: couldn't determine whether %s is white or black\n",
