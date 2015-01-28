@@ -1,0 +1,22 @@
+@echo off
+git add black_result.sql
+git add blitz_game_date.sql
+git add blitz_game_date2.sql
+git add blitz_inserts.sql
+git add color.sql
+git add draw_color.sql
+git add elo_delta.sql
+git add elo_diff.sql
+git add fgetelo.c
+git add loss_color.sql
+git add my_elo_delta.sql
+git add opponent_elo_before.sql
+git add opponent_elo_delta.sql
+git add opponent_name.sql
+git add result.sql
+git add score_by_date.sql
+git add set_opponent_elo_before.sql
+git add tem.bat
+git add update_template.sql
+git add white_result.sql
+git add win_color.sql
