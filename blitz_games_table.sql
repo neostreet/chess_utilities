@@ -11,9 +11,10 @@ create table blitz_games (
   num_half_moves smallint not null,
   result varchar(1) not null,
   result_detail varchar(50) not null,
-  opponent_elo_before int null,
   opponent_elo_after int not null,
+  opponent_elo_delta smallint null,
   my_elo_after int not null,
+  my_elo_delta smallint null,
   opening varchar(10) null
 );
 
