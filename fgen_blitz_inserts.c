@@ -46,6 +46,21 @@ static char time_control_str[] = "[TimeControl \"";
 static char termination_str[] = "[Termination \"";
 #define TERMINATION_STR_LEN (sizeof (termination_str) - 1)
 
+static char won_on_str[] = " won on ";
+#define WON_ON_STR_LEN (sizeof (won_on_str) - 1)
+
+static char won_by_str[] = " won by ";
+#define WON_BY_STR_LEN (sizeof (won_by_str) - 1)
+
+static char won_hyphen_str[] = " won - ";
+#define WON_HYPHEN_STR_LEN (sizeof (won_hyphen_str) - 1)
+
+static char drawn_by_str[] = " drawn by ";
+#define DRAWN_BY_STR_LEN (sizeof (drawn_by_str) - 1)
+
+static char drawn_hyphen_str[] = " drawn - ";
+#define DRAWN_HYPHEN_STR_LEN (sizeof (drawn_hyphen_str) - 1)
+
 static char first_move_str[] = "1.";
 #define FIRST_MOVE_STR_LEN (sizeof (first_move_str) - 1)
 
@@ -529,6 +544,43 @@ static int get_termination(char *line,int line_len,int ix,
   char *termination,int termination_max_len)
 {
   int n;
+  int ix2;
+
+  if (Contains(true,
+    line,line_len,
+    won_on_str,WON_ON_STR_LEN,
+    &ix2)) {
+
+    ix = ix2 + WON_ON_STR_LEN;
+  }
+  else if (Contains(true,
+    line,line_len,
+    won_by_str,WON_BY_STR_LEN,
+    &ix2)) {
+
+    ix = ix2 + WON_BY_STR_LEN;
+  }
+  else if (Contains(true,
+    line,line_len,
+    won_hyphen_str,WON_HYPHEN_STR_LEN,
+    &ix2)) {
+
+    ix = ix2 + WON_HYPHEN_STR_LEN;
+  }
+  else if (Contains(true,
+    line,line_len,
+    drawn_by_str,DRAWN_BY_STR_LEN,
+    &ix2)) {
+
+    ix = ix2 + DRAWN_BY_STR_LEN;
+  }
+  else if (Contains(true,
+    line,line_len,
+    drawn_hyphen_str,DRAWN_HYPHEN_STR_LEN,
+    &ix2)) {
+
+    ix = ix2 + DRAWN_HYPHEN_STR_LEN;
+  }
 
   for (n = 0; n < termination_max_len; n++) {
     if (line[ix + n] == '"')

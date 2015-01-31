@@ -10,7 +10,7 @@ create table blitz_games (
   color varchar(1) not null,
   num_half_moves smallint not null,
   result varchar(1) not null,
-  result_detail varchar(50) not null,
+  result_detail varchar(25) not null,
   opponent_elo_before int null,
   opponent_elo_after int not null,
   opponent_elo_delta smallint null,
