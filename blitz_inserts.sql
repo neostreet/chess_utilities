@@ -1,0 +1,3238 @@
+use chess
+
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-16',
+  '3|0',
+  'jhillary',
+  'W',
+  40,
+  'L',
+  'time',
+  1371,
+  1085
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-16',
+  '5|0',
+  'twiliam20',
+  'B',
+  54,
+  'W',
+  'time',
+  1004,
+  1227
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-17',
+  '5|0',
+  'mischa40',
+  'W',
+  86,
+  'W',
+  'checkmate',
+  1265,
+  1346
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-17',
+  '5|0',
+  'ronaldx1982',
+  'B',
+  102,
+  'L',
+  'checkmate',
+  1342,
+  1254
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-17',
+  '5|0',
+  'sp8387',
+  'W',
+  34,
+  'W',
+  'checkmate',
+  1263,
+  1333
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-17',
+  '5|0',
+  'Brno2015',
+  'B',
+  84,
+  'L',
+  'time',
+  1420,
+  1281
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-17',
+  '5|0',
+  'AL-F',
+  'W',
+  36,
+  'W',
+  'time',
+  1062,
+  1326
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-17',
+  '5|0',
+  'thientam789',
+  'B',
+  104,
+  'L',
+  'time',
+  1308,
+  1272
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-17',
+  '10|0',
+  'cusman',
+  'B',
+  54,
+  'W',
+  'checkmate',
+  1200,
+  1310
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-17',
+  '10|0',
+  'alexpr94',
+  'W',
+  132,
+  'L',
+  'checkmate',
+  1265,
+  1263
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-17',
+  '10|0',
+  'thundadann',
+  'W',
+  16,
+  'W',
+  'resignation',
+  1221,
+  1298
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-17',
+  '10|0',
+  'ahmedhussen30',
+  'W',
+  140,
+  'L',
+  'checkmate',
+  1368,
+  1270
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-17',
+  '10|0',
+  'bocyb',
+  'B',
+  72,
+  'L',
+  'checkmate',
+  1311,
+  1239
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-17',
+  '10|0',
+  'MikhaelMoshe',
+  'B',
+  42,
+  'W',
+  'resignation',
+  1230,
+  1268
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-17',
+  '10|0',
+  'CharmingPotato',
+  'B',
+  58,
+  'W',
+  'checkmate',
+  1173,
+  1289
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-17',
+  '10|0',
+  'ginagutierrez27',
+  'W',
+  66,
+  'L',
+  'checkmate',
+  1298,
+  1264
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-18',
+  '10|0',
+  'AussieBlood',
+  'W',
+  88,
+  'L',
+  'checkmate',
+  1306,
+  1238
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-18',
+  '10|0',
+  'BuckeyeBob',
+  'B',
+  118,
+  'L',
+  'checkmate',
+  1267,
+  1217
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-18',
+  '10|0',
+  'bram0222',
+  'B',
+  128,
+  'W',
+  'resignation',
+  1231,
+  1239
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-18',
+  '10|0',
+  'davidantonio2013',
+  'W',
+  46,
+  'L',
+  'resignation',
+  1334,
+  1224
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-18',
+  '10|0',
+  'rinn98',
+  'B',
+  34,
+  'W',
+  'game abandoned',
+  1212,
+  1244
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-19',
+  '10|0',
+  'myngtay',
+  'W',
+  64,
+  'L',
+  'resignation',
+  1082,
+  1217
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-19',
+  '5|0',
+  'pikica24',
+  'W',
+  118,
+  'D',
+  'insufficient material',
+  1300,
+  1221
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-19',
+  '5|0',
+  'SAV_AGE',
+  'B',
+  32,
+  'L',
+  'resignation',
+  1250,
+  1205
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-19',
+  '10|0',
+  'ahmedgali',
+  'W',
+  82,
+  'L',
+  'resignation',
+  1224,
+  1189
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-19',
+  '10|0',
+  'nzajus',
+  'B',
+  92,
+  'L',
+  'resignation',
+  1216,
+  1174
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-19',
+  '10|0',
+  'wowfactor',
+  'B',
+  72,
+  'W',
+  'checkmate',
+  1184,
+  1189
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-19',
+  '10|0',
+  'don_fabio_esqueda',
+  'W',
+  72,
+  'L',
+  'resignation',
+  1243,
+  1177
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-19',
+  '10|0',
+  'Riddym',
+  'B',
+  178,
+  'W',
+  'checkmate',
+  1104,
+  1188
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-20',
+  '10|0',
+  'buckstarlarry',
+  'W',
+  50,
+  'L',
+  'resignation',
+  1155,
+  1173
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-20',
+  '10|0',
+  'AmitBusgeeth',
+  'W',
+  60,
+  'L',
+  'resignation',
+  1143,
+  1159
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-20',
+  '10|0',
+  'stasperlov',
+  'B',
+  136,
+  'W',
+  'time',
+  1170,
+  1172
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-21',
+  '10|0',
+  'renardbuzz',
+  'W',
+  68,
+  'W',
+  'resignation',
+  1208,
+  1186
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-21',
+  '10|0',
+  'OlafurMar',
+  'B',
+  52,
+  'L',
+  'checkmate',
+  1237,
+  1176
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-21',
+  '10|0',
+  'pbarata',
+  'W',
+  99,
+  'W',
+  'checkmate',
+  1214,
+  1189
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-21',
+  '10|0',
+  'RiLakuMa',
+  'B',
+  86,
+  'W',
+  'time',
+  1200,
+  1201
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-21',
+  '10|0',
+  'giovenile',
+  'B',
+  48,
+  'W',
+  'game abandoned',
+  1211,
+  1212
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-21',
+  '10|0',
+  'riakanau',
+  'W',
+  50,
+  'L',
+  'resignation',
+  1259,
+  1203
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-21',
+  '10|0',
+  'virgiliomj',
+  'W',
+  70,
+  'W',
+  'checkmate',
+  1213,
+  1214
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-21',
+  '10|0',
+  'greatidea23',
+  'W',
+  54,
+  'L',
+  'resignation',
+  1276,
+  1206
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-21',
+  '10|0',
+  'coldsausage',
+  'B',
+  36,
+  'L',
+  'resignation',
+  1228,
+  1197
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-21',
+  '10|0',
+  'hellsfallenspawn',
+  'B',
+  38,
+  'L',
+  'resignation',
+  1186,
+  1187
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-22',
+  '10|0',
+  'CHANTINH923',
+  'W',
+  38,
+  'L',
+  'resignation',
+  1233,
+  1179
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-22',
+  '10|0',
+  'Eutimio666',
+  'B',
+  119,
+  'D',
+  'stalemate',
+  1117,
+  1177
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-22',
+  '10|0',
+  'James_Proust',
+  'W',
+  39,
+  'W',
+  'resignation',
+  1125,
+  1185
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-22',
+  '10|0',
+  'curlyguy99',
+  'B',
+  39,
+  'L',
+  'resignation',
+  1189,
+  1176
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-22',
+  '10|0',
+  'ActuarialCompass',
+  'B',
+  142,
+  'L',
+  'resignation',
+  1187,
+  1168
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-22',
+  '10|0',
+  'KarlozBaro',
+  'W',
+  40,
+  'L',
+  'resignation',
+  1206,
+  1161
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-22',
+  '10|0',
+  'vikatimees',
+  'W',
+  50,
+  'W',
+  'resignation',
+  1123,
+  1168
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-22',
+  '10|0',
+  'amdre1',
+  'B',
+  59,
+  'L',
+  'resignation',
+  1129,
+  1159
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-22',
+  '10|0',
+  'CodyM954',
+  'W',
+  46,
+  'W',
+  'resignation',
+  1163,
+  1167
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-22',
+  '10|0',
+  'destroyerzx',
+  'W',
+  140,
+  'L',
+  'resignation',
+  1180,
+  1159
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-23',
+  '10|0',
+  'opulawar',
+  'B',
+  68,
+  'L',
+  'resignation',
+  1143,
+  1150
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-23',
+  '10|0',
+  'mario75551',
+  'W',
+  76,
+  'W',
+  'resignation',
+  1234,
+  1160
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-23',
+  '10|0',
+  'ksceriath',
+  'B',
+  19,
+  'L',
+  'resignation',
+  1103,
+  1150
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-23',
+  '10|0',
+  'masherman',
+  'W',
+  130,
+  'W',
+  'time',
+  1215,
+  1160
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-23',
+  '10|0',
+  'jslim777',
+  'B',
+  28,
+  'L',
+  'resignation',
+  1232,
+  1153
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-23',
+  '10|0',
+  'JAMMAZ',
+  'B',
+  46,
+  'L',
+  'resignation',
+  1134,
+  1144
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-23',
+  '10|0',
+  'opulawar',
+  'W',
+  64,
+  'W',
+  'resignation',
+  1147,
+  1152
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-23',
+  '10|0',
+  'seba_rs',
+  'W',
+  46,
+  'W',
+  'resignation',
+  1120,
+  1159
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-23',
+  '10|0',
+  'chuyelchuco',
+  'B',
+  54,
+  'W',
+  'resignation',
+  1147,
+  1167
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-23',
+  '10|0',
+  'Mr-International',
+  'B',
+  58,
+  'L',
+  'resignation',
+  1169,
+  1159
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-24',
+  '10|0',
+  'zonemaster',
+  'W',
+  156,
+  'D',
+  'insufficient material',
+  1207,
+  1160
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-24',
+  '10|0',
+  'LightFan',
+  'B',
+  124,
+  'D',
+  'insufficient material',
+  1189,
+  1161
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-24',
+  '10|0',
+  'Bieniak',
+  'W',
+  68,
+  'W',
+  'resignation',
+  1137,
+  1169
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-24',
+  '10|0',
+  'Moxaman',
+  'W',
+  152,
+  'W',
+  'time',
+  1133,
+  1176
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-24',
+  '10|0',
+  'petercoco2000',
+  'B',
+  58,
+  'W',
+  'checkmate',
+  1142,
+  1183
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-24',
+  '10|0',
+  'redbro0406',
+  'W',
+  162,
+  'W',
+  'resignation',
+  1106,
+  1189
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-25',
+  '10|0',
+  'VIFINEST26',
+  'B',
+  50,
+  'L',
+  'resignation',
+  1181,
+  1181
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-25',
+  '10|0',
+  'mustafmustafa',
+  'B',
+  68,
+  'W',
+  'checkmate',
+  1195,
+  1190
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-25',
+  '10|0',
+  'mohnaji',
+  'B',
+  120,
+  'D',
+  'insufficient material',
+  1211,
+  1191
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-25',
+  '10|0',
+  'eliazzz',
+  'W',
+  128,
+  'D',
+  'insufficient material',
+  1214,
+  1192
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-25',
+  '10|0',
+  'TimothyMark',
+  'W',
+  90,
+  'L',
+  'resignation',
+  1251,
+  1185
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-25',
+  '10|0',
+  'trpltz',
+  'B',
+  104,
+  'L',
+  'resignation',
+  1169,
+  1176
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-25',
+  '10|0',
+  'hollywood1usa',
+  'W',
+  78,
+  'L',
+  'resignation',
+  1225,
+  1169
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-26',
+  '10|0',
+  'kduke',
+  'B',
+  82,
+  'L',
+  'checkmate',
+  1245,
+  1163
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-26',
+  '10|0',
+  'exocet11',
+  'W',
+  52,
+  'W',
+  'resignation',
+  1147,
+  1171
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-26',
+  '10|0',
+  'moek611',
+  'W',
+  46,
+  'L',
+  'resignation',
+  1136,
+  1162
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-26',
+  '10|0',
+  'Khoush8',
+  'W',
+  82,
+  'W',
+  'resignation',
+  1204,
+  1171
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-26',
+  '10|0',
+  'belnoch14',
+  'W',
+  148,
+  'W',
+  'time',
+  1128,
+  1178
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-26',
+  '10|0',
+  'kuzmitchin',
+  'B',
+  92,
+  'L',
+  'resignation',
+  1144,
+  1169
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-26',
+  '10|0',
+  'AmineSdiri',
+  'B',
+  68,
+  'W',
+  'resignation',
+  1185,
+  1178
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-26',
+  '10|0',
+  'ray_mund',
+  'B',
+  72,
+  'L',
+  'resignation',
+  1139,
+  1169
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-26',
+  '10|0',
+  'faisalgo',
+  'B',
+  36,
+  'W',
+  'checkmate',
+  1119,
+  1176
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-26',
+  '10|0',
+  'king7071',
+  'B',
+  68,
+  'L',
+  'checkmate',
+  1106,
+  1166
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-26',
+  '10|0',
+  'HOGWERKS',
+  'W',
+  114,
+  'W',
+  'time',
+  1129,
+  1173
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-27',
+  '10|0',
+  'Novamus',
+  'W',
+  134,
+  'D',
+  'stalemate',
+  1139,
+  1172
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-27',
+  '10|0',
+  'Dust1962',
+  'W',
+  78,
+  'L',
+  'resignation',
+  1187,
+  1164
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-27',
+  '10|0',
+  'alimar6773',
+  'B',
+  92,
+  'W',
+  'resignation',
+  1156,
+  1172
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-27',
+  '10|0',
+  'rrlbasher',
+  'W',
+  32,
+  'L',
+  'resignation',
+  1138,
+  1163
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-27',
+  '10|0',
+  'greenman1525',
+  'W',
+  78,
+  'W',
+  'resignation',
+  1131,
+  1170
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-28',
+  '10|0',
+  'CHvis',
+  'W',
+  64,
+  'W',
+  'game abandoned',
+  1120,
+  1177
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-28',
+  '10|0',
+  'KeefKaleger',
+  'B',
+  80,
+  'W',
+  'resignation',
+  1136,
+  1184
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-28',
+  '10|0',
+  'artistpro',
+  'B',
+  68,
+  'W',
+  'resignation',
+  1133,
+  1191
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-28',
+  '10|0',
+  'akaderbd',
+  'B',
+  98,
+  'W',
+  'resignation',
+  1198,
+  1199
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-28',
+  '10|0',
+  'MrGoo1977',
+  'B',
+  79,
+  'L',
+  'resignation',
+  1200,
+  1191
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-28',
+  '10|0',
+  'odessa440',
+  'W',
+  139,
+  'W',
+  'checkmate',
+  1235,
+  1200
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-29',
+  '10|0',
+  'nadmidcpa',
+  'B',
+  36,
+  'L',
+  'resignation',
+  1158,
+  1191
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-29',
+  '10|0',
+  'ChiefLynx',
+  'W',
+  46,
+  'L',
+  'checkmate',
+  1229,
+  1184
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-29',
+  '10|0',
+  'peter_will_win_u',
+  'W',
+  72,
+  'W',
+  'resignation',
+  1210,
+  1193
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-29',
+  '10|0',
+  'BlackKnecht',
+  'B',
+  98,
+  'W',
+  'resignation',
+  1142,
+  1200
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-29',
+  '10|0',
+  'tgrimwade',
+  'W',
+  100,
+  'L',
+  'resignation',
+  1182,
+  1191
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-29',
+  '10|0',
+  'cdnfthree',
+  'W',
+  112,
+  'W',
+  'time',
+  1144,
+  1198
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-29',
+  '10|0',
+  'jgarma',
+  'B',
+  20,
+  'W',
+  'resignation',
+  1169,
+  1205
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-29',
+  '10|0',
+  'applecrumble2',
+  'B',
+  36,
+  'L',
+  'resignation',
+  1272,
+  1198
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-29',
+  '10|0',
+  'ez2197',
+  'W',
+  108,
+  'D',
+  'agreement',
+  1278,
+  1200
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-30',
+  '10|0',
+  'hollywodking',
+  'B',
+  50,
+  'L',
+  'resignation',
+  1186,
+  1191
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-30',
+  '10|0',
+  'Konnes',
+  'W',
+  56,
+  'W',
+  'checkmate',
+  1159,
+  1198
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-30',
+  '10|0',
+  'Rhomas_DaThomas',
+  'B',
+  12,
+  'L',
+  'resignation',
+  1187,
+  1190
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-30',
+  '10|0',
+  'Ih8Obama',
+  'B',
+  116,
+  'W',
+  'resignation',
+  1253,
+  1200
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-30',
+  '10|0',
+  'CriminalMind',
+  'W',
+  90,
+  'W',
+  'resignation',
+  1240,
+  1209
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-30',
+  '10|0',
+  'shankinsmurf',
+  'B',
+  148,
+  'L',
+  'checkmate',
+  1244,
+  1202
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-30',
+  '10|0',
+  'HaidarHaak',
+  'W',
+  76,
+  'W',
+  'checkmate',
+  1225,
+  1211
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-30',
+  '10|0',
+  'naum1938',
+  'W',
+  60,
+  'L',
+  'resignation',
+  1268,
+  1204
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-30',
+  '10|0',
+  'greekthano',
+  'W',
+  50,
+  'W',
+  'resignation',
+  1208,
+  1212
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-31',
+  '10|0',
+  'madmedic4',
+  'B',
+  34,
+  'L',
+  'resignation',
+  1317,
+  1206
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-31',
+  '10|0',
+  'dgreenwalt12',
+  'W',
+  66,
+  'L',
+  'resignation',
+  1209,
+  1198
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-31',
+  '10|0',
+  'setsun2000',
+  'B',
+  60,
+  'W',
+  'resignation',
+  1226,
+  1207
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-31',
+  '10|0',
+  'Athena1603',
+  'B',
+  19,
+  'L',
+  'checkmate',
+  1237,
+  1200
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-31',
+  '10|0',
+  'chester6',
+  'B',
+  56,
+  'L',
+  'checkmate',
+  1201,
+  1192
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-31',
+  '10|0',
+  'filippo_m',
+  'W',
+  62,
+  'L',
+  'checkmate',
+  1184,
+  1184
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-31',
+  '10|0',
+  'jm1680',
+  'W',
+  86,
+  'W',
+  'resignation',
+  1159,
+  1192
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-01-31',
+  '10|0',
+  'teorico',
+  'B',
+  90,
+  'W',
+  'time',
+  1109,
+  1198
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-02',
+  '10|0',
+  'dgreenwalt12',
+  'B',
+  56,
+  'L',
+  'resignation',
+  1249,
+  1191
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-02',
+  '10|0',
+  'donderrell',
+  'B',
+  90,
+  'W',
+  'checkmate',
+  1114,
+  1197
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-02',
+  '10|0',
+  'Denilius',
+  'W',
+  56,
+  'W',
+  'resignation',
+  1173,
+  1205
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-02',
+  '10|0',
+  'malusorchard',
+  'W',
+  92,
+  'W',
+  'resignation',
+  1231,
+  1214
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-02',
+  '10|0',
+  'Primz2323',
+  'W',
+  62,
+  'L',
+  'resignation',
+  1258,
+  1207
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-02',
+  '10|0',
+  'BobSlossar',
+  'B',
+  59,
+  'L',
+  'resignation',
+  1200,
+  1199
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-02',
+  '10|0',
+  'Rcwillia55',
+  'W',
+  92,
+  'L',
+  'checkmate',
+  1214,
+  1191
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-02',
+  '10|0',
+  'Shrimper11',
+  'B',
+  16,
+  'L',
+  'resignation',
+  1161,
+  1182
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-02',
+  '10|0',
+  'saikiranannedla',
+  'B',
+  54,
+  'L',
+  'resignation',
+  1205,
+  1174
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-02',
+  '10|0',
+  'radoje',
+  'W',
+  86,
+  'W',
+  'time',
+  1075,
+  1180
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-02',
+  '10|0',
+  'Gambit01',
+  'B',
+  58,
+  'L',
+  'resignation',
+  1179,
+  1172
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-02',
+  '10|0',
+  'christinealicia',
+  'W',
+  58,
+  'L',
+  'resignation',
+  1191,
+  1164
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-02',
+  '10|0',
+  'abader91',
+  'B',
+  19,
+  'L',
+  'resignation',
+  1190,
+  1156
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-02',
+  '10|0',
+  'stsusa',
+  'B',
+  24,
+  'L',
+  'resignation',
+  1178,
+  1148
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-02',
+  '10|0',
+  'chemacardenas',
+  'W',
+  64,
+  'W',
+  'resignation',
+  1174,
+  1157
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-02',
+  '10|0',
+  'rkanal',
+  'W',
+  58,
+  'L',
+  'resignation',
+  1207,
+  1150
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-03',
+  '10|0',
+  's00nerb0rn',
+  'W',
+  74,
+  'W',
+  'time',
+  1058,
+  1156
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-03',
+  '10|0',
+  'that_chess_troll',
+  'B',
+  68,
+  'L',
+  'resignation',
+  1131,
+  1147
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-03',
+  '10|0',
+  'Old_School86',
+  'B',
+  88,
+  'W',
+  'resignation',
+  1134,
+  1155
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-03',
+  '10|0',
+  'Tatogan',
+  'W',
+  110,
+  'W',
+  'resignation',
+  1111,
+  1162
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-03',
+  '10|0',
+  'Navarro50',
+  'B',
+  92,
+  'W',
+  'checkmate',
+  1182,
+  1171
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-03',
+  '10|0',
+  'd0ct0rG0nz0',
+  'W',
+  66,
+  'W',
+  'resignation',
+  1194,
+  1180
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-03',
+  '10|0',
+  'srikumar85',
+  'W',
+  52,
+  'L',
+  'resignation',
+  1163,
+  1171
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-03',
+  '10|0',
+  'bvvvnnbnnnm',
+  'W',
+  70,
+  'W',
+  'time',
+  1089,
+  1177
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-03',
+  '10|0',
+  'bananone2008',
+  'B',
+  54,
+  'W',
+  'checkmate',
+  1170,
+  1185
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-03',
+  '10|0',
+  'shauninohio',
+  'B',
+  144,
+  'L',
+  'resignation',
+  1197,
+  1177
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-03',
+  '10|0',
+  'gautam0707',
+  'B',
+  58,
+  'L',
+  'resignation',
+  1222,
+  1170
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-03',
+  '10|0',
+  'mcpalm99',
+  'W',
+  122,
+  'L',
+  'checkmate',
+  1116,
+  1161
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-03',
+  '10|0',
+  'seb-harmonikar',
+  'W',
+  52,
+  'W',
+  'resignation',
+  1131,
+  1168
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-03',
+  '10|0',
+  'rifathn',
+  'W',
+  46,
+  'L',
+  'resignation',
+  1140,
+  1159
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after
+) values (
+  '2015-02-03',
+  '10|0',
+  'nonie123',
+  'B',
+  84,
+  'W',
+  'resignation',
+  1111,
+  1166
+);
+
+quit
