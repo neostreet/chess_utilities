@@ -13,7 +13,11 @@
 #define BLITZ_GAME_TERMINATION          6
 #define BLITZ_GAME_WHITE_ELO            7
 #define BLITZ_GAME_BLACK_ELO            8
-#define NUM_BLITZ_GAME_ITEMS            9
+#define BLITZ_GAME_FIRST_MOVE           9
+#define BLITZ_GAME_FIRST_TWO_MOVES     10
+#define BLITZ_GAME_FIRST_THREE_MOVES   11
+#define BLITZ_GAME_FIRST_FOUR_MOVES    12
+#define NUM_BLITZ_GAME_ITEMS           13
 
 #define MAX_FILENAME_LEN 1024
 static char filename[MAX_FILENAME_LEN];
@@ -64,6 +68,18 @@ static char drawn_hyphen_str[] = " drawn - ";
 static char first_move_str[] = "1.";
 #define FIRST_MOVE_STR_LEN (sizeof (first_move_str) - 1)
 
+static char second_move_str[] = " 2.";
+#define SECOND_MOVE_STR_LEN (sizeof (second_move_str) - 1)
+
+static char third_move_str[] = " 3.";
+#define THIRD_MOVE_STR_LEN (sizeof (third_move_str) - 1)
+
+static char fourth_move_str[] = " 4.";
+#define FOURTH_MOVE_STR_LEN (sizeof (fourth_move_str) - 1)
+
+static char fifth_move_str[] = " 5.";
+#define FIFTH_MOVE_STR_LEN (sizeof (fifth_move_str) - 1)
+
 #define BLITZ_GAME_DATE_LEN 10
 static char blitz_game_date[BLITZ_GAME_DATE_LEN+1];
 
@@ -87,6 +103,18 @@ static char time_control[TIME_CONTROL_MAX_LEN+1];
 
 #define TERMINATION_MAX_LEN 50
 static char termination[TERMINATION_MAX_LEN+1];
+
+#define FIRST_MOVE_MAX_LEN 10
+static char first_move[FIRST_MOVE_MAX_LEN+1];
+
+#define FIRST_TWO_MOVES_MAX_LEN 20
+static char first_two_moves[FIRST_TWO_MOVES_MAX_LEN+1];
+
+#define FIRST_THREE_MOVES_MAX_LEN 30
+static char first_three_moves[FIRST_THREE_MOVES_MAX_LEN+1];
+
+#define FIRST_FOUR_MOVES_MAX_LEN 40
+static char first_four_moves[FIRST_FOUR_MOVES_MAX_LEN+1];
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
@@ -305,6 +333,56 @@ int main(int argc,char **argv)
         }
 
         bHaveItem[BLITZ_GAME_NUM_HALF_MOVES] = true;
+
+        if (!ix) {
+          if (Contains(true,
+            line,line_len,
+            fifth_move_str,FIFTH_MOVE_STR_LEN,
+            &ix)) {
+
+            if (ix <= FIRST_FOUR_MOVES_MAX_LEN) {
+              line[ix] = 0;
+              strcpy(first_four_moves,line);
+              bHaveItem[BLITZ_GAME_FIRST_FOUR_MOVES] = true;
+            }
+          }
+
+          if (Contains(true,
+            line,line_len,
+            fourth_move_str,FOURTH_MOVE_STR_LEN,
+            &ix)) {
+
+            if (ix <= FIRST_THREE_MOVES_MAX_LEN) {
+              line[ix] = 0;
+              strcpy(first_three_moves,line);
+              bHaveItem[BLITZ_GAME_FIRST_THREE_MOVES] = true;
+            }
+          }
+
+          if (Contains(true,
+            line,line_len,
+            third_move_str,THIRD_MOVE_STR_LEN,
+            &ix)) {
+
+            if (ix <= FIRST_TWO_MOVES_MAX_LEN) {
+              line[ix] = 0;
+              strcpy(first_two_moves,line);
+              bHaveItem[BLITZ_GAME_FIRST_TWO_MOVES] = true;
+            }
+          }
+
+          if (Contains(true,
+            line,line_len,
+            second_move_str,SECOND_MOVE_STR_LEN,
+            &ix)) {
+
+            if (ix <= FIRST_MOVE_MAX_LEN) {
+              line[ix] = 0;
+              strcpy(first_move,line);
+              bHaveItem[BLITZ_GAME_FIRST_MOVE] = true;
+            }
+          }
+        }
       }
     }
 
@@ -327,7 +405,11 @@ int main(int argc,char **argv)
       printf("  result,\n");
       printf("  result_detail,\n");
       printf("  opponent_elo_after,\n");
-      printf("  my_elo_after\n");
+      printf("  my_elo_after,\n");
+      printf("  first_move,\n");
+      printf("  first_two_moves,\n");
+      printf("  first_three_moves,\n");
+      printf("  first_four_moves\n");
       printf(") values (\n");
       printf("  '%s',\n",blitz_game_date);
       printf("  '%s',\n",time_control);
@@ -338,8 +420,12 @@ int main(int argc,char **argv)
       printf("  '%s',\n",termination);
       printf("  %s,\n",
         ((color[0] == 'W') ? elo[BLACK] : elo[WHITE]));
-      printf("  %s\n",
+      printf("  %s,\n",
         ((color[0] == 'W') ? elo[WHITE] : elo[BLACK]));
+      printf("  '%s',\n",first_move);
+      printf("  '%s',\n",first_two_moves);
+      printf("  '%s',\n",first_three_moves);
+      printf("  '%s'\n",first_four_moves);
       printf(");\n");
     }
   }
