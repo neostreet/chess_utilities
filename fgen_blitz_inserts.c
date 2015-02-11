@@ -107,13 +107,13 @@ static char termination[TERMINATION_MAX_LEN+1];
 #define FIRST_MOVE_MAX_LEN 10
 static char first_move[FIRST_MOVE_MAX_LEN+1];
 
-#define FIRST_TWO_MOVES_MAX_LEN 20
+#define FIRST_TWO_MOVES_MAX_LEN 25
 static char first_two_moves[FIRST_TWO_MOVES_MAX_LEN+1];
 
-#define FIRST_THREE_MOVES_MAX_LEN 30
+#define FIRST_THREE_MOVES_MAX_LEN 35
 static char first_three_moves[FIRST_THREE_MOVES_MAX_LEN+1];
 
-#define FIRST_FOUR_MOVES_MAX_LEN 40
+#define FIRST_FOUR_MOVES_MAX_LEN 45
 static char first_four_moves[FIRST_FOUR_MOVES_MAX_LEN+1];
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
@@ -393,8 +393,10 @@ int main(int argc,char **argv)
         break;
     }
 
-    if (n != NUM_BLITZ_GAME_ITEMS)
-      printf("  missing information\n");
+    if (n != NUM_BLITZ_GAME_ITEMS) {
+      printf("%s: missing information: %d\n",
+        filename,n);
+    }
     else {
       printf("insert into blitz_games(\n");
       printf("  blitz_game_date,\n");

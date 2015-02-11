@@ -17,6 +17,10 @@ create table blitz_games (
   my_elo_before int null,
   my_elo_after int not null,
   my_elo_delta smallint null,
+  first_move varchar(10) null,
+  first_two_moves varchar(25) null,
+  first_three_moves varchar(35) null,
+  first_four_moves varchar(45) null,
   opening varchar(10) null
 );
 
