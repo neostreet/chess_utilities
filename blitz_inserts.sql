@@ -9,7 +9,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-16',
   '3|0',
@@ -19,7 +23,11 @@ insert into blitz_games(
   'L',
   'time',
   1371,
-  1085
+  1085,
+  '1.d4 Nf6',
+  '1.d4 Nf6 2.c4 e5',
+  '1.d4 Nf6 2.c4 e5 3.dxe5 Ng4',
+  '1.d4 Nf6 2.c4 e5 3.dxe5 Ng4 4.Nf3 Bc5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -30,7 +38,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-16',
   '5|0',
@@ -40,7 +52,11 @@ insert into blitz_games(
   'W',
   'time',
   1004,
-  1227
+  1227,
+  '1.e3 e5',
+  '1.e3 e5 2.Bc4 Nf6',
+  '1.e3 e5 2.Bc4 Nf6 3.a3 Nc6',
+  '1.e3 e5 2.Bc4 Nf6 3.a3 Nc6 4.Ba2 Bc5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -51,7 +67,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-17',
   '5|0',
@@ -61,7 +81,11 @@ insert into blitz_games(
   'W',
   'checkmate',
   1265,
-  1346
+  1346,
+  '1.e4 c5',
+  '1.e4 c5 2.Nf3 g6',
+  '1.e4 c5 2.Nf3 g6 3.Bc4 Bg7',
+  '1.e4 c5 2.Nf3 g6 3.Bc4 Bg7 4.Nc3 e6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -72,7 +96,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-17',
   '5|0',
@@ -82,7 +110,11 @@ insert into blitz_games(
   'L',
   'checkmate',
   1342,
-  1254
+  1254,
+  '1.e4 e5',
+  '1.e4 e5 2.Nc3 Nf6',
+  '1.e4 e5 2.Nc3 Nf6 3.Nf3 Nc6',
+  '1.e4 e5 2.Nc3 Nf6 3.Nf3 Nc6 4.Bc4 Bc5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -93,7 +125,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-17',
   '5|0',
@@ -103,7 +139,11 @@ insert into blitz_games(
   'W',
   'checkmate',
   1263,
-  1333
+  1333,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 Nf6',
+  '1.d4 d5 2.c4 Nf6 3.Nc3 dxc4',
+  '1.d4 d5 2.c4 Nf6 3.Nc3 dxc4 4.e4 e6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -114,7 +154,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-17',
   '5|0',
@@ -124,7 +168,11 @@ insert into blitz_games(
   'L',
   'time',
   1420,
-  1281
+  1281,
+  '1.d4 d5',
+  '1.d4 d5 2.Nf3 Nc6',
+  '1.d4 d5 2.Nf3 Nc6 3.a3 Bg4',
+  '1.d4 d5 2.Nf3 Nc6 3.a3 Bg4 4.Nbd2 e6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -135,7 +183,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-17',
   '5|0',
@@ -145,7 +197,11 @@ insert into blitz_games(
   'W',
   'time',
   1062,
-  1326
+  1326,
+  '1.e4 d5',
+  '1.e4 d5 2.exd5 Qxd5',
+  '1.e4 d5 2.exd5 Qxd5 3.Nc3 Qd8',
+  '1.e4 d5 2.exd5 Qxd5 3.Nc3 Qd8 4.Nf3 Nf6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -156,7 +212,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-17',
   '5|0',
@@ -166,7 +226,11 @@ insert into blitz_games(
   'L',
   'time',
   1308,
-  1272
+  1272,
+  '1.d4 d5',
+  '1.d4 d5 2.e3 Nc6',
+  '1.d4 d5 2.e3 Nc6 3.Bb5 Bd7',
+  '1.d4 d5 2.e3 Nc6 3.Bb5 Bd7 4.Bxc6 Bxc6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -177,7 +241,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-17',
   '10|0',
@@ -187,7 +255,11 @@ insert into blitz_games(
   'W',
   'checkmate',
   1200,
-  1310
+  1310,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.c3 Bc5',
+  '1.e4 e5 2.Nf3 Nc6 3.c3 Bc5 4.Bc4 Nf6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -198,7 +270,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-17',
   '10|0',
@@ -208,7 +284,11 @@ insert into blitz_games(
   'L',
   'checkmate',
   1265,
-  1263
+  1263,
+  '1.e4 c5',
+  '1.e4 c5 2.Nf3 d6',
+  '1.e4 c5 2.Nf3 d6 3.d4 cxd4',
+  '1.e4 c5 2.Nf3 d6 3.d4 cxd4 4.Nxd4 Nf6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -219,7 +299,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-17',
   '10|0',
@@ -229,7 +313,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1221,
-  1298
+  1298,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 dxc4',
+  '1.d4 d5 2.c4 dxc4 3.e4 e6',
+  '1.d4 d5 2.c4 dxc4 3.e4 e6 4.Bxc4 Nc6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -240,7 +328,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-17',
   '10|0',
@@ -250,7 +342,11 @@ insert into blitz_games(
   'L',
   'checkmate',
   1368,
-  1270
+  1270,
+  '1.e4 d5',
+  '1.e4 d5 2.exd5 Nf6',
+  '1.e4 d5 2.exd5 Nf6 3.c4 Na6',
+  '1.e4 d5 2.exd5 Nf6 3.c4 Na6 4.Nc3 Bf5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -261,7 +357,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-17',
   '10|0',
@@ -271,7 +371,11 @@ insert into blitz_games(
   'L',
   'checkmate',
   1311,
-  1239
+  1239,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.d4 exd4',
+  '1.e4 e5 2.Nf3 Nc6 3.d4 exd4 4.Bc4 Bb4+'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -282,7 +386,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-17',
   '10|0',
@@ -292,7 +400,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1230,
-  1268
+  1268,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 e6',
+  '1.d4 d5 2.c4 e6 3.cxd5 exd5',
+  '1.d4 d5 2.c4 e6 3.cxd5 exd5 4.a3 Nc6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -303,7 +415,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-17',
   '10|0',
@@ -313,7 +429,11 @@ insert into blitz_games(
   'W',
   'checkmate',
   1173,
-  1289
+  1289,
+  '1.e4 e5',
+  '1.e4 e5 2.d4 exd4',
+  '1.e4 e5 2.d4 exd4 3.Qxd4 Nc6',
+  '1.e4 e5 2.d4 exd4 3.Qxd4 Nc6 4.Qd1 Bc5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -324,7 +444,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-17',
   '10|0',
@@ -334,7 +458,11 @@ insert into blitz_games(
   'L',
   'checkmate',
   1298,
-  1264
+  1264,
+  '1.d4 b5',
+  '1.d4 b5 2.e4 c6',
+  '1.d4 b5 2.e4 c6 3.Nf3 Bb7',
+  '1.d4 b5 2.e4 c6 3.Nf3 Bb7 4.d5 a5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -345,7 +473,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-18',
   '10|0',
@@ -355,7 +487,11 @@ insert into blitz_games(
   'L',
   'checkmate',
   1306,
-  1238
+  1238,
+  '1.e4 d5',
+  '1.e4 d5 2.exd5 Qxd5',
+  '1.e4 d5 2.exd5 Qxd5 3.Nc3 Qd8',
+  '1.e4 d5 2.exd5 Qxd5 3.Nc3 Qd8 4.d4 Nf6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -366,7 +502,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-18',
   '10|0',
@@ -376,7 +516,11 @@ insert into blitz_games(
   'L',
   'checkmate',
   1267,
-  1217
+  1217,
+  '1.e4 e5',
+  '1.e4 e5 2.a3 Nf6',
+  '1.e4 e5 2.a3 Nf6 3.Nc3 d5',
+  '1.e4 e5 2.a3 Nf6 3.Nc3 d5 4.exd5 Nxd5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -387,7 +531,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-18',
   '10|0',
@@ -397,7 +545,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1231,
-  1239
+  1239,
+  '1.e4 e5',
+  '1.e4 e5 2.Bc4 Bc5',
+  '1.e4 e5 2.Bc4 Bc5 3.Qh5 Qf6',
+  '1.e4 e5 2.Bc4 Bc5 3.Qh5 Qf6 4.Nf3 Nc6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -408,7 +560,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-18',
   '10|0',
@@ -418,7 +574,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1334,
-  1224
+  1224,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 c6',
+  '1.d4 d5 2.c4 c6 3.Nc3 dxc4',
+  '1.d4 d5 2.c4 c6 3.Nc3 dxc4 4.e4 b5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -429,7 +589,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-18',
   '10|0',
@@ -439,7 +603,11 @@ insert into blitz_games(
   'W',
   'game abandoned',
   1212,
-  1244
+  1244,
+  '1.d4 d5',
+  '1.d4 d5 2.e3 Nc6',
+  '1.d4 d5 2.e3 Nc6 3.Nc3 Nf6',
+  '1.d4 d5 2.e3 Nc6 3.Nc3 Nf6 4.Nf3 Bg4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -450,7 +618,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-19',
   '10|0',
@@ -460,7 +632,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1082,
-  1217
+  1217,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 d6',
+  '1.e4 e5 2.Nf3 d6 3.d4 Nc6',
+  '1.e4 e5 2.Nf3 d6 3.d4 Nc6 4.d5 Nb8'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -471,7 +647,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-19',
   '5|0',
@@ -481,7 +661,11 @@ insert into blitz_games(
   'D',
   'insufficient material',
   1300,
-  1221
+  1221,
+  '1.e4 e6',
+  '1.e4 e6 2.d4 c6',
+  '1.e4 e6 2.d4 c6 3.Nc3 b5',
+  '1.e4 e6 2.d4 c6 3.Nc3 b5 4.a3 a5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -492,7 +676,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-19',
   '5|0',
@@ -502,7 +690,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1250,
-  1205
+  1205,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 e6',
+  '1.d4 d5 2.c4 e6 3.Nc3 Nf6',
+  '1.d4 d5 2.c4 e6 3.Nc3 Nf6 4.Bg5 Bb4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -513,7 +705,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-19',
   '10|0',
@@ -523,7 +719,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1224,
-  1189
+  1189,
+  '1.d4 g6',
+  '1.d4 g6 2.c4 Bg7',
+  '1.d4 g6 2.c4 Bg7 3.Nc3 b6',
+  '1.d4 g6 2.c4 Bg7 3.Nc3 b6 4.Nf3 Bb7'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -534,7 +734,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-19',
   '10|0',
@@ -544,7 +748,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1216,
-  1174
+  1174,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.d4 exd4',
+  '1.e4 e5 2.Nf3 Nc6 3.d4 exd4 4.Nxd4 Bc5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -555,7 +763,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-19',
   '10|0',
@@ -565,7 +777,11 @@ insert into blitz_games(
   'W',
   'checkmate',
   1184,
-  1189
+  1189,
+  '1.e4 e5',
+  '1.e4 e5 2.Bc4 Bc5',
+  '1.e4 e5 2.Bc4 Bc5 3.Qh5 Qf6',
+  '1.e4 e5 2.Bc4 Bc5 3.Qh5 Qf6 4.Nf3 Nc6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -576,7 +792,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-19',
   '10|0',
@@ -586,7 +806,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1243,
-  1177
+  1177,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 dxc4',
+  '1.d4 d5 2.c4 dxc4 3.e4 e5',
+  '1.d4 d5 2.c4 dxc4 3.e4 e5 4.dxe5 Qxd1+'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -597,7 +821,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-19',
   '10|0',
@@ -607,7 +835,11 @@ insert into blitz_games(
   'W',
   'checkmate',
   1104,
-  1188
+  1188,
+  '1.e4 e5',
+  '1.e4 e5 2.b3 Nf6',
+  '1.e4 e5 2.b3 Nf6 3.d3 Bc5',
+  '1.e4 e5 2.b3 Nf6 3.d3 Bc5 4.Bb2 Nc6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -618,7 +850,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-20',
   '10|0',
@@ -628,7 +864,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1155,
-  1173
+  1173,
+  '1.e4 d6',
+  '1.e4 d6 2.d4 Nf6',
+  '1.e4 d6 2.d4 Nf6 3.Nc3 h6',
+  '1.e4 d6 2.d4 Nf6 3.Nc3 h6 4.Bc4 Bg4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -639,7 +879,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-20',
   '10|0',
@@ -649,7 +893,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1143,
-  1159
+  1159,
+  '1.e4 e6',
+  '1.e4 e6 2.d4 a6',
+  '1.e4 e6 2.d4 a6 3.c4 h6',
+  '1.e4 e6 2.d4 a6 3.c4 h6 4.Nc3 Qe7'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -660,7 +908,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-20',
   '10|0',
@@ -670,7 +922,11 @@ insert into blitz_games(
   'W',
   'time',
   1170,
-  1172
+  1172,
+  '1.e4 e5',
+  '1.e4 e5 2.Bc4 Nf6',
+  '1.e4 e5 2.Bc4 Nf6 3.Nf3 Nc6',
+  '1.e4 e5 2.Bc4 Nf6 3.Nf3 Nc6 4.Ng5 d5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -681,7 +937,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-21',
   '10|0',
@@ -691,7 +951,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1208,
-  1186
+  1186,
+  '1.d4 Nf6',
+  '1.d4 Nf6 2.c4 e6',
+  '1.d4 Nf6 2.c4 e6 3.Nc3 Bb4',
+  '1.d4 Nf6 2.c4 e6 3.Nc3 Bb4 4.Bg5 Be7'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -702,7 +966,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-21',
   '10|0',
@@ -712,7 +980,11 @@ insert into blitz_games(
   'L',
   'checkmate',
   1237,
-  1176
+  1176,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bb5 a6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bb5 a6 4.Ba4 b5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -723,7 +995,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-21',
   '10|0',
@@ -733,7 +1009,11 @@ insert into blitz_games(
   'W',
   'checkmate',
   1214,
-  1189
+  1189,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 h6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 h6 4.O-O Nf6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -744,7 +1024,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-21',
   '10|0',
@@ -754,7 +1038,11 @@ insert into blitz_games(
   'W',
   'time',
   1200,
-  1201
+  1201,
+  '1.g3 e5',
+  '1.g3 e5 2.Bg2 d5',
+  '1.g3 e5 2.Bg2 d5 3.d4 e4',
+  '1.g3 e5 2.Bg2 d5 3.d4 e4 4.c4 c6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -765,7 +1053,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-21',
   '10|0',
@@ -775,7 +1067,11 @@ insert into blitz_games(
   'W',
   'game abandoned',
   1211,
-  1212
+  1212,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.c3 Bc5',
+  '1.e4 e5 2.Nf3 Nc6 3.c3 Bc5 4.d4 exd4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -786,7 +1082,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-21',
   '10|0',
@@ -796,7 +1096,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1259,
-  1203
+  1203,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 d6',
+  '1.e4 e5 2.Nf3 d6 3.Bc4 Nc6',
+  '1.e4 e5 2.Nf3 d6 3.Bc4 Nc6 4.d3 Nf6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -807,7 +1111,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-21',
   '10|0',
@@ -817,7 +1125,11 @@ insert into blitz_games(
   'W',
   'checkmate',
   1213,
-  1214
+  1214,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 dxc4',
+  '1.d4 d5 2.c4 dxc4 3.e4 e6',
+  '1.d4 d5 2.c4 dxc4 3.e4 e6 4.Bxc4 Bb4+'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -828,7 +1140,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-21',
   '10|0',
@@ -838,7 +1154,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1276,
-  1206
+  1206,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 Bf5',
+  '1.d4 d5 2.c4 Bf5 3.Nc3 e6',
+  '1.d4 d5 2.c4 Bf5 3.Nc3 e6 4.Nf3 h6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -849,7 +1169,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-21',
   '10|0',
@@ -859,7 +1183,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1228,
-  1197
+  1197,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.d4 exd4',
+  '1.e4 e5 2.Nf3 Nc6 3.d4 exd4 4.Nxd4 d5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -870,7 +1198,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-21',
   '10|0',
@@ -880,7 +1212,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1186,
-  1187
+  1187,
+  '1.e4 e5',
+  '1.e4 e5 2.f4 d6',
+  '1.e4 e5 2.f4 d6 3.Nf3 Nc6',
+  '1.e4 e5 2.f4 d6 3.Nf3 Nc6 4.Nc3 Bg4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -891,7 +1227,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-22',
   '10|0',
@@ -901,7 +1241,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1233,
-  1179
+  1179,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 d6',
+  '1.e4 e5 2.Nf3 d6 3.Bc4 c6',
+  '1.e4 e5 2.Nf3 d6 3.Bc4 c6 4.Nc3 Bg4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -912,7 +1256,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-22',
   '10|0',
@@ -922,7 +1270,11 @@ insert into blitz_games(
   'D',
   'stalemate',
   1117,
-  1177
+  1177,
+  '1.e4 e5',
+  '1.e4 e5 2.d4 exd4',
+  '1.e4 e5 2.d4 exd4 3.Qxd4 Nc6',
+  '1.e4 e5 2.d4 exd4 3.Qxd4 Nc6 4.Qe3 Qe7'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -933,7 +1285,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-22',
   '10|0',
@@ -943,7 +1299,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1125,
-  1185
+  1185,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 Nf6',
+  '1.d4 d5 2.c4 Nf6 3.Nc3 e6',
+  '1.d4 d5 2.c4 Nf6 3.Nc3 e6 4.Bg5 h6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -954,7 +1314,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-22',
   '10|0',
@@ -964,7 +1328,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1189,
-  1176
+  1176,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Nc3 Nf6',
+  '1.e4 e5 2.Nf3 Nc6 3.Nc3 Nf6 4.Bc4 d6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -975,7 +1343,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-22',
   '10|0',
@@ -985,7 +1357,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1187,
-  1168
+  1168,
+  '1.d4 d5',
+  '1.d4 d5 2.e3 Nc6',
+  '1.d4 d5 2.e3 Nc6 3.Bb5 a6',
+  '1.d4 d5 2.e3 Nc6 3.Bb5 a6 4.Bxc6+ bxc6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -996,7 +1372,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-22',
   '10|0',
@@ -1006,7 +1386,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1206,
-  1161
+  1161,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Nb8',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Nb8 4.Nc3 d6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1017,7 +1401,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-22',
   '10|0',
@@ -1027,7 +1415,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1123,
-  1168
+  1168,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 h6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 h6 4.O-O f5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1038,7 +1430,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-22',
   '10|0',
@@ -1048,7 +1444,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1129,
-  1159
+  1159,
+  '1.e4 e5',
+  '1.e4 e5 2.h3 Nc6',
+  '1.e4 e5 2.h3 Nc6 3.c3 Nf6',
+  '1.e4 e5 2.h3 Nc6 3.c3 Nf6 4.d3 Bc5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1059,7 +1459,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-22',
   '10|0',
@@ -1069,7 +1473,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1163,
-  1167
+  1167,
+  '1.e4 c5',
+  '1.e4 c5 2.Nf3 d6',
+  '1.e4 c5 2.Nf3 d6 3.d4 cxd4',
+  '1.e4 c5 2.Nf3 d6 3.d4 cxd4 4.Nxd4 a6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1080,7 +1488,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-22',
   '10|0',
@@ -1090,7 +1502,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1180,
-  1159
+  1159,
+  '1.d4 c5',
+  '1.d4 c5 2.e3 e6',
+  '1.d4 c5 2.e3 e6 3.Nf3 d5',
+  '1.d4 c5 2.e3 e6 3.Nf3 d5 4.Bb5+ Bd7'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1101,7 +1517,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-23',
   '10|0',
@@ -1111,7 +1531,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1143,
-  1150
+  1150,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.d4 exd4',
+  '1.e4 e5 2.Nf3 Nc6 3.d4 exd4 4.Nxd4 Nxd4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1122,7 +1546,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-23',
   '10|0',
@@ -1132,7 +1560,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1234,
-  1160
+  1160,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 d6',
+  '1.e4 e5 2.Nf3 d6 3.d4 exd4',
+  '1.e4 e5 2.Nf3 d6 3.d4 exd4 4.Nxd4 Nf6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1143,7 +1575,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-23',
   '10|0',
@@ -1153,7 +1589,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1103,
-  1150
+  1150,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 e6',
+  '1.d4 d5 2.c4 e6 3.cxd5 exd5',
+  '1.d4 d5 2.c4 e6 3.cxd5 exd5 4.e4 dxe4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1164,7 +1604,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-23',
   '10|0',
@@ -1174,7 +1618,11 @@ insert into blitz_games(
   'W',
   'time',
   1215,
-  1160
+  1160,
+  '1.d4 Nf6',
+  '1.d4 Nf6 2.c4 g6',
+  '1.d4 Nf6 2.c4 g6 3.Nc3 Bg7',
+  '1.d4 Nf6 2.c4 g6 3.Nc3 Bg7 4.Nf3 O-O'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1185,7 +1633,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-23',
   '10|0',
@@ -1195,7 +1647,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1232,
-  1153
+  1153,
+  '1.e4 e5',
+  '1.e4 e5 2.Nc3 Nf6',
+  '1.e4 e5 2.Nc3 Nf6 3.Nf3 Nc6',
+  '1.e4 e5 2.Nc3 Nf6 3.Nf3 Nc6 4.Bc4 Bc5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1206,7 +1662,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-23',
   '10|0',
@@ -1216,7 +1676,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1134,
-  1144
+  1144,
+  '1.e4 e5',
+  '1.e4 e5 2.f4 d5',
+  '1.e4 e5 2.f4 d5 3.exd5 Qxd5',
+  '1.e4 e5 2.f4 d5 3.exd5 Qxd5 4.Nc3 Qd8'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1227,7 +1691,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-23',
   '10|0',
@@ -1237,7 +1705,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1147,
-  1152
+  1152,
+  '1.e4 e6',
+  '1.e4 e6 2.d4 d6',
+  '1.e4 e6 2.d4 d6 3.Nc3 c6',
+  '1.e4 e6 2.d4 d6 3.Nc3 c6 4.Nf3 h6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1248,7 +1720,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-23',
   '10|0',
@@ -1258,7 +1734,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1120,
-  1159
+  1159,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 dxc4',
+  '1.d4 d5 2.c4 dxc4 3.e4 b5',
+  '1.d4 d5 2.c4 dxc4 3.e4 b5 4.a4 Bd7'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1269,7 +1749,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-23',
   '10|0',
@@ -1279,7 +1763,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1147,
-  1167
+  1167,
+  '1.d3 e5',
+  '1.d3 e5 2.g3 d5',
+  '1.d3 e5 2.g3 d5 3.Bg2 Nf6',
+  '1.d3 e5 2.g3 d5 3.Bg2 Nf6 4.d4 e4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1290,7 +1778,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-23',
   '10|0',
@@ -1300,7 +1792,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1169,
-  1159
+  1159,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.h3 Nf6',
+  '1.e4 e5 2.Nf3 Nc6 3.h3 Nf6 4.d3 Bc5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1311,7 +1807,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-24',
   '10|0',
@@ -1321,7 +1821,11 @@ insert into blitz_games(
   'D',
   'insufficient material',
   1207,
-  1160
+  1160,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 dxc4',
+  '1.d4 d5 2.c4 dxc4 3.a4 c6',
+  '1.d4 d5 2.c4 dxc4 3.a4 c6 4.Nc3 e6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1332,7 +1836,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-24',
   '10|0',
@@ -1342,7 +1850,11 @@ insert into blitz_games(
   'D',
   'insufficient material',
   1189,
-  1161
+  1161,
+  '1.e4 e5',
+  '1.e4 e5 2.f4 d5',
+  '1.e4 e5 2.f4 d5 3.exd5 Qxd5',
+  '1.e4 e5 2.f4 d5 3.exd5 Qxd5 4.Nc3 Qe6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1353,7 +1865,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-24',
   '10|0',
@@ -1363,7 +1879,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1137,
-  1169
+  1169,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 Be6',
+  '1.d4 d5 2.c4 Be6 3.cxd5 Bxd5',
+  '1.d4 d5 2.c4 Be6 3.cxd5 Bxd5 4.Nc3 e6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1374,7 +1894,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-24',
   '10|0',
@@ -1384,7 +1908,11 @@ insert into blitz_games(
   'W',
   'time',
   1133,
-  1176
+  1176,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 Bf5',
+  '1.d4 d5 2.c4 Bf5 3.cxd5 Qxd5',
+  '1.d4 d5 2.c4 Bf5 3.cxd5 Qxd5 4.Nc3 Qd8'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1395,7 +1923,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-24',
   '10|0',
@@ -1405,7 +1937,11 @@ insert into blitz_games(
   'W',
   'checkmate',
   1142,
-  1183
+  1183,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 e6',
+  '1.d4 d5 2.c4 e6 3.a3 Nf6',
+  '1.d4 d5 2.c4 e6 3.a3 Nf6 4.Nc3 Be7'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1416,7 +1952,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-24',
   '10|0',
@@ -1426,7 +1966,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1106,
-  1189
+  1189,
+  '1.d4 e6',
+  '1.d4 e6 2.e4 c6',
+  '1.d4 e6 2.e4 c6 3.Nf3 Qc7',
+  '1.d4 e6 2.e4 c6 3.Nf3 Qc7 4.Nc3 a6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1437,7 +1981,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-25',
   '10|0',
@@ -1447,7 +1995,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1181,
-  1181
+  1181,
+  '1.d4 d5',
+  '1.d4 d5 2.e3 Nc6',
+  '1.d4 d5 2.e3 Nc6 3.c4 e6',
+  '1.d4 d5 2.e3 Nc6 3.c4 e6 4.cxd5 exd5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1458,7 +2010,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-25',
   '10|0',
@@ -1468,7 +2024,11 @@ insert into blitz_games(
   'W',
   'checkmate',
   1195,
-  1190
+  1190,
+  '1.g3 e5',
+  '1.g3 e5 2.Nf3 Nc6',
+  '1.g3 e5 2.Nf3 Nc6 3.Bg2 Bc5',
+  '1.g3 e5 2.Nf3 Nc6 3.Bg2 Bc5 4.O-O d6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1479,7 +2039,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-25',
   '10|0',
@@ -1489,7 +2053,11 @@ insert into blitz_games(
   'D',
   'insufficient material',
   1211,
-  1191
+  1191,
+  '1.e4 e5',
+  '1.e4 e5 2.Bc4 Nc6',
+  '1.e4 e5 2.Bc4 Nc6 3.Qf3 Qf6',
+  '1.e4 e5 2.Bc4 Nc6 3.Qf3 Qf6 4.c3 Bc5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1500,7 +2068,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-25',
   '10|0',
@@ -1510,7 +2082,11 @@ insert into blitz_games(
   'D',
   'insufficient material',
   1214,
-  1192
+  1192,
+  '1.d4 Nf6',
+  '1.d4 Nf6 2.c4 e6',
+  '1.d4 Nf6 2.c4 e6 3.Nc3 c5',
+  '1.d4 Nf6 2.c4 e6 3.Nc3 c5 4.Nf3 cxd4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1521,7 +2097,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-25',
   '10|0',
@@ -1531,7 +2111,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1251,
-  1185
+  1185,
+  '1.e4 c5',
+  '1.e4 c5 2.Nf3 Nc6',
+  '1.e4 c5 2.Nf3 Nc6 3.d4 cxd4',
+  '1.e4 c5 2.Nf3 Nc6 3.d4 cxd4 4.Nxd4 Nf6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1542,7 +2126,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-25',
   '10|0',
@@ -1552,7 +2140,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1169,
-  1176
+  1176,
+  '1.d4 d5',
+  '1.d4 d5 2.Bf4 Nc6',
+  '1.d4 d5 2.Bf4 Nc6 3.Nf3 Bf5',
+  '1.d4 d5 2.Bf4 Nc6 3.Nf3 Bf5 4.a3 a5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1563,7 +2155,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-25',
   '10|0',
@@ -1573,7 +2169,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1225,
-  1169
+  1169,
+  '1.d4 e5',
+  '1.d4 e5 2.dxe5 d5',
+  '1.d4 e5 2.dxe5 d5 3.e4 d4',
+  '1.d4 e5 2.dxe5 d5 3.e4 d4 4.Nf3 Nc6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1584,7 +2184,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-26',
   '10|0',
@@ -1594,7 +2198,11 @@ insert into blitz_games(
   'L',
   'checkmate',
   1245,
-  1163
+  1163,
+  '1.Nf3 d5',
+  '1.Nf3 d5 2.d4 Nc6',
+  '1.Nf3 d5 2.d4 Nc6 3.c4 e6',
+  '1.Nf3 d5 2.d4 Nc6 3.c4 e6 4.a3 Bd7'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1605,7 +2213,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-26',
   '10|0',
@@ -1615,7 +2227,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1147,
-  1171
+  1171,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 Bf5',
+  '1.d4 d5 2.c4 Bf5 3.Nc3 e6',
+  '1.d4 d5 2.c4 Bf5 3.Nc3 e6 4.Bf4 Bb4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1626,7 +2242,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-26',
   '10|0',
@@ -1636,7 +2256,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1136,
-  1162
+  1162,
+  '1.d4 d6',
+  '1.d4 d6 2.e4 Nc6',
+  '1.d4 d6 2.e4 Nc6 3.Nf3 Nf6',
+  '1.d4 d6 2.e4 Nc6 3.Nf3 Nf6 4.Nc3 Bg4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1647,7 +2271,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-26',
   '10|0',
@@ -1657,7 +2285,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1204,
-  1171
+  1171,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 Bf5',
+  '1.d4 d5 2.c4 Bf5 3.Bf4 e6',
+  '1.d4 d5 2.c4 Bf5 3.Bf4 e6 4.e3 Bd6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1668,7 +2300,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-26',
   '10|0',
@@ -1678,7 +2314,11 @@ insert into blitz_games(
   'W',
   'time',
   1128,
-  1178
+  1178,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 d6',
+  '1.e4 e5 2.Nf3 d6 3.d4 exd4',
+  '1.e4 e5 2.Nf3 d6 3.d4 exd4 4.Nxd4 Ne7'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1689,7 +2329,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-26',
   '10|0',
@@ -1699,7 +2343,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1144,
-  1169
+  1169,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Nc3 Nf6',
+  '1.e4 e5 2.Nf3 Nc6 3.Nc3 Nf6 4.d4 exd4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1710,7 +2358,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-26',
   '10|0',
@@ -1720,7 +2372,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1185,
-  1178
+  1178,
+  '1.e4 e5',
+  '1.e4 e5 2.f4 d5',
+  '1.e4 e5 2.f4 d5 3.fxe5 dxe4',
+  '1.e4 e5 2.f4 d5 3.fxe5 dxe4 4.d3 exd3'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1731,7 +2387,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-26',
   '10|0',
@@ -1741,7 +2401,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1139,
-  1169
+  1169,
+  '1.e4 e5',
+  '1.e4 e5 2.Qh5 Nf6',
+  '1.e4 e5 2.Qh5 Nf6 3.Qxe5+ Be7',
+  '1.e4 e5 2.Qh5 Nf6 3.Qxe5+ Be7 4.d3 d6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1752,7 +2416,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-26',
   '10|0',
@@ -1762,7 +2430,11 @@ insert into blitz_games(
   'W',
   'checkmate',
   1119,
-  1176
+  1176,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bb5 a6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bb5 a6 4.Bc4 Nf6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1773,7 +2445,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-26',
   '10|0',
@@ -1783,7 +2459,11 @@ insert into blitz_games(
   'L',
   'checkmate',
   1106,
-  1166
+  1166,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Nf6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Nf6 4.Nc3 Be7'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1794,7 +2474,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-26',
   '10|0',
@@ -1804,7 +2488,11 @@ insert into blitz_games(
   'W',
   'time',
   1129,
-  1173
+  1173,
+  '1.d4 e6',
+  '1.d4 e6 2.e4 c5',
+  '1.d4 e6 2.e4 c5 3.c3 Qa5',
+  '1.d4 e6 2.e4 c5 3.c3 Qa5 4.Bd2 Qb6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1815,7 +2503,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-27',
   '10|0',
@@ -1825,7 +2517,11 @@ insert into blitz_games(
   'D',
   'stalemate',
   1139,
-  1172
+  1172,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 dxc4',
+  '1.d4 d5 2.c4 dxc4 3.Qa4+ Nc6',
+  '1.d4 d5 2.c4 dxc4 3.Qa4+ Nc6 4.e3 Qd5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1836,7 +2532,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-27',
   '10|0',
@@ -1846,7 +2546,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1187,
-  1164
+  1164,
+  '1.d4 Nf6',
+  '1.d4 Nf6 2.c4 d5',
+  '1.d4 Nf6 2.c4 d5 3.Nc3 Be6',
+  '1.d4 Nf6 2.c4 d5 3.Nc3 Be6 4.cxd5 Nxd5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1857,7 +2561,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-27',
   '10|0',
@@ -1867,7 +2575,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1156,
-  1172
+  1172,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Nf6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Nf6 4.d3 Be7'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1878,7 +2590,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-27',
   '10|0',
@@ -1888,7 +2604,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1138,
-  1163
+  1163,
+  '1.e4 c6',
+  '1.e4 c6 2.d4 g6',
+  '1.e4 c6 2.d4 g6 3.Nc3 Bg7',
+  '1.e4 c6 2.d4 g6 3.Nc3 Bg7 4.Nf3 d6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1899,7 +2619,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-27',
   '10|0',
@@ -1909,7 +2633,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1131,
-  1170
+  1170,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 e6',
+  '1.d4 d5 2.c4 e6 3.Nc3 Bb4',
+  '1.d4 d5 2.c4 e6 3.Nc3 Bb4 4.a3 Bxc3+'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1920,7 +2648,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-28',
   '10|0',
@@ -1930,7 +2662,11 @@ insert into blitz_games(
   'W',
   'game abandoned',
   1120,
-  1177
+  1177,
+  '1.d4 e6',
+  '1.d4 e6 2.c4 c5',
+  '1.d4 e6 2.c4 c5 3.Nf3 Nc6',
+  '1.d4 e6 2.c4 c5 3.Nf3 Nc6 4.d5 Na5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1941,7 +2677,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-28',
   '10|0',
@@ -1951,7 +2691,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1136,
-  1184
+  1184,
+  '1.e4 e5',
+  '1.e4 e5 2.Bc4 Nf6',
+  '1.e4 e5 2.Bc4 Nf6 3.Nf3 Nc6',
+  '1.e4 e5 2.Bc4 Nf6 3.Nf3 Nc6 4.d3 Be7'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1962,7 +2706,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-28',
   '10|0',
@@ -1972,7 +2720,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1133,
-  1191
+  1191,
+  '1.b3 d5',
+  '1.b3 d5 2.Bb2 Nc6',
+  '1.b3 d5 2.Bb2 Nc6 3.e3 e5',
+  '1.b3 d5 2.Bb2 Nc6 3.e3 e5 4.Bb5 e4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -1983,7 +2735,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-28',
   '10|0',
@@ -1993,7 +2749,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1198,
-  1199
+  1199,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Nf6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Nf6 4.Ng5 d5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2004,7 +2764,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-28',
   '10|0',
@@ -2014,7 +2778,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1200,
-  1191
+  1191,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 4.d3 Nf6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2025,7 +2793,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-28',
   '10|0',
@@ -2035,7 +2807,11 @@ insert into blitz_games(
   'W',
   'checkmate',
   1235,
-  1200
+  1200,
+  '1.d4 g6',
+  '1.d4 g6 2.c4 Bg7',
+  '1.d4 g6 2.c4 Bg7 3.Nf3 b6',
+  '1.d4 g6 2.c4 Bg7 3.Nf3 b6 4.Bf4 d6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2046,7 +2822,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-29',
   '10|0',
@@ -2056,7 +2836,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1158,
-  1191
+  1191,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 4.d3 Nf6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2067,7 +2851,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-29',
   '10|0',
@@ -2077,7 +2865,11 @@ insert into blitz_games(
   'L',
   'checkmate',
   1229,
-  1184
+  1184,
+  '1.d4 Nf6',
+  '1.d4 Nf6 2.c4 c6',
+  '1.d4 Nf6 2.c4 c6 3.Nc3 d5',
+  '1.d4 Nf6 2.c4 c6 3.Nc3 d5 4.c5 Bf5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2088,7 +2880,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-29',
   '10|0',
@@ -2098,7 +2894,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1210,
-  1193
+  1193,
+  '1.d4 b6',
+  '1.d4 b6 2.e4 Bb7',
+  '1.d4 b6 2.e4 Bb7 3.Nc3 e6',
+  '1.d4 b6 2.e4 Bb7 3.Nc3 e6 4.Nf3 Nf6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2109,7 +2909,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-29',
   '10|0',
@@ -2119,7 +2923,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1142,
-  1200
+  1200,
+  '1.d4 d5',
+  '1.d4 d5 2.f4 Bf5',
+  '1.d4 d5 2.f4 Bf5 3.Nf3 Nc6',
+  '1.d4 d5 2.f4 Bf5 3.Nf3 Nc6 4.e3 e6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2130,7 +2938,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-29',
   '10|0',
@@ -2140,7 +2952,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1182,
-  1191
+  1191,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Qf6',
+  '1.e4 e5 2.Nf3 Qf6 3.d4 exd4',
+  '1.e4 e5 2.Nf3 Qf6 3.d4 exd4 4.Qxd4 Qxd4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2151,7 +2967,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-29',
   '10|0',
@@ -2161,7 +2981,11 @@ insert into blitz_games(
   'W',
   'time',
   1144,
-  1198
+  1198,
+  '1.e4 c5',
+  '1.e4 c5 2.Nf3 Nc6',
+  '1.e4 c5 2.Nf3 Nc6 3.d4 cxd4',
+  '1.e4 c5 2.Nf3 Nc6 3.d4 cxd4 4.Nxd4 d6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2172,7 +2996,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-29',
   '10|0',
@@ -2182,7 +3010,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1169,
-  1205
+  1205,
+  '1.b4 d5',
+  '1.b4 d5 2.a4 e5',
+  '1.b4 d5 2.a4 e5 3.a5 Bxb4',
+  '1.b4 d5 2.a4 e5 3.a5 Bxb4 4.c4 dxc4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2193,7 +3025,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-29',
   '10|0',
@@ -2203,7 +3039,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1272,
-  1198
+  1198,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.c3 Nf6',
+  '1.e4 e5 2.Nf3 Nc6 3.c3 Nf6 4.d3 Be7'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2214,7 +3054,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-29',
   '10|0',
@@ -2224,7 +3068,11 @@ insert into blitz_games(
   'D',
   'agreement',
   1278,
-  1200
+  1200,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 Bf5',
+  '1.d4 d5 2.c4 Bf5 3.Nc3 e6',
+  '1.d4 d5 2.c4 Bf5 3.Nc3 e6 4.Nf3 Nf6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2235,7 +3083,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-30',
   '10|0',
@@ -2245,7 +3097,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1186,
-  1191
+  1191,
+  '1.g3 e5',
+  '1.g3 e5 2.Bg2 d5',
+  '1.g3 e5 2.Bg2 d5 3.Nf3 e4',
+  '1.g3 e5 2.Bg2 d5 3.Nf3 e4 4.Nd4 c5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2256,7 +3112,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-30',
   '10|0',
@@ -2266,7 +3126,11 @@ insert into blitz_games(
   'W',
   'checkmate',
   1159,
-  1198
+  1198,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 dxc4',
+  '1.d4 d5 2.c4 dxc4 3.Qa4+ Nc6',
+  '1.d4 d5 2.c4 dxc4 3.Qa4+ Nc6 4.Qxc4 e6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2277,7 +3141,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-30',
   '10|0',
@@ -2287,7 +3155,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1187,
-  1190
+  1190,
+  '1.e4 e5',
+  '1.e4 e5 2.f4 d5',
+  '1.e4 e5 2.f4 d5 3.exd5 Qxd5',
+  '1.e4 e5 2.f4 d5 3.exd5 Qxd5 4.Nf3 e4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2298,7 +3170,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-30',
   '10|0',
@@ -2308,7 +3184,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1253,
-  1200
+  1200,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 e6',
+  '1.d4 d5 2.c4 e6 3.Nc3 Nf6',
+  '1.d4 d5 2.c4 e6 3.Nc3 Nf6 4.Nf3 Nc6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2319,7 +3199,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-30',
   '10|0',
@@ -2329,7 +3213,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1240,
-  1209
+  1209,
+  '1.e4 c5',
+  '1.e4 c5 2.Nf3 Nc6',
+  '1.e4 c5 2.Nf3 Nc6 3.d4 cxd4',
+  '1.e4 c5 2.Nf3 Nc6 3.d4 cxd4 4.Nxd4 d6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2340,7 +3228,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-30',
   '10|0',
@@ -2350,7 +3242,11 @@ insert into blitz_games(
   'L',
   'checkmate',
   1244,
-  1202
+  1202,
+  '1.Nf3 d5',
+  '1.Nf3 d5 2.d4 Nc6',
+  '1.Nf3 d5 2.d4 Nc6 3.Bf4 Bf5',
+  '1.Nf3 d5 2.d4 Nc6 3.Bf4 Bf5 4.a3 Nf6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2361,7 +3257,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-30',
   '10|0',
@@ -2371,7 +3271,11 @@ insert into blitz_games(
   'W',
   'checkmate',
   1225,
-  1211
+  1211,
+  '1.e4 d5',
+  '1.e4 d5 2.exd5 Qxd5',
+  '1.e4 d5 2.exd5 Qxd5 3.Nc3 Qe6+',
+  '1.e4 d5 2.exd5 Qxd5 3.Nc3 Qe6+ 4.Qe2 Nf6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2382,7 +3286,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-30',
   '10|0',
@@ -2392,7 +3300,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1268,
-  1204
+  1204,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bb5 Nge7',
+  '1.e4 e5 2.Nf3 Nc6 3.Bb5 Nge7 4.O-O a6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2403,7 +3315,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-30',
   '10|0',
@@ -2413,7 +3329,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1208,
-  1212
+  1212,
+  '1.d4 c5',
+  '1.d4 c5 2.d5 d6',
+  '1.d4 c5 2.d5 d6 3.e4 e6',
+  '1.d4 c5 2.d5 d6 3.e4 e6 4.c4 exd5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2424,7 +3344,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-31',
   '10|0',
@@ -2434,7 +3358,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1317,
-  1206
+  1206,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bb5 a6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bb5 a6 4.Ba4 b5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2445,7 +3373,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-31',
   '10|0',
@@ -2455,7 +3387,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1209,
-  1198
+  1198,
+  '1.d4 Nf6',
+  '1.d4 Nf6 2.c4 e6',
+  '1.d4 Nf6 2.c4 e6 3.Nc3 b6',
+  '1.d4 Nf6 2.c4 e6 3.Nc3 b6 4.Bg5 Bb7'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2466,7 +3402,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-31',
   '10|0',
@@ -2476,7 +3416,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1226,
-  1207
+  1207,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.d4 exd4',
+  '1.e4 e5 2.Nf3 Nc6 3.d4 exd4 4.Nxd4 Nxd4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2487,7 +3431,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-31',
   '10|0',
@@ -2497,7 +3445,11 @@ insert into blitz_games(
   'L',
   'checkmate',
   1237,
-  1200
+  1200,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bb5 a6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bb5 a6 4.Ba4 b5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2508,7 +3460,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-31',
   '10|0',
@@ -2518,7 +3474,11 @@ insert into blitz_games(
   'L',
   'checkmate',
   1201,
-  1192
+  1192,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 e6',
+  '1.d4 d5 2.c4 e6 3.Nf3 Nc6',
+  '1.d4 d5 2.c4 e6 3.Nf3 Nc6 4.Nc3 Nf6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2529,7 +3489,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-31',
   '10|0',
@@ -2539,7 +3503,11 @@ insert into blitz_games(
   'L',
   'checkmate',
   1184,
-  1184
+  1184,
+  '1.e4 e6',
+  '1.e4 e6 2.Nf3 d5',
+  '1.e4 e6 2.Nf3 d5 3.e5 c5',
+  '1.e4 e6 2.Nf3 d5 3.e5 c5 4.c3 Qb6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2550,7 +3518,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-31',
   '10|0',
@@ -2560,7 +3532,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1159,
-  1192
+  1192,
+  '1.d4 Nf6',
+  '1.d4 Nf6 2.c4 d5',
+  '1.d4 Nf6 2.c4 d5 3.Nc3 dxc4',
+  '1.d4 Nf6 2.c4 d5 3.Nc3 dxc4 4.e4 b5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2571,7 +3547,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-01-31',
   '10|0',
@@ -2581,7 +3561,11 @@ insert into blitz_games(
   'W',
   'time',
   1109,
-  1198
+  1198,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.c3 Nf6',
+  '1.e4 e5 2.Nf3 Nc6 3.c3 Nf6 4.d3 Be7'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2592,7 +3576,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-02',
   '10|0',
@@ -2602,7 +3590,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1249,
-  1191
+  1191,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 e6',
+  '1.d4 d5 2.c4 e6 3.Nc3 Nf6',
+  '1.d4 d5 2.c4 e6 3.Nc3 Nf6 4.Nf3 Nc6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2613,7 +3605,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-02',
   '10|0',
@@ -2623,7 +3619,11 @@ insert into blitz_games(
   'W',
   'checkmate',
   1114,
-  1197
+  1197,
+  '1.e4 e5',
+  '1.e4 e5 2.Qh5 d6',
+  '1.e4 e5 2.Qh5 d6 3.Bc4 Qf6',
+  '1.e4 e5 2.Qh5 d6 3.Bc4 Qf6 4.Nc3 Be6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2634,7 +3634,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-02',
   '10|0',
@@ -2644,7 +3648,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1173,
-  1205
+  1205,
+  '1.d4 Nf6',
+  '1.d4 Nf6 2.c4 g6',
+  '1.d4 Nf6 2.c4 g6 3.Nc3 Bg7',
+  '1.d4 Nf6 2.c4 g6 3.Nc3 Bg7 4.Bf4 d6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2655,7 +3663,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-02',
   '10|0',
@@ -2665,7 +3677,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1231,
-  1214
+  1214,
+  '1.e4 e6',
+  '1.e4 e6 2.d4 b6',
+  '1.e4 e6 2.d4 b6 3.Nf3 Bb7',
+  '1.e4 e6 2.d4 b6 3.Nf3 Bb7 4.Nc3 Bb4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2676,7 +3692,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-02',
   '10|0',
@@ -2686,7 +3706,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1258,
-  1207
+  1207,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nf6',
+  '1.e4 e5 2.Nf3 Nf6 3.Nxe5 d6',
+  '1.e4 e5 2.Nf3 Nf6 3.Nxe5 d6 4.Nf3 Nxe4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2697,7 +3721,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-02',
   '10|0',
@@ -2707,7 +3735,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1200,
-  1199
+  1199,
+  '1.Nc3 e5',
+  '1.Nc3 e5 2.e4 Nf6',
+  '1.Nc3 e5 2.e4 Nf6 3.Nf3 Nc6',
+  '1.Nc3 e5 2.e4 Nf6 3.Nf3 Nc6 4.Bc4 Bc5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2718,7 +3750,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-02',
   '10|0',
@@ -2728,7 +3764,11 @@ insert into blitz_games(
   'L',
   'checkmate',
   1214,
-  1191
+  1191,
+  '1.d4 d5',
+  '1.d4 d5 2.c3 Nc6',
+  '1.d4 d5 2.c3 Nc6 3.Nf3 Bg4',
+  '1.d4 d5 2.c3 Nc6 3.Nf3 Bg4 4.e3 Nf6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2739,7 +3779,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-02',
   '10|0',
@@ -2749,7 +3793,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1161,
-  1182
+  1182,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.d4 exd4',
+  '1.e4 e5 2.Nf3 Nc6 3.d4 exd4 4.Nxd4 Nxd4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2760,7 +3808,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-02',
   '10|0',
@@ -2770,7 +3822,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1205,
-  1174
+  1174,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 4.d3 d6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2781,7 +3837,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-02',
   '10|0',
@@ -2791,7 +3851,11 @@ insert into blitz_games(
   'W',
   'time',
   1075,
-  1180
+  1180,
+  '1.e4 d5',
+  '1.e4 d5 2.exd5 Qxd5',
+  '1.e4 d5 2.exd5 Qxd5 3.Nc3 Qa5',
+  '1.e4 d5 2.exd5 Qxd5 3.Nc3 Qa5 4.d4 c6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2802,7 +3866,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-02',
   '10|0',
@@ -2812,7 +3880,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1179,
-  1172
+  1172,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.d4 exd4',
+  '1.e4 e5 2.Nf3 Nc6 3.d4 exd4 4.Nxd4 Bc5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2823,7 +3895,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-02',
   '10|0',
@@ -2833,7 +3909,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1191,
-  1164
+  1164,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Nf6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Nf6 4.Nc3 Bc5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2844,7 +3924,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-02',
   '10|0',
@@ -2854,7 +3938,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1190,
-  1156
+  1156,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 e6',
+  '1.d4 d5 2.c4 e6 3.Nc3 Nf6',
+  '1.d4 d5 2.c4 e6 3.Nc3 Nf6 4.Bg5 Bb4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2865,7 +3953,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-02',
   '10|0',
@@ -2875,7 +3967,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1178,
-  1148
+  1148,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.c3 Bc5',
+  '1.e4 e5 2.Nf3 Nc6 3.c3 Bc5 4.d4 exd4'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2886,7 +3982,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-02',
   '10|0',
@@ -2896,7 +3996,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1174,
-  1157
+  1157,
+  '1.e4 c5',
+  '1.e4 c5 2.Nf3 Nc6',
+  '1.e4 c5 2.Nf3 Nc6 3.d4 c4',
+  '1.e4 c5 2.Nf3 Nc6 3.d4 c4 4.Bxc4 g6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2907,7 +4011,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-02',
   '10|0',
@@ -2917,7 +4025,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1207,
-  1150
+  1150,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 d6',
+  '1.e4 e5 2.Nf3 d6 3.d4 exd4',
+  '1.e4 e5 2.Nf3 d6 3.d4 exd4 4.Nxd4 Be7'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2928,7 +4040,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-03',
   '10|0',
@@ -2938,7 +4054,11 @@ insert into blitz_games(
   'W',
   'time',
   1058,
-  1156
+  1156,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 4.O-O d6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2949,7 +4069,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-03',
   '10|0',
@@ -2959,7 +4083,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1131,
-  1147
+  1147,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 4.O-O Nf6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2970,7 +4098,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-03',
   '10|0',
@@ -2980,7 +4112,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1134,
-  1155
+  1155,
+  '1.e4 e5',
+  '1.e4 e5 2.d3 d5',
+  '1.e4 e5 2.d3 d5 3.exd5 Qxd5',
+  '1.e4 e5 2.d3 d5 3.exd5 Qxd5 4.Nc3 Qd8'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -2991,7 +4127,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-03',
   '10|0',
@@ -3001,7 +4141,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1111,
-  1162
+  1162,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 dxc4',
+  '1.d4 d5 2.c4 dxc4 3.e4 Nc6',
+  '1.d4 d5 2.c4 dxc4 3.e4 Nc6 4.Nf3 b5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -3012,7 +4156,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-03',
   '10|0',
@@ -3022,7 +4170,11 @@ insert into blitz_games(
   'W',
   'checkmate',
   1182,
-  1171
+  1171,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 4.d3 h6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -3033,7 +4185,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-03',
   '10|0',
@@ -3043,7 +4199,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1194,
-  1180
+  1180,
+  '1.d4 c5',
+  '1.d4 c5 2.d5 e6',
+  '1.d4 c5 2.d5 e6 3.c4 Nf6',
+  '1.d4 c5 2.d5 e6 3.c4 Nf6 4.Nc3 g6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -3054,7 +4214,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-03',
   '10|0',
@@ -3064,7 +4228,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1163,
-  1171
+  1171,
+  '1.d4 g6',
+  '1.d4 g6 2.c4 Bg7',
+  '1.d4 g6 2.c4 Bg7 3.Nf3 Nf6',
+  '1.d4 g6 2.c4 Bg7 3.Nf3 Nf6 4.Nc3 O-O'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -3075,7 +4243,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-03',
   '10|0',
@@ -3085,7 +4257,11 @@ insert into blitz_games(
   'W',
   'time',
   1089,
-  1177
+  1177,
+  '1.d4 g6',
+  '1.d4 g6 2.e4 Bg7',
+  '1.d4 g6 2.e4 Bg7 3.e5 d6',
+  '1.d4 g6 2.e4 Bg7 3.e5 d6 4.f4 dxe5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -3096,7 +4272,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-03',
   '10|0',
@@ -3106,7 +4286,11 @@ insert into blitz_games(
   'W',
   'checkmate',
   1170,
-  1185
+  1185,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 e6',
+  '1.d4 d5 2.c4 e6 3.cxd5 exd5',
+  '1.d4 d5 2.c4 e6 3.cxd5 exd5 4.Nf3 Nc6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -3117,7 +4301,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-03',
   '10|0',
@@ -3127,7 +4315,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1197,
-  1177
+  1177,
+  '1.d4 d5',
+  '1.d4 d5 2.Nc3 e6',
+  '1.d4 d5 2.Nc3 e6 3.Bf4 Bd6',
+  '1.d4 d5 2.Nc3 e6 3.Bf4 Bd6 4.Bxd6 Qxd6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -3138,7 +4330,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-03',
   '10|0',
@@ -3148,7 +4344,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1222,
-  1170
+  1170,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Be2 Bc5',
+  '1.e4 e5 2.Nf3 Nc6 3.Be2 Bc5 4.O-O Nf6'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -3159,7 +4359,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-03',
   '10|0',
@@ -3169,7 +4373,11 @@ insert into blitz_games(
   'L',
   'checkmate',
   1116,
-  1161
+  1161,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 h6',
+  '1.d4 d5 2.c4 h6 3.Nc3 dxc4',
+  '1.d4 d5 2.c4 h6 3.Nc3 dxc4 4.e4 e5'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -3180,7 +4388,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-03',
   '10|0',
@@ -3190,7 +4402,11 @@ insert into blitz_games(
   'W',
   'resignation',
   1131,
-  1168
+  1168,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 dxc4',
+  '1.d4 d5 2.c4 dxc4 3.e4 e5',
+  '1.d4 d5 2.c4 dxc4 3.e4 e5 4.dxe5 Qxd1+'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -3201,7 +4417,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-03',
   '10|0',
@@ -3211,7 +4431,11 @@ insert into blitz_games(
   'L',
   'resignation',
   1140,
-  1159
+  1159,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 c5',
+  '1.d4 d5 2.c4 c5 3.cxd5 Qxd5',
+  '1.d4 d5 2.c4 c5 3.cxd5 Qxd5 4.Nc3 Qd8'
 );
 insert into blitz_games(
   blitz_game_date,
@@ -3222,7 +4446,11 @@ insert into blitz_games(
   result,
   result_detail,
   opponent_elo_after,
-  my_elo_after
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
 ) values (
   '2015-02-03',
   '10|0',
@@ -3232,7 +4460,1722 @@ insert into blitz_games(
   'W',
   'resignation',
   1111,
-  1166
+  1166,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bb5 a6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bb5 a6 4.Ba4 b5'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-04',
+  '10|0',
+  'barracuda730',
+  'B',
+  94,
+  'L',
+  'resignation',
+  1179,
+  1158,
+  '1.e4 e5',
+  '1.e4 e5 2.Bc4 Nf6',
+  '1.e4 e5 2.Bc4 Nf6 3.d3 Bc5',
+  '1.e4 e5 2.Bc4 Nf6 3.d3 Bc5 4.h3 Nc6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-04',
+  '10|0',
+  'Pericynthion',
+  'B',
+  40,
+  'W',
+  'checkmate',
+  1124,
+  1165,
+  '1.c4 e5',
+  '1.c4 e5 2.e4 Nf6',
+  '1.c4 e5 2.e4 Nf6 3.Nc3 Bc5',
+  '1.c4 e5 2.e4 Nf6 3.Nc3 Bc5 4.d3 h6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-04',
+  '10|0',
+  'chandruchandru1',
+  'W',
+  110,
+  'L',
+  'resignation',
+  1172,
+  1157,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 dxc4',
+  '1.d4 d5 2.c4 dxc4 3.e4 e6',
+  '1.d4 d5 2.c4 dxc4 3.e4 e6 4.Bxc4 Nf6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-04',
+  '10|0',
+  'ronaldobrilha',
+  'W',
+  56,
+  'L',
+  'checkmate',
+  1222,
+  1150,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 e5',
+  '1.d4 d5 2.c4 e5 3.e3 Nc6',
+  '1.d4 d5 2.c4 e5 3.e3 Nc6 4.c5 Nf6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-04',
+  '10|0',
+  'g1anmar10',
+  'B',
+  34,
+  'L',
+  'resignation',
+  1186,
+  1143,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 e6',
+  '1.d4 d5 2.c4 e6 3.Nc3 Nf6',
+  '1.d4 d5 2.c4 e6 3.Nc3 Nf6 4.a3 h6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-04',
+  '10|0',
+  'hullander50',
+  'B',
+  154,
+  'L',
+  'resignation',
+  1149,
+  1135,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bb5 a6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bb5 a6 4.Bxc6 bxc6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-04',
+  '10|0',
+  'kered76',
+  'B',
+  150,
+  'D',
+  'stalemate',
+  1080,
+  1134,
+  '1.e4 e5',
+  '1.e4 e5 2.Bc4 Bc5',
+  '1.e4 e5 2.Bc4 Bc5 3.d3 Nc6',
+  '1.e4 e5 2.Bc4 Bc5 3.d3 Nc6 4.c3 h6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-04',
+  '10|0',
+  'cleogray',
+  'W',
+  54,
+  'L',
+  'checkmate',
+  1113,
+  1125,
+  '1.e4 g6',
+  '1.e4 g6 2.d4 e6',
+  '1.e4 g6 2.d4 e6 3.e5 c6',
+  '1.e4 g6 2.d4 e6 3.e5 c6 4.Nf3 Qb6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-04',
+  '10|0',
+  'discovercheck',
+  'W',
+  59,
+  'W',
+  'checkmate',
+  1082,
+  1132,
+  '1.e4 d6',
+  '1.e4 d6 2.d4 e6',
+  '1.e4 d6 2.d4 e6 3.Nc3 g6',
+  '1.e4 d6 2.d4 e6 3.Nc3 g6 4.Nf3 h6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-04',
+  '10|0',
+  'artistpro',
+  'W',
+  46,
+  'W',
+  'resignation',
+  1151,
+  1141,
+  '1.e4 b6',
+  '1.e4 b6 2.d4 Bb7',
+  '1.e4 b6 2.d4 Bb7 3.Nc3 e6',
+  '1.e4 b6 2.d4 Bb7 3.Nc3 e6 4.Nf3 Bb4'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-04',
+  '10|0',
+  'AlfredBurnett',
+  'B',
+  52,
+  'L',
+  'resignation',
+  1214,
+  1134,
+  '1.e4 e5',
+  '1.e4 e5 2.d4 exd4',
+  '1.e4 e5 2.d4 exd4 3.Qxd4 Nc6',
+  '1.e4 e5 2.d4 exd4 3.Qxd4 Nc6 4.Qd1 Bc5'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-04',
+  '10|0',
+  'chessbug4',
+  'B',
+  38,
+  'L',
+  'resignation',
+  1126,
+  1126,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 e6',
+  '1.d4 d5 2.c4 e6 3.a3 Nf6',
+  '1.d4 d5 2.c4 e6 3.a3 Nf6 4.e3 Nc6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-04',
+  '10|0',
+  'Old_School86',
+  'W',
+  30,
+  'W',
+  'resignation',
+  1134,
+  1134,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 e6',
+  '1.d4 d5 2.c4 e6 3.Nc3 dxc4',
+  '1.d4 d5 2.c4 e6 3.Nc3 dxc4 4.e4 a6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-04',
+  '10|0',
+  'evanrecruitersbiz',
+  'B',
+  60,
+  'W',
+  'time',
+  1121,
+  1142,
+  '1.c4 e5',
+  '1.c4 e5 2.e4 Nf6',
+  '1.c4 e5 2.e4 Nf6 3.f3 Nc6',
+  '1.c4 e5 2.e4 Nf6 3.f3 Nc6 4.Ne2 Bc5'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-04',
+  '10|0',
+  'taytay403',
+  'W',
+  26,
+  'W',
+  'resignation',
+  1121,
+  1150,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 dxc4',
+  '1.d4 d5 2.c4 dxc4 3.e4 Nc6',
+  '1.d4 d5 2.c4 dxc4 3.e4 Nc6 4.d5 Ne5'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-04',
+  '10|0',
+  'vajar',
+  'B',
+  84,
+  'L',
+  'resignation',
+  1187,
+  1143,
+  '1.h3 e5',
+  '1.h3 e5 2.e3 d5',
+  '1.h3 e5 2.e3 d5 3.Qh5 Nc6',
+  '1.h3 e5 2.e3 d5 3.Qh5 Nc6 4.Bb5 Qd6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-05',
+  '10|0',
+  'markdjevans',
+  'W',
+  106,
+  'W',
+  'time',
+  1137,
+  1151,
+  '1.d4 g6',
+  '1.d4 g6 2.e4 Bg7',
+  '1.d4 g6 2.e4 Bg7 3.Nf3 d6',
+  '1.d4 g6 2.e4 Bg7 3.Nf3 d6 4.Nc3 Nf6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-05',
+  '10|0',
+  'okuu',
+  'B',
+  120,
+  'W',
+  'resignation',
+  1103,
+  1158,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 e6',
+  '1.d4 d5 2.c4 e6 3.Nc3 Nf6',
+  '1.d4 d5 2.c4 e6 3.Nc3 Nf6 4.Nf3 Nc6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-05',
+  '10|0',
+  'aequitas21',
+  'W',
+  82,
+  'W',
+  'resignation',
+  1066,
+  1164,
+  '1.d4 Nf6',
+  '1.d4 Nf6 2.c4 e6',
+  '1.d4 Nf6 2.c4 e6 3.Nc3 Bb4',
+  '1.d4 Nf6 2.c4 e6 3.Nc3 Bb4 4.Bg5 Bxc3+'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-05',
+  '10|0',
+  'DarKnighTAssassiN',
+  'W',
+  94,
+  'W',
+  'time',
+  1121,
+  1171,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 c6',
+  '1.d4 d5 2.c4 c6 3.Nc3 Bf5',
+  '1.d4 d5 2.c4 c6 3.Nc3 Bf5 4.Bf4 a6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-05',
+  '10|0',
+  'rf2551',
+  'B',
+  124,
+  'W',
+  'checkmate',
+  1103,
+  1178,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 4.Nc3 Nf6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-05',
+  '10|0',
+  'BryceHarper',
+  'B',
+  106,
+  'W',
+  'resignation',
+  1091,
+  1184,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.d3 Bc5',
+  '1.e4 e5 2.Nf3 Nc6 3.d3 Bc5 4.Nc3 Nf6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-05',
+  '10|0',
+  'DmitriyLevitin',
+  'W',
+  42,
+  'L',
+  'resignation',
+  1223,
+  1177,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 dxc4',
+  '1.d4 d5 2.c4 dxc4 3.e4 e6',
+  '1.d4 d5 2.c4 dxc4 3.e4 e6 4.Bxc4 Bb4+'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-05',
+  '10|0',
+  'blf40',
+  'B',
+  58,
+  'W',
+  'resignation',
+  1161,
+  1185,
+  '1.d4 d5',
+  '1.d4 d5 2.Nc3 e6',
+  '1.d4 d5 2.Nc3 e6 3.e4 dxe4',
+  '1.d4 d5 2.Nc3 e6 3.e4 dxe4 4.Nxe4 Nf6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-05',
+  '10|0',
+  'stockpicker',
+  'B',
+  144,
+  'D',
+  'insufficient material',
+  1204,
+  1185,
+  '1.b4 d5',
+  '1.b4 d5 2.Bb2 Bf5',
+  '1.b4 d5 2.Bb2 Bf5 3.Nf3 Nd7',
+  '1.b4 d5 2.Bb2 Bf5 3.Nf3 Nd7 4.d3 e6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-06',
+  '10|0',
+  'burlapheaven',
+  'W',
+  48,
+  'L',
+  'resignation',
+  1164,
+  1176,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 Nf6',
+  '1.d4 d5 2.c4 Nf6 3.Nc3 dxc4',
+  '1.d4 d5 2.c4 Nf6 3.Nc3 dxc4 4.e4 e6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-06',
+  '10|0',
+  'LegalMove',
+  'W',
+  22,
+  'L',
+  'resignation',
+  1164,
+  1168,
+  '1.d4 f5',
+  '1.d4 f5 2.c4 e6',
+  '1.d4 f5 2.c4 e6 3.Nc3 Nf6',
+  '1.d4 f5 2.c4 e6 3.Nc3 Nf6 4.Bf4 Be7'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-06',
+  '10|0',
+  'venechess',
+  'B',
+  50,
+  'W',
+  'resignation',
+  1226,
+  1178,
+  '1.d4 d5',
+  '1.d4 d5 2.Nc3 e6',
+  '1.d4 d5 2.Nc3 e6 3.e4 Bb4',
+  '1.d4 d5 2.Nc3 e6 3.e4 Bb4 4.exd5 exd5'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-06',
+  '10|0',
+  'kalq',
+  'B',
+  154,
+  'W',
+  'checkmate',
+  1159,
+  1186,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Nc3 Nf6',
+  '1.e4 e5 2.Nf3 Nc6 3.Nc3 Nf6 4.Bc4 Bc5'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-06',
+  '10|0',
+  'Serchio',
+  'W',
+  70,
+  'L',
+  'resignation',
+  1171,
+  1177,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 b6',
+  '1.d4 d5 2.c4 b6 3.Nc3 e6',
+  '1.d4 d5 2.c4 b6 3.Nc3 e6 4.Bf4 Bb4'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-06',
+  '10|0',
+  'happyroro',
+  'W',
+  88,
+  'W',
+  'resignation',
+  1231,
+  1186,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 d6',
+  '1.e4 e5 2.Nf3 d6 3.d4 exd4',
+  '1.e4 e5 2.Nf3 d6 3.d4 exd4 4.Nxd4 Nc6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-06',
+  '10|0',
+  'whit2205',
+  'B',
+  50,
+  'L',
+  'resignation',
+  1240,
+  1179,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bb5 a6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bb5 a6 4.Bxc6 bxc6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-06',
+  '10|0',
+  'PatoRlza',
+  'B',
+  126,
+  'W',
+  'resignation',
+  1164,
+  1187,
+  '1.e4 e5',
+  '1.e4 e5 2.d3 Bc5',
+  '1.e4 e5 2.d3 Bc5 3.Nd2 Nc6',
+  '1.e4 e5 2.d3 Bc5 3.Nd2 Nc6 4.Ngf3 d6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-06',
+  '10|0',
+  'Moxaman',
+  'B',
+  118,
+  'L',
+  'checkmate',
+  1169,
+  1178,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 e6',
+  '1.d4 d5 2.c4 e6 3.Bf4 Bd6',
+  '1.d4 d5 2.c4 e6 3.Bf4 Bd6 4.Bxd6 Qxd6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-06',
+  '10|0',
+  'gmc52267',
+  'W',
+  88,
+  'W',
+  'checkmate',
+  1124,
+  1185,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 4.O-O Nf6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-06',
+  '10|0',
+  'over_rated99',
+  'B',
+  36,
+  'W',
+  'game abandoned',
+  1104,
+  1191,
+  '1.e4 e5',
+  '1.e4 e5 2.f4 d6',
+  '1.e4 e5 2.f4 d6 3.Nf3 Nc6',
+  '1.e4 e5 2.f4 d6 3.Nf3 Nc6 4.Bc4 Be6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-06',
+  '10|0',
+  'jjuares',
+  'B',
+  74,
+  'W',
+  'resignation',
+  1152,
+  1198,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 e6',
+  '1.d4 d5 2.c4 e6 3.Bf4 Bd6',
+  '1.d4 d5 2.c4 e6 3.Bf4 Bd6 4.Bxd6 Qxd6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-06',
+  '10|0',
+  'FaroukSallak',
+  'W',
+  42,
+  'W',
+  'resignation',
+  1149,
+  1205,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 dxc4',
+  '1.d4 d5 2.c4 dxc4 3.e4 Nc6',
+  '1.d4 d5 2.c4 dxc4 3.e4 Nc6 4.d5 Ne5'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-09',
+  '10|0',
+  'nr28',
+  'W',
+  150,
+  'D',
+  'insufficient material',
+  1205,
+  1205,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 Nc6',
+  '1.d4 d5 2.c4 Nc6 3.Nc3 dxc4',
+  '1.d4 d5 2.c4 Nc6 3.Nc3 dxc4 4.e3 Bf5'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-09',
+  '10|0',
+  'gagas1',
+  'B',
+  90,
+  'W',
+  'time',
+  1240,
+  1214,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5',
+  '1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 4.d3 h6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-09',
+  '10|0',
+  'cyborg_752',
+  'B',
+  98,
+  'W',
+  'checkmate',
+  1189,
+  1222,
+  '1.d4 d5',
+  '1.d4 d5 2.e3 Nc6',
+  '1.d4 d5 2.e3 Nc6 3.Nf3 Bg4',
+  '1.d4 d5 2.e3 Nc6 3.Nf3 Bg4 4.Be2 Nf6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-09',
+  '10|0',
+  'Jwack98',
+  'W',
+  134,
+  'L',
+  'checkmate',
+  1248,
+  1214,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 c6',
+  '1.d4 d5 2.c4 c6 3.c5 e6',
+  '1.d4 d5 2.c4 c6 3.c5 e6 4.Bf4 Nd7'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-09',
+  '10|0',
+  'wt2',
+  'B',
+  86,
+  'L',
+  'resignation',
+  1292,
+  1208,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bb5 a6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bb5 a6 4.Ba4 b5'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-09',
+  '10|0',
+  'Alphabaig',
+  'W',
+  44,
+  'L',
+  'resignation',
+  1239,
+  1201,
+  '1.e4 a6',
+  '1.e4 a6 2.d4 e6',
+  '1.e4 a6 2.d4 e6 3.e5 h6',
+  '1.e4 a6 2.d4 e6 3.e5 h6 4.Nf3 d5'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-09',
+  '10|0',
+  'Alphabaig',
+  'B',
+  174,
+  'D',
+  'insufficient material',
+  1238,
+  1202,
+  '1.e4 e5',
+  '1.e4 e5 2.Bc4 Bc5',
+  '1.e4 e5 2.Bc4 Bc5 3.Qf3 Qf6',
+  '1.e4 e5 2.Bc4 Bc5 3.Qf3 Qf6 4.Qg3 d6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-09',
+  '10|0',
+  'leinerivantaipequisp',
+  'W',
+  59,
+  'W',
+  'checkmate',
+  1126,
+  1208,
+  '1.d4 d6',
+  '1.d4 d6 2.e4 Nc6',
+  '1.d4 d6 2.e4 Nc6 3.d5 Ne5',
+  '1.d4 d6 2.e4 Nc6 3.d5 Ne5 4.f4 Ng6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-09',
+  '10|0',
+  'Zmey29',
+  'W',
+  56,
+  'L',
+  'resignation',
+  1173,
+  1199,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 dxc4',
+  '1.d4 d5 2.c4 dxc4 3.e4 e6',
+  '1.d4 d5 2.c4 dxc4 3.e4 e6 4.Bxc4 Nc6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-09',
+  '10|0',
+  'naum1938',
+  'B',
+  56,
+  'W',
+  'resignation',
+  1188,
+  1207,
+  '1.e4 e5',
+  '1.e4 e5 2.Bc4 Bc5',
+  '1.e4 e5 2.Bc4 Bc5 3.d3 Nc6',
+  '1.e4 e5 2.Bc4 Bc5 3.d3 Nc6 4.a3 a5'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-10',
+  '10|0',
+  'jpvidas',
+  'B',
+  54,
+  'W',
+  'time',
+  1218,
+  1215,
+  '1.d4 d5',
+  '1.d4 d5 2.c4 e6',
+  '1.d4 d5 2.c4 e6 3.Nc3 Nf6',
+  '1.d4 d5 2.c4 e6 3.Nc3 Nf6 4.Bg5 Bb4'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-10',
+  '10|0',
+  'mahanhen',
+  'W',
+  66,
+  'W',
+  'resignation',
+  1170,
+  1222,
+  '1.d4 Nf6',
+  '1.d4 Nf6 2.c4 d6',
+  '1.d4 Nf6 2.c4 d6 3.Nc3 g6',
+  '1.d4 Nf6 2.c4 d6 3.Nc3 g6 4.Bf4 Bg7'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-10',
+  '10|0',
+  'juicydragonhole',
+  'B',
+  44,
+  'L',
+  'resignation',
+  1154,
+  1212,
+  '1.e4 e5',
+  '1.e4 e5 2.a3 Nc6',
+  '1.e4 e5 2.a3 Nc6 3.Nf3 Bc5',
+  '1.e4 e5 2.a3 Nc6 3.Nf3 Bc5 4.Nc3 Nf6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-10',
+  '10|0',
+  'notgood7',
+  'W',
+  52,
+  'L',
+  'resignation',
+  1244,
+  1205,
+  '1.d4 b6',
+  '1.d4 b6 2.e4 h6',
+  '1.d4 b6 2.e4 h6 3.Nf3 Bb7',
+  '1.d4 b6 2.e4 h6 3.Nf3 Bb7 4.Nc3 e6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-10',
+  '10|0',
+  'dirty_king',
+  'W',
+  28,
+  'L',
+  'resignation',
+  1231,
+  1197,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nf6',
+  '1.e4 e5 2.Nf3 Nf6 3.Nxe5 d6',
+  '1.e4 e5 2.Nf3 Nf6 3.Nxe5 d6 4.Nf3 Nxe4'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-10',
+  '10|0',
+  'kewlbeenz',
+  'B',
+  72,
+  'W',
+  'resignation',
+  1166,
+  1204,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bb5 a6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bb5 a6 4.Bxc6 bxc6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-10',
+  '10|0',
+  'khkjj7',
+  'W',
+  88,
+  'W',
+  'resignation',
+  1215,
+  1212,
+  '1.e4 d5',
+  '1.e4 d5 2.exd5 Qxd5',
+  '1.e4 d5 2.exd5 Qxd5 3.Nc3 Qe6+',
+  '1.e4 d5 2.exd5 Qxd5 3.Nc3 Qe6+ 4.Qe2 Qxe2+'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-10',
+  '10|0',
+  'Turkuais',
+  'B',
+  38,
+  'L',
+  'resignation',
+  1262,
+  1205,
+  '1.e4 e5',
+  '1.e4 e5 2.Nf3 Nc6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bb5 a6',
+  '1.e4 e5 2.Nf3 Nc6 3.Bb5 a6 4.Ba4 b5'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-10',
+  '10|0',
+  'darkdesert',
+  'W',
+  76,
+  'W',
+  'game abandoned',
+  1145,
+  1212,
+  '1.e4 Nc6',
+  '1.e4 Nc6 2.Nf3 e5',
+  '1.e4 Nc6 2.Nf3 e5 3.d4 exd4',
+  '1.e4 Nc6 2.Nf3 e5 3.d4 exd4 4.Nxd4 Nxd4'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-10',
+  '10|0',
+  'stoneycreek2010',
+  'B',
+  64,
+  'L',
+  'resignation',
+  1162,
+  1203,
+  '1.d4 d5',
+  '1.d4 d5 2.c3 e6',
+  '1.d4 d5 2.c3 e6 3.Nd2 Nf6',
+  '1.d4 d5 2.c3 e6 3.Nd2 Nf6 4.Ngf3 Nc6'
+);
+insert into blitz_games(
+  blitz_game_date,
+  time_control,
+  opponent_name,
+  color,
+  num_half_moves,
+  result,
+  result_detail,
+  opponent_elo_after,
+  my_elo_after,
+  first_move,
+  first_two_moves,
+  first_three_moves,
+  first_four_moves
+) values (
+  '2015-02-10',
+  '10|0',
+  'pmgh2012',
+  'B',
+  56,
+  'W',
+  'resignation',
+  1205,
+  1211,
+  '1.e4 c5',
+  '1.e4 c5 2.c3 Nc6',
+  '1.e4 c5 2.c3 Nc6 3.Bb5 a6',
+  '1.e4 c5 2.c3 Nc6 3.Bb5 a6 4.Bxc6 bxc6'
 );
 
 quit
