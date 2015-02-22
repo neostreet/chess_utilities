@@ -2,12 +2,12 @@ use chess
 
 select result,count(*)
 from blitz_games
-where num_half_moves > 20 and num_half_moves <= 40
+where num_moves > 10 and num_moves <= 20
 group by result
 order by result desc;
 
 select count(*)
 from blitz_games
-where num_half_moves > 20 and num_half_moves <= 40;
+where num_moves > 10 and num_moves <= 20;
 
 quit

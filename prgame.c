@@ -1,4 +1,9 @@
+#include <vector>
+
+using namespace std;
+
 #include <stdio.h>
+
 #include "chess.h"
 #define MAKE_GLOBALS_HERE
 #include "chess.glb"

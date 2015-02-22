@@ -12,6 +12,8 @@ mysql_grab losses_by_type
 mysql_grab white_result
 mysql_grab black_result
 mysql_grab my_elo_after
+mysql_grab my_elo_after2
+mysql_grab my_elo_delta
 mysql_grab my_elo_delta2
 mysql_grab my_elo_delta_by_date
 mysql_grab score_by_date
