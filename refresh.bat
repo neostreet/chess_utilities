@@ -24,3 +24,4 @@ mysql_grab first_two_white_moves_results
 mysql_grab first_two_black_moves_results
 mysql_grab avg_opp
 mysql_grab qga
+mysql_grab color
