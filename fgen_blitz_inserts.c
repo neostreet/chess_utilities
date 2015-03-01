@@ -26,7 +26,7 @@ static char filename[MAX_FILENAME_LEN];
 static char line[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fgen_blitz_inserts (-debug) player_name filename\n";
+"usage: fgen_blitz_inserts (-debug) player_name table_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char blitz_game_event_str[] = "[Event \"";
@@ -142,6 +142,7 @@ static int get_termination(char *line,int line_len,int ix,
   char *termination,int termination_max_len);
 static int get_num_moves(char *line,int line_len,int *num_moves_ptr);
 static void output_game_insert_statement(
+  char *table_name,
   bool *bHaveItem,
   char *blitz_game_date,
   char *time_control,
@@ -163,6 +164,7 @@ int main(int argc,char **argv)
   bool bDebug;
   char *player_name;
   int player_name_len;
+  char *table_name;
   int color_str_len[2];
   int elo_str_len[2];
   FILE *fptr0;
@@ -175,7 +177,7 @@ int main(int argc,char **argv)
   int num_moves;
   bool bHaveItem[NUM_BLITZ_GAME_ITEMS];
 
-  if ((argc < 3) || (argc > 4)) {
+  if ((argc < 4) || (argc > 5)) {
     printf(usage);
     return 1;
   }
@@ -189,7 +191,7 @@ int main(int argc,char **argv)
       break;
   }
 
-  if (argc - curr_arg != 2) {
+  if (argc - curr_arg != 3) {
     printf(usage);
     return 2;
   }
@@ -197,8 +199,10 @@ int main(int argc,char **argv)
   player_name = argv[curr_arg];
   player_name_len = strlen(player_name);
 
-  if ((fptr0 = fopen(argv[curr_arg+1],"r")) == NULL) {
-    printf(couldnt_open,argv[curr_arg+1]);
+  table_name = argv[curr_arg+1];
+
+  if ((fptr0 = fopen(argv[curr_arg+2],"r")) == NULL) {
+    printf(couldnt_open,argv[curr_arg+2]);
     return 3;
   }
 
@@ -245,6 +249,7 @@ int main(int argc,char **argv)
         if (bHaveItem[BLITZ_GAME_DATE]) {
           if (!bDebug) {
             output_game_insert_statement(
+              table_name,
               bHaveItem,
               blitz_game_date,
               time_control,
@@ -441,6 +446,7 @@ int main(int argc,char **argv)
 
     if (!bDebug) {
       output_game_insert_statement(
+        table_name,
         bHaveItem,
         blitz_game_date,
         time_control,
@@ -739,6 +745,7 @@ static int get_num_moves(char *line,int line_len,int *num_moves_ptr)
 }
 
 static void output_game_insert_statement(
+  char *table_name,
   bool *bHaveItem,
   char *blitz_game_date,
   char *time_control,
@@ -769,7 +776,7 @@ static void output_game_insert_statement(
   }
   else {
     if (n < NUM_BLITZ_GAME_ITEMS) {
-      printf("insert into blitz_games(\n");
+      printf("insert into %s(\n",table_name);
       printf("  blitz_game_date,\n");
       printf("  time_control,\n");
       printf("  opponent_name,\n");
@@ -794,7 +801,7 @@ static void output_game_insert_statement(
       printf(");\n");
     }
     else {
-      printf("insert into blitz_games(\n");
+      printf("insert into %s(\n",table_name);
       printf("  blitz_game_date,\n");
       printf("  time_control,\n");
       printf("  opponent_name,\n");
