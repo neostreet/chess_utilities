@@ -38,4 +38,5 @@ mysql_grab wins_avg_opp_by_date2
 mysql_grab losses_avg_opp_by_date2
 mysql_grab draws_avg_opp_by_date2
 call grab_runtot1
+call grab_runtot2
 call num_moves_crosstabs

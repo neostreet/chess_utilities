@@ -1,9 +1,13 @@
 use chess
 
-select time_control,count(*)
+select count(*),time_control
 from blitz_games
 where result = 'L'
-group by 1
-order by 2 desc,1;
+group by 2
+order by 1 desc,2;
+
+select count(*)
+from blitz_games
+where result = 'L';
 
 quit

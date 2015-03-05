@@ -1,13 +1,13 @@
 use chess
 
-select result,count(*)
+select count(*),result
 from blitz_games
-where opponent_elo_before is not null and my_elo_before < opponent_elo_before
-group by result
-order by result desc;
+where my_elo_after < opponent_elo_after
+group by 2
+order by 2 desc;
 
 select count(*)
 from blitz_games
-where opponent_elo_before is not null and my_elo_before < opponent_elo_before;
+where my_elo_after < opponent_elo_after;
 
 quit
