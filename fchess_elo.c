@@ -7,7 +7,7 @@ static char filename[MAX_FILENAME_LEN];
 #define MAX_LINE_LEN 1024
 static char line[MAX_LINE_LEN];
 
-static char usage[] = "usage: fchess_elo player_name filename\n";
+static char usage[] = "usage: fchess_elo (-terse) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -30,6 +30,8 @@ static int Contains(bool bCaseSens,char *line,int line_len,
 int main(int argc,char **argv)
 {
   int n;
+  int curr_arg;
+  bool bTerse;
   int player_name_ix;
   int player_name_len;
   FILE *fptr0;
@@ -41,17 +43,31 @@ int main(int argc,char **argv)
   int ix;
   int elo;
 
-  if (argc != 3) {
+  if ((argc < 3) || (argc > 4)) {
     printf(usage);
     return 1;
   }
 
-  player_name_ix = 1;
+  bTerse = false;
+
+  for (curr_arg = 1; curr_arg < argc; curr_arg++) {
+    if (!strcmp(argv[curr_arg],"-terse"))
+      bTerse = true;
+    else
+      break;
+  }
+
+  if (argc - curr_arg != 2) {
+    printf(usage);
+    return 2;
+  }
+
+  player_name_ix = curr_arg;
   player_name_len = strlen(argv[player_name_ix]);
 
-  if ((fptr0 = fopen(argv[2],"r")) == NULL) {
-    printf(couldnt_open,argv[2]);
-    return 2;
+  if ((fptr0 = fopen(argv[curr_arg + 1],"r")) == NULL) {
+    printf(couldnt_open,argv[curr_arg + 1]);
+    return 3;
   }
 
   for ( ; ; ) {
@@ -78,7 +94,11 @@ int main(int argc,char **argv)
 
         if (bPlayerIsWhite) {
           sscanf(&line[ix + WHITE_ELO_LEN],"%d",&elo);
-          printf("%4d %s\n",elo,filename);
+
+          if (!bTerse)
+            printf("%4d %s\n",elo,filename);
+          else
+            printf("%4d\n",elo);
 
           break;
         }
@@ -90,7 +110,11 @@ int main(int argc,char **argv)
 
         if (!bPlayerIsWhite) {
           sscanf(&line[ix + BLACK_ELO_LEN],"%d",&elo);
-          printf("%4d %s\n",elo,filename);
+
+          if (!bTerse)
+            printf("%4d %s\n",elo,filename);
+          else
+            printf("%4d\n",elo);
 
           break;
         }
