@@ -8,6 +8,7 @@ static char filename[MAX_LINE_LEN];
 static char usage[] = "usage: split_pgn filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
+static char game_list_file[] = "games.lst";
 static char game_filename_fmt[] = "game%d.txt";
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
@@ -15,7 +16,7 @@ static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 int main(int argc,char **argv)
 {
   int n;
-  FILE *fptr[2];
+  FILE *fptr[3];
   int game_count;
   int line_len;
   int line_no;
@@ -30,6 +31,11 @@ int main(int argc,char **argv)
   if ((fptr[0] = fopen(argv[1],"r")) == NULL) {
     printf(couldnt_open,argv[1]);
     return 2;
+  }
+
+  if ((fptr[1] = fopen(game_list_file,"w")) == NULL) {
+    printf(couldnt_open,game_list_file);
+    return 3;
   }
 
   game_count = 0;
@@ -48,7 +54,7 @@ int main(int argc,char **argv)
 
   line_no = 0;
   game = 0;
-  fptr[1] = NULL;
+  fptr[2] = NULL;
 
   for ( ; ; ) {
     GetLine(fptr[0],line,&line_len,MAX_LINE_LEN);
@@ -60,27 +66,29 @@ int main(int argc,char **argv)
 
     if (!strncmp(line,"[Event ",7)) {
       if (game)
-        fclose(fptr[1]);
+        fclose(fptr[2]);
 
       sprintf(buf,game_filename_fmt,game_count - game);
+      fprintf(fptr[1],"%s\n",buf);
 
       game++;
 
-      if ((fptr[1] = fopen(buf,"w")) == NULL) {
+      if ((fptr[2] = fopen(buf,"w")) == NULL) {
         printf(couldnt_open,buf);
-        return 3;
+        return 4;
       }
 
-      fprintf(fptr[1],"%s\n",line);
+      fprintf(fptr[2],"%s\n",line);
     }
     else if (game)
-      fprintf(fptr[1],"%s\n",line);
+      fprintf(fptr[2],"%s\n",line);
   }
 
-  fclose(fptr[0]);
-
   if (game)
-    fclose(fptr[1]);
+    fclose(fptr[2]);
+
+  fclose(fptr[1]);
+  fclose(fptr[0]);
 
   return 0;
 }
