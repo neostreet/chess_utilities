@@ -9,7 +9,7 @@ static char usage[] = "usage: split_pgn filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char game_list_file[] = "games.lst";
-static char game_filename_fmt[] = "game%d.txt";
+static char game_filename_fmt[] = "game%04d.txt";
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 
