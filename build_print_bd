@@ -1,0 +1,1 @@
+g++ -g -o print_bd print_bd.c bitfuns.c chessatk.c chessdbg.c chessmvs.c chessrd.c chessmsc.c
