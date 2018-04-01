@@ -12,7 +12,7 @@ using namespace std;
 #include "chess.mac"
 
 static char usage[] =
-"usage: print_bd (-debug) (-toggle) (-space_and_force) (-initial_boardfilename)\n"
+"usage: print_bd (-debug) (-toggle) (-space) (-force) (-initial_boardfilename)\n"
 "  (-board_binfilename) (-print_pieces) (-qnn) [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
@@ -27,7 +27,8 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bDebug;
   bool bToggle;
-  bool bSpaceAndForce;
+  bool bSpace;
+  bool bForce;
   bool bBoardBin;
   bool bPrintPieces;
   int board_bin_arg;
@@ -37,14 +38,15 @@ int main(int argc,char **argv)
   int retval;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 10)) {
+  if ((argc < 2) || (argc > 11)) {
     printf(usage);
     return 1;
   }
 
   bDebug = false;
   bToggle = false;
-  bSpaceAndForce = false;
+  bSpace = false;
+  bForce = false;
   quiz_number = -1;
   bBoardBin = false;
   bPrintPieces = false;
@@ -54,8 +56,10 @@ int main(int argc,char **argv)
       bDebug = true;
     else if (!strcmp(argv[curr_arg],"-toggle"))
       bToggle = true;
-    else if (!strcmp(argv[curr_arg],"-space_and_force"))
-      bSpaceAndForce = true;
+    else if (!strcmp(argv[curr_arg],"-space"))
+      bSpace = true;
+    else if (!strcmp(argv[curr_arg],"-force"))
+      bForce = true;
     else if (!strncmp(argv[curr_arg],"-initial_board",14)) {
       retval = populate_initial_board_from_board_file(&argv[curr_arg][14]);
 
@@ -127,51 +131,48 @@ int main(int argc,char **argv)
       print_bd(&curr_game);
     }
   }
-  else if (quiz_number != -1) {
-    initial_move = (quiz_number - 1) * 2;
-
-    if (bBlack)
-      initial_move++;
-
-    if (initial_move > curr_game.num_moves) {
-      printf("initial_move must be <= %d\n",curr_game.num_moves);
-      return 7;
-    }
-
-    set_initial_board(&curr_game);
-    curr_game.curr_move = 0;
-
-    for (n = 0; n < initial_move; n++) {
-      update_board(&curr_game,false);
-      curr_game.curr_move++;
-    }
-
-    if (bSpaceAndForce) {
-      calculate_seirawan_counts(&curr_game);
-      refresh_force_count(&curr_game);
-
-      printf("Space: %d - %d\n",
-        curr_game.seirawan_count[0],curr_game.seirawan_count[1]);
-      printf("Force: %d - %d\n",
-        curr_game.force_count[0],curr_game.force_count[1]);
-    }
-
-    putchar(0x0a);
-    print_bd(&curr_game);
-    print_special_moves(&curr_game);
-  }
   else {
-    if (bSpaceAndForce) {
-      refresh_force_count(&curr_game);
+    if (bSpace) {
+      calculate_seirawan_counts(&curr_game);
 
       printf("Space: %d - %d\n",
         curr_game.seirawan_count[0],curr_game.seirawan_count[1]);
+    }
+
+    if (bForce) {
+      refresh_force_count(&curr_game);
+
       printf("Force: %d - %d\n",
         curr_game.force_count[0],curr_game.force_count[1]);
     }
 
-    putchar(0x0a);
-    print_bd(&curr_game);
+    if (quiz_number != -1) {
+      initial_move = (quiz_number - 1) * 2;
+
+      if (bBlack)
+        initial_move++;
+
+      if (initial_move > curr_game.num_moves) {
+        printf("initial_move must be <= %d\n",curr_game.num_moves);
+        return 7;
+      }
+
+      set_initial_board(&curr_game);
+      curr_game.curr_move = 0;
+
+      for (n = 0; n < initial_move; n++) {
+        update_board(&curr_game,false);
+        curr_game.curr_move++;
+      }
+
+      putchar(0x0a);
+      print_bd(&curr_game);
+      print_special_moves(&curr_game);
+    }
+    else {
+      putchar(0x0a);
+      print_bd(&curr_game);
+    }
   }
 
   if (bBoardBin)
