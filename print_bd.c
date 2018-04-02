@@ -110,8 +110,10 @@ int main(int argc,char **argv)
     }
   }
 
-  if (min_force_diff != -1)
+  if (min_force_diff != -1) {
     bForce = true;
+    bDebug = true;
+  }
 
   retval = read_game(argv[argc-1],&curr_game,err_msg);
 
@@ -131,14 +133,24 @@ int main(int argc,char **argv)
 
     set_initial_board(&curr_game);
     curr_game.curr_move = 0;
-    printf("curr_move = %d\n",curr_game.curr_move);
-    print_space_and_force(&curr_game,bSpace,bForce);
-    putchar(0x0a);
-    print_bd(&curr_game);
+
+    if (min_force_diff == -1) {
+      printf("curr_move = %d\n",curr_game.curr_move);
+      print_space_and_force(&curr_game,bSpace,bForce);
+      putchar(0x0a);
+      print_bd(&curr_game);
+    }
 
     for (n = 0; n < curr_game.num_moves; n++) {
       update_board(&curr_game,false);
       curr_game.curr_move++;
+
+      if (min_force_diff != -1) {
+        force_diff = refresh_force_count(&curr_game);
+
+        if (force_diff < min_force_diff)
+          continue;
+      }
 
       putchar(0x0a);
       printf("curr_move = %d\n",curr_game.curr_move);
@@ -148,34 +160,22 @@ int main(int argc,char **argv)
     }
   }
   else {
-    if ((quiz_number != -1) || (min_force_diff != -1)) {
-      if (quiz_number != -1) {
-        initial_move = (quiz_number - 1) * 2;
+    if (quiz_number != -1) {
+      initial_move = (quiz_number - 1) * 2;
 
-        if (bBlack)
-          initial_move++;
+      if (bBlack)
+        initial_move++;
 
-        if (initial_move > curr_game.num_moves) {
-          printf("initial_move must be <= %d\n",curr_game.num_moves);
-          return 7;
-        }
+      if (initial_move > curr_game.num_moves) {
+        printf("initial_move must be <= %d\n",curr_game.num_moves);
+        return 7;
       }
-      else
-        initial_move = curr_game.num_moves;
 
       set_initial_board(&curr_game);
       curr_game.curr_move = 0;
 
       for (n = 0; n < initial_move; n++) {
         update_board(&curr_game,false);
-
-        if (min_force_diff != -1) {
-          force_diff = refresh_force_count(&curr_game);
-
-          if (force_diff >= min_force_diff)
-            break;
-        }
-
         curr_game.curr_move++;
       }
 
