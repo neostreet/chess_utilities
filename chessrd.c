@@ -149,6 +149,8 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
   int got_error;
   struct move move;
 
+  gamept->curr_move = -1;
+
   if ((fptr = fopen(filename,"r")) == NULL)
     return 1;
 
@@ -881,7 +883,7 @@ int write_board_to_binfile(unsigned char *board,char *filename)
   return 0;
 }
 
-void refresh_force_count(struct game *gamept)
+int refresh_force_count(struct game *gamept)
 {
   int n;
   short piece;
@@ -900,4 +902,9 @@ void refresh_force_count(struct game *gamept)
     else
       gamept->force_count[WHITE] += force_value_of(piece);
   }
+
+  if (gamept->force_count[WHITE] > gamept->force_count[BLACK])
+    return gamept->force_count[WHITE] - gamept->force_count[BLACK];
+  else
+    return gamept->force_count[BLACK] - gamept->force_count[WHITE];
 }

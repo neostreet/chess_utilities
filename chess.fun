@@ -15,7 +15,7 @@ void update_move_number(struct game *gamept);
 int read_fen(FILE *fptr,struct game *gamept);
 int populate_board_from_board_file(unsigned char *board,char *filename);
 int write_board_to_binfile(unsigned char *board,char *filename);
-void refresh_force_count(struct game *gamept);
+int refresh_force_count(struct game *gamept);
 
 int do_castle(struct game *gamept,int direction,char *word,int wordlen,struct move *move_ptr);
 int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen,struct move *move_ptr);
