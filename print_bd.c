@@ -20,7 +20,6 @@ char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
 
 void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
-int populate_initial_board_from_board_file(char *filename);
 void print_space_and_force(struct game *game_pt,bool bSpace,bool bForce);
 
 int main(int argc,char **argv)
