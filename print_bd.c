@@ -14,10 +14,12 @@ using namespace std;
 static char usage[] =
 "usage: print_bd (-debug) (-toggle) (-space) (-force) (-initial_boardfilename)\n"
 "  (-board_binfilename) (-print_pieces) (-qnn) [white | black]\n"
-"  (-min_force_diffvalue) filename\n";
+"  (-min_force_diffvalue) (-match_boardfilename) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
+
+static unsigned char match_board[CHARS_IN_BOARD];
 
 void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 void print_space_and_force(struct game *game_pt,bool bSpace,bool bForce);
@@ -32,6 +34,7 @@ int main(int argc,char **argv)
   bool bForce;
   bool bBoardBin;
   bool bPrintPieces;
+  bool bHaveMatchBoard;
   int board_bin_arg;
   int quiz_number;
   int min_force_diff;
@@ -41,7 +44,7 @@ int main(int argc,char **argv)
   int retval;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 12)) {
+  if ((argc < 2) || (argc > 13)) {
     printf(usage);
     return 1;
   }
@@ -55,6 +58,7 @@ int main(int argc,char **argv)
   bPrintPieces = false;
   min_force_diff = -1;
   force_diff = 0;
+  bHaveMatchBoard = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -83,6 +87,15 @@ int main(int argc,char **argv)
       sscanf(&argv[curr_arg][3],"%d",&quiz_number);
     else if (!strncmp(argv[curr_arg],"-min_force_diff",15))
       sscanf(&argv[curr_arg][15],"%d",&min_force_diff);
+    else if (!strncmp(argv[curr_arg],"-match_board",12)) {
+      bHaveMatchBoard = true;
+      retval = populate_board_from_board_file(match_board,&argv[curr_arg][12]);
+
+      if (retval) {
+        printf("populate_board_from_board_file() failed: %d\n",retval);
+        return 3;
+      }
+    }
     else
       break;
   }
@@ -90,7 +103,7 @@ int main(int argc,char **argv)
   if (quiz_number != -1) {
     if (argc - curr_arg != 2) {
       printf(usage);
-      return 3;
+      return 4;
     }
 
     if (!strcmp(argv[curr_arg],"white"))
@@ -99,13 +112,13 @@ int main(int argc,char **argv)
       bBlack = true;
     else {
       printf(usage);
-      return 4;
+      return 5;
     }
   }
   else {
     if (argc - curr_arg != 1) {
       printf(usage);
-      return 5;
+      return 6;
     }
   }
 
@@ -119,7 +132,7 @@ int main(int argc,char **argv)
   if (retval) {
     printf("read_game of %s failed: %d\n",argv[argc-1],retval);
     printf("curr_move = %d\n",curr_game.curr_move);
-    return 6;
+    return 7;
   }
 
   if (bToggle)
@@ -167,7 +180,7 @@ int main(int argc,char **argv)
 
       if (initial_move > curr_game.num_moves) {
         printf("initial_move must be <= %d\n",curr_game.num_moves);
-        return 7;
+        return 8;
       }
 
       set_initial_board(&curr_game);
