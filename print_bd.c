@@ -13,8 +13,9 @@ using namespace std;
 
 static char usage[] =
 "usage: print_bd (-debug) (-toggle) (-space) (-force) (-initial_boardfilename)\n"
-"  (-board_binfilename) (-print_pieces) (-qnn) [white | black]\n"
-"  (-min_force_diffvalue) (-match_boardfilename) filename\n";
+"  (-init_bin_boardfilename) (-board_binfilename) (-print_pieces)\n"
+"  (-min_force_diffvalue) (-match_boardfilename) filename\n"
+"  (-qnn) [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -77,6 +78,14 @@ int main(int argc,char **argv)
         return 2;
       }
     }
+    else if (!strncmp(argv[curr_arg],"-init_bin_board",15)) {
+      retval = populate_initial_board_from_bin_board_file(&argv[curr_arg][15]);
+
+      if (retval) {
+        printf("populate_initial_board_from_bin_board_file() failed: %d\n",retval);
+        return 3;
+      }
+    }
     else if (!strcmp(argv[curr_arg],"-print_pieces"))
       bPrintPieces = true;
     else if (!strncmp(argv[curr_arg],"-board_bin",10)) {
@@ -93,7 +102,7 @@ int main(int argc,char **argv)
 
       if (retval) {
         printf("populate_board_from_board_file() failed: %d\n",retval);
-        return 3;
+        return 4;
       }
     }
     else
@@ -103,7 +112,7 @@ int main(int argc,char **argv)
   if (quiz_number != -1) {
     if (argc - curr_arg != 2) {
       printf(usage);
-      return 4;
+      return 5;
     }
 
     if (!strcmp(argv[curr_arg],"white"))
@@ -112,13 +121,13 @@ int main(int argc,char **argv)
       bBlack = true;
     else {
       printf(usage);
-      return 5;
+      return 6;
     }
   }
   else {
     if (argc - curr_arg != 1) {
       printf(usage);
-      return 6;
+      return 7;
     }
   }
 
@@ -132,7 +141,7 @@ int main(int argc,char **argv)
   if (retval) {
     printf("read_game of %s failed: %d\n",argv[argc-1],retval);
     printf("curr_move = %d\n",curr_game.curr_move);
-    return 7;
+    return 8;
   }
 
   if (bToggle)
@@ -180,7 +189,7 @@ int main(int argc,char **argv)
 
       if (initial_move > curr_game.num_moves) {
         printf("initial_move must be <= %d\n",curr_game.num_moves);
-        return 8;
+        return 9;
       }
 
       set_initial_board(&curr_game);

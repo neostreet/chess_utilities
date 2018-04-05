@@ -859,6 +859,34 @@ int populate_initial_board_from_board_file(char *filename)
   return populate_board_from_board_file(initial_board,filename);
 }
 
+int populate_board_from_bin_board_file(unsigned char *board,char *filename)
+{
+  int fhndl;
+  unsigned int bytes_to_read;
+  unsigned int bytes_read;
+
+  if ((fhndl = open(filename,O_RDONLY | O_BINARY)) == -1)
+    return 1;
+
+  bytes_to_read = CHARS_IN_BOARD;
+
+  bytes_read = read(fhndl,(char *)board,bytes_to_read);
+
+  if (bytes_read != bytes_to_read) {
+    close(fhndl);
+    return 2;
+  }
+
+  close(fhndl);
+
+  return 0;
+}
+
+int populate_initial_board_from_bin_board_file(char *filename)
+{
+  return populate_board_from_bin_board_file(initial_board,filename);
+}
+
 int write_board_to_binfile(unsigned char *board,char *filename)
 {
   int fhndl;

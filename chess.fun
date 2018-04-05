@@ -15,6 +15,8 @@ void update_move_number(struct game *gamept);
 int read_fen(FILE *fptr,struct game *gamept);
 int populate_board_from_board_file(unsigned char *board,char *filename);
 int populate_initial_board_from_board_file(char *filename);
+int populate_board_from_bin_board_file(unsigned char *board,char *filename);
+int populate_initial_board_from_bin_board_file(char *filename);
 int write_board_to_binfile(unsigned char *board,char *filename);
 int refresh_force_count(struct game *gamept);
 
