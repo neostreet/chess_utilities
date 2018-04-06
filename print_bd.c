@@ -74,7 +74,8 @@ int main(int argc,char **argv)
       retval = populate_initial_board_from_board_file(&argv[curr_arg][14]);
 
       if (retval) {
-        printf("populate_initial_board_from_board_file() failed: %d\n",retval);
+        printf("populate_initial_board_from_board_file() failed on 5s: %d\n",
+          &argv[curr_arg][14],retval);
         return 2;
       }
     }
@@ -82,7 +83,8 @@ int main(int argc,char **argv)
       retval = populate_initial_board_from_bin_board_file(&argv[curr_arg][15]);
 
       if (retval) {
-        printf("populate_initial_board_from_bin_board_file() failed: %d\n",retval);
+        printf("populate_initial_board_from_bin_board_file() failed on %s: %d\n",
+          &argv[curr_arg][15],retval);
         return 3;
       }
     }
@@ -101,7 +103,8 @@ int main(int argc,char **argv)
       retval = populate_board_from_board_file(match_board,&argv[curr_arg][12]);
 
       if (retval) {
-        printf("populate_board_from_board_file() failed: %d\n",retval);
+        printf("populate_board_from_board_file() failed on %s: %d\n",
+          &argv[curr_arg][12],retval);
         return 4;
       }
     }

@@ -861,12 +861,19 @@ int populate_initial_board_from_board_file(char *filename)
 
 int populate_board_from_bin_board_file(unsigned char *board,char *filename)
 {
+  struct stat stat_buf;
   int fhndl;
   unsigned int bytes_to_read;
   unsigned int bytes_read;
 
-  if ((fhndl = open(filename,O_RDONLY | O_BINARY)) == -1)
+  if (stat(filename,&stat_buf) == -1)
     return 1;
+
+  if (stat_buf.st_size != CHARS_IN_BOARD)
+    return 2;
+
+  if ((fhndl = open(filename,O_RDONLY | O_BINARY)) == -1)
+    return 3;
 
   bytes_to_read = CHARS_IN_BOARD;
 
@@ -874,7 +881,7 @@ int populate_board_from_bin_board_file(unsigned char *board,char *filename)
 
   if (bytes_read != bytes_to_read) {
     close(fhndl);
-    return 2;
+    return 4;
   }
 
   close(fhndl);

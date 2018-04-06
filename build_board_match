@@ -1,0 +1,1 @@
+g++ -g -o ../cygwin_tools/board_match board_match.c bitfuns.c chessatk.c chessdbg.c chessmvs.c chessrd.c chessmsc.c

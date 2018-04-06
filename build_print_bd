@@ -1,1 +1,1 @@
-g++ -g -o print_bd print_bd.c bitfuns.c chessatk.c chessdbg.c chessmvs.c chessrd.c chessmsc.c
+g++ -g -o ../cygwin_tools/print_bd print_bd.c bitfuns.c chessatk.c chessdbg.c chessmvs.c chessrd.c chessmsc.c
