@@ -34,9 +34,7 @@ int main(int argc,char **argv)
   bool bDebug;
   bool bBin;
   int retval;
-  int work1;
-  int work2;
-  int work3;
+  int match;
 
   if ((argc < 3) || (argc > 5)) {
     printf(usage);
@@ -91,16 +89,9 @@ int main(int argc,char **argv)
     }
   }
 
-  for (n = 0; n < CHARS_IN_BOARD; n++) {
-    work1 = board1[n];
-    work2 = board2[n];
-    work3 = work1 & work2;
+  match = match_board(board1,board2);
 
-    if (work3 != work1)
-      break;
-  }
-
-  if (n < CHARS_IN_BOARD)
+  if (!match)
     printf("no match\n");
   else
     printf("match\n");

@@ -178,3 +178,25 @@ void print_special_moves(struct game *gamept)
   if (hit)
     putchar(0x0a);
 }
+
+int match_board(unsigned char *board1,unsigned char *board2)
+{
+  int n;
+  int work1;
+  int work2;
+  int work3;
+
+  for (n = 0; n < CHARS_IN_BOARD; n++) {
+    work1 = board1[n];
+    work2 = board2[n];
+    work3 = work1 & work2;
+
+    if (work3 != work1)
+      break;
+  }
+
+  if (n < CHARS_IN_BOARD)
+    return 0;
+
+  return 1;
+}

@@ -20,7 +20,7 @@ static char usage[] =
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
 
-static unsigned char match_board[CHARS_IN_BOARD];
+static unsigned char match_board1[CHARS_IN_BOARD];
 
 void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 void print_space_and_force(struct game *game_pt,bool bSpace,bool bForce);
@@ -44,6 +44,7 @@ int main(int argc,char **argv)
   int initial_move;
   int retval;
   struct game curr_game;
+  int match;
 
   if ((argc < 2) || (argc > 13)) {
     printf(usage);
@@ -100,7 +101,7 @@ int main(int argc,char **argv)
       sscanf(&argv[curr_arg][15],"%d",&min_force_diff);
     else if (!strncmp(argv[curr_arg],"-match_board",12)) {
       bHaveMatchBoard = true;
-      retval = populate_board_from_board_file(match_board,&argv[curr_arg][12]);
+      retval = populate_board_from_board_file(match_board1,&argv[curr_arg][12]);
 
       if (retval) {
         printf("populate_board_from_board_file() failed on %s: %d\n",
@@ -139,6 +140,9 @@ int main(int argc,char **argv)
     bDebug = true;
   }
 
+  if (bHaveMatchBoard)
+    bDebug = true;
+
   retval = read_game(argv[argc-1],&curr_game,err_msg);
 
   if (retval) {
@@ -151,14 +155,17 @@ int main(int argc,char **argv)
     curr_game.orientation ^= 1;
 
   if (bDebug) {
-    for (n = 0; n < curr_game.num_moves; n++) {
-      printf("%2d %2d\n",curr_game.moves[n].from,curr_game.moves[n].to);
-    }
+    //for (n = 0; n < curr_game.num_moves; n++) {
+      //printf("%2d %2d\n",curr_game.moves[n].from,curr_game.moves[n].to);
+    //}
 
     set_initial_board(&curr_game);
     curr_game.curr_move = 0;
 
-    if (min_force_diff == -1) {
+    if (bHaveMatchBoard)
+      match = match_board(curr_game.board,match_board1);
+
+    if ((min_force_diff == -1) && (!bHaveMatchBoard || match)) {
       printf("curr_move = %d\n",curr_game.curr_move);
       print_space_and_force(&curr_game,bSpace,bForce);
       putchar(0x0a);
@@ -173,6 +180,13 @@ int main(int argc,char **argv)
         force_diff = refresh_force_count(&curr_game);
 
         if (force_diff < min_force_diff)
+          continue;
+      }
+
+      if (bHaveMatchBoard) {
+        match = match_board(curr_game.board,match_board1);
+
+        if (!match)
           continue;
       }
 
