@@ -48,7 +48,10 @@ void print_bd(struct game *gamept)
       else
         square = get_piece2(gamept->board,m,7 - n);
 
-      printf("%c ",format_square(square));
+      printf("%c",format_square(square));
+
+      if (n < 7)
+        putchar(' ');
     }
 
     putchar(0x0a);
