@@ -36,6 +36,7 @@ int main(int argc,char **argv)
   bool bBoardBin;
   bool bPrintPieces;
   bool bHaveMatchBoard;
+  bool bPrintedBoard;
   int board_bin_arg;
   int quiz_number;
   int min_force_diff;
@@ -101,13 +102,16 @@ int main(int argc,char **argv)
       sscanf(&argv[curr_arg][15],"%d",&min_force_diff);
     else if (!strncmp(argv[curr_arg],"-match_board",12)) {
       bHaveMatchBoard = true;
-      retval = populate_board_from_board_file(match_board1,&argv[curr_arg][12]);
+      retval = populate_board_from_bin_board_file(match_board1,&argv[curr_arg][12]);
 
       if (retval) {
         printf("populate_board_from_board_file() failed on %s: %d\n",
           &argv[curr_arg][12],retval);
         return 4;
       }
+
+      //if (bDebug)
+        //print_bd0(match_board1);
     }
     else
       break;
@@ -161,6 +165,7 @@ int main(int argc,char **argv)
 
     set_initial_board(&curr_game);
     curr_game.curr_move = 0;
+    bPrintedBoard = false;
 
     if (bHaveMatchBoard)
       match = match_board(curr_game.board,match_board1);
@@ -170,6 +175,7 @@ int main(int argc,char **argv)
       print_space_and_force(&curr_game,bSpace,bForce);
       putchar(0x0a);
       print_bd(&curr_game);
+      bPrintedBoard = true;
     }
 
     for (n = 0; n < curr_game.num_moves; n++) {
@@ -190,11 +196,14 @@ int main(int argc,char **argv)
           continue;
       }
 
-      putchar(0x0a);
+      if (bPrintedBoard)
+        putchar(0x0a);
+
       printf("curr_move = %d\n",curr_game.curr_move);
       print_space_and_force(&curr_game,bSpace,bForce);
       putchar(0x0a);
       print_bd(&curr_game);
+      bPrintedBoard = true;
     }
   }
   else {

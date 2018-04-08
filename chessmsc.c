@@ -35,6 +35,26 @@ static int format_square(int square)
   return return_char;
 }
 
+void print_bd0(unsigned char *board)
+{
+  int m;
+  int n;
+  int square;
+
+  for (m = 0; m < 8; m++) {
+    for (n = 0; n < 8; n++) {
+      square = get_piece2(board,7 - m,n);
+
+      printf("%c",format_square(square));
+
+      if (n < 7)
+        putchar(' ');
+    }
+
+    putchar(0x0a);
+  }
+}
+
 void print_bd(struct game *gamept)
 {
   int m;
@@ -181,21 +201,25 @@ void print_special_moves(struct game *gamept)
 
 int match_board(unsigned char *board1,unsigned char *board2)
 {
+  int m;
   int n;
-  int work1;
-  int work2;
-  int work3;
+  int square1;
+  int square2;
 
-  for (n = 0; n < CHARS_IN_BOARD; n++) {
-    work1 = board1[n];
-    work2 = board2[n];
-    work3 = work1 & work2;
+  for (m = 0; m < 8; m++) {
+    for (n = 0; n < 8; n++) {
+      square1 = get_piece2(board1,7 - m,n);
+      square2 = get_piece2(board2,7 - m,n);
 
-    if (work3 != work1)
+      if (square2 && (square1 != square2))
+        break;
+    }
+
+    if (n < 8)
       break;
   }
 
-  if (n < CHARS_IN_BOARD)
+  if (m < 8)
     return 0;
 
   return 1;
