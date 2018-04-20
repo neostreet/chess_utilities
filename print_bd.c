@@ -14,7 +14,7 @@ using namespace std;
 static char usage[] =
 "usage: print_bd (-debug) (-toggle) (-space) (-force) (-initial_boardfilename)\n"
 "  (-init_bin_boardfilename) (-board_binfilename) (-print_pieces)\n"
-"  (-min_force_diffvalue) (-match_boardfilename) filename\n"
+"  (-min_force_diffvalue) (-match_boardfilename) (-only_checks) filename\n"
 "  (-qnn) [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
@@ -35,6 +35,7 @@ int main(int argc,char **argv)
   bool bForce;
   bool bBoardBin;
   bool bPrintPieces;
+  bool bOnlyChecks;
   bool bHaveMatchBoard;
   bool bPrintedBoard;
   int board_bin_arg;
@@ -47,7 +48,7 @@ int main(int argc,char **argv)
   struct game curr_game;
   int match;
 
-  if ((argc < 2) || (argc > 13)) {
+  if ((argc < 2) || (argc > 14)) {
     printf(usage);
     return 1;
   }
@@ -59,6 +60,7 @@ int main(int argc,char **argv)
   quiz_number = -1;
   bBoardBin = false;
   bPrintPieces = false;
+  bOnlyChecks = false;
   min_force_diff = -1;
   force_diff = 0;
   bHaveMatchBoard = false;
@@ -113,6 +115,8 @@ int main(int argc,char **argv)
       //if (bDebug)
         //print_bd0(match_board1);
     }
+    else if (!strcmp(argv[curr_arg],"-only_checks"))
+      bOnlyChecks = true;
     else
       break;
   }
@@ -170,7 +174,7 @@ int main(int argc,char **argv)
     if (bHaveMatchBoard)
       match = match_board(curr_game.board,match_board1);
 
-    if ((min_force_diff == -1) && (!bHaveMatchBoard || match)) {
+    if ((min_force_diff == -1) && (!bHaveMatchBoard || match) && !bOnlyChecks) {
       printf("curr_move = %d\n",curr_game.curr_move);
       print_space_and_force(&curr_game,bSpace,bForce);
       putchar(0x0a);
@@ -193,6 +197,11 @@ int main(int argc,char **argv)
         match = match_board(curr_game.board,match_board1);
 
         if (!match)
+          continue;
+      }
+
+      if (bOnlyChecks) {
+        if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK))
           continue;
       }
 
