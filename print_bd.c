@@ -201,7 +201,7 @@ int main(int argc,char **argv)
       }
 
       if (bOnlyChecks) {
-        if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK))
+        if (!(curr_game.moves[curr_game.curr_move-1].special_move_info & SPECIAL_MOVE_CHECK))
           continue;
       }
 
