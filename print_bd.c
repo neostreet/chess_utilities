@@ -14,7 +14,7 @@ using namespace std;
 static char usage[] =
 "usage: print_bd (-debug) (-toggle) (-space) (-force) (-initial_boardfilename)\n"
 "  (-init_bin_boardfilename) (-board_binfilename) (-print_pieces)\n"
-"  (-min_force_diffvalue) (-match_boardfilename) (-only_checks) filename\n"
+"  (-min_force_diffvalue) (-match_boardfilename) (-only_checks) (-only_castle)\n"
 "  (-qnn) [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
@@ -36,6 +36,7 @@ int main(int argc,char **argv)
   bool bBoardBin;
   bool bPrintPieces;
   bool bOnlyChecks;
+  bool bOnlyCastle;
   bool bHaveMatchBoard;
   bool bPrintedBoard;
   int board_bin_arg;
@@ -48,7 +49,7 @@ int main(int argc,char **argv)
   struct game curr_game;
   int match;
 
-  if ((argc < 2) || (argc > 14)) {
+  if ((argc < 2) || (argc > 15)) {
     printf(usage);
     return 1;
   }
@@ -61,6 +62,7 @@ int main(int argc,char **argv)
   bBoardBin = false;
   bPrintPieces = false;
   bOnlyChecks = false;
+  bOnlyCastle = false;
   min_force_diff = -1;
   force_diff = 0;
   bHaveMatchBoard = false;
@@ -117,14 +119,21 @@ int main(int argc,char **argv)
     }
     else if (!strcmp(argv[curr_arg],"-only_checks"))
       bOnlyChecks = true;
+    else if (!strcmp(argv[curr_arg],"-only_castle"))
+      bOnlyCastle = true;
     else
       break;
+  }
+
+  if (bOnlyChecks && bOnlyCastle) {
+    printf("can't specify both -only_checks and -only_castle\n");
+    return 5;
   }
 
   if (quiz_number != -1) {
     if (argc - curr_arg != 2) {
       printf(usage);
-      return 5;
+      return 6;
     }
 
     if (!strcmp(argv[curr_arg],"white"))
@@ -133,13 +142,13 @@ int main(int argc,char **argv)
       bBlack = true;
     else {
       printf(usage);
-      return 6;
+      return 7;
     }
   }
   else {
     if (argc - curr_arg != 1) {
       printf(usage);
-      return 7;
+      return 8;
     }
   }
 
@@ -156,7 +165,7 @@ int main(int argc,char **argv)
   if (retval) {
     printf("read_game of %s failed: %d\n",argv[argc-1],retval);
     printf("curr_move = %d\n",curr_game.curr_move);
-    return 8;
+    return 9;
   }
 
   if (bToggle)
@@ -174,7 +183,7 @@ int main(int argc,char **argv)
     if (bHaveMatchBoard)
       match = match_board(curr_game.board,match_board1);
 
-    if ((min_force_diff == -1) && (!bHaveMatchBoard || match) && !bOnlyChecks) {
+    if ((min_force_diff == -1) && (!bHaveMatchBoard || match) && !bOnlyChecks && !bOnlyCastle) {
       printf("curr_move = %d\n",curr_game.curr_move);
       print_space_and_force(&curr_game,bSpace,bForce);
       putchar(0x0a);
@@ -205,6 +214,11 @@ int main(int argc,char **argv)
           continue;
       }
 
+      if (bOnlyCastle) {
+        if (!(curr_game.moves[curr_game.curr_move-1].special_move_info & SPECIAL_MOVE_CASTLE))
+          continue;
+      }
+
       if (bPrintedBoard)
         putchar(0x0a);
 
@@ -224,7 +238,7 @@ int main(int argc,char **argv)
 
       if (initial_move > curr_game.num_moves) {
         printf("initial_move must be <= %d\n",curr_game.num_moves);
-        return 9;
+        return 10;
       }
 
       set_initial_board(&curr_game);

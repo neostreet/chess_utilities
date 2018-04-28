@@ -64,6 +64,8 @@ int do_castle(struct game *gamept,int direction,char *word,int wordlen,struct mo
   else
     return 6;
 
+  move_ptr->special_move_info = SPECIAL_MOVE_CASTLE;
+
   return 0;  /* success */
 }
 
