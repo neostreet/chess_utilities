@@ -14,14 +14,10 @@ static char white[] = "White";
 #define WHITE_LEN (sizeof (white) - 1)
 static char black[] = "Black";
 #define BLACK_LEN (sizeof (black) - 1)
-static char result[] = "Result";
-#define RESULT_LEN (sizeof (result) - 1)
 static char white_elo[] = "WhiteElo \"";
 #define WHITE_ELO_LEN (sizeof (white_elo) - 1)
 static char black_elo[] = "BlackElo \"";
 #define BLACK_ELO_LEN (sizeof (black_elo) - 1)
-static char draw[] = "1/2-1/2";
-#define DRAW_LEN (sizeof (draw) - 1)
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
