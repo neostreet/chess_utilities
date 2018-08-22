@@ -262,7 +262,7 @@ void remove_checks(char *line)
   removed = 0;
 
   for (n = 0; n < len; n++) {
-    if (line[n] != '+') {
+    if ((line[n] != '+') && (line[n] != '#')) {
       if (m != n)
         line[m++] = line[n];
       else
