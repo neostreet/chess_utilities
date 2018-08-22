@@ -15,7 +15,7 @@ enum {
 };
 
 static char usage[] =
-"usage: fmy_resut [win | loss | draw] filename\n";
+"usage: fmy_result [win | loss | draw] filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
