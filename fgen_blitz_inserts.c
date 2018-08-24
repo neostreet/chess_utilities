@@ -15,6 +15,8 @@ enum {
   BLITZ_GAME_TERMINATION,
   BLITZ_GAME_WHITE_ELO,
   BLITZ_GAME_BLACK_ELO,
+  BLITZ_GAME_WHITE_RATING_DIFF,
+  BLITZ_GAME_BLACK_RATING_DIFF,
   BLITZ_GAME_FIRST_MOVE,
   BLITZ_GAME_FIRST_TWO_MOVES,
   BLITZ_GAME_FIRST_THREE_MOVES,
@@ -49,6 +51,11 @@ static char result_str[] = "[Result \"";
 static char *elo_str[] = {
   "[WhiteElo \"",
   "[BlackElo \""
+};
+
+static char *rating_diff_str[] = {
+  "[WhiteRatingDiff \"",
+  "[BlackRatingDiff \""
 };
 
 static char time_control_str[] = "[TimeControl \"";
@@ -108,6 +115,9 @@ static char my_result[MY_RESULT_LEN+1];
 #define ELO_MAX_LEN 10
 static char elo[2][ELO_MAX_LEN+1];
 
+#define RATING_DIFF_MAX_LEN 10
+static char rating_diff[2][RATING_DIFF_MAX_LEN+1];
+
 #define TIME_CONTROL_MAX_LEN 10
 static char time_control[TIME_CONTROL_MAX_LEN+1];
 
@@ -145,6 +155,8 @@ static int get_result(char *line,int line_len,int ix,
   char *result,int result_max_len,char *color,char *my_result);
 static int get_elo(char *line,int line_len,int ix,
   char *elo,int elo_max_len);
+static int get_rating_diff(char *line,int line_len,int ix,
+  char *rating_diff,int rating_diff_max_len);
 static int get_time_control(char *line,int line_len,int ix,
   char *time_control,int time_control_max_len);
 static int get_eco(char *line,int line_len,int ix,
@@ -179,6 +191,7 @@ int main(int argc,char **argv)
   char *table_name;
   int color_str_len[2];
   int elo_str_len[2];
+  int rating_diff_str_len[2];
   FILE *fptr0;
   int filename_len;
   FILE *fptr;
@@ -224,6 +237,7 @@ int main(int argc,char **argv)
   for (n = 0; n < 2; n++) {
     color_str_len[n] = strlen(color_str[n]);
     elo_str_len[n] = strlen(elo_str[n]);
+    rating_diff_str_len[n] = strlen(rating_diff_str[n]);
   }
 
   for ( ; ; ) {
@@ -364,6 +378,32 @@ int main(int argc,char **argv)
           printf("get_elo() failed on line %d: %d\n",line_no,retval);
         else
           bHaveItem[BLITZ_GAME_BLACK_ELO] = true;
+      }
+      else if (Contains(true,
+        line,line_len,
+        rating_diff_str[WHITE],rating_diff_str_len[WHITE],
+        &ix)) {
+
+        retval = get_rating_diff(line,line_len,ix+rating_diff_str_len[WHITE],
+          rating_diff[WHITE],RATING_DIFF_MAX_LEN);
+
+        if (retval)
+          printf("get_rating_diff() failed on line %d: %d\n",line_no,retval);
+        else
+          bHaveItem[BLITZ_GAME_WHITE_RATING_DIFF] = true;
+      }
+      else if (Contains(true,
+        line,line_len,
+        rating_diff_str[BLACK],rating_diff_str_len[BLACK],
+        &ix)) {
+
+        retval = get_rating_diff(line,line_len,ix+rating_diff_str_len[BLACK],
+          rating_diff[BLACK],RATING_DIFF_MAX_LEN);
+
+        if (retval)
+          printf("get_rating_diff() failed on line %d: %d\n",line_no,retval);
+        else
+          bHaveItem[BLITZ_GAME_BLACK_RATING_DIFF] = true;
       }
       else if (Contains(true,
         line,line_len,
@@ -669,6 +709,26 @@ static int get_elo(char *line,int line_len,int ix,
   return 0;
 }
 
+static int get_rating_diff(char *line,int line_len,int ix,
+  char *rating_diff,int rating_diff_max_len)
+{
+  int n;
+
+  for (n = 0; n < rating_diff_max_len; n++) {
+    if (line[ix + n] == '"')
+      break;
+
+    rating_diff[n] = line[ix + n];
+  }
+
+  if (n == rating_diff_max_len)
+    return 1;
+
+  rating_diff[n] = 0;
+
+  return 0;
+}
+
 static int get_time_control(char *line,int line_len,int ix,
   char *time_control,int time_control_max_len)
 {
@@ -834,7 +894,9 @@ static void output_game_insert_statement(
       printf("  result,\n");
       printf("  result_detail,\n");
       printf("  opponent_elo_before,\n");
-      printf("  my_elo_before\n");
+      printf("  opponent_elo_delta,\n");
+      printf("  my_elo_before,\n");
+      printf("  my_elo_delta\n");
       printf(") values (\n");
       printf("  '%s',\n",blitz_game_date);
       printf("  '%s',\n",time_control);
@@ -846,8 +908,12 @@ static void output_game_insert_statement(
       printf("  '%s',\n",termination);
       printf("  %s,\n",
         ((color[0] == 'W') ? elo[BLACK] : elo[WHITE]));
-      printf("  %s\n",
+      printf("  %s,\n",
+        ((color[0] == 'W') ? rating_diff[BLACK] : rating_diff[WHITE]));
+      printf("  %s\n,",
         ((color[0] == 'W') ? elo[WHITE] : elo[BLACK]));
+      printf("  %s\n",
+        ((color[0] == 'W') ? rating_diff[WHITE] : rating_diff[BLACK]));
       printf(");\n");
     }
     else {
@@ -861,7 +927,9 @@ static void output_game_insert_statement(
       printf("  result,\n");
       printf("  result_detail,\n");
       printf("  opponent_elo_before,\n");
+      printf("  opponent_elo_delta,\n");
       printf("  my_elo_before,\n");
+      printf("  my_elo_delta,\n");
       printf("  first_move,\n");
       printf("  first_two_moves,\n");
       printf("  first_three_moves,\n");
@@ -878,7 +946,11 @@ static void output_game_insert_statement(
       printf("  %s,\n",
         ((color[0] == 'W') ? elo[BLACK] : elo[WHITE]));
       printf("  %s,\n",
+        ((color[0] == 'W') ? rating_diff[BLACK] : rating_diff[WHITE]));
+      printf("  %s,\n",
         ((color[0] == 'W') ? elo[WHITE] : elo[BLACK]));
+      printf("  %s,\n",
+        ((color[0] == 'W') ? rating_diff[WHITE] : rating_diff[BLACK]));
       printf("  '%s',\n",first_move);
       printf("  '%s',\n",first_two_moves);
       printf("  '%s',\n",first_three_moves);
