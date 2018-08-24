@@ -22,7 +22,7 @@ create table blitz_games (
   first_two_moves varchar(25) null,
   first_three_moves varchar(35) null,
   first_four_moves varchar(45) null,
-  opening varchar(10) null
+  eco varchar(3) null
 );
 
 quit

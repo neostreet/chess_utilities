@@ -4,20 +4,23 @@
 #define WHITE 0
 #define BLACK 1
 
-#define BLITZ_GAME_DATE                 0
-#define BLITZ_GAME_TIME_CONTROL         1
-#define BLITZ_GAME_OPPONENT_NAME        2
-#define BLITZ_GAME_COLOR                3
-#define BLITZ_GAME_NUM_MOVES            4
-#define BLITZ_GAME_RESULT               5
-#define BLITZ_GAME_TERMINATION          6
-#define BLITZ_GAME_WHITE_ELO            7
-#define BLITZ_GAME_BLACK_ELO            8
-#define BLITZ_GAME_FIRST_MOVE           9
-#define BLITZ_GAME_FIRST_TWO_MOVES     10
-#define BLITZ_GAME_FIRST_THREE_MOVES   11
-#define BLITZ_GAME_FIRST_FOUR_MOVES    12
-#define NUM_BLITZ_GAME_ITEMS           13
+enum {
+  BLITZ_GAME_DATE,
+  BLITZ_GAME_TIME_CONTROL,
+  BLITZ_GAME_ECO,
+  BLITZ_GAME_OPPONENT_NAME,
+  BLITZ_GAME_COLOR,
+  BLITZ_GAME_NUM_MOVES,
+  BLITZ_GAME_RESULT,
+  BLITZ_GAME_TERMINATION,
+  BLITZ_GAME_WHITE_ELO,
+  BLITZ_GAME_BLACK_ELO,
+  BLITZ_GAME_FIRST_MOVE,
+  BLITZ_GAME_FIRST_TWO_MOVES,
+  BLITZ_GAME_FIRST_THREE_MOVES,
+  BLITZ_GAME_FIRST_FOUR_MOVES,
+  NUM_BLITZ_GAME_ITEMS
+};
 
 #define MAX_FILENAME_LEN 1024
 static char filename[MAX_FILENAME_LEN];
@@ -50,6 +53,9 @@ static char *elo_str[] = {
 
 static char time_control_str[] = "[TimeControl \"";
 #define TIME_CONTROL_STR_LEN (sizeof (time_control_str) - 1)
+
+static char eco_str[] = "[ECO \"";
+#define ECO_STR_LEN (sizeof (eco_str) - 1)
 
 static char termination_str[] = "[Termination \"";
 #define TERMINATION_STR_LEN (sizeof (termination_str) - 1)
@@ -105,6 +111,9 @@ static char elo[2][ELO_MAX_LEN+1];
 #define TIME_CONTROL_MAX_LEN 10
 static char time_control[TIME_CONTROL_MAX_LEN+1];
 
+#define ECO_MAX_LEN 4
+static char eco[ECO_MAX_LEN+1];
+
 #define TERMINATION_MAX_LEN 50
 static char termination[TERMINATION_MAX_LEN+1];
 
@@ -138,6 +147,8 @@ static int get_elo(char *line,int line_len,int ix,
   char *elo,int elo_max_len);
 static int get_time_control(char *line,int line_len,int ix,
   char *time_control,int time_control_max_len);
+static int get_eco(char *line,int line_len,int ix,
+  char *eco,int eco_max_len);
 static int get_termination(char *line,int line_len,int ix,
   char *termination,int termination_max_len);
 static int get_num_moves(char *line,int line_len,int *num_moves_ptr);
@@ -146,6 +157,7 @@ static void output_game_insert_statement(
   bool *bHaveItem,
   char *blitz_game_date,
   char *time_control,
+  char *eco,
   char *opponent_name,
   char *color,
   int num_moves,
@@ -253,6 +265,7 @@ int main(int argc,char **argv)
               bHaveItem,
               blitz_game_date,
               time_control,
+              eco,
               opponent_name,
               color,
               num_moves,
@@ -367,6 +380,19 @@ int main(int argc,char **argv)
       }
       else if (Contains(true,
         line,line_len,
+        eco_str,ECO_STR_LEN,
+        &ix)) {
+
+        retval = get_eco(line,line_len,ix+ECO_STR_LEN,
+          eco,ECO_MAX_LEN);
+
+        if (retval)
+          printf("get_eco() failed on line %d: %d\n",line_no,retval);
+        else
+          bHaveItem[BLITZ_GAME_ECO] = true;
+      }
+      else if (Contains(true,
+        line,line_len,
         termination_str,TERMINATION_STR_LEN,
         &ix)) {
 
@@ -450,6 +476,7 @@ int main(int argc,char **argv)
         bHaveItem,
         blitz_game_date,
         time_control,
+        eco,
         opponent_name,
         color,
         num_moves,
@@ -662,6 +689,26 @@ static int get_time_control(char *line,int line_len,int ix,
   return 0;
 }
 
+static int get_eco(char *line,int line_len,int ix,
+  char *eco,int eco_max_len)
+{
+  int n;
+
+  for (n = 0; n < eco_max_len; n++) {
+    if (line[ix + n] == '"')
+      break;
+
+    eco[n] = line[ix + n];
+  }
+
+  if (n == eco_max_len)
+    return 1;
+
+  eco[n] = 0;
+
+  return 0;
+}
+
 static int get_termination(char *line,int line_len,int ix,
   char *termination,int termination_max_len)
 {
@@ -749,6 +796,7 @@ static void output_game_insert_statement(
   bool *bHaveItem,
   char *blitz_game_date,
   char *time_control,
+  char *eco,
   char *opponent_name,
   char *color,
   int num_moves,
@@ -779,16 +827,18 @@ static void output_game_insert_statement(
       printf("insert into %s(\n",table_name);
       printf("  blitz_game_date,\n");
       printf("  time_control,\n");
+      printf("  eco,\n");
       printf("  opponent_name,\n");
       printf("  color,\n");
       printf("  num_moves,\n");
       printf("  result,\n");
       printf("  result_detail,\n");
-      printf("  opponent_elo_after,\n");
-      printf("  my_elo_after\n");
+      printf("  opponent_elo_before,\n");
+      printf("  my_elo_before\n");
       printf(") values (\n");
       printf("  '%s',\n",blitz_game_date);
       printf("  '%s',\n",time_control);
+      printf("  '%s',\n",eco);
       printf("  '%s',\n",opponent_name);
       printf("  '%s',\n",color);
       printf("  %d,\n",num_moves);
@@ -804,13 +854,14 @@ static void output_game_insert_statement(
       printf("insert into %s(\n",table_name);
       printf("  blitz_game_date,\n");
       printf("  time_control,\n");
+      printf("  eco,\n");
       printf("  opponent_name,\n");
       printf("  color,\n");
       printf("  num_moves,\n");
       printf("  result,\n");
       printf("  result_detail,\n");
-      printf("  opponent_elo_after,\n");
-      printf("  my_elo_after,\n");
+      printf("  opponent_elo_before,\n");
+      printf("  my_elo_before,\n");
       printf("  first_move,\n");
       printf("  first_two_moves,\n");
       printf("  first_three_moves,\n");
@@ -818,6 +869,7 @@ static void output_game_insert_statement(
       printf(") values (\n");
       printf("  '%s',\n",blitz_game_date);
       printf("  '%s',\n",time_control);
+      printf("  '%s',\n",eco);
       printf("  '%s',\n",opponent_name);
       printf("  '%s',\n",color);
       printf("  %d,\n",num_moves);
