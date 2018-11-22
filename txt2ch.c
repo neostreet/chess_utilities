@@ -25,6 +25,7 @@ int main(int argc,char **argv)
 {
   FILE *fptr;
   FILE *ch_fptr;
+  bool bPrintedColorIndicator;
   int pgn_filename_len;
   int retval;
   int line_len;
@@ -56,6 +57,7 @@ int main(int argc,char **argv)
   }
 
   line_no = 0;
+  bPrintedColorIndicator = false;
 
   for ( ; ; ) {
     GetLine(fptr,line,&line_len,MAX_LINE_LEN);
@@ -78,6 +80,11 @@ int main(int argc,char **argv)
       }
       else
         fprintf(ch_fptr,"1\n\n");
+
+      bPrintedColorIndicator = true;
+    }
+    else if (bPrintedColorIndicator && (line_len >= 1) && (line[0] == '[')) {
+      fprintf(ch_fptr,"/ %s\n",line);
     }
     else if (!strncmp(line,"1. ",3)) {
       retval = split_line(line,line_len,ch_fptr);
