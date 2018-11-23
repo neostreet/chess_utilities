@@ -11,6 +11,7 @@ static char line[MAX_LINE_LEN];
 
 static char usage[] = "usage: ftxt2ch filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
+static char couldnt_determine_color[] = "%s: couldn't determine color\n";
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int build_ch_filename(
@@ -30,6 +31,7 @@ int main(int argc,char **argv)
   int file_no;
   FILE *fptr;
   FILE *ch_fptr;
+  int color;
   int pgn_filename_len;
   int retval;
   int line_len;
@@ -68,10 +70,49 @@ int main(int argc,char **argv)
       continue;
     }
 
+    color = -1;
+
+    for ( ; ; ) {
+      GetLine(fptr,line,&line_len,MAX_LINE_LEN);
+
+      if (feof(fptr))
+        break;
+
+      if (Contains(true,
+        line,line_len,
+        (char *)"neostreet",9,
+        &ix)) {
+
+        if (Contains(true,
+          line,line_len,
+          (char *)"White",5,
+          &ix)) {
+          color = 0;
+        }
+        else
+          color = 1;
+
+        break;
+      }
+    }
+
+    if (color == -1) {
+      fclose(fptr);
+      printf(couldnt_determine_color,ch_filename);
+      continue;
+    }
+
     if ((ch_fptr = fopen(ch_filename,"w")) == NULL) {
       printf(couldnt_open,ch_filename);
-      return 3;
+      continue;
     }
+
+    if (!color)
+      fprintf(ch_fptr,"0\n\n");
+    else
+      fprintf(ch_fptr,"1\n\n");
+
+    fseek(fptr,0L,SEEK_SET);
 
     line_no = 0;
 
@@ -83,26 +124,14 @@ int main(int argc,char **argv)
 
       line_no++;
 
-      if (Contains(true,
-        line,line_len,
-        (char *)"neostreet",9,
-        &ix)) {
-
-        if (Contains(true,
-          line,line_len,
-          (char *)"White",5,
-          &ix)) {
-          fprintf(ch_fptr,"0\n\n");
-        }
-        else
-          fprintf(ch_fptr,"1\n\n");
-      }
+      if ((line_len >= 1) && (line[0] == '['))
+        fprintf(ch_fptr,"/ %s\n",line);
       else if (!strncmp(line,"1. ",3)) {
         retval = split_line(line,line_len,ch_fptr);
 
         if (retval) {
           printf("split_line failed on line %d\n",line_no);
-          return 4;
+          continue;
         }
 
         break;
