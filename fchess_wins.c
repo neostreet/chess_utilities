@@ -7,7 +7,8 @@ static char filename[MAX_FILENAME_LEN];
 #define MAX_LINE_LEN 1024
 static char line[MAX_LINE_LEN];
 
-static char usage[] = "usage: fchess_wins (-terse) player_name filename\n";
+static char usage[] =
+"usage: fchess_wins (-terse) (-is_win) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -30,6 +31,7 @@ int main(int argc,char **argv)
   int n;
   int curr_arg;
   bool bTerse;
+  bool bIsWin;
   int player_name_ix;
   int player_name_len;
   FILE *fptr0;
@@ -41,16 +43,19 @@ int main(int argc,char **argv)
   int ix;
   int elo;
 
-  if ((argc < 3) || (argc > 4)) {
+  if ((argc < 3) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
   bTerse = false;
+  bIsWin = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
       bTerse = true;
+    else if (!strcmp(argv[curr_arg],"-is_win"))
+      bIsWin = true;
     else
       break;
   }
@@ -120,7 +125,9 @@ int main(int argc,char **argv)
           white_wins,WHITE_WINS_LEN,
           &ix)) {
 
-          if (bPlayerIsWhite)
+          if (bIsWin)
+            printf("%d %s\n",bPlayerIsWhite,filename);
+          else if (bPlayerIsWhite)
             printf("%s\n",filename);
         }
         else if (Contains(true,
@@ -128,9 +135,13 @@ int main(int argc,char **argv)
           black_wins,BLACK_WINS_LEN,
           &ix)) {
 
-          if (!bPlayerIsWhite)
+          if (bIsWin)
+            printf("%d %s\n",!bPlayerIsWhite,filename);
+          else if (!bPlayerIsWhite)
             printf("%s\n",filename);
         }
+        else if (bIsWin)
+          printf("0 %s\n",filename);
       }
     }
 
