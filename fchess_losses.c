@@ -41,7 +41,6 @@ int main(int argc,char **argv)
   int line_no;
   bool bPlayerIsWhite;
   int ix;
-  int elo;
 
   if ((argc < 3) || (argc > 5)) {
     printf(usage);
