@@ -8,7 +8,7 @@ static char filename[MAX_FILENAME_LEN];
 static char line[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fchess_wins (-terse) (-is_win) player_name filename\n";
+"usage: fchess_wins (-terse) (-is_win) (-mate) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -21,6 +21,8 @@ static char white_wins[] = "1-0";
 #define WHITE_WINS_LEN (sizeof (white_wins) - 1)
 static char black_wins[] = "0-1";
 #define BLACK_WINS_LEN (sizeof (black_wins) - 1)
+static char mate[] = "#";
+#define MATE_LEN (sizeof (mate) - 1)
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
@@ -32,6 +34,7 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bTerse;
   bool bIsWin;
+  bool bMate;
   int player_name_ix;
   int player_name_len;
   FILE *fptr0;
@@ -41,20 +44,25 @@ int main(int argc,char **argv)
   int line_no;
   bool bPlayerIsWhite;
   int ix;
+  bool bWon;
+  bool bHaveMate;
 
-  if ((argc < 3) || (argc > 5)) {
+  if ((argc < 3) || (argc > 6)) {
     printf(usage);
     return 1;
   }
 
   bTerse = false;
   bIsWin = false;
+  bMate = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
       bTerse = true;
     else if (!strcmp(argv[curr_arg],"-is_win"))
       bIsWin = true;
+    else if (!strcmp(argv[curr_arg],"-mate"))
+      bMate = true;
     else
       break;
   }
@@ -82,6 +90,9 @@ int main(int argc,char **argv)
       printf(couldnt_open,filename);
       continue;
     }
+
+    bWon = false;
+    bHaveMate = false;
 
     for ( ; ; ) {
       GetLine(fptr,line,&line_len,MAX_LINE_LEN);
@@ -124,27 +135,33 @@ int main(int argc,char **argv)
           white_wins,WHITE_WINS_LEN,
           &ix)) {
 
-          if (bIsWin)
-            printf("%d %s\n",bPlayerIsWhite,filename);
-          else if (bPlayerIsWhite)
-            printf("%s\n",filename);
+          bWon = bPlayerIsWhite;
         }
         else if (Contains(true,
           line,line_len,
           black_wins,BLACK_WINS_LEN,
           &ix)) {
 
-          if (bIsWin)
-            printf("%d %s\n",!bPlayerIsWhite,filename);
-          else if (!bPlayerIsWhite)
-            printf("%s\n",filename);
+          bWon = !bPlayerIsWhite;
         }
-        else if (bIsWin)
-          printf("0 %s\n",filename);
+      }
+      else if (Contains(true,
+        line,line_len,
+        mate,MATE_LEN,
+        &ix)) {
+
+        bHaveMate = true;
       }
     }
 
     fclose(fptr);
+
+    if (!bMate || bHaveMate) {
+      if (bIsWin)
+        printf("%d %s\n",bWon,filename);
+      else if (bWon)
+        printf("%s\n",filename);
+    }
   }
 
   fclose(fptr0);
