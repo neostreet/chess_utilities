@@ -22,7 +22,7 @@ static int build_ch_filename(
 static bool Contains(int bCaseSens,char *line,int line_len,
   char *string,int string_len,int *index);
 int split_line(char *line,int line_len,FILE *ch_fptr);
-void remove_checks(char *line);
+void remove_checks_and_promotions(char *line);
 
 int main(int argc,char **argv)
 {
@@ -255,7 +255,7 @@ int split_line(char *line,int line_len,FILE *ch_fptr)
       if (m != 1)
         return 1;
       else {
-        remove_checks(&line[ix]);
+        remove_checks_and_promotions(&line[ix]);
         fprintf(ch_fptr,"%s\n",&line[ix]);
         break;
       }
@@ -270,7 +270,7 @@ int split_line(char *line,int line_len,FILE *ch_fptr)
       return 2;
 
     line[n] = 0;
-    remove_checks(&line[ix]);
+    remove_checks_and_promotions(&line[ix]);
     fprintf(ch_fptr,"%s\n",&line[ix]);
     ix = n + 1;
   }
@@ -278,7 +278,7 @@ int split_line(char *line,int line_len,FILE *ch_fptr)
   return 0;
 }
 
-void remove_checks(char *line)
+void remove_checks_and_promotions(char *line)
 {
   int m;
   int n;
@@ -291,7 +291,7 @@ void remove_checks(char *line)
   removed = 0;
 
   for (n = 0; n < len; n++) {
-    if ((line[n] != '+') && (line[n] != '#')) {
+    if ((line[n] != '+') && (line[n] != '#') && (line[n] != '=')) {
       if (m != n)
         line[m++] = line[n];
       else
