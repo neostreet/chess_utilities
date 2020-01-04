@@ -7,7 +7,7 @@ static char filename[MAX_FILENAME_LEN];
 #define MAX_LINE_LEN 1024
 static char line[MAX_LINE_LEN];
 
-static char usage[] = "usage: fchess_elo_diff (-terse) player_name filename\n";
+static char usage[] = "usage: fchess_elo_diff (-terse) (-neg_only) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -28,6 +28,7 @@ int main(int argc,char **argv)
   int n;
   int curr_arg;
   bool bTerse;
+  bool bNegOnly;
   int player_name_ix;
   int player_name_len;
   FILE *fptr0;
@@ -39,17 +40,21 @@ int main(int argc,char **argv)
   int ix;
   int elo;
   int opponent_elo;
+  int elo_diff;
 
-  if ((argc < 3) || (argc > 4)) {
+  if ((argc < 3) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
   bTerse = false;
+  bNegOnly = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
       bTerse = true;
+    else if (!strcmp(argv[curr_arg],"-neg_only"))
+      bNegOnly = true;
     else
       break;
   }
@@ -104,12 +109,17 @@ int main(int argc,char **argv)
         else
           sscanf(&line[ix + BLACK_ELO_LEN],"%d",&opponent_elo);
 
+        elo_diff = elo - opponent_elo;
+
+        if (bNegOnly && (elo_diff >= 0))
+          break;
+
         if (!bTerse) {
-          printf("%d (%d %d) %s\n",elo - opponent_elo,
+          printf("%d (%d %d) %s\n",elo_diff,
             elo,opponent_elo,filename);
         }
         else
-          printf("%d\n",elo - opponent_elo);
+          printf("%d\n",elo_diff);
 
         break;
       }
