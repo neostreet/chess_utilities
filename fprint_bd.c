@@ -207,6 +207,7 @@ int main(int argc,char **argv)
       print_space_and_force(&curr_game,bSpace,bForce);
       putchar(0x0a);
       print_bd(&curr_game);
+      print_special_moves(&curr_game);
       bPrintedBoard = true;
     }
 
@@ -245,6 +246,7 @@ int main(int argc,char **argv)
       print_space_and_force(&curr_game,bSpace,bForce);
       putchar(0x0a);
       print_bd(&curr_game);
+      print_special_moves(&curr_game);
       bPrintedBoard = true;
     }
   }
