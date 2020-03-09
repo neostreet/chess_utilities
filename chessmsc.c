@@ -224,3 +224,25 @@ int match_board(unsigned char *board1,unsigned char *board2)
 
   return 1;
 }
+
+bool multiple_queens(unsigned char *board)
+{
+  int n;
+  int piece;
+  int num_white_queens = 0;
+  int num_black_queens = 0;
+
+  for (n = 0; n < NUM_BOARD_SQUARES; n++) {
+    piece = get_piece1(board,n);
+
+    if (piece == QUEEN_ID)
+      num_white_queens++;
+    else if (piece == QUEEN_ID * -1)
+      num_black_queens++;
+  }
+
+  if ((num_white_queens > 1) || (num_black_queens > 1))
+    return true;
+
+  return false;
+}

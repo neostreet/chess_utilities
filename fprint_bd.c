@@ -18,7 +18,7 @@ static char usage[] =
 "usage: fprint_bd (-debug) (-toggle) (-space) (-force) (-initial_boardfilename)\n"
 "  (-init_bin_boardfilename) (-board_binfilename) (-print_pieces)\n"
 "  (-min_force_diffvalue) (-match_boardfilename) (-only_checks) (-only_castle)\n"
-"  (-qnn) [white | black] filename\n";
+"  (-multiple_queens) (-qnn) [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -40,7 +40,9 @@ int main(int argc,char **argv)
   bool bPrintPieces;
   bool bOnlyChecks;
   bool bOnlyCastle;
+  bool bMultipleQueens;
   bool bHaveMatchBoard;
+  bool bPrintedFilename;
   bool bPrintedBoard;
   int board_bin_arg;
   int quiz_number;
@@ -54,7 +56,7 @@ int main(int argc,char **argv)
   FILE *fptr;
   int filename_len;
 
-  if ((argc < 2) || (argc > 15)) {
+  if ((argc < 2) || (argc > 16)) {
     printf(usage);
     return 1;
   }
@@ -68,6 +70,7 @@ int main(int argc,char **argv)
   bPrintPieces = false;
   bOnlyChecks = false;
   bOnlyCastle = false;
+  bMultipleQueens = false;
   min_force_diff = -1;
   force_diff = 0;
   bHaveMatchBoard = false;
@@ -126,6 +129,8 @@ int main(int argc,char **argv)
       bOnlyChecks = true;
     else if (!strcmp(argv[curr_arg],"-only_castle"))
       bOnlyCastle = true;
+    else if (!strcmp(argv[curr_arg],"-multiple_queens"))
+      bMultipleQueens = true;
     else
       break;
   }
@@ -185,7 +190,8 @@ int main(int argc,char **argv)
     continue;
   }
 
-  printf("%s\n",filename);
+  if (!bOnlyChecks && !bOnlyCastle && !bMultipleQueens)
+    printf("%s\n",filename);
 
   if (bToggle)
     curr_game.orientation ^= 1;
@@ -197,12 +203,14 @@ int main(int argc,char **argv)
 
     set_initial_board(&curr_game);
     curr_game.curr_move = 0;
+
+    bPrintedFilename = false;
     bPrintedBoard = false;
 
     if (bHaveMatchBoard)
       match = match_board(curr_game.board,match_board1);
 
-    if ((min_force_diff == -1) && (!bHaveMatchBoard || match) && !bOnlyChecks && !bOnlyCastle) {
+    if ((min_force_diff == -1) && (!bHaveMatchBoard || match) && !bOnlyChecks && !bOnlyCastle && !bMultipleQueens) {
       printf("curr_move = %d\n",curr_game.curr_move);
       print_space_and_force(&curr_game,bSpace,bForce);
       putchar(0x0a);
@@ -237,6 +245,18 @@ int main(int argc,char **argv)
       if (bOnlyCastle) {
         if (!(curr_game.moves[curr_game.curr_move-1].special_move_info & SPECIAL_MOVE_CASTLE))
           continue;
+      }
+
+      if (bMultipleQueens) {
+        if (!multiple_queens((unsigned char *)&curr_game.board))
+          continue;
+      }
+
+      if (bOnlyChecks || bOnlyCastle || bMultipleQueens) {
+        if (!bPrintedFilename) {
+          printf("%s\n",filename);
+          bPrintedFilename = true;
+        }
       }
 
       if (bPrintedBoard)
