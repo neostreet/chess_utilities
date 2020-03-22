@@ -184,21 +184,8 @@ int main(int argc,char **argv)
     curr_game.curr_move = 0;
     bPrintedBoard = false;
 
-    if (bHaveMatchBoard)
-      match = match_board(curr_game.board,match_board1);
-
-    if ((min_force_diff == -1) && (!bHaveMatchBoard || match) && !bOnlyChecks && !bOnlyCastle && !bMultipleQueens) {
-      printf("curr_move = %d\n",curr_game.curr_move);
-      print_space_and_force(&curr_game,bSpace,bForce);
-      putchar(0x0a);
-      print_bd(&curr_game);
-      print_special_moves(&curr_game);
-      bPrintedBoard = true;
-    }
-
-    for (n = 0; n < curr_game.num_moves; n++) {
+    for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
       update_board(&curr_game,false);
-      curr_game.curr_move++;
 
       if (min_force_diff != -1) {
         force_diff = refresh_force_count(&curr_game);
@@ -215,12 +202,12 @@ int main(int argc,char **argv)
       }
 
       if (bOnlyChecks) {
-        if (!(curr_game.moves[curr_game.curr_move-1].special_move_info & SPECIAL_MOVE_CHECK))
+        if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK))
           continue;
       }
 
       if (bOnlyCastle) {
-        if (!(curr_game.moves[curr_game.curr_move-1].special_move_info & SPECIAL_MOVE_CASTLE))
+        if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CASTLE))
           continue;
       }
 
@@ -247,32 +234,27 @@ int main(int argc,char **argv)
       if (bBlack)
         initial_move++;
 
-      if (initial_move > curr_game.num_moves) {
-        printf("initial_move must be <= %d\n",curr_game.num_moves);
+      if (initial_move >= curr_game.num_moves) {
+        printf("initial_move must be < %d\n",curr_game.num_moves);
         return 10;
       }
 
       set_initial_board(&curr_game);
       curr_game.curr_move = 0;
 
-      for (n = 0; n < initial_move; n++) {
+      for (n = 0; n <= initial_move; n++) {
         update_board(&curr_game,false);
         curr_game.curr_move++;
       }
-
-      if (force_diff >= min_force_diff) {
-        printf("curr_move = %d\n",curr_game.curr_move);
-        print_space_and_force(&curr_game,bSpace,bForce);
-        putchar(0x0a);
-        print_bd(&curr_game);
-        print_special_moves(&curr_game);
-      }
     }
-    else {
+
+    if (force_diff >= min_force_diff) {
+      curr_game.curr_move--;
       printf("curr_move = %d\n",curr_game.curr_move);
       print_space_and_force(&curr_game,bSpace,bForce);
       putchar(0x0a);
       print_bd(&curr_game);
+      print_special_moves(&curr_game);
     }
   }
 
