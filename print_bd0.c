@@ -28,6 +28,12 @@ int main(int argc,char **argv)
   }
 
   retval = populate_board_from_bin_board_file(board1,argv[1]);
+
+  if (retval) {
+    printf("populate_board_from_bin_board_file() failed on %s: %d\n",argv[1],retval);
+    return 2;
+  }
+
   print_bd0(board1);
 
   return 0;
