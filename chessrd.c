@@ -166,7 +166,8 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
 
     if (retval) {
       printf("read_fen() failed: %d\n",retval);
-      return 3;
+      fclose(fptr);
+      return 2;
     }
 
     bHaveFirstWord = false;
@@ -284,6 +285,8 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
 
   gamept->num_moves = gamept->curr_move;
   calculate_seirawan_counts(gamept);
+
+  fclose(fptr);
 
   return 0;
 }
