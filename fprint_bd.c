@@ -190,7 +190,7 @@ int main(int argc,char **argv)
     continue;
   }
 
-  if (!bOnlyChecks && !bOnlyCastle && !bMultipleQueens)
+  if (!bOnlyChecks && !bOnlyCastle && !bMultipleQueens && !bHaveMatchBoard)
     printf("%s\n",filename);
 
   if (bToggle)
@@ -239,7 +239,7 @@ int main(int argc,char **argv)
           continue;
       }
 
-      if (bOnlyChecks || bOnlyCastle || bMultipleQueens) {
+      if (bOnlyChecks || bOnlyCastle || bMultipleQueens || bHaveMatchBoard) {
         if (!bPrintedFilename) {
           printf("%s\n",filename);
           bPrintedFilename = true;
@@ -294,7 +294,8 @@ int main(int argc,char **argv)
   if (bPrintPieces)
     print_pieces(&curr_game);
 
-  putchar(0x0a);
+  if (bPrintedBoard)
+    putchar(0x0a);
 
   }
 
