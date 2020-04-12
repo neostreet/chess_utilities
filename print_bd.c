@@ -15,7 +15,7 @@ static char usage[] =
 "usage: print_bd (-debug) (-toggle) (-space) (-force) (-initial_boardfilename)\n"
 "  (-init_bin_boardfilename) (-board_binfilename) (-print_pieces)\n"
 "  (-min_force_diffvalue) (-match_boardfilename) (-only_checks) (-only_castle)\n"
-"  (-multiple_queens) (-qnn) [white | black] filename\n";
+"  (-multiple_queens) (-move_number_only) (-qnn) [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -38,6 +38,7 @@ int main(int argc,char **argv)
   bool bOnlyChecks;
   bool bOnlyCastle;
   bool bMultipleQueens;
+  bool bMoveNumberOnly;
   bool bHaveMatchBoard;
   bool bPrintedBoard;
   int board_bin_arg;
@@ -50,7 +51,7 @@ int main(int argc,char **argv)
   struct game curr_game;
   int match;
 
-  if ((argc < 2) || (argc > 16)) {
+  if ((argc < 2) || (argc > 17)) {
     printf(usage);
     return 1;
   }
@@ -65,6 +66,7 @@ int main(int argc,char **argv)
   bOnlyChecks = false;
   bOnlyCastle = false;
   bMultipleQueens = false;
+  bMoveNumberOnly = false;
   min_force_diff = -1;
   force_diff = 0;
   bHaveMatchBoard = false;
@@ -125,6 +127,8 @@ int main(int argc,char **argv)
       bOnlyCastle = true;
     else if (!strcmp(argv[curr_arg],"-multiple_queens"))
       bMultipleQueens = true;
+    else if (!strcmp(argv[curr_arg],"-move_number_only"))
+      bMoveNumberOnly = true;
     else
       break;
   }
@@ -220,11 +224,14 @@ int main(int argc,char **argv)
         putchar(0x0a);
 
       printf("curr_move = %d\n",curr_game.curr_move);
-      print_space_and_force(&curr_game,bSpace,bForce);
-      putchar(0x0a);
-      print_bd(&curr_game);
-      print_special_moves(&curr_game);
-      bPrintedBoard = true;
+
+      if (!bMoveNumberOnly) {
+        print_space_and_force(&curr_game,bSpace,bForce);
+        putchar(0x0a);
+        print_bd(&curr_game);
+        print_special_moves(&curr_game);
+        bPrintedBoard = true;
+      }
     }
   }
   else {
