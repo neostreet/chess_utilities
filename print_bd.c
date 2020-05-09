@@ -165,8 +165,9 @@ int main(int argc,char **argv)
     bDebug = true;
   }
 
-  if (bHaveMatchBoard)
+  if (bHaveMatchBoard || bOnlyChecks || bOnlyCastle || bMultipleQueens) {
     bDebug = true;
+  }
 
   retval = read_game(argv[argc-1],&curr_game,err_msg);
 

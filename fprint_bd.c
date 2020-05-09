@@ -171,8 +171,9 @@ int main(int argc,char **argv)
     bDebug = true;
   }
 
-  if (bHaveMatchBoard)
+  if (bHaveMatchBoard || bOnlyChecks || bOnlyCastle || bMultipleQueens) {
     bDebug = true;
+  }
 
   if ((fptr = fopen(argv[argc-1],"r")) == NULL) {
     printf(couldnt_open,argv[argc-1]);
