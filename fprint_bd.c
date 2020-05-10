@@ -18,7 +18,8 @@ static char usage[] =
 "usage: fprint_bd (-debug) (-toggle) (-space) (-force) (-initial_boardfilename)\n"
 "  (-init_bin_boardfilename) (-board_binfilename) (-print_pieces)\n"
 "  (-min_force_diffvalue) (-match_boardfilename) (-only_checks) (-only_castle)\n"
-"  (-multiple_queens) (-move_number_only) (-qnn) [white | black] filename\n";
+"  (-only_promotions) (-multiple_queens) (-move_number_only) \n"
+"  (-qnn) [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -40,6 +41,7 @@ int main(int argc,char **argv)
   bool bPrintPieces;
   bool bOnlyChecks;
   bool bOnlyCastle;
+  bool bOnlyPromotions;
   bool bMultipleQueens;
   bool bMoveNumberOnly;
   bool bHaveMatchBoard;
@@ -57,7 +59,7 @@ int main(int argc,char **argv)
   FILE *fptr;
   int filename_len;
 
-  if ((argc < 2) || (argc > 17)) {
+  if ((argc < 2) || (argc > 18)) {
     printf(usage);
     return 1;
   }
@@ -71,6 +73,7 @@ int main(int argc,char **argv)
   bPrintPieces = false;
   bOnlyChecks = false;
   bOnlyCastle = false;
+  bOnlyPromotions = false;
   bMultipleQueens = false;
   bMoveNumberOnly = false;
   min_force_diff = -1;
@@ -131,6 +134,8 @@ int main(int argc,char **argv)
       bOnlyChecks = true;
     else if (!strcmp(argv[curr_arg],"-only_castle"))
       bOnlyCastle = true;
+    else if (!strcmp(argv[curr_arg],"-only_promotions"))
+      bOnlyPromotions = true;
     else if (!strcmp(argv[curr_arg],"-multiple_queens"))
       bMultipleQueens = true;
     else if (!strcmp(argv[curr_arg],"-move_number_only"))
@@ -171,7 +176,7 @@ int main(int argc,char **argv)
     bDebug = true;
   }
 
-  if (bHaveMatchBoard || bOnlyChecks || bOnlyCastle || bMultipleQueens) {
+  if (bHaveMatchBoard || bOnlyChecks || bOnlyCastle || bOnlyPromotions || bMultipleQueens) {
     bDebug = true;
   }
 
@@ -195,7 +200,7 @@ int main(int argc,char **argv)
     continue;
   }
 
-  if (!bOnlyChecks && !bOnlyCastle && !bMultipleQueens && !bHaveMatchBoard)
+  if (!bOnlyChecks && !bOnlyCastle && !bOnlyPromotions && !bMultipleQueens && !bHaveMatchBoard)
     printf("%s\n",filename);
 
   if (bToggle)
@@ -239,12 +244,17 @@ int main(int argc,char **argv)
           continue;
       }
 
+      if (bOnlyPromotions) {
+        if (!(curr_game.moves[curr_game.curr_move].special_move_info & (SPECIAL_MOVE_PROMOTION_QUEEN | SPECIAL_MOVE_PROMOTION_ROOK | SPECIAL_MOVE_PROMOTION_KNIGHT | SPECIAL_MOVE_PROMOTION_BISHOP)))
+          continue;
+      }
+
       if (bMultipleQueens) {
         if (!multiple_queens((unsigned char *)&curr_game.board))
           continue;
       }
 
-      if (bOnlyChecks || bOnlyCastle || bMultipleQueens || bHaveMatchBoard) {
+      if (bOnlyChecks || bOnlyCastle || bOnlyPromotions || bMultipleQueens || bHaveMatchBoard) {
         if (!bPrintedFilename) {
           printf("%s\n",filename);
           bPrintedFilename = true;
