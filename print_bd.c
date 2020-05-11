@@ -15,7 +15,7 @@ static char usage[] =
 "usage: print_bd (-debug) (-toggle) (-space) (-force) (-initial_boardfilename)\n"
 "  (-init_bin_boardfilename) (-board_binfilename) (-print_pieces)\n"
 "  (-min_force_diffvalue) (-match_boardfilename) (-only_checks) (-only_castle)\n"
-"  (-only_promotions) (-multiple_queens) (-move_number_only) \n"
+"  (-only_promotions) (-only_captures) (-multiple_queens) (-move_number_only) \n"
 "  (-qnn) [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
@@ -39,6 +39,7 @@ int main(int argc,char **argv)
   bool bOnlyChecks;
   bool bOnlyCastle;
   bool bOnlyPromotions;
+  bool bOnlyCaptures;
   bool bMultipleQueens;
   bool bMoveNumberOnly;
   bool bHaveMatchBoard;
@@ -53,7 +54,7 @@ int main(int argc,char **argv)
   struct game curr_game;
   int match;
 
-  if ((argc < 2) || (argc > 18)) {
+  if ((argc < 2) || (argc > 19)) {
     printf(usage);
     return 1;
   }
@@ -68,6 +69,7 @@ int main(int argc,char **argv)
   bOnlyChecks = false;
   bOnlyCastle = false;
   bOnlyPromotions = false;
+  bOnlyCaptures = false;
   bMultipleQueens = false;
   bMoveNumberOnly = false;
   min_force_diff = -1;
@@ -130,6 +132,8 @@ int main(int argc,char **argv)
       bOnlyCastle = true;
     else if (!strcmp(argv[curr_arg],"-only_promotions"))
       bOnlyPromotions = true;
+    else if (!strcmp(argv[curr_arg],"-only_captures"))
+      bOnlyCaptures = true;
     else if (!strcmp(argv[curr_arg],"-multiple_queens"))
       bMultipleQueens = true;
     else if (!strcmp(argv[curr_arg],"-move_number_only"))
@@ -170,7 +174,7 @@ int main(int argc,char **argv)
     bDebug = true;
   }
 
-  if (bHaveMatchBoard || bOnlyChecks || bOnlyCastle || bOnlyPromotions || bMultipleQueens) {
+  if (bHaveMatchBoard || bOnlyChecks || bOnlyCastle || bOnlyPromotions || bOnlyCaptures || bMultipleQueens) {
     bDebug = true;
   }
 
@@ -223,6 +227,11 @@ int main(int argc,char **argv)
 
       if (bOnlyPromotions) {
         if (!(curr_game.moves[curr_game.curr_move].special_move_info & (SPECIAL_MOVE_PROMOTION_QUEEN | SPECIAL_MOVE_PROMOTION_ROOK | SPECIAL_MOVE_PROMOTION_KNIGHT | SPECIAL_MOVE_PROMOTION_BISHOP)))
+          continue;
+      }
+
+      if (bOnlyCaptures) {
+        if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CAPTURE))
           continue;
       }
 
