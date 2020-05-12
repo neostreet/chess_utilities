@@ -15,7 +15,7 @@ static char usage[] =
 "usage: print_bd (-debug) (-toggle) (-space) (-force) (-initial_boardfilename)\n"
 "  (-init_bin_boardfilename) (-board_binfilename) (-print_pieces)\n"
 "  (-min_force_diffvalue) (-match_boardfilename) (-only_checks) (-only_castle)\n"
-"  (-only_promotions) (-only_captures) (-multiple_queens) (-move_number_only) \n"
+"  (-only_promotions) (-only_captures) (-multiple_queens) (-move_number_only) (-mine) (-not_mine)\n"
 "  (-qnn) [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
@@ -30,6 +30,7 @@ int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
+  int orientation;
   bool bDebug;
   bool bToggle;
   bool bSpace;
@@ -42,6 +43,8 @@ int main(int argc,char **argv)
   bool bOnlyCaptures;
   bool bMultipleQueens;
   bool bMoveNumberOnly;
+  bool bMine;
+  bool bNotMine;
   bool bHaveMatchBoard;
   bool bPrintedBoard;
   int board_bin_arg;
@@ -54,7 +57,7 @@ int main(int argc,char **argv)
   struct game curr_game;
   int match;
 
-  if ((argc < 2) || (argc > 19)) {
+  if ((argc < 2) || (argc > 21)) {
     printf(usage);
     return 1;
   }
@@ -72,6 +75,8 @@ int main(int argc,char **argv)
   bOnlyCaptures = false;
   bMultipleQueens = false;
   bMoveNumberOnly = false;
+  bMine = false;
+  bNotMine = false;
   min_force_diff = -1;
   force_diff = 0;
   bHaveMatchBoard = false;
@@ -138,6 +143,10 @@ int main(int argc,char **argv)
       bMultipleQueens = true;
     else if (!strcmp(argv[curr_arg],"-move_number_only"))
       bMoveNumberOnly = true;
+    else if (!strcmp(argv[curr_arg],"-mine"))
+      bMine = true;
+    else if (!strcmp(argv[curr_arg],"-not_mine"))
+      bNotMine = true;
     else
       break;
   }
@@ -147,10 +156,15 @@ int main(int argc,char **argv)
     return 5;
   }
 
+  if (bMine && bNotMine) {
+    printf("can't specify both -mine and -not_mine\n");
+    return 6;
+  }
+
   if (quiz_number != -1) {
     if (argc - curr_arg != 2) {
       printf(usage);
-      return 6;
+      return 7;
     }
 
     if (!strcmp(argv[curr_arg],"white"))
@@ -159,13 +173,13 @@ int main(int argc,char **argv)
       bBlack = true;
     else {
       printf(usage);
-      return 7;
+      return 8;
     }
   }
   else {
     if (argc - curr_arg != 1) {
       printf(usage);
-      return 8;
+      return 9;
     }
   }
 
@@ -174,7 +188,7 @@ int main(int argc,char **argv)
     bDebug = true;
   }
 
-  if (bHaveMatchBoard || bOnlyChecks || bOnlyCastle || bOnlyPromotions || bOnlyCaptures || bMultipleQueens) {
+  if (bHaveMatchBoard || bOnlyChecks || bOnlyCastle || bOnlyPromotions || bOnlyCaptures || bMultipleQueens || bMine || bNotMine) {
     bDebug = true;
   }
 
@@ -183,8 +197,10 @@ int main(int argc,char **argv)
   if (retval) {
     printf("read_game of %s failed: %d\n",argv[argc-1],retval);
     printf("curr_move = %d\n",curr_game.curr_move);
-    return 9;
+    return 10;
   }
+
+  orientation = curr_game.orientation;
 
   if (bToggle)
     curr_game.orientation ^= 1;
@@ -200,6 +216,15 @@ int main(int argc,char **argv)
 
     for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
       update_board(&curr_game,false);
+
+      if (bMine) {
+        if ((curr_game.curr_move % 2) != orientation)
+          continue;
+      }
+      else if (bNotMine) {
+        if ((curr_game.curr_move % 2) == orientation)
+          continue;
+      }
 
       if (min_force_diff != -1) {
         force_diff = refresh_force_count(&curr_game);
@@ -263,7 +288,7 @@ int main(int argc,char **argv)
 
       if (initial_move >= curr_game.num_moves) {
         printf("initial_move must be < %d\n",curr_game.num_moves);
-        return 10;
+        return 11;
       }
 
       set_initial_board(&curr_game);
