@@ -19,7 +19,7 @@ static char usage[] =
 "  (-init_bin_boardfilename) (-board_binfilename) (-print_pieces)\n"
 "  (-min_force_diffvalue) (-match_boardfilename) (-only_checks) (-only_castle)\n"
 "  (-only_promotions) (-only_captures) (-multiple_queens) (-move_number_only) (-mine) (-not_mine)\n"
-"  (-qnn) [white | black] filename\n";
+"  (-search_all_moves) (-qnn) [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -35,6 +35,7 @@ int main(int argc,char **argv)
   int curr_arg;
   int orientation;
   bool bDebug;
+  bool bSearchAllMoves;
   bool bToggle;
   bool bSpace;
   bool bForce;
@@ -63,12 +64,13 @@ int main(int argc,char **argv)
   FILE *fptr;
   int filename_len;
 
-  if ((argc < 2) || (argc > 21)) {
+  if ((argc < 2) || (argc > 22)) {
     printf(usage);
     return 1;
   }
 
   bDebug = false;
+  bSearchAllMoves = false;
   bToggle = false;
   bSpace = false;
   bForce = false;
@@ -90,6 +92,8 @@ int main(int argc,char **argv)
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
       bDebug = true;
+    else if (!strcmp(argv[curr_arg],"-search_all_moves"))
+      bSearchAllMoves = true;
     else if (!strcmp(argv[curr_arg],"-toggle"))
       bToggle = true;
     else if (!strcmp(argv[curr_arg],"-space"))
@@ -133,9 +137,6 @@ int main(int argc,char **argv)
           &argv[curr_arg][12],retval);
         return 4;
       }
-
-      //if (bDebug)
-        //print_bd0(match_board1);
     }
     else if (!strcmp(argv[curr_arg],"-only_checks"))
       bOnlyChecks = true;
@@ -191,11 +192,11 @@ int main(int argc,char **argv)
 
   if (min_force_diff != -1) {
     bForce = true;
-    bDebug = true;
+    bSearchAllMoves = true;
   }
 
   if (bHaveMatchBoard || bOnlyChecks || bOnlyCastle || bOnlyPromotions || bOnlyCaptures || bMultipleQueens || bMine || bNotMine) {
-    bDebug = true;
+    bSearchAllMoves = true;
   }
 
   if ((fptr = fopen(argv[argc-1],"r")) == NULL) {
@@ -226,7 +227,7 @@ int main(int argc,char **argv)
   if (bToggle)
     curr_game.orientation ^= 1;
 
-  if (bDebug) {
+  if (bSearchAllMoves) {
     //for (n = 0; n < curr_game.num_moves; n++) {
       //printf("%2d %2d\n",curr_game.moves[n].from,curr_game.moves[n].to);
     //}
