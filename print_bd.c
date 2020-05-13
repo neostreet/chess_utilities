@@ -48,6 +48,7 @@ int main(int argc,char **argv)
   bool bNotMine;
   bool bHaveMatchBoard;
   bool bPrintedBoard;
+  bool bSkip;
   int board_bin_arg;
   int quiz_number;
   int min_force_diff;
@@ -186,11 +187,6 @@ int main(int argc,char **argv)
 
   if (min_force_diff != -1) {
     bForce = true;
-    bSearchAllMoves = true;
-  }
-
-  if (bHaveMatchBoard || bOnlyChecks || bOnlyCastle || bOnlyPromotions || bOnlyCaptures || bMultipleQueens || bMine || bNotMine) {
-    bSearchAllMoves = true;
   }
 
   retval = read_game(argv[argc-1],&curr_game,err_msg);
@@ -207,10 +203,6 @@ int main(int argc,char **argv)
     curr_game.orientation ^= 1;
 
   if (bSearchAllMoves) {
-    //for (n = 0; n < curr_game.num_moves; n++) {
-      //printf("%2d %2d\n",curr_game.moves[n].from,curr_game.moves[n].to);
-    //}
-
     set_initial_board(&curr_game);
     curr_game.curr_move = 0;
     bPrintedBoard = false;
@@ -301,7 +293,55 @@ int main(int argc,char **argv)
       }
     }
 
-    if (force_diff >= min_force_diff) {
+    bSkip = false;
+
+    if (bMine) {
+      if ((curr_game.curr_move % 2) != orientation)
+        bSkip = true;
+    }
+    else if (bNotMine) {
+      if ((curr_game.curr_move % 2) == orientation)
+        bSkip = true;
+    }
+
+    if (!bSkip) {
+      if (force_diff < min_force_diff)
+        bSkip = true;
+    }
+
+    if (!bSkip && bHaveMatchBoard) {
+      match = match_board(curr_game.board,match_board1);
+
+      if (!match)
+        bSkip = true;
+    }
+
+    if (!bSkip && bOnlyChecks) {
+      if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK))
+        bSkip = true;
+    }
+
+    if (!bSkip && bOnlyCastle) {
+      if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CASTLE))
+        bSkip = true;
+    }
+
+    if (!bSkip && bOnlyPromotions) {
+      if (!(curr_game.moves[curr_game.curr_move].special_move_info & (SPECIAL_MOVE_PROMOTION_QUEEN | SPECIAL_MOVE_PROMOTION_ROOK | SPECIAL_MOVE_PROMOTION_KNIGHT | SPECIAL_MOVE_PROMOTION_BISHOP)))
+        bSkip = true;
+    }
+
+    if (!bSkip && bOnlyCaptures) {
+      if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CAPTURE))
+        bSkip = true;
+    }
+
+    if (!bSkip && bMultipleQueens) {
+      if (!multiple_queens((unsigned char *)&curr_game.board))
+        bSkip = true;
+    }
+
+    if (!bSkip) {
       curr_game.curr_move--;
       printf("curr_move = %d\n",curr_game.curr_move);
       print_space_and_force(&curr_game,bSpace,bForce);
