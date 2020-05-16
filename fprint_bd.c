@@ -373,6 +373,10 @@ int main(int argc,char **argv)
     }
 
     if (!bSkip) {
+      if (bOnlyChecks || bOnlyCastle || bOnlyPromotions || bOnlyCaptures || bMultipleQueens || bHaveMatchBoard || bMine || bNotMine) {
+        printf("%s\n",filename);
+      }
+
       printf("curr_move = %d\n",curr_game.curr_move);
       print_space_and_force(&curr_game,bSpace,bForce);
       putchar(0x0a);
