@@ -197,6 +197,7 @@ int main(int argc,char **argv)
     return 10;
   }
 
+  curr_game.curr_move--;
   orientation = curr_game.orientation;
 
   if (bToggle)
@@ -342,7 +343,6 @@ int main(int argc,char **argv)
     }
 
     if (!bSkip) {
-      curr_game.curr_move--;
       printf("curr_move = %d\n",curr_game.curr_move);
       print_space_and_force(&curr_game,bSpace,bForce);
       putchar(0x0a);
