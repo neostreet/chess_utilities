@@ -15,7 +15,7 @@ using namespace std;
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: fprint_bd (-debug) (-toggle) (-space) (-force) (-initial_boardfilename)\n"
+"usage: fprint_bd (-debug) (-terse) (-toggle) (-space) (-force) (-initial_boardfilename)\n"
 "  (-init_bin_boardfilename) (-board_binfilename) (-print_pieces)\n"
 "  (-min_force_diffvalue) (-match_boardfilename) (-only_checks) (-only_castle)\n"
 "  (-only_promotions) (-only_captures) (-multiple_queens) (-move_number_only) (-mine) (-not_mine)\n"
@@ -35,6 +35,7 @@ int main(int argc,char **argv)
   int curr_arg;
   int orientation;
   bool bDebug;
+  bool bTerse;
   bool bSearchAllMoves;
   bool bToggle;
   bool bSpace;
@@ -65,12 +66,13 @@ int main(int argc,char **argv)
   FILE *fptr;
   int filename_len;
 
-  if ((argc < 2) || (argc > 22)) {
+  if ((argc < 2) || (argc > 23)) {
     printf(usage);
     return 1;
   }
 
   bDebug = false;
+  bTerse = false;
   bSearchAllMoves = false;
   bToggle = false;
   bSpace = false;
@@ -93,6 +95,8 @@ int main(int argc,char **argv)
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
       bDebug = true;
+    else if (!strcmp(argv[curr_arg],"-terse"))
+      bTerse = true;
     else if (!strcmp(argv[curr_arg],"-search_all_moves"))
       bSearchAllMoves = true;
     else if (!strcmp(argv[curr_arg],"-toggle"))
@@ -377,11 +381,13 @@ int main(int argc,char **argv)
         printf("%s\n",filename);
       }
 
-      printf("curr_move = %d\n",curr_game.curr_move);
-      print_space_and_force(&curr_game,bSpace,bForce);
-      putchar(0x0a);
-      print_bd(&curr_game);
-      print_special_moves(&curr_game);
+      if (!bTerse) {
+        printf("curr_move = %d\n",curr_game.curr_move);
+        print_space_and_force(&curr_game,bSpace,bForce);
+        putchar(0x0a);
+        print_bd(&curr_game);
+        print_special_moves(&curr_game);
+      }
     }
   }
 
