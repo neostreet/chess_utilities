@@ -15,8 +15,8 @@ static char usage[] =
 "usage: print_bd (-debug) (-toggle) (-space) (-force) (-initial_boardfilename)\n"
 "  (-init_bin_boardfilename) (-board_binfilename) (-print_pieces)\n"
 "  (-min_force_diffvalue) (-match_boardfilename) (-only_checks) (-only_castle)\n"
-"  (-only_promotions) (-only_captures) (-multiple_queens) (-move_number_only) (-mine) (-not_mine)\n"
-"  (-search_all_moves) (-qnn) [white | black] filename\n";
+"  (-only_promotions) (-only_captures) (-only_en_passants) (-multiple_queens) (-move_number_only)\n"
+"  (-mine) (-not_mine) (-search_all_moves) (-qnn) [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -42,6 +42,7 @@ int main(int argc,char **argv)
   bool bOnlyCastle;
   bool bOnlyPromotions;
   bool bOnlyCaptures;
+  bool bOnlyEnPassants;
   bool bMultipleQueens;
   bool bMoveNumberOnly;
   bool bMine;
@@ -59,7 +60,7 @@ int main(int argc,char **argv)
   struct game curr_game;
   int match;
 
-  if ((argc < 2) || (argc > 22)) {
+  if ((argc < 2) || (argc > 23)) {
     printf(usage);
     return 1;
   }
@@ -76,6 +77,7 @@ int main(int argc,char **argv)
   bOnlyCastle = false;
   bOnlyPromotions = false;
   bOnlyCaptures = false;
+  bOnlyEnPassants = false;
   bMultipleQueens = false;
   bMoveNumberOnly = false;
   bMine = false;
@@ -141,6 +143,8 @@ int main(int argc,char **argv)
       bOnlyPromotions = true;
     else if (!strcmp(argv[curr_arg],"-only_captures"))
       bOnlyCaptures = true;
+    else if (!strcmp(argv[curr_arg],"-only_en_passants"))
+      bOnlyEnPassants = true;
     else if (!strcmp(argv[curr_arg],"-multiple_queens"))
       bMultipleQueens = true;
     else if (!strcmp(argv[curr_arg],"-move_number_only"))
@@ -254,6 +258,11 @@ int main(int argc,char **argv)
           continue;
       }
 
+      if (bOnlyEnPassants) {
+        if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_EN_PASSANT))
+          continue;
+      }
+
       if (bMultipleQueens) {
         if (!multiple_queens((unsigned char *)&curr_game.board))
           continue;
@@ -334,6 +343,11 @@ int main(int argc,char **argv)
 
     if (!bSkip && bOnlyCaptures) {
       if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CAPTURE))
+        bSkip = true;
+    }
+
+    if (!bSkip && bOnlyEnPassants) {
+      if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_EN_PASSANT))
         bSkip = true;
     }
 
