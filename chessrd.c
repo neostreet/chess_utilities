@@ -288,6 +288,9 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
 
   fclose(fptr);
 
+  if (got_error)
+    return 3;
+
   return 0;
 }
 
