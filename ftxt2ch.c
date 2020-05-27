@@ -254,11 +254,6 @@ int split_line(char *line,int line_len,FILE *ch_fptr)
     if (m != 2) {
       if (m != 1)
         return 1;
-      else {
-        remove_checks_and_promotions(&line[ix]);
-        fprintf(ch_fptr,"%s\n",&line[ix]);
-        break;
-      }
     }
 
     for (n = ix + n - 1; (n >= 0); n--) {
@@ -272,6 +267,10 @@ int split_line(char *line,int line_len,FILE *ch_fptr)
     line[n] = 0;
     remove_checks_and_promotions(&line[ix]);
     fprintf(ch_fptr,"%s\n",&line[ix]);
+
+    if (m == 1)
+      break;
+
     ix = n + 1;
   }
 
