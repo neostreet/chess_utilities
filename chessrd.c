@@ -280,6 +280,12 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
     gamept->moves.push_back(move);
 
     update_board(gamept,false);
+
+    if (player_is_in_check(((gamept->curr_move + 1) % 2),gamept)) {
+      got_error = 1;
+      break;
+    }
+
     gamept->curr_move++;
   }
 
