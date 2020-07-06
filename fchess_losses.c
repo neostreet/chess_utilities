@@ -157,8 +157,12 @@ int main(int argc,char **argv)
     fclose(fptr);
 
     if (!bMate || bHaveMate) {
-      if (bIsLoss)
-        printf("%d %s\n",bLost,filename);
+      if (bIsLoss) {
+        if (!bTerse)
+          printf("%d %s\n",bLost,filename);
+        else
+          printf("%d\n",bLost);
+      }
       else if (bLost)
         printf("%s\n",filename);
     }

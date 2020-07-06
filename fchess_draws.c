@@ -87,8 +87,12 @@ int main(int argc,char **argv)
           draw,DRAW_LEN,
           &ix)) {
 
-          if (bIsDraw)
-            printf("1 %s\n",filename);
+          if (bIsDraw) {
+            if (!bTerse)
+              printf("1 %s\n",filename);
+            else
+              printf("1\n");
+          }
           else
             printf("%s\n",filename);
         }

@@ -157,8 +157,12 @@ int main(int argc,char **argv)
     fclose(fptr);
 
     if (!bMate || bHaveMate) {
-      if (bIsWin)
-        printf("%d %s\n",bWon,filename);
+      if (bIsWin) {
+        if (!bTerse)
+          printf("%d %s\n",bWon,filename);
+        else
+          printf("%d\n",bWon);
+      }
       else if (bWon)
         printf("%s\n",filename);
     }
