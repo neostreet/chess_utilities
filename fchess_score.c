@@ -191,8 +191,8 @@ int main(int argc,char **argv)
     putchar(0x0a);
 
   printf("%6d wins\n",wins);
-  printf("%6d losses\n",losses);
   printf("%6d draws\n",draws);
+  printf("%6d losses\n",losses);
 
   points = (double)wins + ((double)(0.5) * (double)draws);
 
