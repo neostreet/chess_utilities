@@ -218,12 +218,15 @@ int main(int argc,char **argv)
   retval = read_game(filename,&curr_game,err_msg);
 
   if (retval) {
-    printf("read_game of %s failed: %d\n",filename,retval);
-    printf("curr_move = %d\n",curr_game.curr_move);
+    if (!bHaveMatchBoard) {
+      printf("read_game of %s failed: %d\n",filename,retval);
+      printf("curr_move = %d\n",curr_game.curr_move);
+    }
+
     continue;
   }
 
-  if (!bOnlyChecks && !bOnlyCastle && !bOnlyPromotions && !bOnlyCaptures && !bOnlyEnPassants && !bMultipleQueens && !bMine && !bNotMine)
+  if (!bOnlyChecks && !bOnlyCastle && !bOnlyPromotions && !bOnlyCaptures && !bOnlyEnPassants && !bMultipleQueens && !bMine && !bNotMine && !bHaveMatchBoard)
     printf("%s\n",filename);
 
   curr_game.curr_move--;
