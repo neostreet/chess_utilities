@@ -305,17 +305,19 @@ int main(int argc,char **argv)
         }
       }
 
-      if (bPrintedBoard)
-        putchar(0x0a);
+      if (!bTerse) {
+        if (bPrintedBoard)
+          putchar(0x0a);
 
-      printf("curr_move = %d\n",curr_game.curr_move);
+        printf("curr_move = %d\n",curr_game.curr_move);
 
-      if (!bMoveNumberOnly) {
-        print_space_and_force(&curr_game,bSpace,bForce);
-        putchar(0x0a);
-        print_bd(&curr_game);
-        print_special_moves(&curr_game);
-        bPrintedBoard = true;
+        if (!bMoveNumberOnly) {
+          print_space_and_force(&curr_game,bSpace,bForce);
+          putchar(0x0a);
+          print_bd(&curr_game);
+          print_special_moves(&curr_game);
+          bPrintedBoard = true;
+        }
       }
     }
   }
