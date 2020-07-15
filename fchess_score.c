@@ -7,8 +7,13 @@ static char filename[MAX_FILENAME_LEN];
 #define MAX_LINE_LEN 1024
 static char line[MAX_LINE_LEN];
 
-static char usage[] = "usage: fchess_score (-verbose) player_name filename\n";
+static char usage[] = "usage: fchess_score (-verbose) (-colorcolor) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
+
+enum {
+  WHITE,
+  BLACK
+};
 
 static char white[] = "White";
 #define WHITE_LEN (sizeof (white) - 1)
@@ -32,6 +37,7 @@ int main(int argc,char **argv)
   int n;
   int curr_arg;
   bool bVerbose;
+  int color;
   int player_name_ix;
   int player_name_len;
   FILE *fptr0;
@@ -47,23 +53,34 @@ int main(int argc,char **argv)
   int ix;
   double points;
 
-  if (argc < 3) {
+  if ((argc < 3) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
   bVerbose = false;
+  color = -1;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
       bVerbose = true;
+    else if (!strncmp(argv[curr_arg],"-color",6)) {
+      if (!strcmp(&argv[curr_arg][6],white))
+        color = WHITE;
+      else if (!strcmp(&argv[curr_arg][6],black))
+        color = BLACK;
+      else {
+        printf("color must be %s or %s\n",white,black);
+        return 2;
+      }
+    }
     else
       break;
   }
 
   if (argc - curr_arg != 2) {
     printf(usage);
-    return 2;
+    return 3;
   }
 
   player_name_ix = curr_arg++;
@@ -71,7 +88,7 @@ int main(int argc,char **argv)
 
   if ((fptr0 = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 3;
+    return 4;
   }
 
   wins = 0;
@@ -106,16 +123,20 @@ int main(int argc,char **argv)
           &ix)) {
 
           if (bPlayerIsWhite) {
-            if (bVerbose)
-              printf("%6.2lf %s\n",(double)1,filename);
+            if ((color == -1) || (color == WHITE)) {
+              if (bVerbose)
+                printf("%6.2lf %s\n",(double)1,filename);
 
-            wins++;
+              wins++;
+            }
           }
           else {
-            if (bVerbose)
-              printf("%6.2lf %s\n",(double)0,filename);
+            if ((color == -1) || (color == BLACK)) {
+              if (bVerbose)
+                printf("%6.2lf %s\n",(double)0,filename);
 
-            losses++;
+              losses++;
+            }
           }
         }
         else if (Contains(true,
@@ -124,16 +145,20 @@ int main(int argc,char **argv)
           &ix)) {
 
           if (!bPlayerIsWhite) {
-            if (bVerbose)
-              printf("%6.2lf %s\n",(double)1,filename);
+            if ((color == -1) || (color == BLACK)) {
+              if (bVerbose)
+                printf("%6.2lf %s\n",(double)1,filename);
 
-            wins++;
+              wins++;
+            }
           }
           else {
-            if (bVerbose)
-              printf("%6.2lf %s\n",(double)0,filename);
+            if ((color == -1) || (color == WHITE)) {
+              if (bVerbose)
+                printf("%6.2lf %s\n",(double)0,filename);
 
-            losses++;
+              losses++;
+            }
           }
         }
         else if (Contains(true,
@@ -141,10 +166,12 @@ int main(int argc,char **argv)
           draw,DRAW_LEN,
           &ix)) {
 
-          if (bVerbose)
-            printf("%6.2lf %s\n",(double).5,filename);
+          if ((color == -1) || ((color == WHITE) && bPlayerIsWhite) || ((color == BLACK) && !bPlayerIsWhite)) {
+            if (bVerbose)
+              printf("%6.2lf %s\n",(double).5,filename);
 
-          draws++;
+            draws++;
+          }
         }
         else {
           printf("%s: couldn't determine result\n",filename);
@@ -175,7 +202,7 @@ int main(int argc,char **argv)
         else {
           printf("%s: couldn't determine whether %s is white or black\n",
             filename,argv[player_name_ix]);
-          return 4;
+          return 6;
         }
       }
     }
