@@ -120,6 +120,8 @@ int main(int argc,char **argv)
             filename,argv[player_name_ix]);
           return 5;
         }
+
+        break;
       }
     }
 
