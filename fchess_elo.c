@@ -8,7 +8,7 @@ static char filename[MAX_FILENAME_LEN];
 static char line[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fchess_elo (-terse) (-verbose) (-after) (-before_and_after) player_name filename\n";
+"usage: fchess_elo (-terse) (-verbose) (-after) (-before_and_after) (-opponent) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -36,6 +36,7 @@ int main(int argc,char **argv)
   bool bVerbose;
   bool bAfter;
   bool bBeforeAndAfter;
+  bool bOpponent;
   int player_name_ix;
   int player_name_len;
   FILE *fptr0;
@@ -48,7 +49,7 @@ int main(int argc,char **argv)
   int elo;
   int rating_diff;
 
-  if ((argc < 3) || (argc > 7)) {
+  if ((argc < 3) || (argc > 8)) {
     printf(usage);
     return 1;
   }
@@ -57,6 +58,7 @@ int main(int argc,char **argv)
   bVerbose = false;
   bAfter = false;
   bBeforeAndAfter = false;
+  bOpponent = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
@@ -67,6 +69,8 @@ int main(int argc,char **argv)
       bAfter = true;
     else if (!strcmp(argv[curr_arg],"-before_and_after"))
       bBeforeAndAfter = true;
+    else if (!strcmp(argv[curr_arg],"-opponent"))
+      bOpponent = true;
     else
       break;
   }
@@ -116,7 +120,8 @@ int main(int argc,char **argv)
         white_elo,WHITE_ELO_LEN,
         &ix)) {
 
-        if (bPlayerIsWhite) {
+        if ((bPlayerIsWhite && !bOpponent) ||
+          (!bPlayerIsWhite && bOpponent)) {
           sscanf(&line[ix + WHITE_ELO_LEN],"%d",&elo);
 
           if (!bAfter && !bBeforeAndAfter) {
@@ -134,7 +139,8 @@ int main(int argc,char **argv)
         black_elo,BLACK_ELO_LEN,
         &ix)) {
 
-        if (!bPlayerIsWhite) {
+        if ((!bPlayerIsWhite && !bOpponent) ||
+          (bPlayerIsWhite && bOpponent)) {
           sscanf(&line[ix + BLACK_ELO_LEN],"%d",&elo);
 
           if (!bAfter && !bBeforeAndAfter) {
