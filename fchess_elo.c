@@ -8,12 +8,13 @@ static char filename[MAX_FILENAME_LEN];
 static char line[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fchess_elo (-terse) (-verbose) (-after) (-before_and_after) (-opponent) player_name filename\n";
+"usage: fchess_elo (-terse) (-verbose) (-after) (-before_and_after) (-opponent) (-opponent_name)\n"
+"  player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
-static char white[] = "White";
+static char white[] = "[White \"";
 #define WHITE_LEN (sizeof (white) - 1)
-static char black[] = "Black";
+static char black[] = "[Black \"";
 #define BLACK_LEN (sizeof (black) - 1)
 static char white_elo[] = "WhiteElo \"";
 #define WHITE_ELO_LEN (sizeof (white_elo) - 1)
@@ -23,6 +24,8 @@ static char white_rating_diff[] = "WhiteRatingDiff \"";
 #define WHITE_RATING_DIFF_LEN (sizeof (white_rating_diff) - 1)
 static char black_rating_diff[] = "BlackRatingDiff \"";
 #define BLACK_RATING_DIFF_LEN (sizeof (black_rating_diff) - 1)
+#define MAX_OPPONENT_NAME_LEN 50
+static char opponent_name[MAX_OPPONENT_NAME_LEN + 1];
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
@@ -30,6 +33,7 @@ static int Contains(bool bCaseSens,char *line,int line_len,
 
 int main(int argc,char **argv)
 {
+  int m;
   int n;
   int curr_arg;
   bool bTerse;
@@ -37,6 +41,7 @@ int main(int argc,char **argv)
   bool bAfter;
   bool bBeforeAndAfter;
   bool bOpponent;
+  bool bOpponentName;
   int player_name_ix;
   int player_name_len;
   FILE *fptr0;
@@ -49,7 +54,7 @@ int main(int argc,char **argv)
   int elo;
   int rating_diff;
 
-  if ((argc < 3) || (argc > 8)) {
+  if ((argc < 3) || (argc > 9)) {
     printf(usage);
     return 1;
   }
@@ -59,6 +64,7 @@ int main(int argc,char **argv)
   bAfter = false;
   bBeforeAndAfter = false;
   bOpponent = false;
+  bOpponentName = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
@@ -71,6 +77,8 @@ int main(int argc,char **argv)
       bBeforeAndAfter = true;
     else if (!strcmp(argv[curr_arg],"-opponent"))
       bOpponent = true;
+    else if (!strcmp(argv[curr_arg],"-opponent_name"))
+      bOpponentName = true;
     else
       break;
   }
@@ -127,8 +135,12 @@ int main(int argc,char **argv)
           if (!bAfter && !bBeforeAndAfter) {
             if (bTerse)
               printf("%d\n",elo);
-            else
-              printf("%4d %s\n",elo,filename);
+            else {
+              if (!bOpponentName)
+                printf("%4d %s\n",elo,filename);
+              else
+                printf("%4d %s %s\n",elo,opponent_name,filename);
+            }
 
             break;
           }
@@ -146,8 +158,12 @@ int main(int argc,char **argv)
           if (!bAfter && !bBeforeAndAfter) {
             if (bTerse)
               printf("%d\n",elo);
-            else
-              printf("%4d %s\n",elo,filename);
+            else {
+              if (!bOpponentName)
+                printf("%4d %s\n",elo,filename);
+              else
+                printf("%4d %s %s\n",elo,opponent_name,filename);
+            }
 
             break;
           }
@@ -237,6 +253,27 @@ int main(int argc,char **argv)
             filename,argv[player_name_ix]);
           return 6;
         }
+      }
+      else if (Contains(true,
+        line,line_len,
+        white,WHITE_LEN,
+        &ix) ||
+        Contains(true,
+        line,line_len,
+        black,BLACK_LEN,
+        &ix)) {
+
+        for (m = 0, n = ix + WHITE_LEN; n < line_len; n++) {
+          if (line[n] == '"')
+            break;
+
+          if (m == MAX_OPPONENT_NAME_LEN)
+            break;
+
+          opponent_name[m++] = line[n];
+        }
+
+        opponent_name[m] = 0;
       }
     }
 
