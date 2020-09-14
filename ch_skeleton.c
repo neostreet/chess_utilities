@@ -48,7 +48,7 @@ int main(int argc,char **argv)
   retval = read_game(argv[curr_arg],&curr_game,err_msg);
 
   if (retval) {
-    printf("read_game of %s failed: %d\n",argv[argc-1],retval);
+    printf("read_game of %s failed: %d\n",argv[curr_arg],retval);
     printf("curr_move = %d\n",curr_game.curr_move);
     return 3;
   }
