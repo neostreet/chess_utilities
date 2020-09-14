@@ -17,10 +17,7 @@ static char usage[] =
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
 
-static unsigned char match_board1[CHARS_IN_BOARD];
-
 void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
-void print_space_and_force(struct game *game_pt,bool bSpace,bool bForce);
 
 int main(int argc,char **argv)
 {
