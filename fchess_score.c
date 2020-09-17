@@ -184,7 +184,7 @@ int main(int argc,char **argv)
         }
 
         if (bRuntots)
-          printf("# %d %d %d %d\n",wins - losses,wins,draws,losses);
+          printf("# %d %d %d %d %s\n",wins - losses,wins,draws,losses,filename);
 
         break;
       }
