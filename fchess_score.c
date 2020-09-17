@@ -7,7 +7,8 @@ static char filename[MAX_FILENAME_LEN];
 #define MAX_LINE_LEN 1024
 static char line[MAX_LINE_LEN];
 
-static char usage[] = "usage: fchess_score (-verbose) (-colorcolor) player_name filename\n";
+static char usage[] =
+"usage: fchess_score (-verbose) (-runtots) (-colorcolor) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 enum {
@@ -37,6 +38,7 @@ int main(int argc,char **argv)
   int n;
   int curr_arg;
   bool bVerbose;
+  bool bRuntots;
   int color;
   int player_name_ix;
   int player_name_len;
@@ -53,17 +55,20 @@ int main(int argc,char **argv)
   int ix;
   double points;
 
-  if ((argc < 3) || (argc > 5)) {
+  if ((argc < 3) || (argc > 6)) {
     printf(usage);
     return 1;
   }
 
   bVerbose = false;
+  bRuntots = false;
   color = -1;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
       bVerbose = true;
+    else if (!strcmp(argv[curr_arg],"-runtots"))
+      bRuntots = true;
     else if (!strncmp(argv[curr_arg],"-color",6)) {
       if (!strcmp(&argv[curr_arg][6],white))
         color = WHITE;
@@ -178,6 +183,9 @@ int main(int argc,char **argv)
           return 5;
         }
 
+        if (bRuntots)
+          printf("# %d %d %d %d\n",wins - losses,wins,draws,losses);
+
         break;
       }
       else if (Contains(true,
@@ -217,13 +225,15 @@ int main(int argc,char **argv)
   if (bVerbose)
     putchar(0x0a);
 
-  printf("%6d wins\n",wins);
-  printf("%6d draws\n",draws);
-  printf("%6d losses\n",losses);
+  if (!bRuntots) {
+    printf("%6d wins\n",wins);
+    printf("%6d draws\n",draws);
+    printf("%6d losses\n",losses);
 
-  points = (double)wins + ((double)(0.5) * (double)draws);
+    points = (double)wins + ((double)(0.5) * (double)draws);
 
-  printf("\n%6.2lf out of %6.2lf\n",points,(double)total_games);
+    printf("\n%6.2lf out of %6.2lf\n",points,(double)total_games);
+  }
 
   return 0;
 }
