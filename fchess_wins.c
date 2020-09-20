@@ -6,9 +6,10 @@ static char filename[MAX_FILENAME_LEN];
 
 #define MAX_LINE_LEN 1024
 static char line[MAX_LINE_LEN];
+static char date[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fchess_wins (-terse) (-is_win) (-mate) player_name filename\n";
+"usage: fchess_wins (-terse) (-is_win) (-mate) (-date) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -23,6 +24,8 @@ static char black_wins[] = "0-1";
 #define BLACK_WINS_LEN (sizeof (black_wins) - 1)
 static char mate[] = "#";
 #define MATE_LEN (sizeof (mate) - 1)
+static char utcdate[] = "UTCDate";
+#define UTCDATE_LEN (sizeof (utcdate) - 1)
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
@@ -35,6 +38,7 @@ int main(int argc,char **argv)
   bool bTerse;
   bool bIsWin;
   bool bMate;
+  bool bDate;
   int player_name_ix;
   int player_name_len;
   FILE *fptr0;
@@ -47,7 +51,7 @@ int main(int argc,char **argv)
   bool bWon;
   bool bHaveMate;
 
-  if ((argc < 3) || (argc > 6)) {
+  if ((argc < 3) || (argc > 7)) {
     printf(usage);
     return 1;
   }
@@ -55,6 +59,7 @@ int main(int argc,char **argv)
   bTerse = false;
   bIsWin = false;
   bMate = false;
+  bDate = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
@@ -63,6 +68,8 @@ int main(int argc,char **argv)
       bIsWin = true;
     else if (!strcmp(argv[curr_arg],"-mate"))
       bMate = true;
+    else if (!strcmp(argv[curr_arg],"-date"))
+      bDate = true;
     else
       break;
   }
@@ -152,6 +159,14 @@ int main(int argc,char **argv)
 
         bHaveMate = true;
       }
+      else if (Contains(true,
+        line,line_len,
+        utcdate,UTCDATE_LEN,
+        &ix)) {
+
+        if (bDate)
+          strcpy(date,line);
+      }
     }
 
     fclose(fptr);
@@ -163,8 +178,12 @@ int main(int argc,char **argv)
         else
           printf("%d\n",bWon);
       }
-      else if (bWon)
-        printf("%s\n",filename);
+      else if (bWon) {
+        if (!bDate)
+          printf("%s\n",filename);
+        else
+          printf("%s %s\n",filename,date);
+      }
     }
   }
 

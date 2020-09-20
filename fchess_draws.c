@@ -6,15 +6,18 @@ static char filename[MAX_FILENAME_LEN];
 
 #define MAX_LINE_LEN 1024
 static char line[MAX_LINE_LEN];
+static char date[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fchess_draws (-terse) (-is_draw) filename\n";
+"usage: fchess_draws (-terse) (-is_draw) (-date) filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char result[] = "Result \"";
 #define RESULT_LEN (sizeof (result) - 1)
 static char draw[] = "1/2-1/2";
 #define DRAW_LEN (sizeof (draw) - 1)
+static char utcdate[] = "UTCDate";
+#define UTCDATE_LEN (sizeof (utcdate) - 1)
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
@@ -26,6 +29,7 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bTerse;
   bool bIsDraw;
+  bool bDate;
   FILE *fptr0;
   int filename_len;
   FILE *fptr;
@@ -33,19 +37,22 @@ int main(int argc,char **argv)
   int line_no;
   int ix;
 
-  if ((argc < 2) || (argc > 4)) {
+  if ((argc < 2) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
   bTerse = false;
   bIsDraw = false;
+  bDate = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
       bTerse = true;
     else if (!strcmp(argv[curr_arg],"-is_draw"))
       bIsDraw = true;
+    else if (!strcmp(argv[curr_arg],"-date"))
+      bDate = true;
     else
       break;
   }
@@ -79,6 +86,14 @@ int main(int argc,char **argv)
 
       if (Contains(true,
         line,line_len,
+        utcdate,UTCDATE_LEN,
+        &ix)) {
+
+        if (bDate)
+          strcpy(date,line);
+      }
+      else if (Contains(true,
+        line,line_len,
         result,RESULT_LEN,
         &ix)) {
 
@@ -93,8 +108,12 @@ int main(int argc,char **argv)
             else
               printf("1\n");
           }
-          else
-            printf("%s\n",filename);
+          else {
+            if (!bDate)
+              printf("%s\n",filename);
+            else
+              printf("%s %s\n",filename,date);
+          }
         }
         else if (bIsDraw)
           printf("0 %s\n",filename);
