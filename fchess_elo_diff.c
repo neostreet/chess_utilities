@@ -6,9 +6,10 @@ static char filename[MAX_FILENAME_LEN];
 
 #define MAX_LINE_LEN 1024
 static char line[MAX_LINE_LEN];
+static char date[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fchess_elo_diff (-terse) (-neg_only) (-pos_only) (-zero_only) player_name filename\n";
+"usage: fchess_elo_diff (-terse) (-neg_only) (-pos_only) (-zero_only) (-date) (-anchor) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -19,6 +20,8 @@ static char white_elo[] = "WhiteElo \"";
 #define WHITE_ELO_LEN (sizeof (white_elo) - 1)
 static char black_elo[] = "BlackElo \"";
 #define BLACK_ELO_LEN (sizeof (black_elo) - 1)
+static char utcdate[] = "UTCDate";
+#define UTCDATE_LEN (sizeof (utcdate) - 1)
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
@@ -32,6 +35,8 @@ int main(int argc,char **argv)
   bool bNegOnly;
   bool bPosOnly;
   bool bZeroOnly;
+  bool bDate;
+  bool bAnchor;
   int player_name_ix;
   int player_name_len;
   FILE *fptr0;
@@ -45,7 +50,7 @@ int main(int argc,char **argv)
   int opponent_elo;
   int elo_diff;
 
-  if ((argc < 3) || (argc > 7)) {
+  if ((argc < 3) || (argc > 9)) {
     printf(usage);
     return 1;
   }
@@ -54,6 +59,8 @@ int main(int argc,char **argv)
   bNegOnly = false;
   bPosOnly = false;
   bZeroOnly = false;
+  bDate = false;
+  bAnchor = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
@@ -64,6 +71,10 @@ int main(int argc,char **argv)
       bPosOnly = true;
     else if (!strcmp(argv[curr_arg],"-zero_only"))
       bZeroOnly = true;
+    else if (!strcmp(argv[curr_arg],"-date"))
+      bDate = true;
+    else if (!strcmp(argv[curr_arg],"-anchor"))
+      bAnchor = true;
     else
       break;
   }
@@ -105,6 +116,14 @@ int main(int argc,char **argv)
 
       if (Contains(true,
         line,line_len,
+        utcdate,UTCDATE_LEN,
+        &ix)) {
+
+        if (bDate)
+          strcpy(date,line);
+      }
+      else if (Contains(true,
+        line,line_len,
         white_elo,WHITE_ELO_LEN,
         &ix)) {
 
@@ -135,8 +154,16 @@ int main(int argc,char **argv)
           break;
 
         if (!bTerse) {
-          printf("%d (%d %d) %s\n",elo_diff,
-            elo,opponent_elo,filename);
+          if (!bDate) {
+            printf("%s%d (%d %d) %s\n",
+              (bAnchor ? "# " : ""),
+              elo_diff,elo,opponent_elo,filename);
+          }
+          else {
+            printf("%s%d (%d %d) %s %s\n",
+              (bAnchor ? "# " : ""),
+              elo_diff,elo,opponent_elo,filename,date);
+          }
         }
         else
           printf("%d\n",elo_diff);
