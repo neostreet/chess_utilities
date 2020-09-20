@@ -28,6 +28,8 @@ static char black_wins[] = "0-1";
 #define BLACK_WINS_LEN (sizeof (black_wins) - 1)
 static char draw[] = "1/2-1/2";
 #define DRAW_LEN (sizeof (draw) - 1)
+static char utcdate[] = "UTCDate";
+#define UTCDATE_LEN (sizeof (utcdate) - 1)
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
@@ -182,9 +184,14 @@ int main(int argc,char **argv)
           printf("%s: couldn't determine result\n",filename);
           return 5;
         }
+      }
+      else if (Contains(true,
+        line,line_len,
+        utcdate,UTCDATE_LEN,
+        &ix)) {
 
         if (bRuntots)
-          printf("# %d %d %d %d %s\n",wins - losses,wins,draws,losses,filename);
+          printf("# %d %d %d %d %s %s\n",wins - losses,wins,draws,losses,filename,line);
 
         break;
       }
