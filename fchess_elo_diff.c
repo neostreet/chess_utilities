@@ -9,7 +9,8 @@ static char line[MAX_LINE_LEN];
 static char date[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fchess_elo_diff (-terse) (-neg_only) (-pos_only) (-zero_only) (-date) (-anchor) player_name filename\n";
+"usage: fchess_elo_diff (-terse) (-neg_only) (-pos_only) (-zero_only) (-date) (-anchor)\n"
+"  (-opponent_elo_first) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -37,6 +38,7 @@ int main(int argc,char **argv)
   bool bZeroOnly;
   bool bDate;
   bool bAnchor;
+  bool bOpponentEloFirst;
   int player_name_ix;
   int player_name_len;
   FILE *fptr0;
@@ -50,7 +52,7 @@ int main(int argc,char **argv)
   int opponent_elo;
   int elo_diff;
 
-  if ((argc < 3) || (argc > 9)) {
+  if ((argc < 3) || (argc > 10)) {
     printf(usage);
     return 1;
   }
@@ -61,6 +63,7 @@ int main(int argc,char **argv)
   bZeroOnly = false;
   bDate = false;
   bAnchor = false;
+  bOpponentEloFirst = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
@@ -75,6 +78,8 @@ int main(int argc,char **argv)
       bDate = true;
     else if (!strcmp(argv[curr_arg],"-anchor"))
       bAnchor = true;
+    else if (!strcmp(argv[curr_arg],"-opponent_elo_first"))
+      bOpponentEloFirst = true;
     else
       break;
   }
@@ -155,14 +160,28 @@ int main(int argc,char **argv)
 
         if (!bTerse) {
           if (!bDate) {
-            printf("%s%d (%d %d) %s\n",
-              (bAnchor ? "# " : ""),
-              elo_diff,elo,opponent_elo,filename);
+            if (!bOpponentEloFirst) {
+              printf("%s%d (%d %d) %s\n",
+                (bAnchor ? "# " : ""),
+                elo_diff,elo,opponent_elo,filename);
+            }
+            else {
+              printf("%s%d %d %d %s\n",
+                (bAnchor ? "# " : ""),
+                opponent_elo,elo,elo_diff,filename);
+            }
           }
           else {
-            printf("%s%d (%d %d) %s %s\n",
-              (bAnchor ? "# " : ""),
-              elo_diff,elo,opponent_elo,filename,date);
+            if (!bOpponentEloFirst) {
+               printf("%s%d (%d %d) %s %s\n",
+                 (bAnchor ? "# " : ""),
+                 elo_diff,elo,opponent_elo,filename,date);
+            }
+            else {
+              printf("%s%d %d %d %s %s\n",
+                (bAnchor ? "# " : ""),
+                opponent_elo,elo,elo_diff,filename,date);
+            }
           }
         }
         else
