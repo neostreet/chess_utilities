@@ -6,10 +6,11 @@ static char filename[MAX_FILENAME_LEN];
 
 #define MAX_LINE_LEN 1024
 static char line[MAX_LINE_LEN];
+static char date[MAX_LINE_LEN];
 
 static char usage[] =
 "usage: fchess_elo (-terse) (-verbose) (-after) (-before_and_after) (-opponent) (-opponent_name)\n"
-"  player_name filename\n";
+"  (-date) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "[White \"";
@@ -26,6 +27,8 @@ static char black_rating_diff[] = "BlackRatingDiff \"";
 #define BLACK_RATING_DIFF_LEN (sizeof (black_rating_diff) - 1)
 #define MAX_OPPONENT_NAME_LEN 50
 static char opponent_name[MAX_OPPONENT_NAME_LEN + 1];
+static char utcdate[] = "UTCDate";
+#define UTCDATE_LEN (sizeof (utcdate) - 1)
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
@@ -42,6 +45,7 @@ int main(int argc,char **argv)
   bool bBeforeAndAfter;
   bool bOpponent;
   bool bOpponentName;
+  bool bDate;
   int player_name_ix;
   int player_name_len;
   FILE *fptr0;
@@ -54,7 +58,7 @@ int main(int argc,char **argv)
   int elo;
   int rating_diff;
 
-  if ((argc < 3) || (argc > 9)) {
+  if ((argc < 3) || (argc > 10)) {
     printf(usage);
     return 1;
   }
@@ -65,6 +69,7 @@ int main(int argc,char **argv)
   bBeforeAndAfter = false;
   bOpponent = false;
   bOpponentName = false;
+  bDate = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
@@ -79,6 +84,8 @@ int main(int argc,char **argv)
       bOpponent = true;
     else if (!strcmp(argv[curr_arg],"-opponent_name"))
       bOpponentName = true;
+    else if (!strcmp(argv[curr_arg],"-date"))
+      bDate = true;
     else
       break;
   }
@@ -125,6 +132,14 @@ int main(int argc,char **argv)
 
       if (Contains(true,
         line,line_len,
+        utcdate,UTCDATE_LEN,
+        &ix)) {
+
+        if (bDate)
+          strcpy(date,line);
+      }
+      else if (Contains(true,
+        line,line_len,
         white_elo,WHITE_ELO_LEN,
         &ix)) {
 
@@ -136,10 +151,18 @@ int main(int argc,char **argv)
             if (bTerse)
               printf("%d\n",elo);
             else {
-              if (!bOpponentName)
-                printf("%4d %s\n",elo,filename);
-              else
-                printf("%4d %s %s\n",elo,opponent_name,filename);
+              if (!bDate) {
+                if (!bOpponentName)
+                  printf("%4d %s\n",elo,filename);
+                else
+                  printf("%4d %s %s\n",elo,opponent_name,filename);
+              }
+              else {
+                if (!bOpponentName)
+                  printf("%4d %s %s\n",elo,filename,date);
+                else
+                  printf("%4d %s %s %s\n",elo,opponent_name,filename,date);
+              }
             }
 
             break;
@@ -159,10 +182,18 @@ int main(int argc,char **argv)
             if (bTerse)
               printf("%d\n",elo);
             else {
-              if (!bOpponentName)
-                printf("%4d %s\n",elo,filename);
-              else
-                printf("%4d %s %s\n",elo,opponent_name,filename);
+              if (!bDate) {
+                if (!bOpponentName)
+                  printf("%4d %s\n",elo,filename);
+                else
+                  printf("%4d %s %s\n",elo,opponent_name,filename);
+              }
+              else {
+                if (!bOpponentName)
+                  printf("%4d %s %s\n",elo,filename,date);
+                else
+                  printf("%4d %s %s %s\n",elo,opponent_name,filename,date);
+              }
             }
 
             break;
@@ -184,16 +215,32 @@ int main(int argc,char **argv)
               printf("%d %d\n",elo,elo+rating_diff);
           }
           else if (bVerbose) {
-            if (bAfter)
-              printf("%4d (%4d) %s\n",elo+rating_diff,rating_diff,filename);
-            else
-              printf("%4d %4d (%4d) %s\n",elo,elo+rating_diff,rating_diff,filename);
+            if (bAfter) {
+              if (!bDate)
+                printf("%4d (%4d) %s\n",elo+rating_diff,rating_diff,filename);
+              else
+                printf("%4d (%4d) %s %s\n",elo+rating_diff,rating_diff,filename,date);
+            }
+            else {
+              if (!bDate)
+                printf("%4d %4d (%4d) %s\n",elo,elo+rating_diff,rating_diff,filename);
+              else
+                printf("%4d %4d (%4d) %s %s\n",elo,elo+rating_diff,rating_diff,filename,date);
+            }
           }
           else {
-            if (bAfter)
-              printf("%4d %s\n",elo+rating_diff,filename);
-            else
-              printf("%4d %4d %s\n",elo,elo+rating_diff,filename);
+            if (bAfter) {
+              if (!bDate)
+                printf("%4d %s\n",elo+rating_diff,filename);
+              else
+                printf("%4d %s %s\n",elo+rating_diff,filename,date);
+            }
+            else {
+              if (!bDate)
+                printf("%4d %4d %s\n",elo,elo+rating_diff,filename);
+              else
+                printf("%4d %4d %s %s\n",elo,elo+rating_diff,filename,date);
+            }
           }
 
           break;
@@ -214,16 +261,32 @@ int main(int argc,char **argv)
               printf("%d %d\n",elo,elo+rating_diff);
           }
           else if (bVerbose) {
-            if (bAfter)
-              printf("%4d (%4d) %s\n",elo+rating_diff,rating_diff,filename);
-            else
-              printf("%4d %4d (%4d) %s\n",elo,elo+rating_diff,rating_diff,filename);
+            if (bAfter) {
+              if (!bDate)
+                printf("%4d (%4d) %s\n",elo+rating_diff,rating_diff,filename);
+              else
+                printf("%4d (%4d) %s %s\n",elo+rating_diff,rating_diff,filename,date);
+            }
+            else {
+              if (!bDate)
+                printf("%4d %4d (%4d) %s\n",elo,elo+rating_diff,rating_diff,filename);
+              else
+                printf("%4d %4d (%4d) %s %s\n",elo,elo+rating_diff,rating_diff,filename,date);
+            }
           }
           else {
-            if (bAfter)
-              printf("%4d %s\n",elo+rating_diff,filename);
-            else
-              printf("%4d %4d %s\n",elo,elo+rating_diff,filename);
+            if (bAfter) {
+              if (!bDate)
+                printf("%4d %s\n",elo+rating_diff,filename);
+              else
+                printf("%4d %s %s\n",elo+rating_diff,filename,date);
+            }
+            else {
+              if (!bDate)
+                printf("%4d %4d %s\n",elo,elo+rating_diff,filename);
+              else
+                printf("%4d %4d %s %s\n",elo,elo+rating_diff,filename,date);
+            }
           }
 
           break;
