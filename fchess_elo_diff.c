@@ -10,7 +10,7 @@ static char date[MAX_LINE_LEN];
 
 static char usage[] =
 "usage: fchess_elo_diff (-terse) (-neg_only) (-pos_only) (-zero_only) (-date) (-anchor)\n"
-"  (-opponent_elo_first) player_name filename\n";
+"  (-opponent_elo_first) (-opponent_elo_geval) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -51,8 +51,9 @@ int main(int argc,char **argv)
   int elo;
   int opponent_elo;
   int elo_diff;
+  int opponent_elo_geval;
 
-  if ((argc < 3) || (argc > 10)) {
+  if ((argc < 3) || (argc > 11)) {
     printf(usage);
     return 1;
   }
@@ -64,6 +65,7 @@ int main(int argc,char **argv)
   bDate = false;
   bAnchor = false;
   bOpponentEloFirst = false;
+  opponent_elo_geval = -1;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
@@ -80,6 +82,8 @@ int main(int argc,char **argv)
       bAnchor = true;
     else if (!strcmp(argv[curr_arg],"-opponent_elo_first"))
       bOpponentEloFirst = true;
+    else if (!strncmp(argv[curr_arg],"-opponent_elo_ge",16))
+      sscanf(&argv[curr_arg][16],"%d",&opponent_elo_geval);
     else
       break;
   }
@@ -146,6 +150,9 @@ int main(int argc,char **argv)
           sscanf(&line[ix + BLACK_ELO_LEN],"%d",&elo);
         else
           sscanf(&line[ix + BLACK_ELO_LEN],"%d",&opponent_elo);
+
+        if (opponent_elo < opponent_elo_geval)
+          break;
 
         elo_diff = elo - opponent_elo;
 
