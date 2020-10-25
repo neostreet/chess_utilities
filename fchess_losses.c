@@ -9,7 +9,7 @@ static char line[MAX_LINE_LEN];
 static char date[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fchess_losses (-terse) (-is_loss) (-mate) (-date) player_name filename\n";
+"usage: fchess_losses (-terse) (-is_loss) (-is_not_win) (-mate) (-date) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -37,6 +37,7 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bTerse;
   bool bIsLoss;
+  bool bIsNotWin;
   bool bMate;
   bool bDate;
   int player_name_ix;
@@ -50,14 +51,16 @@ int main(int argc,char **argv)
   int ix;
   bool bLost;
   bool bHaveMate;
+  bool bNotWin;
 
-  if ((argc < 3) || (argc > 7)) {
+  if ((argc < 3) || (argc > 8)) {
     printf(usage);
     return 1;
   }
 
   bTerse = false;
   bIsLoss = false;
+  bIsNotWin = false;
   bMate = false;
   bDate = false;
 
@@ -66,6 +69,8 @@ int main(int argc,char **argv)
       bTerse = true;
     else if (!strcmp(argv[curr_arg],"-is_loss"))
       bIsLoss = true;
+    else if (!strcmp(argv[curr_arg],"-is_not_win"))
+      bIsNotWin = true;
     else if (!strcmp(argv[curr_arg],"-mate"))
       bMate = true;
     else if (!strcmp(argv[curr_arg],"-date"))
@@ -74,9 +79,14 @@ int main(int argc,char **argv)
       break;
   }
 
+  if (bIsLoss && bIsNotWin) {
+    printf("can't specify both -is_loss and -is_not_win\n");
+    return 2;
+  }
+
   if (argc - curr_arg != 2) {
     printf(usage);
-    return 2;
+    return 3;
   }
 
   player_name_ix = curr_arg;
@@ -84,7 +94,7 @@ int main(int argc,char **argv)
 
   if ((fptr0 = fopen(argv[curr_arg + 1],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg + 1]);
-    return 3;
+    return 4;
   }
 
   for ( ; ; ) {
@@ -100,6 +110,7 @@ int main(int argc,char **argv)
 
     bLost = false;
     bHaveMate = false;
+    bNotWin = false;
 
     for ( ; ; ) {
       GetLine(fptr,line,&line_len,MAX_LINE_LEN);
@@ -129,7 +140,7 @@ int main(int argc,char **argv)
         else {
           printf("%s: couldn't determine whether %s is white or black\n",
             filename,argv[player_name_ix]);
-          return 4;
+          return 5;
         }
       }
       else if (Contains(true,
@@ -143,6 +154,9 @@ int main(int argc,char **argv)
           &ix)) {
 
           bLost = !bPlayerIsWhite;
+
+          if (bLost)
+            bNotWin = true;
         }
         else if (Contains(true,
           line,line_len,
@@ -150,7 +164,12 @@ int main(int argc,char **argv)
           &ix)) {
 
           bLost = bPlayerIsWhite;
+
+          if (bLost)
+            bNotWin = true;
         }
+        else
+          bNotWin = true;
       }
       else if (Contains(true,
         line,line_len,
@@ -173,10 +192,32 @@ int main(int argc,char **argv)
 
     if (!bMate || bHaveMate) {
       if (bIsLoss) {
-        if (!bTerse)
-          printf("%d %s\n",bLost,filename);
-        else
-          printf("%d\n",bLost);
+        if (!bTerse) {
+          if (!bDate)
+            printf("%d %s\n",bLost,filename);
+          else
+            printf("%d %s %s\n",bLost,filename,date);
+        }
+        else {
+          if (!bDate)
+            printf("%d\n",bLost);
+          else
+            printf("%d %s\n",bLost,date);
+        }
+      }
+      else if (bIsNotWin) {
+        if (!bTerse) {
+          if (!bDate)
+            printf("%d %s\n",bNotWin,filename);
+          else
+            printf("%d %s %s\n",bNotWin,filename,date);
+        }
+        else {
+          if (!bDate)
+            printf("%d\n",bNotWin);
+          else
+            printf("%d %s\n",bNotWin,date);
+        }
       }
       else if (bLost) {
         if (!bDate)
