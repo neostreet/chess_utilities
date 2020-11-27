@@ -6,8 +6,9 @@ static char filename[MAX_FILENAME_LEN];
 
 #define MAX_LINE_LEN 1024
 static char line[MAX_LINE_LEN];
+static char date[MAX_LINE_LEN];
 
-static char usage[] = "usage: fchess_rating_diff (-terse) player_name filename\n";
+static char usage[] = "usage: fchess_rating_diff (-terse) (-date) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -18,6 +19,8 @@ static char white_rating_diff[] = "WhiteRatingDiff \"";
 #define WHITE_RATING_DIFF_LEN (sizeof (white_rating_diff) - 1)
 static char black_rating_diff[] = "BlackRatingDiff \"";
 #define BLACK_RATING_DIFF_LEN (sizeof (black_rating_diff) - 1)
+static char utcdate[] = "UTCDate";
+#define UTCDATE_LEN (sizeof (utcdate) - 1)
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
@@ -36,19 +39,23 @@ int main(int argc,char **argv)
   int line_len;
   int line_no;
   bool bPlayerIsWhite;
+  bool bDate;
   int ix;
   int rating_diff;
 
-  if ((argc < 3) || (argc > 4)) {
+  if ((argc < 3) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
   bTerse = false;
+  bDate = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
       bTerse = true;
+    else if (!strcmp(argv[curr_arg],"-date"))
+      bDate = true;
     else
       break;
   }
@@ -85,14 +92,26 @@ int main(int argc,char **argv)
 
       if (Contains(true,
         line,line_len,
+        utcdate,UTCDATE_LEN,
+        &ix)) {
+
+        if (bDate)
+          strcpy(date,line);
+      }
+      else if (Contains(true,
+        line,line_len,
         white_rating_diff,WHITE_RATING_DIFF_LEN,
         &ix)) {
 
         if (bPlayerIsWhite) {
           sscanf(&line[ix + WHITE_RATING_DIFF_LEN],"%d",&rating_diff);
 
-          if (!bTerse)
-            printf("%4d %s\n",rating_diff,filename);
+          if (!bTerse) {
+            if (!bDate)
+              printf("%4d %s\n",rating_diff,filename);
+            else
+              printf("%4d %s %s\n",rating_diff,filename,date);
+          }
           else
             printf("%d\n",rating_diff);
 
@@ -107,8 +126,12 @@ int main(int argc,char **argv)
         if (!bPlayerIsWhite) {
           sscanf(&line[ix + BLACK_RATING_DIFF_LEN],"%d",&rating_diff);
 
-          if (!bTerse)
-            printf("%4d %s\n",rating_diff,filename);
+          if (!bTerse) {
+            if (!bDate)
+              printf("%4d %s\n",rating_diff,filename);
+            else
+              printf("%4d %s %s\n",rating_diff,filename,date);
+          }
           else
             printf("%d\n",rating_diff);
 
