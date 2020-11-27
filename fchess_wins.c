@@ -9,7 +9,7 @@ static char line[MAX_LINE_LEN];
 static char date[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fchess_wins (-terse) (-is_win) (-is_not_loss) (-mate) (-date) player_name filename\n";
+"usage: fchess_wins (-terse) (-is_win) (-is_not_loss) (-mate) (-date) (-date_first) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -30,6 +30,7 @@ static char utcdate[] = "UTCDate";
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
   char *string,int string_len,int *index);
+static void get_date(char *date,char *line);
 
 int main(int argc,char **argv)
 {
@@ -40,6 +41,7 @@ int main(int argc,char **argv)
   bool bIsNotLoss;
   bool bMate;
   bool bDate;
+  bool bDateFirst;
   int player_name_ix;
   int player_name_len;
   FILE *fptr0;
@@ -53,7 +55,7 @@ int main(int argc,char **argv)
   bool bHaveMate;
   bool bNotLoss;
 
-  if ((argc < 3) || (argc > 8)) {
+  if ((argc < 3) || (argc > 9)) {
     printf(usage);
     return 1;
   }
@@ -63,6 +65,7 @@ int main(int argc,char **argv)
   bIsNotLoss = false;
   bMate = false;
   bDate = false;
+  bDateFirst = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
@@ -75,6 +78,8 @@ int main(int argc,char **argv)
       bMate = true;
     else if (!strcmp(argv[curr_arg],"-date"))
       bDate = true;
+    else if (!strcmp(argv[curr_arg],"-date_first"))
+      bDateFirst = true;
     else
       break;
   }
@@ -184,7 +189,7 @@ int main(int argc,char **argv)
         &ix)) {
 
         if (bDate)
-          strcpy(date,line);
+          get_date(date,line);
       }
     }
 
@@ -195,8 +200,10 @@ int main(int argc,char **argv)
         if (!bTerse) {
           if (!bDate)
             printf("%d %s\n",bWon,filename);
-          else
+          else if (!bDateFirst)
             printf("%d %s %s\n",bWon,filename,date);
+          else
+            printf("%s\t%d\t%s\n",date,bWon,filename);
         }
         else {
           if (!bDate)
@@ -209,21 +216,27 @@ int main(int argc,char **argv)
         if (!bTerse) {
           if (!bDate)
             printf("%d %s\n",bNotLoss,filename);
-          else
+          else if (!bDateFirst)
             printf("%d %s %s\n",bNotLoss,filename,date);
+          else
+            printf("%s\t%d\t%s\n",date,bNotLoss,filename);
         }
         else {
           if (!bDate)
             printf("%d\n",bNotLoss);
-          else
+          else if (!bDateFirst)
             printf("%d %s\n",bNotLoss,date);
+          else
+            printf("%s\t%d\n",date,bNotLoss);
         }
       }
       else if (bWon) {
         if (!bDate)
           printf("%s\n",filename);
-        else
+        else if (!bDateFirst)
           printf("%s %s\n",filename,date);
+        else
+          printf("%s\t%s\n",date,filename);
       }
     }
   }
@@ -290,4 +303,11 @@ static int Contains(bool bCaseSens,char *line,int line_len,
   }
 
   return false;
+}
+
+static void get_date(char *date,char *line)
+{
+  strncpy(date,&line[10],10);
+  date[4] = '-';
+  date[7] = '-';
 }

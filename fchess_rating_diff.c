@@ -8,7 +8,7 @@ static char filename[MAX_FILENAME_LEN];
 static char line[MAX_LINE_LEN];
 static char date[MAX_LINE_LEN];
 
-static char usage[] = "usage: fchess_rating_diff (-terse) (-date) player_name filename\n";
+static char usage[] = "usage: fchess_rating_diff (-terse) (-date) (-date_first) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -25,6 +25,7 @@ static char utcdate[] = "UTCDate";
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
   char *string,int string_len,int *index);
+static void get_date(char *date,char *line);
 
 int main(int argc,char **argv)
 {
@@ -40,22 +41,26 @@ int main(int argc,char **argv)
   int line_no;
   bool bPlayerIsWhite;
   bool bDate;
+  bool bDateFirst;
   int ix;
   int rating_diff;
 
-  if ((argc < 3) || (argc > 5)) {
+  if ((argc < 3) || (argc > 6)) {
     printf(usage);
     return 1;
   }
 
   bTerse = false;
   bDate = false;
+  bDateFirst = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
       bTerse = true;
     else if (!strcmp(argv[curr_arg],"-date"))
       bDate = true;
+    else if (!strcmp(argv[curr_arg],"-date_first"))
+      bDateFirst = true;
     else
       break;
   }
@@ -96,7 +101,7 @@ int main(int argc,char **argv)
         &ix)) {
 
         if (bDate)
-          strcpy(date,line);
+          get_date(date,line);
       }
       else if (Contains(true,
         line,line_len,
@@ -109,8 +114,10 @@ int main(int argc,char **argv)
           if (!bTerse) {
             if (!bDate)
               printf("%4d %s\n",rating_diff,filename);
-            else
+            else if (!bDateFirst)
               printf("%4d %s %s\n",rating_diff,filename,date);
+            else
+              printf("%s\t%d\t%s\n",date,rating_diff,filename);
           }
           else
             printf("%d\n",rating_diff);
@@ -129,8 +136,10 @@ int main(int argc,char **argv)
           if (!bTerse) {
             if (!bDate)
               printf("%4d %s\n",rating_diff,filename);
-            else
+            else if (!bDateFirst)
               printf("%4d %s %s\n",rating_diff,filename,date);
+            else
+              printf("%s\t%d\t%s\n",date,rating_diff,filename);
           }
           else
             printf("%d\n",rating_diff);
@@ -230,4 +239,11 @@ static int Contains(bool bCaseSens,char *line,int line_len,
   }
 
   return false;
+}
+
+static void get_date(char *date,char *line)
+{
+  strncpy(date,&line[10],10);
+  date[4] = '-';
+  date[7] = '-';
 }
