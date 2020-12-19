@@ -16,7 +16,7 @@ static char usage[] =
 "  (-init_bin_boardfilename) (-board_binfilename) (-print_pieces)\n"
 "  (-min_force_diffvalue) (-match_boardfilename) (-only_checks) (-only_castle)\n"
 "  (-only_promotions) (-only_captures) (-only_en_passants) (-multiple_queens) (-move_number_only)\n"
-"  (-mine) (-not_mine) (-search_all_moves) (-qnn) [white | black] filename\n";
+"  (-mine) (-not_mine) (-search_all_moves) (-exact_match) (-qnn) [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -33,6 +33,7 @@ int main(int argc,char **argv)
   int orientation;
   bool bDebug;
   bool bSearchAllMoves;
+  bool bExactMatch;
   bool bToggle;
   bool bSpace;
   bool bForce;
@@ -60,13 +61,14 @@ int main(int argc,char **argv)
   struct game curr_game;
   int match;
 
-  if ((argc < 2) || (argc > 23)) {
+  if ((argc < 2) || (argc > 24)) {
     printf(usage);
     return 1;
   }
 
   bDebug = false;
   bSearchAllMoves = false;
+  bExactMatch = false;
   bToggle = false;
   bSpace = false;
   bForce = false;
@@ -153,6 +155,8 @@ int main(int argc,char **argv)
       bMine = true;
     else if (!strcmp(argv[curr_arg],"-not_mine"))
       bNotMine = true;
+    else if (!strcmp(argv[curr_arg],"-exact_match"))
+      bExactMatch = true;
     else
       break;
   }
@@ -232,7 +236,7 @@ int main(int argc,char **argv)
       }
 
       if (bHaveMatchBoard) {
-        match = match_board(curr_game.board,match_board1);
+        match = match_board(curr_game.board,match_board1,bExactMatch);
 
         if (!match)
           continue;
@@ -320,7 +324,7 @@ int main(int argc,char **argv)
     }
 
     if (!bSkip && bHaveMatchBoard) {
-      match = match_board(curr_game.board,match_board1);
+      match = match_board(curr_game.board,match_board1,bExactMatch);
 
       if (!match)
         bSkip = true;

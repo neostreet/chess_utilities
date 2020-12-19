@@ -199,7 +199,7 @@ void print_special_moves(struct game *gamept)
     putchar(0x0a);
 }
 
-int match_board(unsigned char *board1,unsigned char *board2)
+int match_board(unsigned char *board1,unsigned char *board2,bool bExactMatch)
 {
   int m;
   int n;
@@ -211,8 +211,14 @@ int match_board(unsigned char *board1,unsigned char *board2)
       square1 = get_piece2(board1,7 - m,n);
       square2 = get_piece2(board2,7 - m,n);
 
-      if (square2 && (square1 != square2))
-        break;
+      if (!bExactMatch) {
+         if (square2 && (square1 != square2))
+           break;
+      }
+      else {
+         if (square1 != square2)
+           break;
+      }
     }
 
     if (n < 8)
