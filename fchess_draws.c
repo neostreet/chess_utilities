@@ -22,6 +22,7 @@ static char utcdate[] = "UTCDate";
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
   char *string,int string_len,int *index);
+static void get_date(char *date,char *line);
 
 int main(int argc,char **argv)
 {
@@ -90,7 +91,7 @@ int main(int argc,char **argv)
         &ix)) {
 
         if (bDate)
-          strcpy(date,line);
+          get_date(date,line);
       }
       else if (Contains(true,
         line,line_len,
@@ -185,4 +186,11 @@ static int Contains(bool bCaseSens,char *line,int line_len,
   }
 
   return false;
+}
+
+static void get_date(char *date,char *line)
+{
+  strncpy(date,&line[10],10);
+  date[4] = '-';
+  date[7] = '-';
 }
