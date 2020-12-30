@@ -6,9 +6,10 @@ static char filename[MAX_FILENAME_LEN];
 
 #define MAX_LINE_LEN 1024
 static char line[MAX_LINE_LEN];
+static char date[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fchess_score (-verbose) (-runtots) (-colorcolor) player_name filename\n";
+"usage: fchess_score (-verbose) (-runtots) (-colorcolor) (-plus_minus) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 enum {
@@ -34,6 +35,7 @@ static char utcdate[] = "UTCDate";
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
   char *string,int string_len,int *index);
+static void get_date(char *date,char *line);
 
 int main(int argc,char **argv)
 {
@@ -42,6 +44,7 @@ int main(int argc,char **argv)
   bool bVerbose;
   bool bRuntots;
   int color;
+  bool bPlusMinus;
   int player_name_ix;
   int player_name_len;
   FILE *fptr0;
@@ -57,7 +60,7 @@ int main(int argc,char **argv)
   int ix;
   double points;
 
-  if ((argc < 3) || (argc > 6)) {
+  if ((argc < 3) || (argc > 7)) {
     printf(usage);
     return 1;
   }
@@ -65,6 +68,7 @@ int main(int argc,char **argv)
   bVerbose = false;
   bRuntots = false;
   color = -1;
+  bPlusMinus = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
@@ -81,6 +85,8 @@ int main(int argc,char **argv)
         return 2;
       }
     }
+    else if (!strcmp(argv[curr_arg],"-plus_minus"))
+      bPlusMinus = true;
     else
       break;
   }
@@ -131,18 +137,26 @@ int main(int argc,char **argv)
 
           if (bPlayerIsWhite) {
             if ((color == -1) || (color == WHITE)) {
-              if (bVerbose)
-                printf("%6.2lf %s\n",(double)1,filename);
-
               wins++;
+
+              if (bVerbose) {
+                if (!bPlusMinus)
+                  printf("%6.2lf %s ",(double)1,filename);
+                else
+                  printf("%d %s ",wins - losses,filename);
+              }
             }
           }
           else {
             if ((color == -1) || (color == BLACK)) {
-              if (bVerbose)
-                printf("%6.2lf %s\n",(double)0,filename);
-
               losses++;
+
+              if (bVerbose) {
+                if (!bPlusMinus)
+                  printf("%6.2lf %s ",(double)0,filename);
+                else
+                  printf("%d %s ",wins - losses,filename);
+              }
             }
           }
         }
@@ -153,18 +167,26 @@ int main(int argc,char **argv)
 
           if (!bPlayerIsWhite) {
             if ((color == -1) || (color == BLACK)) {
-              if (bVerbose)
-                printf("%6.2lf %s\n",(double)1,filename);
-
               wins++;
+
+              if (bVerbose) {
+                if (!bPlusMinus)
+                  printf("%6.2lf %s ",(double)1,filename);
+                else
+                  printf("%d %s ",wins - losses,filename);
+              }
             }
           }
           else {
             if ((color == -1) || (color == WHITE)) {
-              if (bVerbose)
-                printf("%6.2lf %s\n",(double)0,filename);
-
               losses++;
+
+              if (bVerbose) {
+                if (!bPlusMinus)
+                  printf("%6.2lf %s ",(double)0,filename);
+                else
+                  printf("%d %s ",wins - losses,filename);
+              }
             }
           }
         }
@@ -174,10 +196,14 @@ int main(int argc,char **argv)
           &ix)) {
 
           if ((color == -1) || ((color == WHITE) && bPlayerIsWhite) || ((color == BLACK) && !bPlayerIsWhite)) {
-            if (bVerbose)
-              printf("%6.2lf %s\n",(double).5,filename);
-
             draws++;
+
+            if (bVerbose) {
+              if (!bPlusMinus)
+                printf("%6.2lf %s ",(double).5,filename);
+              else
+                printf("%d %s ",wins - losses,filename);
+            }
           }
         }
         else {
@@ -190,8 +216,14 @@ int main(int argc,char **argv)
         utcdate,UTCDATE_LEN,
         &ix)) {
 
-        if (bRuntots)
-          printf("# %d %d %d %d %s %s\n",wins - losses,wins,draws,losses,filename,line);
+        if (bVerbose || bRuntots) {
+          get_date(date,line);
+
+          if (bRuntots)
+            printf("# %d %d %d %d %s %s\n",wins - losses,wins,draws,losses,filename,date);
+          else
+            printf("%s\n",date);
+        }
 
         break;
       }
@@ -229,10 +261,10 @@ int main(int argc,char **argv)
 
   total_games = wins + losses + draws;
 
-  if (bVerbose)
-    putchar(0x0a);
+  if (!bRuntots && !bPlusMinus) {
+    if (bVerbose)
+      putchar(0x0a);
 
-  if (!bRuntots) {
     printf("%6d wins\n",wins);
     printf("%6d draws\n",draws);
     printf("%6d losses\n",losses);
@@ -302,4 +334,11 @@ static int Contains(bool bCaseSens,char *line,int line_len,
   }
 
   return false;
+}
+
+static void get_date(char *date,char *line)
+{
+  strncpy(date,&line[10],10);
+  date[4] = '-';
+  date[7] = '-';
 }
