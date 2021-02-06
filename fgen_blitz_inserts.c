@@ -165,6 +165,7 @@ static int get_termination(char *line,int line_len,int ix,
   char *termination,int termination_max_len);
 static int get_num_moves(char *line,int line_len,int *num_moves_ptr);
 static void output_game_insert_statement(
+  char *filename,
   char *table_name,
   bool *bHaveItem,
   char *game_date,
@@ -280,6 +281,7 @@ int main(int argc,char **argv)
         if (bHaveItem[BLITZ_GAME_DATE]) {
           if (!bDebug) {
             output_game_insert_statement(
+              filename,
               table_name,
               bHaveItem,
               game_date,
@@ -518,6 +520,7 @@ int main(int argc,char **argv)
 
     if (!bDebug) {
       output_game_insert_statement(
+        filename,
         table_name,
         bHaveItem,
         game_date,
@@ -859,6 +862,7 @@ static int get_num_moves(char *line,int line_len,int *num_moves_ptr)
 }
 
 static void output_game_insert_statement(
+  char *filename,
   char *table_name,
   bool *bHaveItem,
   char *game_date,
@@ -893,6 +897,7 @@ static void output_game_insert_statement(
   else {
     if (!bFirstMoves || (n < NUM_BLITZ_GAME_ITEMS)) {
       printf("insert into %s(\n",table_name);
+      printf("  game_filename,\n");
       printf("  game_date,\n");
       printf("  time_control,\n");
       printf("  eco,\n");
@@ -906,6 +911,7 @@ static void output_game_insert_statement(
       printf("  my_elo_before,\n");
       printf("  my_elo_delta\n");
       printf(") values (\n");
+      printf("  '%s',\n",filename);
       printf("  '%s',\n",game_date);
       printf("  '%s',\n",time_control);
       printf("  '%s',\n",eco);
@@ -926,6 +932,7 @@ static void output_game_insert_statement(
     }
     else {
       printf("insert into %s(\n",table_name);
+      printf("  game_filename,\n");
       printf("  game_date,\n");
       printf("  time_control,\n");
       printf("  eco,\n");
@@ -943,6 +950,7 @@ static void output_game_insert_statement(
       printf("  first_three_moves,\n");
       printf("  first_four_moves\n");
       printf(") values (\n");
+      printf("  '%s',\n",filename);
       printf("  '%s',\n",game_date);
       printf("  '%s',\n",time_control);
       printf("  '%s',\n",eco);
