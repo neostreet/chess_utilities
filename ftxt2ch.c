@@ -9,6 +9,9 @@ static char ch_filename[MAX_FILENAME_LEN];
 #define MAX_LINE_LEN 8192
 static char line[MAX_LINE_LEN];
 
+#define MAX_OPPONENT_NAME_LEN 50
+static char opponent_name[MAX_OPPONENT_NAME_LEN+1];
+
 static char usage[] = "usage: ftxt2ch filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 static char couldnt_determine_color[] = "%s: couldn't determine color\n";
@@ -23,6 +26,7 @@ static bool Contains(int bCaseSens,char *line,int line_len,
   char *string,int string_len,int *index);
 int split_line(char *line,int line_len,FILE *ch_fptr);
 void remove_checks_and_promotions(char *line);
+void get_opponent_name(char *line,int line_len,char *opponent_name,int max_opponent_name_len);
 
 int main(int argc,char **argv)
 {
@@ -80,18 +84,28 @@ int main(int argc,char **argv)
 
       if (Contains(true,
         line,line_len,
-        (char *)"neostreet",9,
+        (char *)"White",5,
         &ix)) {
 
         if (Contains(true,
           line,line_len,
-          (char *)"White",5,
+          (char *)"neostreet",9,
           &ix)) {
+
           color = 0;
         }
-        else
+        else {
           color = 1;
+          get_opponent_name(line,line_len,opponent_name,MAX_OPPONENT_NAME_LEN);
+          break;
+        }
+      }
+      else if (Contains(true,
+        line,line_len,
+        (char *)"Black",5,
+        &ix)) {
 
+        get_opponent_name(line,line_len,opponent_name,MAX_OPPONENT_NAME_LEN);
         break;
       }
     }
@@ -107,10 +121,14 @@ int main(int argc,char **argv)
       continue;
     }
 
-    if (!color)
+    if (!color) {
       fprintf(ch_fptr,"0\n\n");
-    else
+      fprintf(ch_fptr,"titleneostreet\\vs\\%s\n\n",opponent_name);
+    }
+    else {
       fprintf(ch_fptr,"1\n\n");
+      fprintf(ch_fptr,"title%s\\vs\\neostreet\n\n",opponent_name);
+    }
 
     fseek(fptr,0L,SEEK_SET);
 
@@ -302,4 +320,18 @@ void remove_checks_and_promotions(char *line)
 
   if (removed)
     line[m] = 0;
+}
+
+void get_opponent_name(char *line,int line_len,char *opponent_name,int max_opponent_name_len)
+{
+  int n;
+
+  for (n = 0; (8 + n < line_len) && (n < max_opponent_name_len); n++) {
+    if (line[8 + n] == '"')
+      break;
+
+    opponent_name[n] = line[8 + n];
+  }
+
+  opponent_name[n] = 0;
 }
