@@ -837,9 +837,11 @@ int populate_board_from_board_file(unsigned char *board,char *filename)
       }
       else {
         if (chara == 'p')
-          set_piece2(board,7 - line_no,n,1);
+          set_piece2(board,7 - line_no,n,PAWN_iD);
         else if (chara == 'P')
-          set_piece2(board,7 - line_no,n,-1);
+          set_piece2(board,7 - line_no,n,PAWN_ID * -1);
+        else if (chara == 'e')
+          set_piece2(board,7 - line_no,n,EMPTY_ID);
         else {
           for (m = 0; m < NUM_PIECE_TYPES; m++) {
             if (chara == piece_ids[m]) {

@@ -212,12 +212,22 @@ int match_board(unsigned char *board1,unsigned char *board2,bool bExactMatch)
       square2 = get_piece2(board2,7 - m,n);
 
       if (!bExactMatch) {
-         if (square2 && (square1 != square2))
-           break;
+        if (square2) {
+          if (square2 == EMPTY_ID) {
+            if (square1)
+              break;
+          }
+          else if (square1 != square2)
+            break;
+        }
       }
       else {
-         if (square1 != square2)
-           break;
+        if (square2 == EMPTY_ID) {
+          if (square1)
+            break;
+        }
+        else if (square1 != square2)
+          break;
       }
     }
 

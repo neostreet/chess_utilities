@@ -18,6 +18,7 @@
 #define BISHOP_ID     4
 #define QUEEN_ID      5
 #define KING_ID       6
+#define EMPTY_ID      7
 
 #define FORCE_VALUE_QUEEN  9
 #define FORCE_VALUE_ROOK   5
