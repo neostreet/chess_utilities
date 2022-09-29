@@ -837,7 +837,7 @@ int populate_board_from_board_file(unsigned char *board,char *filename)
       }
       else {
         if (chara == 'p')
-          set_piece2(board,7 - line_no,n,PAWN_iD);
+          set_piece2(board,7 - line_no,n,PAWN_ID);
         else if (chara == 'P')
           set_piece2(board,7 - line_no,n,PAWN_ID * -1);
         else if (chara == 'e')
