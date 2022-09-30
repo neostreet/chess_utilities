@@ -7,7 +7,7 @@ static char filename[MAX_FILENAME_LEN];
 #define MAX_LINE_LEN 1024
 static char line[MAX_LINE_LEN];
 
-static char usage[] = "usage: frapid (-debug) filename\n";
+static char usage[] = "usage: frapid (-debug) (-not) filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char timecontrol[] = "TimeControl \"";
@@ -22,6 +22,7 @@ int main(int argc,char **argv)
   int n;
   int curr_arg;
   bool bDebug;
+  bool bNot;
   FILE *fptr0;
   int filename_len;
   FILE *fptr;
@@ -30,16 +31,19 @@ int main(int argc,char **argv)
   int seconds;
   int increment;
 
-  if ((argc < 2) || (argc > 3)) {
+  if ((argc < 2) || (argc > 4)) {
     printf(usage);
     return 1;
   }
 
   bDebug = false;
+  bNot = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
       bDebug = true;
+    else if (!strcmp(argv[curr_arg],"-not"))
+      bNot = true;
     else
       break;
   }
@@ -86,8 +90,14 @@ int main(int argc,char **argv)
           sscanf(&line[ix + TIMECONTROL_LEN],"%d",&seconds);
           sscanf(&line[n],"%d",&increment);
 
-          if ((seconds == 600) || ((seconds == 900) && (increment == 10)))
-            printf("%s\n",filename);
+          if ((seconds == 600) || ((seconds == 900) && (increment == 10))) {
+            if (!bNot)
+              printf("%s\n",filename);
+          }
+          else {
+            if (bNot)
+              printf("%s\n",filename);
+          }
         }
 
         break;
