@@ -8,6 +8,7 @@ enum {
   BLITZ_GAME_DATE,
   BLITZ_GAME_TIME_CONTROL,
   BLITZ_GAME_ECO,
+  BLITZ_GAME_OPENING,
   BLITZ_GAME_OPPONENT_NAME,
   BLITZ_GAME_COLOR,
   BLITZ_GAME_NUM_MOVES,
@@ -63,6 +64,9 @@ static char time_control_str[] = "[TimeControl \"";
 
 static char eco_str[] = "[ECO \"";
 #define ECO_STR_LEN (sizeof (eco_str) - 1)
+
+static char opening_str[] = "[Opening \"";
+#define OPENING_STR_LEN (sizeof (opening_str) - 1)
 
 static char termination_str[] = "[Termination \"";
 #define TERMINATION_STR_LEN (sizeof (termination_str) - 1)
@@ -124,6 +128,9 @@ static char time_control[TIME_CONTROL_MAX_LEN+1];
 #define ECO_MAX_LEN 4
 static char eco[ECO_MAX_LEN+1];
 
+#define OPENING_MAX_LEN 150
+static char opening[OPENING_MAX_LEN+1];
+
 #define TERMINATION_MAX_LEN 50
 static char termination[TERMINATION_MAX_LEN+1];
 
@@ -161,6 +168,8 @@ static int get_time_control(char *line,int line_len,int ix,
   char *time_control,int time_control_max_len);
 static int get_eco(char *line,int line_len,int ix,
   char *eco,int eco_max_len);
+static int get_opening(char *line,int line_len,int ix,
+  char *opening,int opening_max_len);
 static int get_termination(char *line,int line_len,int ix,
   char *termination,int termination_max_len);
 static int get_num_moves(char *line,int line_len,int *num_moves_ptr);
@@ -171,6 +180,7 @@ static void output_game_insert_statement(
   char *game_date,
   char *time_control,
   char *eco,
+  char *opening,
   char *opponent_name,
   char *color,
   int num_moves,
@@ -287,6 +297,7 @@ int main(int argc,char **argv)
               game_date,
               time_control,
               eco,
+              opening,
               opponent_name,
               color,
               num_moves,
@@ -441,6 +452,19 @@ int main(int argc,char **argv)
       }
       else if (Contains(true,
         line,line_len,
+        opening_str,OPENING_STR_LEN,
+        &ix)) {
+
+        retval = get_opening(line,line_len,ix+OPENING_STR_LEN,
+          opening,OPENING_MAX_LEN);
+
+        if (retval)
+          printf("get_opening() failed on line %d: %d\n",line_no,retval);
+        else
+          bHaveItem[BLITZ_GAME_OPENING] = true;
+      }
+      else if (Contains(true,
+        line,line_len,
         termination_str,TERMINATION_STR_LEN,
         &ix)) {
 
@@ -526,6 +550,7 @@ int main(int argc,char **argv)
         game_date,
         time_control,
         eco,
+        opening,
         opponent_name,
         color,
         num_moves,
@@ -779,6 +804,29 @@ static int get_eco(char *line,int line_len,int ix,
   return 0;
 }
 
+static int get_opening(char *line,int line_len,int ix,
+  char *opening,int opening_max_len)
+{
+  int m;
+  int n;
+
+  for (m = 0,n = 0; n < opening_max_len; n++) {
+    if (line[ix + n] == '"')
+      break;
+
+    if ((line[ix + n] >= ' ') && (line[ix + n] < 0x7f)) {
+      if (m == opening_max_len)
+        return 1;
+
+      opening[m++] = line[ix + n];
+    }
+  }
+
+  opening[m] = 0;
+
+  return 0;
+}
+
 static int get_termination(char *line,int line_len,int ix,
   char *termination,int termination_max_len)
 {
@@ -868,6 +916,7 @@ static void output_game_insert_statement(
   char *game_date,
   char *time_control,
   char *eco,
+  char *opening,
   char *opponent_name,
   char *color,
   int num_moves,
@@ -901,6 +950,7 @@ static void output_game_insert_statement(
       printf("  game_date,\n");
       printf("  time_control,\n");
       printf("  eco,\n");
+      printf("  opening,\n");
       printf("  opponent_name,\n");
       printf("  color,\n");
       printf("  num_moves,\n");
@@ -915,6 +965,7 @@ static void output_game_insert_statement(
       printf("  '%s',\n",game_date);
       printf("  '%s',\n",time_control);
       printf("  '%s',\n",eco);
+      printf("  \"%s\",\n",opening);
       printf("  '%s',\n",opponent_name);
       printf("  '%s',\n",color);
       printf("  %d,\n",num_moves);
