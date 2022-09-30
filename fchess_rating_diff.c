@@ -8,7 +8,8 @@ static char filename[MAX_FILENAME_LEN];
 static char line[MAX_LINE_LEN];
 static char date[MAX_LINE_LEN];
 
-static char usage[] = "usage: fchess_rating_diff (-terse) (-date) (-date_first) player_name filename\n";
+static char usage[] =
+"usage: fchess_rating_diff (-terse) (-date) (-date_first) (-ge_valval) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -36,16 +37,18 @@ int main(int argc,char **argv)
   int player_name_len;
   FILE *fptr0;
   int filename_len;
+  int file_no;
   FILE *fptr;
   int line_len;
   int line_no;
   bool bPlayerIsWhite;
   bool bDate;
   bool bDateFirst;
+  int ge_val;
   int ix;
   int rating_diff;
 
-  if ((argc < 3) || (argc > 6)) {
+  if ((argc < 3) || (argc > 7)) {
     printf(usage);
     return 1;
   }
@@ -53,6 +56,7 @@ int main(int argc,char **argv)
   bTerse = false;
   bDate = false;
   bDateFirst = false;
+  ge_val = -1;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
@@ -61,6 +65,8 @@ int main(int argc,char **argv)
       bDate = true;
     else if (!strcmp(argv[curr_arg],"-date_first"))
       bDateFirst = true;
+    else if (!strncmp(argv[curr_arg],"-ge_val",7))
+      sscanf(&argv[curr_arg][7],"%d",&ge_val);
     else
       break;
   }
@@ -78,22 +84,30 @@ int main(int argc,char **argv)
     return 3;
   }
 
+  file_no = 0;
+
   for ( ; ; ) {
     GetLine(fptr0,filename,&filename_len,MAX_FILENAME_LEN);
 
     if (feof(fptr0))
       break;
 
+    file_no++;
+
     if ((fptr = fopen(filename,"r")) == NULL) {
       printf(couldnt_open,filename);
       continue;
     }
+
+    line_no = 0;
 
     for ( ; ; ) {
       GetLine(fptr,line,&line_len,MAX_LINE_LEN);
 
       if (feof(fptr))
         break;
+
+      line_no++;
 
       if (Contains(true,
         line,line_len,
@@ -110,6 +124,9 @@ int main(int argc,char **argv)
 
         if (bPlayerIsWhite) {
           sscanf(&line[ix + WHITE_RATING_DIFF_LEN],"%d",&rating_diff);
+
+          if ((ge_val != -1) && (rating_diff < ge_val))
+            break;
 
           if (!bTerse) {
             if (!bDate)
@@ -132,6 +149,9 @@ int main(int argc,char **argv)
 
         if (!bPlayerIsWhite) {
           sscanf(&line[ix + BLACK_RATING_DIFF_LEN],"%d",&rating_diff);
+
+          if ((ge_val != -1) && (rating_diff < ge_val))
+            break;
 
           if (!bTerse) {
             if (!bDate)
