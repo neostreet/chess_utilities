@@ -9,7 +9,7 @@ static char line[MAX_LINE_LEN];
 static char date[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fchess_wins (-terse) (-is_win) (-is_not_loss) (-mate) (-date) (-date_first) player_name filename\n";
+"usage: fchess_wins (-terse) (-is_win) (-is_not_loss) (-not_loss) (-mate) (-date) (-date_first) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -39,6 +39,7 @@ int main(int argc,char **argv)
   bool bTerse;
   bool bIsWin;
   bool bIsNotLoss;
+  bool bNotLoss;
   bool bMate;
   bool bDate;
   bool bDateFirst;
@@ -53,9 +54,9 @@ int main(int argc,char **argv)
   int ix;
   bool bWon;
   bool bHaveMate;
-  bool bNotLoss;
+  bool bHaveNotLoss;
 
-  if ((argc < 3) || (argc > 9)) {
+  if ((argc < 3) || (argc > 10)) {
     printf(usage);
     return 1;
   }
@@ -63,6 +64,7 @@ int main(int argc,char **argv)
   bTerse = false;
   bIsWin = false;
   bIsNotLoss = false;
+  bNotLoss = false;
   bMate = false;
   bDate = false;
   bDateFirst = false;
@@ -72,6 +74,8 @@ int main(int argc,char **argv)
       bTerse = true;
     else if (!strcmp(argv[curr_arg],"-is_win"))
       bIsWin = true;
+    else if (!strcmp(argv[curr_arg],"-not_loss"))
+      bNotLoss = true;
     else if (!strcmp(argv[curr_arg],"-is_not_loss"))
       bIsNotLoss = true;
     else if (!strcmp(argv[curr_arg],"-mate"))
@@ -115,7 +119,7 @@ int main(int argc,char **argv)
 
     bWon = false;
     bHaveMate = false;
-    bNotLoss = false;
+    bHaveNotLoss = false;
 
     for ( ; ; ) {
       GetLine(fptr,line,&line_len,MAX_LINE_LEN);
@@ -161,7 +165,7 @@ int main(int argc,char **argv)
           bWon = bPlayerIsWhite;
 
           if (bWon)
-            bNotLoss = true;
+            bHaveNotLoss = true;
         }
         else if (Contains(true,
           line,line_len,
@@ -171,10 +175,10 @@ int main(int argc,char **argv)
           bWon = !bPlayerIsWhite;
 
           if (bWon)
-            bNotLoss = true;
+            bHaveNotLoss = true;
         }
         else
-          bNotLoss = true;
+          bHaveNotLoss = true;
       }
       else if (Contains(true,
         line,line_len,
@@ -215,19 +219,19 @@ int main(int argc,char **argv)
       else if (bIsNotLoss) {
         if (!bTerse) {
           if (!bDate)
-            printf("%d %s\n",bNotLoss,filename);
+            printf("%d %s\n",bHaveNotLoss,filename);
           else if (!bDateFirst)
-            printf("%d %s %s\n",bNotLoss,filename,date);
+            printf("%d %s %s\n",bHaveNotLoss,filename,date);
           else
-            printf("%s\t%d\t%s\n",date,bNotLoss,filename);
+            printf("%s\t%d\t%s\n",date,bHaveNotLoss,filename);
         }
         else {
           if (!bDate)
-            printf("%d\n",bNotLoss);
+            printf("%d\n",bHaveNotLoss);
           else if (!bDateFirst)
-            printf("%d %s\n",bNotLoss,date);
+            printf("%d %s\n",bHaveNotLoss,date);
           else
-            printf("%s\t%d\n",date,bNotLoss);
+            printf("%s\t%d\n",date,bHaveNotLoss);
         }
       }
       else if (bWon) {
