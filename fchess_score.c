@@ -141,9 +141,15 @@ int main(int argc,char **argv)
 
               if (bVerbose) {
                 if (!bPlusMinus)
-                  printf("%6.2lf %s ",(double)1,filename);
+                  printf("1.0 %s ",filename);
                 else
                   printf("%d %s ",wins - losses,filename);
+              }
+              else {
+                if (!bPlusMinus)
+                  printf("1.0\n");
+                else
+                  printf("%d\n",wins - losses);
               }
             }
           }
@@ -153,9 +159,15 @@ int main(int argc,char **argv)
 
               if (bVerbose) {
                 if (!bPlusMinus)
-                  printf("%6.2lf %s ",(double)0,filename);
+                  printf("0.0 %s ",filename);
                 else
                   printf("%d %s ",wins - losses,filename);
+              }
+              else {
+                if (!bPlusMinus)
+                  printf("0.0\n");
+                else
+                  printf("%d\n",wins - losses);
               }
             }
           }
@@ -171,9 +183,15 @@ int main(int argc,char **argv)
 
               if (bVerbose) {
                 if (!bPlusMinus)
-                  printf("%6.2lf %s ",(double)1,filename);
+                  printf("1.0 %s ",filename);
                 else
                   printf("%d %s ",wins - losses,filename);
+              }
+              else {
+                if (!bPlusMinus)
+                  printf("1.0\n");
+                else
+                  printf("%d\n",wins - losses);
               }
             }
           }
@@ -183,9 +201,15 @@ int main(int argc,char **argv)
 
               if (bVerbose) {
                 if (!bPlusMinus)
-                  printf("%6.2lf %s ",(double)0,filename);
+                  printf("0.0 %s ",filename);
                 else
                   printf("%d %s ",wins - losses,filename);
+              }
+              else {
+                if (!bPlusMinus)
+                  printf("0.0\n");
+                else
+                  printf("%d\n",wins - losses);
               }
             }
           }
@@ -200,9 +224,15 @@ int main(int argc,char **argv)
 
             if (bVerbose) {
               if (!bPlusMinus)
-                printf("%6.2lf %s ",(double).5,filename);
+                printf("0.5 %s ",filename);
               else
                 printf("%d %s ",wins - losses,filename);
+            }
+            else {
+              if (!bPlusMinus)
+                printf("0.5\n");
+              else
+                printf("%d\n",wins - losses);
             }
           }
         }
@@ -261,11 +291,8 @@ int main(int argc,char **argv)
 
   total_games = wins + losses + draws;
 
-  if (!bRuntots && !bPlusMinus) {
-    if (bVerbose)
-      putchar(0x0a);
-
-    printf("%6d wins\n",wins);
+  if (!bRuntots && !bPlusMinus && bVerbose) {
+    printf("\n%6d wins\n",wins);
     printf("%6d draws\n",draws);
     printf("%6d losses\n",losses);
 
