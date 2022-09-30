@@ -344,7 +344,9 @@ int main(int argc,char **argv)
 
       for (n = 0; n <= initial_move; n++) {
         update_board(&curr_game,false);
-        curr_game.curr_move++;
+
+        if (n < initial_move)
+          curr_game.curr_move++;
       }
     }
 
