@@ -328,6 +328,8 @@ int main(int argc,char **argv)
     }
   }
   else {
+    bPrintedBoard = false;
+
     if (quiz_number != -1) {
       initial_move = (quiz_number - 1) * 2;
 
