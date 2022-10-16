@@ -42,6 +42,8 @@ static void get_date(char *date,char *line);
             else \
               break; \
           } \
+          if ((ge_elo != -1) && (elo + rating_diff < ge_elo)) \
+            break; \
           if (bTerse) { \
             if (bRatingDiff) \
               printf("%d\n",rating_diff); \
