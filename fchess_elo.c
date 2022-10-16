@@ -10,7 +10,7 @@ static char date[MAX_LINE_LEN];
 
 static char usage[] =
 "usage: fchess_elo (-terse) (-verbose) (-rating_diff) (-after) (-before_and_after) (-before_and_after_diff) (-opponent)\n"
-"  (-opponent_name) (-date) (-boundaryboundary) (-is_ge_eloelo) player_name filename\n";
+"  (-opponent_name) (-date) (-boundaryboundary) (-ge_eloelo) (-is_ge_eloelo) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "[White \"";
@@ -146,6 +146,7 @@ int main(int argc,char **argv)
   bool bOpponentName;
   bool bDate;
   int boundary;
+  int ge_elo;
   int is_ge_elo;
   int player_name_ix;
   int player_name_len;
@@ -159,7 +160,7 @@ int main(int argc,char **argv)
   int elo;
   int rating_diff;
 
-  if ((argc < 3) || (argc > 14)) {
+  if ((argc < 3) || (argc > 15)) {
     printf(usage);
     return 1;
   }
@@ -174,6 +175,7 @@ int main(int argc,char **argv)
   bOpponentName = false;
   bDate = false;
   boundary = -1;
+  ge_elo = -1;
   is_ge_elo = -1;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
@@ -197,6 +199,8 @@ int main(int argc,char **argv)
       bDate = true;
     else if (!strncmp(argv[curr_arg],"-boundary",9))
       sscanf(&argv[curr_arg][9],"%d",&boundary);
+    else if (!strncmp(argv[curr_arg],"-ge_elo",7))
+      sscanf(&argv[curr_arg][7],"%d",&ge_elo);
     else if (!strncmp(argv[curr_arg],"-is_ge_elo",10))
       sscanf(&argv[curr_arg][10],"%d",&is_ge_elo);
     else
@@ -270,6 +274,9 @@ int main(int argc,char **argv)
           (!bPlayerIsWhite && bOpponent)) {
           sscanf(&line[ix + WHITE_ELO_LEN],"%d",&elo);
 
+          if ((ge_elo != -1) && (elo < ge_elo))
+            continue;
+
           if (!bRatingDiff && !bAfter && !bBeforeAndAfter) {
             if (bTerse) {
               if (is_ge_elo == -1)
@@ -320,6 +327,9 @@ int main(int argc,char **argv)
         if ((!bPlayerIsWhite && !bOpponent) ||
           (bPlayerIsWhite && bOpponent)) {
           sscanf(&line[ix + BLACK_ELO_LEN],"%d",&elo);
+
+          if ((ge_elo != -1) && (elo < ge_elo))
+            continue;
 
           if (!bRatingDiff && !bAfter && !bBeforeAndAfter) {
             if (bTerse) {
