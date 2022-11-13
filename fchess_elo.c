@@ -7,10 +7,11 @@ static char filename[MAX_FILENAME_LEN];
 #define MAX_LINE_LEN 1024
 static char line[MAX_LINE_LEN];
 static char date[MAX_LINE_LEN];
+static char time[MAX_LINE_LEN];
 
 static char usage[] =
 "usage: fchess_elo (-terse) (-verbose) (-rating_diff) (-after) (-before_and_after) (-before_and_after_diff) (-opponent)\n"
-"  (-opponent_name) (-date) (-boundaryboundary) (-ge_eloelo) (-is_ge_eloelo) player_name filename\n";
+"  (-opponent_name) (-date) (-time) (-boundaryboundary) (-ge_eloelo) (-is_ge_eloelo) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "[White \"";
@@ -29,11 +30,14 @@ static char black_rating_diff[] = "BlackRatingDiff \"";
 static char opponent_name[MAX_OPPONENT_NAME_LEN + 1];
 static char utcdate[] = "UTCDate";
 #define UTCDATE_LEN (sizeof (utcdate) - 1)
+static char utctime[] = "UTCTime";
+#define UTCTIME_LEN (sizeof (utctime) - 1)
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
   char *string,int string_len,int *index);
 static void get_date(char *date,char *line);
+static void get_time(char *date,char *line);
 
 #define RATING_DIFF_BLOCK \
           if (boundary != -1) { \
@@ -147,6 +151,7 @@ int main(int argc,char **argv)
   bool bOpponent;
   bool bOpponentName;
   bool bDate;
+  bool bTime;
   int boundary;
   int ge_elo;
   int is_ge_elo;
@@ -162,7 +167,7 @@ int main(int argc,char **argv)
   int elo;
   int rating_diff;
 
-  if ((argc < 3) || (argc > 15)) {
+  if ((argc < 3) || (argc > 16)) {
     printf(usage);
     return 1;
   }
@@ -176,6 +181,7 @@ int main(int argc,char **argv)
   bOpponent = false;
   bOpponentName = false;
   bDate = false;
+  bTime = false;
   boundary = -1;
   ge_elo = -1;
   is_ge_elo = -1;
@@ -197,6 +203,8 @@ int main(int argc,char **argv)
       bOpponent = true;
     else if (!strcmp(argv[curr_arg],"-opponent_name"))
       bOpponentName = true;
+    else if (!strcmp(argv[curr_arg],"-time"))
+      bTime = true;
     else if (!strcmp(argv[curr_arg],"-date"))
       bDate = true;
     else if (!strncmp(argv[curr_arg],"-boundary",9))
@@ -266,6 +274,14 @@ int main(int argc,char **argv)
 
         if (bDate)
           get_date(date,line);
+      }
+      else if (Contains(true,
+        line,line_len,
+        utctime,UTCTIME_LEN,
+        &ix)) {
+
+        if (bTime)
+          get_time(time,line);
       }
       else if (Contains(true,
         line,line_len,
@@ -521,4 +537,9 @@ static void get_date(char *date,char *line)
   strncpy(date,&line[10],10);
   date[4] = '-';
   date[7] = '-';
+}
+
+static void get_time(char *time,char *line)
+{
+  strncpy(time,&line[10],8);
 }
