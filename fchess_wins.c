@@ -7,9 +7,10 @@ static char filename[MAX_FILENAME_LEN];
 #define MAX_LINE_LEN 1024
 static char line[MAX_LINE_LEN];
 static char date[MAX_LINE_LEN];
+static char time[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fchess_wins (-terse) (-is_win) (-is_not_loss) (-not_loss) (-mate) (-date) (-date_first) player_name filename\n";
+"usage: fchess_wins (-terse) (-is_win) (-is_not_loss) (-not_loss) (-mate) (-date_time) (-date_first) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -26,11 +27,14 @@ static char mate[] = "#";
 #define MATE_LEN (sizeof (mate) - 1)
 static char utcdate[] = "UTCDate";
 #define UTCDATE_LEN (sizeof (utcdate) - 1)
+static char utctime[] = "UTCTime";
+#define UTCTIME_LEN (sizeof (utctime) - 1)
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
   char *string,int string_len,int *index);
 static void get_date(char *date,char *line);
+static void get_time(char *time,char *line);
 
 int main(int argc,char **argv)
 {
@@ -41,7 +45,7 @@ int main(int argc,char **argv)
   bool bIsNotLoss;
   bool bNotLoss;
   bool bMate;
-  bool bDate;
+  bool bDateTime;
   bool bDateFirst;
   int player_name_ix;
   int player_name_len;
@@ -66,7 +70,7 @@ int main(int argc,char **argv)
   bIsNotLoss = false;
   bNotLoss = false;
   bMate = false;
-  bDate = false;
+  bDateTime = false;
   bDateFirst = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
@@ -80,8 +84,8 @@ int main(int argc,char **argv)
       bIsNotLoss = true;
     else if (!strcmp(argv[curr_arg],"-mate"))
       bMate = true;
-    else if (!strcmp(argv[curr_arg],"-date"))
-      bDate = true;
+    else if (!strcmp(argv[curr_arg],"-date_time"))
+      bDateTime = true;
     else if (!strcmp(argv[curr_arg],"-date_first"))
       bDateFirst = true;
     else
@@ -192,8 +196,16 @@ int main(int argc,char **argv)
         utcdate,UTCDATE_LEN,
         &ix)) {
 
-        if (bDate)
+        if (bDateTime)
           get_date(date,line);
+      }
+      else if (Contains(true,
+        line,line_len,
+        utctime,UTCTIME_LEN,
+        &ix)) {
+
+        if (bDateTime)
+          get_time(time,line);
       }
     }
 
@@ -202,45 +214,45 @@ int main(int argc,char **argv)
     if (!bMate || bHaveMate) {
       if (bIsWin) {
         if (!bTerse) {
-          if (!bDate)
+          if (!bDateTime)
             printf("%d %s\n",bWon,filename);
           else if (!bDateFirst)
-            printf("%d %s %s\n",bWon,filename,date);
+            printf("%d %s %s %s\n",bWon,filename,date,time);
           else
-            printf("%s\t%d\t%s\n",date,bWon,filename);
+            printf("%s\t%s\t%d\t%s\n",date,time,bWon,filename);
         }
         else {
-          if (!bDate)
+          if (!bDateTime)
             printf("%d\n",bWon);
           else
-            printf("%d %s\n",bWon,date);
+            printf("%d %s %s\n",bWon,date,time);
         }
       }
       else if (bIsNotLoss) {
         if (!bTerse) {
-          if (!bDate)
+          if (!bDateTime)
             printf("%d %s\n",bHaveNotLoss,filename);
           else if (!bDateFirst)
-            printf("%d %s %s\n",bHaveNotLoss,filename,date);
+            printf("%d %s %s %s\n",bHaveNotLoss,filename,date,time);
           else
-            printf("%s\t%d\t%s\n",date,bHaveNotLoss,filename);
+            printf("%s\t%s\t%d\t%s\n",date,time,bHaveNotLoss,filename);
         }
         else {
-          if (!bDate)
+          if (!bDateTime)
             printf("%d\n",bHaveNotLoss);
           else if (!bDateFirst)
-            printf("%d %s\n",bHaveNotLoss,date);
+            printf("%d %s %s\n",bHaveNotLoss,date,time);
           else
-            printf("%s\t%d\n",date,bHaveNotLoss);
+            printf("%s\t%s\t%d\n",date,time,bHaveNotLoss);
         }
       }
       else if (bWon) {
-        if (!bDate)
+        if (!bDateTime)
           printf("%s\n",filename);
         else if (!bDateFirst)
-          printf("%s %s\n",filename,date);
+          printf("%s %s %s\n",filename,date,time);
         else
-          printf("%s\t%s\n",date,filename);
+          printf("%s\t%s\t%s\n",date,time,filename);
       }
     }
   }
@@ -314,4 +326,9 @@ static void get_date(char *date,char *line)
   strncpy(date,&line[10],10);
   date[4] = '-';
   date[7] = '-';
+}
+
+static void get_time(char *time,char *line)
+{
+  strncpy(time,&line[10],8);
 }

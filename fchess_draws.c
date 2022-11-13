@@ -7,9 +7,10 @@ static char filename[MAX_FILENAME_LEN];
 #define MAX_LINE_LEN 1024
 static char line[MAX_LINE_LEN];
 static char date[MAX_LINE_LEN];
+static char time[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fchess_draws (-terse) (-is_draw) (-date) filename\n";
+"usage: fchess_draws (-terse) (-is_draw) (-date_time) filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char result[] = "Result \"";
@@ -18,11 +19,14 @@ static char draw[] = "1/2-1/2";
 #define DRAW_LEN (sizeof (draw) - 1)
 static char utcdate[] = "UTCDate";
 #define UTCDATE_LEN (sizeof (utcdate) - 1)
+static char utctime[] = "UTCTime";
+#define UTCTIME_LEN (sizeof (utctime) - 1)
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
   char *string,int string_len,int *index);
 static void get_date(char *date,char *line);
+static void get_time(char *time,char *line);
 
 int main(int argc,char **argv)
 {
@@ -30,7 +34,7 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bTerse;
   bool bIsDraw;
-  bool bDate;
+  bool bDateTime;
   FILE *fptr0;
   int filename_len;
   FILE *fptr;
@@ -45,15 +49,15 @@ int main(int argc,char **argv)
 
   bTerse = false;
   bIsDraw = false;
-  bDate = false;
+  bDateTime = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
       bTerse = true;
     else if (!strcmp(argv[curr_arg],"-is_draw"))
       bIsDraw = true;
-    else if (!strcmp(argv[curr_arg],"-date"))
-      bDate = true;
+    else if (!strcmp(argv[curr_arg],"-date_time"))
+      bDateTime = true;
     else
       break;
   }
@@ -90,8 +94,16 @@ int main(int argc,char **argv)
         utcdate,UTCDATE_LEN,
         &ix)) {
 
-        if (bDate)
+        if (bDateTime)
           get_date(date,line);
+      }
+      else if (Contains(true,
+        line,line_len,
+        utctime,UTCTIME_LEN,
+        &ix)) {
+
+        if (bDateTime)
+          get_time(time,line);
       }
       else if (Contains(true,
         line,line_len,
@@ -110,10 +122,10 @@ int main(int argc,char **argv)
               printf("1\n");
           }
           else {
-            if (!bDate)
+            if (!bDateTime)
               printf("%s\n",filename);
             else
-              printf("%s %s\n",filename,date);
+              printf("%s %s %s\n",filename,date,time);
           }
         }
         else if (bIsDraw)
@@ -193,4 +205,9 @@ static void get_date(char *date,char *line)
   strncpy(date,&line[10],10);
   date[4] = '-';
   date[7] = '-';
+}
+
+static void get_time(char *time,char *line)
+{
+  strncpy(time,&line[10],8);
 }
