@@ -957,3 +957,30 @@ int refresh_force_count(struct game *gamept)
   else
     return gamept->force_count[BLACK] - gamept->force_count[WHITE];
 }
+
+int count_num_pieces(int color,struct game *gamept)
+{
+  int n;
+  short piece;
+  int count;
+
+  count = 0;
+
+  for (n = 0; n < NUM_BOARD_SQUARES; n++) {
+    piece = get_piece1(gamept->board,n);
+
+    if (!piece)
+      continue;
+
+    if (color == WHITE) {
+      if (piece > 0)
+        count++;
+    }
+    else {
+      if (piece < 0)
+        count++;
+    }
+  }
+
+  return count;
+}
