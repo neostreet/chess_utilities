@@ -16,7 +16,7 @@ static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
 "usage: fprint_bd (-debug) (-terse) (-toggle) (-space) (-force) (-initial_boardfilename)\n"
-"  (-init_bin_boardfilename) (-board_binfilename) (-print_pieces)\n"
+"  (-init_bin_boardfilename) (-board_binfilename) (-num_white_piecesnum) (-num_black_piecesnum) (-print_pieces)\n"
 "  (-min_force_diffvalue) (-match_boardfilename) (-only_checks) (-only_castle)\n"
 "  (-only_promotions) (-only_captures) (-only_en_passants) (-multiple_queens) (-move_number_only)\n"
 "  (-mine) (-not_mine) (-search_all_moves) (-exact_match) (-qnn) [white | black] filename\n";
@@ -42,6 +42,8 @@ int main(int argc,char **argv)
   bool bSpace;
   bool bForce;
   bool bBoardBin;
+  int num_white_pieces;
+  int num_black_pieces;
   bool bPrintPieces;
   bool bOnlyChecks;
   bool bOnlyCastle;
@@ -67,8 +69,9 @@ int main(int argc,char **argv)
   int match;
   FILE *fptr;
   int filename_len;
+  int num_pieces;
 
-  if ((argc < 2) || (argc > 25)) {
+  if ((argc < 2) || (argc > 27)) {
     printf(usage);
     return 1;
   }
@@ -82,6 +85,8 @@ int main(int argc,char **argv)
   bForce = false;
   quiz_number = -1;
   bBoardBin = false;
+  num_white_pieces = -1;
+  num_black_pieces = -1;
   bPrintPieces = false;
   bOnlyChecks = false;
   bOnlyCastle = false;
@@ -127,6 +132,10 @@ int main(int argc,char **argv)
         return 3;
       }
     }
+    else if (!strncmp(argv[curr_arg],"-num_white_pieces",17))
+      sscanf(&argv[curr_arg][17],"%d",&num_white_pieces);
+    else if (!strncmp(argv[curr_arg],"-num_black_pieces",17))
+      sscanf(&argv[curr_arg][17],"%d",&num_black_pieces);
     else if (!strcmp(argv[curr_arg],"-print_pieces"))
       bPrintPieces = true;
     else if (!strncmp(argv[curr_arg],"-board_bin",10)) {
@@ -258,6 +267,20 @@ int main(int argc,char **argv)
           continue;
       }
 
+      if (num_white_pieces != -1) {
+        num_pieces = count_num_pieces(WHITE,&curr_game);
+
+        if (num_pieces != num_white_pieces)
+          continue;
+      }
+
+      if (num_black_pieces != -1) {
+        num_pieces = count_num_pieces(BLACK,&curr_game);
+
+        if (num_pieces != num_black_pieces)
+          continue;
+      }
+
       if (min_force_diff != -1) {
         force_diff = refresh_force_count(&curr_game);
 
@@ -361,6 +384,24 @@ int main(int argc,char **argv)
     else if (bNotMine) {
       if ((curr_game.curr_move % 2) == orientation)
         bSkip = true;
+    }
+
+    if (!bSkip) {
+      if (num_white_pieces != -1) {
+        num_pieces = count_num_pieces(WHITE,&curr_game);
+
+        if (num_pieces != num_white_pieces)
+          bSkip = true;
+      }
+    }
+
+    if (!bSkip) {
+      if (num_black_pieces != -1) {
+        num_pieces = count_num_pieces(BLACK,&curr_game);
+
+        if (num_pieces != num_black_pieces)
+          bSkip = true;
+      }
     }
 
     if (!bSkip) {
