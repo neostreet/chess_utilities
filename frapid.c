@@ -7,7 +7,7 @@ static char filename[MAX_FILENAME_LEN];
 #define MAX_LINE_LEN 1024
 static char line[MAX_LINE_LEN];
 
-static char usage[] = "usage: frapid (-debug) (-not) filename\n";
+static char usage[] = "usage: frapid (-debug) (-not) (-minsmins) (-incinc) filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char timecontrol[] = "TimeControl \"";
@@ -23,6 +23,9 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bDebug;
   bool bNot;
+  int mins;
+  int secs;
+  int inc;
   FILE *fptr0;
   int filename_len;
   FILE *fptr;
@@ -30,20 +33,29 @@ int main(int argc,char **argv)
   int ix;
   int seconds;
   int increment;
+  int match;
 
-  if ((argc < 2) || (argc > 4)) {
+  if ((argc < 2) || (argc > 6)) {
     printf(usage);
     return 1;
   }
 
   bDebug = false;
   bNot = false;
+  mins = -1;
+  inc = -1;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
       bDebug = true;
     else if (!strcmp(argv[curr_arg],"-not"))
       bNot = true;
+    else if (!strncmp(argv[curr_arg],"-mins",5)) {
+      sscanf(&argv[curr_arg][5],"%d",&mins);
+      secs = mins * 60;
+    }
+    else if (!strncmp(argv[curr_arg],"-inc",4))
+      sscanf(&argv[curr_arg][4],"%d",&inc);
     else
       break;
   }
@@ -53,9 +65,14 @@ int main(int argc,char **argv)
     return 2;
   }
 
+  if ((mins == -1) && (inc != -1 )) {
+    printf("must specify mins if you specify inc\n");
+    return 3;
+  }
+
   if ((fptr0 = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 3;
+    return 4;
   }
 
   for ( ; ; ) {
@@ -90,7 +107,22 @@ int main(int argc,char **argv)
           sscanf(&line[ix + TIMECONTROL_LEN],"%d",&seconds);
           sscanf(&line[n],"%d",&increment);
 
-          if ((seconds == 600) || ((seconds == 900) && (increment == 10))) {
+          match = 0;
+
+          if ((mins == -1) && (inc == -1)) {
+            if ((seconds == 600) || ((seconds == 900) && (increment == 10)))
+              match = 1;
+          }
+          else if (inc != -1) {
+            if ((seconds == secs) && (increment == inc))
+              match = 1;
+          }
+          else {
+            if (seconds == secs)
+              match = 1;
+          }
+
+          if (match) {
             if (!bNot)
               printf("%s\n",filename);
           }
