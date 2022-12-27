@@ -50,7 +50,7 @@ int main(int argc,char **argv)
     if (feof(fptr[0]))
       break;
 
-    if (!strncmp(line,"[Event ",7))
+    if (!strncmp(line,"[Event ",7) && strncmp(&line[8],"Casual ",7))
       game_count++;
   }
 
@@ -69,8 +69,13 @@ int main(int argc,char **argv)
     line_no++;
 
     if (!strncmp(line,"[Event ",7)) {
-      if (game)
+      if (fptr[2]) {
         fclose(fptr[2]);
+        fptr[2] = NULL;
+      }
+
+      if (!strncmp(&line[8],"Casual ",7))
+        continue;
 
       sprintf(buf,game_filename_fmt,argv[2],game_count - game);
       fprintf(fptr[1],"%s\n",buf);
@@ -84,11 +89,11 @@ int main(int argc,char **argv)
 
       fprintf(fptr[2],"%s\n",line);
     }
-    else if (game)
+    else if (fptr[2])
       fprintf(fptr[2],"%s\n",line);
   }
 
-  if (game)
+  if (fptr[2])
     fclose(fptr[2]);
 
   fclose(fptr[1]);
