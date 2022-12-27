@@ -5,11 +5,13 @@
 static char line[MAX_LINE_LEN];
 static char filename[MAX_LINE_LEN];
 
-static char usage[] = "usage: split_pgn filename\n";
+static char usage[] = "usage: split_pgn filename variant\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
-static char game_list_file[] = "games.lst";
-static char game_filename_fmt[] = "game%05d.txt";
+static char game_list_fmt[] = "%s_games.lst";
+#define MAX_LIST_FILE_LEN 64
+static char game_list_file[MAX_LIST_FILE_LEN+1];
+static char game_filename_fmt[] = "%s_game%05d.txt";
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 
@@ -23,7 +25,7 @@ int main(int argc,char **argv)
   int game;
   char buf[20];
 
-  if (argc != 2) {
+  if (argc != 3) {
     printf(usage);
     return 1;
   }
@@ -32,6 +34,8 @@ int main(int argc,char **argv)
     printf(couldnt_open,argv[1]);
     return 2;
   }
+
+  sprintf(game_list_file,game_list_fmt,argv[2]);
 
   if ((fptr[1] = fopen(game_list_file,"w")) == NULL) {
     printf(couldnt_open,game_list_file);
@@ -68,7 +72,7 @@ int main(int argc,char **argv)
       if (game)
         fclose(fptr[2]);
 
-      sprintf(buf,game_filename_fmt,game_count - game);
+      sprintf(buf,game_filename_fmt,argv[2],game_count - game);
       fprintf(fptr[1],"%s\n",buf);
 
       game++;
