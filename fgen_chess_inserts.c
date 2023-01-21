@@ -5,24 +5,24 @@
 #define BLACK 1
 
 enum {
-  BLITZ_GAME_DATE,
-  BLITZ_GAME_TIME_CONTROL,
-  BLITZ_GAME_ECO,
-  BLITZ_GAME_OPENING,
-  BLITZ_GAME_OPPONENT_NAME,
-  BLITZ_GAME_COLOR,
-  BLITZ_GAME_NUM_MOVES,
-  BLITZ_GAME_RESULT,
-  BLITZ_GAME_TERMINATION,
-  BLITZ_GAME_WHITE_ELO,
-  BLITZ_GAME_BLACK_ELO,
-  BLITZ_GAME_WHITE_RATING_DIFF,
-  BLITZ_GAME_BLACK_RATING_DIFF,
-  BLITZ_GAME_FIRST_MOVE,
-  BLITZ_GAME_FIRST_TWO_MOVES,
-  BLITZ_GAME_FIRST_THREE_MOVES,
-  BLITZ_GAME_FIRST_FOUR_MOVES,
-  NUM_BLITZ_GAME_ITEMS
+  CHESS_GAME_DATE,
+  CHESS_GAME_TIME_CONTROL,
+  CHESS_GAME_ECO,
+  CHESS_GAME_OPENING,
+  CHESS_GAME_OPPONENT_NAME,
+  CHESS_GAME_COLOR,
+  CHESS_GAME_NUM_MOVES,
+  CHESS_GAME_RESULT,
+  CHESS_GAME_TERMINATION,
+  CHESS_GAME_WHITE_ELO,
+  CHESS_GAME_BLACK_ELO,
+  CHESS_GAME_WHITE_RATING_DIFF,
+  CHESS_GAME_BLACK_RATING_DIFF,
+  CHESS_GAME_FIRST_MOVE,
+  CHESS_GAME_FIRST_TWO_MOVES,
+  CHESS_GAME_FIRST_THREE_MOVES,
+  CHESS_GAME_FIRST_FOUR_MOVES,
+  NUM_CHESS_GAME_ITEMS
 };
 
 #define MAX_FILENAME_LEN 1024
@@ -32,14 +32,14 @@ static char filename[MAX_FILENAME_LEN];
 static char line[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fgen_blitz_inserts (-debug) (-first_moves) player_name table_name filename\n";
+"usage: fgen_chess_inserts (-debug) (-first_moves) player_name table_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
-static char blitz_game_event_str[] = "[Event \"";
-#define BLITZ_GAME_EVENT_STR_LEN (sizeof (blitz_game_event_str) - 1)
+static char chess_game_event_str[] = "[Event \"";
+#define CHESS_GAME_EVENT_STR_LEN (sizeof (chess_game_event_str) - 1)
 
 static char game_date_str[] = "[Date \"";
-#define BLITZ_GAME_DATE_STR_LEN (sizeof (game_date_str) - 1)
+#define CHESS_GAME_DATE_STR_LEN (sizeof (game_date_str) - 1)
 
 static char *color_str[] = {
   "[White \"",
@@ -101,8 +101,8 @@ static char fourth_move_str[] = " 4.";
 static char fifth_move_str[] = " 5.";
 #define FIFTH_MOVE_STR_LEN (sizeof (fifth_move_str) - 1)
 
-#define BLITZ_GAME_DATE_LEN 10
-static char game_date[BLITZ_GAME_DATE_LEN+1];
+#define CHESS_GAME_DATE_LEN 10
+static char game_date[CHESS_GAME_DATE_LEN+1];
 
 #define COLOR_LEN 1
 static char color[COLOR_LEN+1];
@@ -213,7 +213,7 @@ int main(int argc,char **argv)
   int ix;
   int retval;
   int num_moves;
-  bool bHaveItem[NUM_BLITZ_GAME_ITEMS];
+  bool bHaveItem[NUM_CHESS_GAME_ITEMS];
 
   if ((argc < 4) || (argc > 6)) {
     printf(usage);
@@ -272,7 +272,7 @@ int main(int argc,char **argv)
 
     line_no = 0;
 
-    for (n = 0; n < NUM_BLITZ_GAME_ITEMS; n++)
+    for (n = 0; n < NUM_CHESS_GAME_ITEMS; n++)
       bHaveItem[n] = false;
 
     for ( ; ; ) {
@@ -285,10 +285,10 @@ int main(int argc,char **argv)
 
       if (Contains(true,
         line,line_len,
-        blitz_game_event_str,BLITZ_GAME_EVENT_STR_LEN,
+        chess_game_event_str,CHESS_GAME_EVENT_STR_LEN,
         &ix)) {
 
-        if (bHaveItem[BLITZ_GAME_DATE]) {
+        if (bHaveItem[CHESS_GAME_DATE]) {
           if (!bDebug) {
             output_game_insert_statement(
               filename,
@@ -312,21 +312,21 @@ int main(int argc,char **argv)
           }
         }
 
-        for (n = 0; n < NUM_BLITZ_GAME_ITEMS; n++)
+        for (n = 0; n < NUM_CHESS_GAME_ITEMS; n++)
           bHaveItem[n] = false;
       }
       else if (Contains(true,
         line,line_len,
-        game_date_str,BLITZ_GAME_DATE_STR_LEN,
+        game_date_str,CHESS_GAME_DATE_STR_LEN,
         &ix)) {
 
-        retval = get_game_date(line,line_len,ix+BLITZ_GAME_DATE_STR_LEN,
+        retval = get_game_date(line,line_len,ix+CHESS_GAME_DATE_STR_LEN,
           game_date);
 
         if (retval)
           printf("get_date() failed on line %d: %d\n",line_no,retval);
         else
-          bHaveItem[BLITZ_GAME_DATE] = true;
+          bHaveItem[CHESS_GAME_DATE] = true;
       }
       else if (Contains(true,
         line,line_len,
@@ -352,8 +352,8 @@ int main(int argc,char **argv)
         if (retval)
           printf("process_color_str() failed on line %d: %d\n",line_no,retval);
         else {
-          bHaveItem[BLITZ_GAME_OPPONENT_NAME] = true;
-          bHaveItem[BLITZ_GAME_COLOR] = true;
+          bHaveItem[CHESS_GAME_OPPONENT_NAME] = true;
+          bHaveItem[CHESS_GAME_COLOR] = true;
 
           if (bDebug)
             printf("  %s\n",opponent_name);
@@ -370,7 +370,7 @@ int main(int argc,char **argv)
         if (retval)
           printf("get_result() failed on line %d: %d\n",line_no,retval);
         else
-          bHaveItem[BLITZ_GAME_RESULT] = true;
+          bHaveItem[CHESS_GAME_RESULT] = true;
       }
       else if (Contains(true,
         line,line_len,
@@ -383,7 +383,7 @@ int main(int argc,char **argv)
         if (retval)
           printf("get_elo() failed on line %d: %d\n",line_no,retval);
         else
-          bHaveItem[BLITZ_GAME_WHITE_ELO] = true;
+          bHaveItem[CHESS_GAME_WHITE_ELO] = true;
       }
       else if (Contains(true,
         line,line_len,
@@ -396,7 +396,7 @@ int main(int argc,char **argv)
         if (retval)
           printf("get_elo() failed on line %d: %d\n",line_no,retval);
         else
-          bHaveItem[BLITZ_GAME_BLACK_ELO] = true;
+          bHaveItem[CHESS_GAME_BLACK_ELO] = true;
       }
       else if (Contains(true,
         line,line_len,
@@ -409,7 +409,7 @@ int main(int argc,char **argv)
         if (retval)
           printf("get_rating_diff() failed on line %d: %d\n",line_no,retval);
         else
-          bHaveItem[BLITZ_GAME_WHITE_RATING_DIFF] = true;
+          bHaveItem[CHESS_GAME_WHITE_RATING_DIFF] = true;
       }
       else if (Contains(true,
         line,line_len,
@@ -422,7 +422,7 @@ int main(int argc,char **argv)
         if (retval)
           printf("get_rating_diff() failed on line %d: %d\n",line_no,retval);
         else
-          bHaveItem[BLITZ_GAME_BLACK_RATING_DIFF] = true;
+          bHaveItem[CHESS_GAME_BLACK_RATING_DIFF] = true;
       }
       else if (Contains(true,
         line,line_len,
@@ -435,7 +435,7 @@ int main(int argc,char **argv)
         if (retval)
           printf("get_time_control() failed on line %d: %d\n",line_no,retval);
         else
-          bHaveItem[BLITZ_GAME_TIME_CONTROL] = true;
+          bHaveItem[CHESS_GAME_TIME_CONTROL] = true;
       }
       else if (Contains(true,
         line,line_len,
@@ -448,7 +448,7 @@ int main(int argc,char **argv)
         if (retval)
           printf("get_eco() failed on line %d: %d\n",line_no,retval);
         else
-          bHaveItem[BLITZ_GAME_ECO] = true;
+          bHaveItem[CHESS_GAME_ECO] = true;
       }
       else if (Contains(true,
         line,line_len,
@@ -461,7 +461,7 @@ int main(int argc,char **argv)
         if (retval)
           printf("get_opening() failed on line %d: %d\n",line_no,retval);
         else
-          bHaveItem[BLITZ_GAME_OPENING] = true;
+          bHaveItem[CHESS_GAME_OPENING] = true;
       }
       else if (Contains(true,
         line,line_len,
@@ -474,7 +474,7 @@ int main(int argc,char **argv)
         if (retval)
           printf("get_termination() failed on line %d: %d\n",line_no,retval);
         else
-          bHaveItem[BLITZ_GAME_TERMINATION] = true;
+          bHaveItem[CHESS_GAME_TERMINATION] = true;
       }
       else if (Contains(true,
         line,line_len,
@@ -486,7 +486,7 @@ int main(int argc,char **argv)
         if (retval)
           printf("get_num_moves() failed on line %d: %d\n",line_no,retval);
         else
-          bHaveItem[BLITZ_GAME_NUM_MOVES] = true;
+          bHaveItem[CHESS_GAME_NUM_MOVES] = true;
 
         if (bFirstMoves && !ix) {
           if (Contains(true,
@@ -497,7 +497,7 @@ int main(int argc,char **argv)
             if (ix <= FIRST_FOUR_MOVES_MAX_LEN) {
               line[ix] = 0;
               strcpy(first_four_moves,line);
-              bHaveItem[BLITZ_GAME_FIRST_FOUR_MOVES] = true;
+              bHaveItem[CHESS_GAME_FIRST_FOUR_MOVES] = true;
             }
           }
 
@@ -509,7 +509,7 @@ int main(int argc,char **argv)
             if (ix <= FIRST_THREE_MOVES_MAX_LEN) {
               line[ix] = 0;
               strcpy(first_three_moves,line);
-              bHaveItem[BLITZ_GAME_FIRST_THREE_MOVES] = true;
+              bHaveItem[CHESS_GAME_FIRST_THREE_MOVES] = true;
             }
           }
 
@@ -521,7 +521,7 @@ int main(int argc,char **argv)
             if (ix <= FIRST_TWO_MOVES_MAX_LEN) {
               line[ix] = 0;
               strcpy(first_two_moves,line);
-              bHaveItem[BLITZ_GAME_FIRST_TWO_MOVES] = true;
+              bHaveItem[CHESS_GAME_FIRST_TWO_MOVES] = true;
             }
           }
 
@@ -533,7 +533,7 @@ int main(int argc,char **argv)
             if (ix <= FIRST_MOVE_MAX_LEN) {
               line[ix] = 0;
               strcpy(first_move,line);
-              bHaveItem[BLITZ_GAME_FIRST_MOVE] = true;
+              bHaveItem[CHESS_GAME_FIRST_MOVE] = true;
             }
           }
         }
@@ -637,10 +637,10 @@ static int get_game_date(char *line,int line_len,int ix,
 {
   int n;
 
-  if (line_len - ix < BLITZ_GAME_DATE_LEN + 1)
+  if (line_len - ix < CHESS_GAME_DATE_LEN + 1)
     return 1;
 
-  for (n = 0; n < BLITZ_GAME_DATE_LEN; n++) {
+  for (n = 0; n < CHESS_GAME_DATE_LEN; n++) {
     if (line[ix + n] == '.')
       game_date[n] = '-';
     else
@@ -931,20 +931,20 @@ static void output_game_insert_statement(
 {
   int n;
 
-  for (n = 0; n < NUM_BLITZ_GAME_ITEMS; n++) {
+  for (n = 0; n < NUM_CHESS_GAME_ITEMS; n++) {
     if (!bHaveItem[n])
       break;
   }
 
-  if (n < BLITZ_GAME_FIRST_MOVE) {
+  if (n < CHESS_GAME_FIRST_MOVE) {
     printf("%s: missing information: %d\n",
       filename,n);
 
-    if (bHaveItem[BLITZ_GAME_OPPONENT_NAME])
+    if (bHaveItem[CHESS_GAME_OPPONENT_NAME])
       printf("  %s\n",opponent_name);
   }
   else {
-    if (!bFirstMoves || (n < NUM_BLITZ_GAME_ITEMS)) {
+    if (!bFirstMoves || (n < NUM_CHESS_GAME_ITEMS)) {
       printf("insert into %s(\n",table_name);
       printf("  game_filename,\n");
       printf("  game_date,\n");
