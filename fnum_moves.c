@@ -22,6 +22,7 @@ int main(int argc,char **argv)
   int filename_len;
   FILE *fptr;
   int linelen;
+  int num_moves;
 
   if ((argc < 2) || (argc > 3)) {
     printf(usage);
@@ -69,10 +70,12 @@ int main(int argc,char **argv)
 
     fclose(fptr);
 
+    sscanf(prev_line,"%d",&num_moves);
+
     if (!bNumMovesFirst)
-      printf("%s: %s\n",filename,prev_line);
+      printf("%s %d\n",filename,num_moves);
     else
-      printf("%s: %s\n",prev_line,filename);
+      printf("%d %s\n",num_moves,filename);
   }
 
   fclose(fptr0);
