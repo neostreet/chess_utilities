@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define MAX_LINE_LEN 1024
+#define MAX_LINE_LEN 8192
 static char line[MAX_LINE_LEN];
 static char filename[MAX_LINE_LEN];
 
