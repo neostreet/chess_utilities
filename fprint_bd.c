@@ -19,7 +19,8 @@ static char usage[] =
 "  (-init_bin_boardfilename) (-board_binfilename) (-num_white_piecesnum) (-num_black_piecesnum) (-print_pieces)\n"
 "  (-min_force_diffvalue) (-match_boardfilename) (-only_checks) (-only_castle)\n"
 "  (-only_promotions) (-only_captures) (-only_en_passants) (-multiple_queens) (-move_number_only)\n"
-"  (-mine) (-not_mine) (-search_all_moves) (-exact_match) (-qnn) [white | black] filename\n";
+"  (-mine) (-not_mine) (-search_all_moves) (-exact_match)\n"
+"  (-white_force_countnum) (-black_force_countnum) (-qnn) [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -44,6 +45,8 @@ int main(int argc,char **argv)
   bool bBoardBin;
   int num_white_pieces;
   int num_black_pieces;
+  int white_force_count;
+  int black_force_count;
   bool bPrintPieces;
   bool bOnlyChecks;
   bool bOnlyCastle;
@@ -71,7 +74,7 @@ int main(int argc,char **argv)
   int filename_len;
   int num_pieces;
 
-  if ((argc < 2) || (argc > 27)) {
+  if ((argc < 2) || (argc > 29)) {
     printf(usage);
     return 1;
   }
@@ -87,6 +90,8 @@ int main(int argc,char **argv)
   bBoardBin = false;
   num_white_pieces = -1;
   num_black_pieces = -1;
+  white_force_count = -1;
+  black_force_count = -1;
   bPrintPieces = false;
   bOnlyChecks = false;
   bOnlyCastle = false;
@@ -136,6 +141,10 @@ int main(int argc,char **argv)
       sscanf(&argv[curr_arg][17],"%d",&num_white_pieces);
     else if (!strncmp(argv[curr_arg],"-num_black_pieces",17))
       sscanf(&argv[curr_arg][17],"%d",&num_black_pieces);
+    else if (!strncmp(argv[curr_arg],"-white_force_count",18))
+      sscanf(&argv[curr_arg][18],"%d",&white_force_count);
+    else if (!strncmp(argv[curr_arg],"-black_force_count",18))
+      sscanf(&argv[curr_arg][18],"%d",&black_force_count);
     else if (!strcmp(argv[curr_arg],"-print_pieces"))
       bPrintPieces = true;
     else if (!strncmp(argv[curr_arg],"-board_bin",10)) {
@@ -239,7 +248,9 @@ int main(int argc,char **argv)
     continue;
   }
 
-  if (!bOnlyChecks && !bOnlyCastle && !bOnlyPromotions && !bOnlyCaptures && !bOnlyEnPassants && !bMultipleQueens && !bMine && !bNotMine && !bHaveMatchBoard && (min_force_diff == -1))
+  if (!bOnlyChecks && !bOnlyCastle && !bOnlyPromotions && !bOnlyCaptures && !bOnlyEnPassants && !bMultipleQueens &&
+    !bMine && !bNotMine && !bHaveMatchBoard && (min_force_diff == -1) && (num_white_pieces == -1) &&
+    (num_black_pieces == -1) && (white_force_count == -1) && (black_force_count == -1))
     printf("%s\n",filename);
 
   curr_game.curr_move--;
@@ -278,6 +289,20 @@ int main(int argc,char **argv)
         num_pieces = count_num_pieces(BLACK,&curr_game);
 
         if (num_pieces != num_black_pieces)
+          continue;
+      }
+
+      if (white_force_count != -1) {
+        refresh_force_count(&curr_game);
+
+        if (curr_game.force_count[WHITE] != white_force_count)
+          continue;
+      }
+
+      if (black_force_count != -1) {
+        refresh_force_count(&curr_game);
+
+        if (curr_game.force_count[BLACK] != black_force_count)
           continue;
       }
 
@@ -405,10 +430,30 @@ int main(int argc,char **argv)
     }
 
     if (!bSkip) {
-      force_diff = refresh_force_count(&curr_game);
+      if (white_force_count != -1) {
+        refresh_force_count(&curr_game);
 
-      if (force_diff < min_force_diff)
-        bSkip = true;
+        if (curr_game.force_count[WHITE] != white_force_count)
+          bSkip = true;
+      }
+    }
+
+    if (!bSkip) {
+      if (black_force_count != -1) {
+        refresh_force_count(&curr_game);
+
+        if (curr_game.force_count[BLACK] != black_force_count)
+          bSkip = true;
+      }
+    }
+
+    if (!bSkip) {
+      if (min_force_diff != -1) {
+        force_diff = refresh_force_count(&curr_game);
+
+        if (force_diff < min_force_diff)
+          bSkip = true;
+      }
     }
 
     if (!bSkip && bHaveMatchBoard) {
@@ -449,7 +494,9 @@ int main(int argc,char **argv)
     }
 
     if (!bSkip) {
-      if (bOnlyChecks || bOnlyCastle || bOnlyPromotions || bOnlyCaptures || bMultipleQueens || bHaveMatchBoard || bMine || bNotMine || (min_force_diff != -1)) {
+      if (bOnlyChecks || bOnlyCastle || bOnlyPromotions || bOnlyCaptures || bMultipleQueens || bHaveMatchBoard ||
+        bMine || bNotMine || (min_force_diff != -1) || (num_white_pieces != -1) || (num_black_pieces != -1) ||
+        (white_force_count != -1) || (black_force_count != -1)) {
         printf("%s\n",filename);
       }
 
