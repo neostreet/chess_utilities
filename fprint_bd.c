@@ -239,7 +239,7 @@ int main(int argc,char **argv)
     continue;
   }
 
-  if (!bOnlyChecks && !bOnlyCastle && !bOnlyPromotions && !bOnlyCaptures && !bOnlyEnPassants && !bMultipleQueens && !bMine && !bNotMine && !bHaveMatchBoard)
+  if (!bOnlyChecks && !bOnlyCastle && !bOnlyPromotions && !bOnlyCaptures && !bOnlyEnPassants && !bMultipleQueens && !bMine && !bNotMine && !bHaveMatchBoard && (min_force_diff == -1))
     printf("%s\n",filename);
 
   curr_game.curr_move--;
@@ -405,6 +405,8 @@ int main(int argc,char **argv)
     }
 
     if (!bSkip) {
+      force_diff = refresh_force_count(&curr_game);
+
       if (force_diff < min_force_diff)
         bSkip = true;
     }
@@ -447,7 +449,7 @@ int main(int argc,char **argv)
     }
 
     if (!bSkip) {
-      if (bOnlyChecks || bOnlyCastle || bOnlyPromotions || bOnlyCaptures || bMultipleQueens || bHaveMatchBoard || bMine || bNotMine) {
+      if (bOnlyChecks || bOnlyCastle || bOnlyPromotions || bOnlyCaptures || bMultipleQueens || bHaveMatchBoard || bMine || bNotMine || (min_force_diff != -1)) {
         printf("%s\n",filename);
       }
 
