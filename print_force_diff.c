@@ -48,14 +48,16 @@ int main(int argc,char **argv)
     return 2;
   }
 
+  printf("%s\n\n",argv[argc-1]);
+
   set_initial_board(&curr_game);
 
-  printf("%d\n",curr_game.force_count[WHITE] - curr_game.force_count[BLACK]);
+  printf("%d %d\n",curr_game.force_count[WHITE],curr_game.force_count[WHITE] - curr_game.force_count[BLACK]);
 
   for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
     update_board(&curr_game,false);
     refresh_force_count(&curr_game);
-    printf("%d\n",curr_game.force_count[WHITE] - curr_game.force_count[BLACK]);
+    printf("%d %d\n",curr_game.force_count[WHITE],curr_game.force_count[WHITE] - curr_game.force_count[BLACK]);
   }
 
   return 0;
