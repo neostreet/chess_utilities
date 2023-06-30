@@ -67,8 +67,10 @@ int main(int argc,char **argv)
       if ((curr_force == force) && (curr_diff == diff)) {
         repeat_count++;
 
-        if (repeat_count == repeated)
+        if (repeat_count == repeated) {
           printf("%s : %d\n",filename,line_no);
+          break;
+        }
       }
       else
         repeat_count = 0;
