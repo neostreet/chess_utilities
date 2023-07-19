@@ -281,16 +281,10 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
 
     update_board(gamept,false);
 
-    if (player_is_in_check(((gamept->curr_move + 1) % 2),gamept)) {
-      got_error = 1;
-      break;
-    }
-
     gamept->curr_move++;
   }
 
   gamept->num_moves = gamept->curr_move;
-  calculate_seirawan_counts(gamept);
 
   fclose(fptr);
 
@@ -545,16 +539,7 @@ void update_board(struct game *gamept,short bCalcCounts)
     }
   }
 
-  if (bCalcCounts)
-    calculate_seirawan_counts(gamept);
-
   set_piece_offsets(gamept);
-
-  // now check if this move has put the other player in check
-  if (player_is_in_check(!((gamept->curr_move + 1) % 2),gamept)) {
-    // mark this move as a check
-    gamept->moves[gamept->curr_move].special_move_info |= SPECIAL_MOVE_CHECK;
-  }
 }
 
 int get_piece1(unsigned char *board,int board_offset)
@@ -596,46 +581,6 @@ void set_piece2(unsigned char *board,int row,int column,int piece)
 
   board_offset = row * 8 + column;
   set_piece1(board,board_offset,piece);
-}
-
-void calculate_seirawan_counts(struct game *gamept)
-{
-  int m;
-  int n;
-  int o;
-  int direction;
-  int piece;
-  int low;
-  int high;
-
-  for (m = 0; m < 2; m++) {
-    gamept->seirawan_count[m] = 0;
-
-    if (!m)
-      direction = 1;
-    else
-      direction = -1;
-
-    for (n = 0; n < NUM_BOARD_SQUARES; n++) {
-      piece = get_piece1(gamept->board,n);
-
-      if (piece * direction > 0) {
-        if (piece < 0) {
-          low = 0;
-          high = 32;
-        }
-        else {
-          low = 32;
-          high = 64;
-        }
-
-        for (o = low; o < high; o++) {
-          if (square_attacks_square(gamept,n,o))
-            gamept->seirawan_count[m]++;
-        }
-      }
-    }
-  }
 }
 
 #define MAX_FEN_LINE_LEN 256
