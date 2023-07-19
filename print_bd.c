@@ -24,7 +24,6 @@ char couldnt_open[] = "couldn't open %s\n";
 static unsigned char match_board1[CHARS_IN_BOARD];
 
 void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
-void print_space_and_force(struct game *game_pt,bool bSpace,bool bForce);
 
 int main(int argc,char **argv)
 {
@@ -301,7 +300,6 @@ int main(int argc,char **argv)
       printf("curr_move = %d\n",curr_game.curr_move);
 
       if (!bMoveNumberOnly) {
-        print_space_and_force(&curr_game,bSpace,bForce);
         putchar(0x0a);
         print_bd(&curr_game);
         print_special_moves(&curr_game);
@@ -407,7 +405,6 @@ int main(int argc,char **argv)
 
     if (!bSkip) {
       printf("curr_move = %d\n",curr_game.curr_move);
-      print_space_and_force(&curr_game,bSpace,bForce);
       putchar(0x0a);
       print_bd(&curr_game);
       print_special_moves(&curr_game);
@@ -421,21 +418,4 @@ int main(int argc,char **argv)
     print_pieces(&curr_game);
 
   return 0;
-}
-
-void print_space_and_force(struct game *game_pt,bool bSpace,bool bForce)
-{
-  if (bSpace) {
-    calculate_seirawan_counts(game_pt);
-
-    printf("Space: %d - %d\n",
-      game_pt->seirawan_count[0],game_pt->seirawan_count[1]);
-  }
-
-  if (bForce) {
-    refresh_force_count(game_pt);
-
-    printf("Force: %d - %d\n",
-      game_pt->force_count[0],game_pt->force_count[1]);
-  }
 }
