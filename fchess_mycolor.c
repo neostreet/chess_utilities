@@ -58,9 +58,9 @@ int main(int argc,char **argv)
     return 2;
   }
 
-  if (!strcmp(argv[curr_arg],white))
+  if (!strcmp(argv[curr_arg],"white"))
     bWhite = true;
-  else if (!strcmp(argv[curr_arg],black))
+  else if (!strcmp(argv[curr_arg],"black"))
     bWhite = false;
   else {
     printf("color must be %s or %s\n",white,black);
