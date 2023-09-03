@@ -11,7 +11,7 @@ static char time[MAX_LINE_LEN];
 
 static char usage[] =
 "usage: fchess_elo (-terse) (-verbose) (-rating_diff) (-after) (-before_and_after) (-before_and_after_diff) (-opponent)\n"
-"  (-opponent_name) (-date_time) (-boundaryboundary) (-ge_eloelo) (-is_ge_eloelo) player_name filename\n";
+"  (-opponent_name) (-date_time) (-boundaryboundary) (-ge_eloelo) (-is_ge_eloelo) (-filename) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "[White \"";
@@ -32,6 +32,8 @@ static char utcdate[] = "UTCDate";
 #define UTCDATE_LEN (sizeof (utcdate) - 1)
 static char utctime[] = "UTCTime";
 #define UTCTIME_LEN (sizeof (utctime) - 1)
+
+static bool bFilename;
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
@@ -66,10 +68,18 @@ static void get_time(char *time,char *line);
           } \
           else if (bVerbose) { \
             if (bRatingDiff) { \
-              if (!bDateTime) \
-                printf("%d %s\n",rating_diff,filename); \
-              else \
-                printf("%d %s %s %s\n",rating_diff,filename,date,time); \
+              if (!bDateTime) {\
+                if (!bFilename) \
+                  printf("%d\n",rating_diff); \
+                else \
+                  printf("%d %s\n",rating_diff,filename); \
+              } \
+              else { \
+                if (!bFilename) \
+                  printf("%d %s %s\n",rating_diff,date,time); \
+                else \
+                  printf("%d %s %s %s\n",rating_diff,filename,date,time); \
+              } \
             } \
             else if (bAfter) { \
               if (!bDateTime) { \
@@ -93,8 +103,12 @@ static void get_time(char *time,char *line);
                   printf("%d %d %d (%d) %s\n",(elo + rating_diff >= is_ge_elo),elo,elo+rating_diff,rating_diff,filename); \
               } \
               else { \
-                if (is_ge_elo == -1) \
-                  printf("%d %d (%d) %s %s %s\n",elo,elo+rating_diff,rating_diff,filename,date,time); \
+                if (is_ge_elo == -1) { \
+                  if (!bFilename) \
+                    printf("%d %d (%d) %s %s\n",elo,elo+rating_diff,rating_diff,date,time); \
+                  else \
+                    printf("%d %d (%d) %s %s %s\n",elo,elo+rating_diff,rating_diff,filename,date,time); \
+                } \
                 else \
                   printf("%d %d %d (%d) %s %s %s\n",(elo + rating_diff >= is_ge_elo),elo,elo+rating_diff,rating_diff,filename,date,time); \
               } \
@@ -129,8 +143,12 @@ static void get_time(char *time,char *line);
                   printf("%d %d %d %s\n",(elo + rating_diff >= is_ge_elo),elo,elo+rating_diff,filename); \
               } \
               else { \
-                if (is_ge_elo == -1) \
-                  printf("%d %d %s %s %s\n",elo,elo+rating_diff,filename,date,time); \
+                if (is_ge_elo == -1) { \
+                  if (!bFilename) \
+                    printf("%d %d %s %s\n",elo,elo+rating_diff,date,time); \
+                  else \
+                    printf("%d %d %s %s %s\n",elo,elo+rating_diff,filename,date,time); \
+                } \
                 else \
                   printf("%d %d %d %s %s %s\n",(elo + rating_diff >= is_ge_elo),elo,elo+rating_diff,filename,date,time); \
               } \
@@ -166,7 +184,7 @@ int main(int argc,char **argv)
   int elo;
   int rating_diff;
 
-  if ((argc < 3) || (argc > 15)) {
+  if ((argc < 3) || (argc > 16)) {
     printf(usage);
     return 1;
   }
@@ -183,6 +201,7 @@ int main(int argc,char **argv)
   boundary = -1;
   ge_elo = -1;
   is_ge_elo = -1;
+  bFilename = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
@@ -209,6 +228,8 @@ int main(int argc,char **argv)
       sscanf(&argv[curr_arg][7],"%d",&ge_elo);
     else if (!strncmp(argv[curr_arg],"-is_ge_elo",10))
       sscanf(&argv[curr_arg][10],"%d",&is_ge_elo);
+    else if (!strcmp(argv[curr_arg],"-filename"))
+      bFilename = true;
     else
       break;
   }
