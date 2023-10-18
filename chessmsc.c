@@ -263,7 +263,7 @@ bool multiple_queens(unsigned char *board)
   return false;
 }
 
-int get_enemy_king_row_and_column(struct game *gamept,int *row_pt,int *column_pt)
+int get_enemy_king_file_and_rank(struct game *gamept,int *file_pt,int *rank_pt)
 {
   int m;
   int n;
@@ -288,8 +288,8 @@ int get_enemy_king_row_and_column(struct game *gamept,int *row_pt,int *column_pt
   }
 
   if (m < 8) {
-    *row_pt = n;
-    *column_pt = m;
+    *file_pt = n;
+    *rank_pt = m;
     return 1;
   }
 
