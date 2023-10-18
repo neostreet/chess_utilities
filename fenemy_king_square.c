@@ -32,8 +32,8 @@ int main(int argc,char **argv)
   struct game curr_game;
   FILE *fptr;
   int filename_len;
-  int row;
-  int column;
+  int file;
+  int rank;
 
   if ((argc < 2) || (argc > 3)) {
     printf(usage);
@@ -70,16 +70,16 @@ int main(int argc,char **argv)
     continue;
   }
 
-  if (!get_enemy_king_row_and_column(&curr_game,&row,&column)) {
-    printf("get_enemy_king_row_and_column() of %s failed\n",filename);
+  if (!get_enemy_king_file_and_rank(&curr_game,&file,&rank)) {
+    printf("get_enemy_king_file_and_rank() of %s failed\n",filename);
     return 3;
   }
 
   if (!bVerbose) {
-    printf("%c%d\n",'a' + row,column + 1);
+    printf("%c%d\n",'a' + file,rank + 1);
   }
   else {
-    printf("%c%d %s\n",'a' + row,column + 1,filename);
+    printf("%c%d %s\n",'a' + file,rank + 1,filename);
   }
 
   }
