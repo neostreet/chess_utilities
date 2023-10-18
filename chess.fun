@@ -45,6 +45,7 @@ void set_piece1(unsigned char *board,int board_offset,int piece);
 void set_piece2(unsigned char *board,int row,int column,int piece);
 void calculate_seirawan_counts(struct game *gamept);
 bool multiple_queens(unsigned char *board);
+int get_enemy_king_row_and_column(struct game *gamept,int *row_pt,int *column_pt);
 int count_num_pieces(int color,struct game *gamept);
 
 void print_bd0(unsigned char *board);
