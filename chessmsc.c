@@ -262,3 +262,36 @@ bool multiple_queens(unsigned char *board)
 
   return false;
 }
+
+int get_enemy_king_row_and_column(struct game *gamept,int *row_pt,int *column_pt)
+{
+  int m;
+  int n;
+  int enemy_king_id;
+  int square;
+
+  if (!gamept->orientation)
+    enemy_king_id = KING_ID * -1;
+  else
+    enemy_king_id = KING_ID;
+
+  for (m = 0; m < 8; m++) {
+    for (n = 0; n < 8; n++) {
+      square = get_piece2(gamept->board,m,n);
+
+      if (square == enemy_king_id)
+        break;
+    }
+
+    if (n < 8)
+      break;
+  }
+
+  if (m < 8) {
+    *row_pt = n;
+    *column_pt = m;
+    return 1;
+  }
+
+  return 0;
+}
