@@ -15,7 +15,7 @@ static char opponent_name[MAX_OPPONENT_NAME_LEN+1];
 #define MAX_RESULT_LEN 7
 static char result[MAX_RESULT_LEN+1];
 
-static char usage[] = "usage: ftxt2ch filename\n";
+static char usage[] = "usage: ftxt2ch (-dont_do_removes) filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 static char couldnt_determine_color[] = "%s: couldn't determine color\n";
 
@@ -27,13 +27,15 @@ static int build_ch_filename(
   int max_filename_len);
 static bool Contains(int bCaseSens,char *line,int line_len,
   char *string,int string_len,int *index);
-int split_line(char *line,int line_len,FILE *ch_fptr);
+int split_line(char *line,int line_len,FILE *ch_fptr,bool bDontDoRemoves);
 void remove_checks_and_promotions(char *line);
 void get_opponent_name(char *line,int line_len,char *opponent_name,int max_opponent_name_len);
 void get_result(char *line,int line_len,char *result,int max_result_len);
 
 int main(int argc,char **argv)
 {
+  int curr_arg;
+  bool bDontDoRemoves;
   FILE *fptr0;
   int file_len;
   int file_no;
@@ -46,14 +48,28 @@ int main(int argc,char **argv)
   int line_no;
   int ix;
 
-  if (argc != 2) {
+  if ((argc < 2) || (argc > 3)) {
     printf(usage);
     return 1;
   }
 
-  if ((fptr0 = fopen(argv[1],"r")) == NULL) {
-    printf(couldnt_open,argv[1]);
+  bDontDoRemoves = false;
+
+  for (curr_arg = 1; curr_arg < argc; curr_arg++) {
+    if (!strcmp(argv[curr_arg],"-dont_do_removes"))
+      bDontDoRemoves = true;
+    else
+      break;
+  }
+
+  if (argc - curr_arg != 1) {
+    printf(usage);
     return 2;
+  }
+
+  if ((fptr0 = fopen(argv[curr_arg],"r")) == NULL) {
+    printf(couldnt_open,argv[curr_arg]);
+    return 3;
   }
 
   file_no = 0;
@@ -156,7 +172,7 @@ int main(int argc,char **argv)
       if ((line_len >= 1) && (line[0] == '['))
         fprintf(ch_fptr,"/ %s\n",line);
       else if (!strncmp(line,"1. ",3)) {
-        retval = split_line(line,line_len,ch_fptr);
+        retval = split_line(line,line_len,ch_fptr,bDontDoRemoves);
 
         if (retval) {
           printf("split_line failed on line %d\n",line_no);
@@ -260,7 +276,7 @@ static bool Contains(int bCaseSens,char *line,int line_len,
   return false;
 }
 
-int split_line(char *line,int line_len,FILE *ch_fptr)
+int split_line(char *line,int line_len,FILE *ch_fptr,bool bDontDoRemoves)
 {
   int m;
   int n;
@@ -294,7 +310,10 @@ int split_line(char *line,int line_len,FILE *ch_fptr)
       return 2;
 
     line[n] = 0;
-    remove_checks_and_promotions(&line[ix]);
+
+    if (!bDontDoRemoves)
+      remove_checks_and_promotions(&line[ix]);
+
     fprintf(ch_fptr,"%s\n",&line[ix]);
 
     if (m == 1)
