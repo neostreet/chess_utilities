@@ -2,12 +2,19 @@
 #include <string.h>
 
 #define MAX_FILENAME_LEN 1024
+
 static char ch_filename[MAX_FILENAME_LEN];
 
 #define MAX_LINE_LEN 8192
 static char line[MAX_LINE_LEN];
 
-static char usage[] = "usage: txt2ch filename\n";
+#define MAX_OPPONENT_NAME_LEN 50
+static char opponent_name[MAX_OPPONENT_NAME_LEN+1];
+
+#define MAX_RESULT_LEN 7
+static char result[MAX_RESULT_LEN+1];
+
+static char usage[] = "usage: txt2ch (-dont_do_removes) filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 static char couldnt_determine_color[] = "%s: couldn't determine color\n";
 
@@ -19,11 +26,15 @@ static int build_ch_filename(
   int max_filename_len);
 static bool Contains(int bCaseSens,char *line,int line_len,
   char *string,int string_len,int *index);
-int split_line(char *line,int line_len,FILE *ch_fptr);
-void remove_checks(char *line);
+int split_line(char *line,int line_len,FILE *ch_fptr,bool bDontDoRemoves);
+void remove_checks_and_promotions(char *line);
+void get_opponent_name(char *line,int line_len,char *opponent_name,int max_opponent_name_len);
+void get_result(char *line,int line_len,char *result,int max_result_len);
 
 int main(int argc,char **argv)
 {
+  int curr_arg;
+  bool bDontDoRemoves;
   FILE *fptr;
   FILE *ch_fptr;
   int color;
@@ -33,23 +44,38 @@ int main(int argc,char **argv)
   int line_no;
   int ix;
 
-  if (argc != 2) {
+  if ((argc < 2) || (argc > 3)) {
     printf(usage);
     return 1;
   }
 
-  pgn_filename_len = strlen(argv[1]);
+  bDontDoRemoves = false;
 
-  retval = build_ch_filename(argv[1],pgn_filename_len,ch_filename,MAX_FILENAME_LEN);
+  for (curr_arg = 1; curr_arg < argc; curr_arg++) {
+    if (!strcmp(argv[curr_arg],"-dont_do_removes"))
+      bDontDoRemoves = true;
+    else
+      break;
+  }
 
-  if (retval) {
-    printf("build_ch_filename failed on %s: %d\n",argv[1],retval);
+  if (argc - curr_arg != 1) {
+    printf(usage);
     return 2;
   }
 
-  if ((fptr = fopen(argv[1],"r")) == NULL) {
-    printf(couldnt_open,argv[1]);
+  if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
+    printf(couldnt_open,argv[curr_arg]);
     return 3;
+  }
+
+  pgn_filename_len = strlen(argv[curr_arg]);
+
+  retval = build_ch_filename(argv[curr_arg],pgn_filename_len,ch_filename,MAX_FILENAME_LEN);
+
+  if (retval) {
+    fclose(fptr);
+    printf("build_ch_filename failed on %s: %d\n",argv[curr_arg],retval);
+    return 4;
   }
 
   color = -1;
@@ -62,18 +88,35 @@ int main(int argc,char **argv)
 
     if (Contains(true,
       line,line_len,
-      (char *)"neostreet",9,
+      (char *)"White",5,
       &ix)) {
 
       if (Contains(true,
         line,line_len,
-        (char *)"White",5,
+        (char *)"neostreet",9,
         &ix)) {
+
         color = 0;
       }
-      else
+      else {
         color = 1;
+        get_opponent_name(line,line_len,opponent_name,MAX_OPPONENT_NAME_LEN);
+      }
+    }
+    else if (Contains(true,
+      line,line_len,
+      (char *)"Black",5,
+      &ix)) {
 
+      if (!color)
+        get_opponent_name(line,line_len,opponent_name,MAX_OPPONENT_NAME_LEN);
+    }
+    else if (Contains(true,
+      line,line_len,
+      (char *)"Result",6,
+      &ix)) {
+
+      get_result(line,line_len,result,MAX_RESULT_LEN);
       break;
     }
   }
@@ -81,19 +124,23 @@ int main(int argc,char **argv)
   if (color == -1) {
     fclose(fptr);
     printf(couldnt_determine_color,ch_filename);
-    return 4;
+    return 5;
   }
 
   if ((ch_fptr = fopen(ch_filename,"w")) == NULL) {
     fclose(fptr);
     printf(couldnt_open,ch_filename);
-    return 5;
+    return 6;
   }
 
-  if (!color)
+  if (!color) {
     fprintf(ch_fptr,"0\n\n");
-  else
+    fprintf(ch_fptr,"titleneostreet\\vs\\%s\\\\\\\\%s\n\n",opponent_name,result);
+  }
+  else {
     fprintf(ch_fptr,"1\n\n");
+    fprintf(ch_fptr,"title%s\\vs\\neostreet\\\\\\\\%s\n\n",opponent_name,result);
+  }
 
   fseek(fptr,0L,SEEK_SET);
 
@@ -110,11 +157,13 @@ int main(int argc,char **argv)
     if ((line_len >= 1) && (line[0] == '['))
       fprintf(ch_fptr,"/ %s\n",line);
     else if (!strncmp(line,"1. ",3)) {
-      retval = split_line(line,line_len,ch_fptr);
+      retval = split_line(line,line_len,ch_fptr,bDontDoRemoves);
 
       if (retval) {
+        fclose(ch_fptr);
+        fclose(fptr);
         printf("split_line failed on line %d\n",line_no);
-        return 6;
+        return 7;
       }
 
       break;
@@ -211,7 +260,7 @@ static bool Contains(int bCaseSens,char *line,int line_len,
   return false;
 }
 
-int split_line(char *line,int line_len,FILE *ch_fptr)
+int split_line(char *line,int line_len,FILE *ch_fptr,bool bDontDoRemoves)
 {
   int m;
   int n;
@@ -245,7 +294,10 @@ int split_line(char *line,int line_len,FILE *ch_fptr)
       return 2;
 
     line[n] = 0;
-    remove_checks(&line[ix]);
+
+    if (!bDontDoRemoves)
+      remove_checks_and_promotions(&line[ix]);
+
     fprintf(ch_fptr,"%s\n",&line[ix]);
 
     if (m == 1)
@@ -257,7 +309,7 @@ int split_line(char *line,int line_len,FILE *ch_fptr)
   return 0;
 }
 
-void remove_checks(char *line)
+void remove_checks_and_promotions(char *line)
 {
   int m;
   int n;
@@ -270,7 +322,7 @@ void remove_checks(char *line)
   removed = 0;
 
   for (n = 0; n < len; n++) {
-    if ((line[n] != '+') && (line[n] != '#')) {
+    if ((line[n] != '+') && (line[n] != '#') && (line[n] != '=')) {
       if (m != n)
         line[m++] = line[n];
       else
@@ -282,4 +334,32 @@ void remove_checks(char *line)
 
   if (removed)
     line[m] = 0;
+}
+
+void get_opponent_name(char *line,int line_len,char *opponent_name,int max_opponent_name_len)
+{
+  int n;
+
+  for (n = 0; (8 + n < line_len) && (n < max_opponent_name_len); n++) {
+    if (line[8 + n] == '"')
+      break;
+
+    opponent_name[n] = line[8 + n];
+  }
+
+  opponent_name[n] = 0;
+}
+
+void get_result(char *line,int line_len,char *result,int max_result_len)
+{
+  int n;
+
+  for (n = 0; (9 + n < line_len) && (n < max_result_len); n++) {
+    if (line[9 + n] == '"')
+      break;
+
+    result[n] = line[9 + n];
+  }
+
+  result[n] = 0;
 }
