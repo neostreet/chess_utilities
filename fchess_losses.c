@@ -4,7 +4,7 @@
 #define MAX_FILENAME_LEN 256
 static char filename[MAX_FILENAME_LEN];
 
-#define MAX_LINE_LEN 1024
+#define MAX_LINE_LEN 4096
 static char line[MAX_LINE_LEN];
 static char date[MAX_LINE_LEN];
 static char time[MAX_LINE_LEN];
