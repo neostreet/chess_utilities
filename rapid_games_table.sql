@@ -19,7 +19,8 @@ create table rapid_games (
   my_elo_before int null,
   my_elo_after int null,
   my_elo_delta smallint null,
-  eco varchar(3) null
+  eco varchar(4) null,
+  opening varchar(150) null
 );
 
 quit
