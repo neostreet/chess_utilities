@@ -13,6 +13,7 @@ enum {
   CHESS_GAME_COLOR,
   CHESS_GAME_NUM_MOVES,
   CHESS_GAME_RESULT,
+  CHESS_GAME_MATE,
   CHESS_GAME_TERMINATION,
   CHESS_GAME_WHITE_ELO,
   CHESS_GAME_BLACK_ELO,
@@ -44,6 +45,9 @@ static char *color_str[] = {
 
 static char result_str[] = "[Result \"";
 #define RESULT_STR_LEN (sizeof (result_str) - 1)
+
+static char mate[] = "#";
+#define MATE_LEN (sizeof (mate) - 1)
 
 static char *elo_str[] = {
   "[WhiteElo \"",
@@ -99,6 +103,9 @@ static char result[RESULT_MAX_LEN+1];
 
 #define MY_RESULT_LEN 1
 static char my_result[MY_RESULT_LEN+1];
+
+#define MATE_LEN 1
+static char my_mate[MATE_LEN+1];
 
 #define ELO_MAX_LEN 10
 static char elo[2][ELO_MAX_LEN+1];
@@ -157,6 +164,7 @@ static void output_game_insert_statement(
   char *color,
   int num_moves,
   char *my_result,
+  char *my_mate,
   char *termination
 );
 
@@ -265,6 +273,7 @@ int main(int argc,char **argv)
               color,
               num_moves,
               my_result,
+              my_mate,
               termination
             );
           }
@@ -443,8 +452,22 @@ int main(int argc,char **argv)
 
         if (retval)
           printf("get_num_moves() failed on line %d: %d\n",line_no,retval);
-        else
+        else {
           bHaveItem[CHESS_GAME_NUM_MOVES] = true;
+
+          if (Contains(true,
+            line,line_len,
+            mate,MATE_LEN,
+            &ix)) {
+
+            my_mate[0] = '1';
+          }
+          else
+            my_mate[0] = '0';
+
+          my_mate[1] = 0;
+          bHaveItem[CHESS_GAME_MATE] = true;
+        }
       }
     }
 
@@ -463,6 +486,7 @@ int main(int argc,char **argv)
         color,
         num_moves,
         my_result,
+        my_mate,
         termination
       );
     }
@@ -824,6 +848,7 @@ static void output_game_insert_statement(
   char *color,
   int num_moves,
   char *my_result,
+  char *my_mate,
   char *termination
 )
 {
@@ -852,6 +877,7 @@ static void output_game_insert_statement(
     printf("  color,\n");
     printf("  num_moves,\n");
     printf("  result,\n");
+    printf("  mate,\n");
     printf("  result_detail,\n");
     printf("  opponent_elo_before,\n");
     printf("  opponent_elo_delta,\n");
@@ -867,6 +893,7 @@ static void output_game_insert_statement(
     printf("  '%s',\n",color);
     printf("  %d,\n",num_moves);
     printf("  '%s',\n",my_result);
+    printf("  '%s',\n",my_mate);
     printf("  '%s',\n",termination);
     printf("  %s,\n",
       ((color[0] == 'W') ? elo[BLACK] : elo[WHITE]));
