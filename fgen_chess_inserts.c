@@ -18,10 +18,6 @@ enum {
   CHESS_GAME_BLACK_ELO,
   CHESS_GAME_WHITE_RATING_DIFF,
   CHESS_GAME_BLACK_RATING_DIFF,
-  CHESS_GAME_FIRST_MOVE,
-  CHESS_GAME_FIRST_TWO_MOVES,
-  CHESS_GAME_FIRST_THREE_MOVES,
-  CHESS_GAME_FIRST_FOUR_MOVES,
   NUM_CHESS_GAME_ITEMS
 };
 
@@ -32,7 +28,7 @@ static char filename[MAX_FILENAME_LEN];
 static char line[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fgen_chess_inserts (-debug) (-first_moves) player_name table_name filename\n";
+"usage: fgen_chess_inserts (-debug) player_name table_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char chess_game_event_str[] = "[Event \"";
@@ -89,18 +85,6 @@ static char drawn_hyphen_str[] = " drawn - ";
 static char first_move_str[] = "1.";
 #define FIRST_MOVE_STR_LEN (sizeof (first_move_str) - 1)
 
-static char second_move_str[] = " 2.";
-#define SECOND_MOVE_STR_LEN (sizeof (second_move_str) - 1)
-
-static char third_move_str[] = " 3.";
-#define THIRD_MOVE_STR_LEN (sizeof (third_move_str) - 1)
-
-static char fourth_move_str[] = " 4.";
-#define FOURTH_MOVE_STR_LEN (sizeof (fourth_move_str) - 1)
-
-static char fifth_move_str[] = " 5.";
-#define FIFTH_MOVE_STR_LEN (sizeof (fifth_move_str) - 1)
-
 #define CHESS_GAME_DATE_LEN 10
 static char game_date[CHESS_GAME_DATE_LEN+1];
 
@@ -133,18 +117,6 @@ static char opening[OPENING_MAX_LEN+1];
 
 #define TERMINATION_MAX_LEN 50
 static char termination[TERMINATION_MAX_LEN+1];
-
-#define FIRST_MOVE_MAX_LEN 10
-static char first_move[FIRST_MOVE_MAX_LEN+1];
-
-#define FIRST_TWO_MOVES_MAX_LEN 25
-static char first_two_moves[FIRST_TWO_MOVES_MAX_LEN+1];
-
-#define FIRST_THREE_MOVES_MAX_LEN 35
-static char first_three_moves[FIRST_THREE_MOVES_MAX_LEN+1];
-
-#define FIRST_FOUR_MOVES_MAX_LEN 45
-static char first_four_moves[FIRST_FOUR_MOVES_MAX_LEN+1];
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
@@ -185,12 +157,7 @@ static void output_game_insert_statement(
   char *color,
   int num_moves,
   char *my_result,
-  char *termination,
-  bool bFirstMoves,
-  char *first_move,
-  char *first_two_moves,
-  char *first_three_moves,
-  char *first_four_moves
+  char *termination
 );
 
 int main(int argc,char **argv)
@@ -198,7 +165,6 @@ int main(int argc,char **argv)
   int n;
   int curr_arg;
   bool bDebug;
-  bool bFirstMoves;
   char *player_name;
   int player_name_len;
   char *table_name;
@@ -215,19 +181,16 @@ int main(int argc,char **argv)
   int num_moves;
   bool bHaveItem[NUM_CHESS_GAME_ITEMS];
 
-  if ((argc < 4) || (argc > 6)) {
+  if ((argc < 4) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
   bDebug = false;
-  bFirstMoves = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
       bDebug = true;
-    else if (!strcmp(argv[curr_arg],"-first_moves"))
-      bFirstMoves = true;
     else
       break;
   }
@@ -302,12 +265,7 @@ int main(int argc,char **argv)
               color,
               num_moves,
               my_result,
-              termination,
-              bFirstMoves,
-              first_move,
-              first_two_moves,
-              first_three_moves,
-              first_four_moves
+              termination
             );
           }
         }
@@ -487,56 +445,6 @@ int main(int argc,char **argv)
           printf("get_num_moves() failed on line %d: %d\n",line_no,retval);
         else
           bHaveItem[CHESS_GAME_NUM_MOVES] = true;
-
-        if (bFirstMoves && !ix) {
-          if (Contains(true,
-            line,line_len,
-            fifth_move_str,FIFTH_MOVE_STR_LEN,
-            &ix)) {
-
-            if (ix <= FIRST_FOUR_MOVES_MAX_LEN) {
-              line[ix] = 0;
-              strcpy(first_four_moves,line);
-              bHaveItem[CHESS_GAME_FIRST_FOUR_MOVES] = true;
-            }
-          }
-
-          if (Contains(true,
-            line,line_len,
-            fourth_move_str,FOURTH_MOVE_STR_LEN,
-            &ix)) {
-
-            if (ix <= FIRST_THREE_MOVES_MAX_LEN) {
-              line[ix] = 0;
-              strcpy(first_three_moves,line);
-              bHaveItem[CHESS_GAME_FIRST_THREE_MOVES] = true;
-            }
-          }
-
-          if (Contains(true,
-            line,line_len,
-            third_move_str,THIRD_MOVE_STR_LEN,
-            &ix)) {
-
-            if (ix <= FIRST_TWO_MOVES_MAX_LEN) {
-              line[ix] = 0;
-              strcpy(first_two_moves,line);
-              bHaveItem[CHESS_GAME_FIRST_TWO_MOVES] = true;
-            }
-          }
-
-          if (Contains(true,
-            line,line_len,
-            second_move_str,SECOND_MOVE_STR_LEN,
-            &ix)) {
-
-            if (ix <= FIRST_MOVE_MAX_LEN) {
-              line[ix] = 0;
-              strcpy(first_move,line);
-              bHaveItem[CHESS_GAME_FIRST_MOVE] = true;
-            }
-          }
-        }
       }
     }
 
@@ -555,12 +463,7 @@ int main(int argc,char **argv)
         color,
         num_moves,
         my_result,
-        termination,
-        bFirstMoves,
-        first_move,
-        first_two_moves,
-        first_three_moves,
-        first_four_moves
+        termination
       );
     }
   }
@@ -921,12 +824,7 @@ static void output_game_insert_statement(
   char *color,
   int num_moves,
   char *my_result,
-  char *termination,
-  bool bFirstMoves,
-  char *first_move,
-  char *first_two_moves,
-  char *first_three_moves,
-  char *first_four_moves
+  char *termination
 )
 {
   int n;
@@ -936,7 +834,7 @@ static void output_game_insert_statement(
       break;
   }
 
-  if (n < CHESS_GAME_FIRST_MOVE) {
+  if (n < NUM_CHESS_GAME_ITEMS) {
     printf("%s: missing information: %d\n",
       filename,n);
 
@@ -944,85 +842,40 @@ static void output_game_insert_statement(
       printf("  %s\n",opponent_name);
   }
   else {
-    if (!bFirstMoves || (n < NUM_CHESS_GAME_ITEMS)) {
-      printf("insert into %s(\n",table_name);
-      printf("  game_filename,\n");
-      printf("  game_date,\n");
-      printf("  time_control,\n");
-      printf("  eco,\n");
-      printf("  opening,\n");
-      printf("  opponent_name,\n");
-      printf("  color,\n");
-      printf("  num_moves,\n");
-      printf("  result,\n");
-      printf("  result_detail,\n");
-      printf("  opponent_elo_before,\n");
-      printf("  opponent_elo_delta,\n");
-      printf("  my_elo_before,\n");
-      printf("  my_elo_delta\n");
-      printf(") values (\n");
-      printf("  '%s',\n",filename);
-      printf("  '%s',\n",game_date);
-      printf("  '%s',\n",time_control);
-      printf("  '%s',\n",eco);
-      printf("  \"%s\",\n",opening);
-      printf("  '%s',\n",opponent_name);
-      printf("  '%s',\n",color);
-      printf("  %d,\n",num_moves);
-      printf("  '%s',\n",my_result);
-      printf("  '%s',\n",termination);
-      printf("  %s,\n",
-        ((color[0] == 'W') ? elo[BLACK] : elo[WHITE]));
-      printf("  %s,\n",
-        ((color[0] == 'W') ? rating_diff[BLACK] : rating_diff[WHITE]));
-      printf("  %s\n,",
-        ((color[0] == 'W') ? elo[WHITE] : elo[BLACK]));
-      printf("  %s\n",
-        ((color[0] == 'W') ? rating_diff[WHITE] : rating_diff[BLACK]));
-      printf(");\n");
-    }
-    else {
-      printf("insert into %s(\n",table_name);
-      printf("  game_filename,\n");
-      printf("  game_date,\n");
-      printf("  time_control,\n");
-      printf("  eco,\n");
-      printf("  opponent_name,\n");
-      printf("  color,\n");
-      printf("  num_moves,\n");
-      printf("  result,\n");
-      printf("  result_detail,\n");
-      printf("  opponent_elo_before,\n");
-      printf("  opponent_elo_delta,\n");
-      printf("  my_elo_before,\n");
-      printf("  my_elo_delta,\n");
-      printf("  first_move,\n");
-      printf("  first_two_moves,\n");
-      printf("  first_three_moves,\n");
-      printf("  first_four_moves\n");
-      printf(") values (\n");
-      printf("  '%s',\n",filename);
-      printf("  '%s',\n",game_date);
-      printf("  '%s',\n",time_control);
-      printf("  '%s',\n",eco);
-      printf("  '%s',\n",opponent_name);
-      printf("  '%s',\n",color);
-      printf("  %d,\n",num_moves);
-      printf("  '%s',\n",my_result);
-      printf("  '%s',\n",termination);
-      printf("  %s,\n",
-        ((color[0] == 'W') ? elo[BLACK] : elo[WHITE]));
-      printf("  %s,\n",
-        ((color[0] == 'W') ? rating_diff[BLACK] : rating_diff[WHITE]));
-      printf("  %s,\n",
-        ((color[0] == 'W') ? elo[WHITE] : elo[BLACK]));
-      printf("  %s,\n",
-        ((color[0] == 'W') ? rating_diff[WHITE] : rating_diff[BLACK]));
-      printf("  '%s',\n",first_move);
-      printf("  '%s',\n",first_two_moves);
-      printf("  '%s',\n",first_three_moves);
-      printf("  '%s'\n",first_four_moves);
-      printf(");\n");
-    }
+    printf("insert into %s(\n",table_name);
+    printf("  game_filename,\n");
+    printf("  game_date,\n");
+    printf("  time_control,\n");
+    printf("  eco,\n");
+    printf("  opening,\n");
+    printf("  opponent_name,\n");
+    printf("  color,\n");
+    printf("  num_moves,\n");
+    printf("  result,\n");
+    printf("  result_detail,\n");
+    printf("  opponent_elo_before,\n");
+    printf("  opponent_elo_delta,\n");
+    printf("  my_elo_before,\n");
+    printf("  my_elo_delta\n");
+    printf(") values (\n");
+    printf("  '%s',\n",filename);
+    printf("  '%s',\n",game_date);
+    printf("  '%s',\n",time_control);
+    printf("  '%s',\n",eco);
+    printf("  \"%s\",\n",opening);
+    printf("  '%s',\n",opponent_name);
+    printf("  '%s',\n",color);
+    printf("  %d,\n",num_moves);
+    printf("  '%s',\n",my_result);
+    printf("  '%s',\n",termination);
+    printf("  %s,\n",
+      ((color[0] == 'W') ? elo[BLACK] : elo[WHITE]));
+    printf("  %s,\n",
+      ((color[0] == 'W') ? rating_diff[BLACK] : rating_diff[WHITE]));
+    printf("  %s\n,",
+      ((color[0] == 'W') ? elo[WHITE] : elo[BLACK]));
+    printf("  %s\n",
+      ((color[0] == 'W') ? rating_diff[WHITE] : rating_diff[BLACK]));
+    printf(");\n");
   }
 }
