@@ -11,6 +11,7 @@ create table rapid_games (
   color varchar(1) not null,
   num_moves smallint not null,
   result varchar(1) not null,
+  mate varchar(1) not null,
   result_decimal decimal(6,1) null,
   result_detail varchar(25) not null,
   opponent_elo_before int null,
