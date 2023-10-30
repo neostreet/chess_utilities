@@ -879,10 +879,10 @@ static void output_game_insert_statement(
     printf("  result,\n");
     printf("  mate,\n");
     printf("  result_detail,\n");
-    printf("  opponent_elo_before,\n");
-    printf("  opponent_elo_delta,\n");
     printf("  my_elo_before,\n");
-    printf("  my_elo_delta\n");
+    printf("  my_elo_delta,\n");
+    printf("  opponent_elo_before,\n");
+    printf("  opponent_elo_delta\n");
     printf(") values (\n");
     printf("  '%s',\n",filename);
     printf("  '%s',\n",game_date);
@@ -896,13 +896,13 @@ static void output_game_insert_statement(
     printf("  '%s',\n",my_mate);
     printf("  '%s',\n",termination);
     printf("  %s,\n",
-      ((color[0] == 'W') ? elo[BLACK] : elo[WHITE]));
-    printf("  %s,\n",
-      ((color[0] == 'W') ? rating_diff[BLACK] : rating_diff[WHITE]));
-    printf("  %s\n,",
       ((color[0] == 'W') ? elo[WHITE] : elo[BLACK]));
-    printf("  %s\n",
+    printf("  %s,\n",
       ((color[0] == 'W') ? rating_diff[WHITE] : rating_diff[BLACK]));
+    printf("  %s,\n",
+      ((color[0] == 'W') ? elo[BLACK] : elo[WHITE]));
+    printf("  %s\n",
+      ((color[0] == 'W') ? rating_diff[BLACK] : rating_diff[WHITE]));
     printf(");\n");
   }
 }
