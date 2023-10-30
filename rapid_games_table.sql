@@ -12,16 +12,13 @@ create table rapid_games (
   num_moves smallint not null,
   result varchar(1) not null,
   mate varchar(1) not null,
-  result_decimal decimal(6,1) null,
   result_detail varchar(25) not null,
-  opponent_elo_before int null,
-  opponent_elo_after int null,
-  opponent_elo_delta smallint null,
-  my_elo_before int null,
-  my_elo_after int null,
-  my_elo_delta smallint null,
-  eco varchar(4) null,
-  opening varchar(150) null
+  my_elo_before int not null,
+  my_elo_delta smallint not null,
+  opponent_elo_before int not null,
+  opponent_elo_delta smallint not null,
+  eco varchar(4) not null,
+  opening varchar(150) not null
 );
 
 quit
