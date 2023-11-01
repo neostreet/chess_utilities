@@ -26,6 +26,7 @@ char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
 
 static unsigned char match_board1[CHARS_IN_BOARD];
+static int afl_dbg;
 
 void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 
@@ -78,6 +79,7 @@ int main(int argc,char **argv)
     return 1;
   }
 
+  dbg_move = -1;
   bDebug = false;
   bTerse = false;
   bSearchAllMoves = false;
@@ -267,6 +269,9 @@ int main(int argc,char **argv)
 
     for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
       update_board(&curr_game,false);
+
+      if (curr_game.curr_move == dbg_move)
+        afl_dbg = 1;
 
       if (bMine) {
         if ((curr_game.curr_move % 2) != orientation)
