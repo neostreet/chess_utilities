@@ -9,7 +9,8 @@ static char line[MAX_LINE_LEN];
 static char date[MAX_LINE_LEN];
 static char time[MAX_LINE_LEN];
 
-static char usage[] = "usage: fchess_checks (-verbose) (-date_time) (-none) (-terse) player_name filename\n";
+static char usage[] =
+"usage: fchess_checks (-verbose) (-date_time) (-none) (-terse) (-white) (-black) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -26,7 +27,7 @@ static int Contains(bool bCaseSens,char *line,int line_len,
   char *string,int string_len,int *index);
 static void get_date(char *date,char *line);
 static void get_time(char *time,char *line);
-int count_checks(char *line,int line_len,bool bWhite);
+int count_checks(char *line,int line_len,int *white_checks_pt,int *black_checks_pt,bool bIAmWhite);
 
 int main(int argc,char **argv)
 {
@@ -36,6 +37,8 @@ int main(int argc,char **argv)
   bool bDateTime;
   bool bNone;
   bool bTerse;
+  bool bWhite;
+  bool bBlack;
   int player_name_ix;
   int player_name_len;
   FILE *fptr0;
@@ -43,11 +46,13 @@ int main(int argc,char **argv)
   FILE *fptr;
   int line_len;
   int line_no;
-  bool bWhite;
+  bool bIAmWhite;
   int ix;
-  int num_checks;
+  int white_checks;
+  int black_checks;
+  int total_checks;
 
-  if ((argc < 3) || (argc > 7)) {
+  if ((argc < 3) || (argc > 9)) {
     printf(usage);
     return 1;
   }
@@ -56,6 +61,8 @@ int main(int argc,char **argv)
   bDateTime = false;
   bNone = false;
   bTerse = false;
+  bWhite = false;
+  bBlack = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
@@ -66,6 +73,10 @@ int main(int argc,char **argv)
       bNone = true;
     else if (!strcmp(argv[curr_arg],"-terse"))
       bTerse = true;
+    else if (!strcmp(argv[curr_arg],"-white"))
+      bWhite = true;
+    else if (!strcmp(argv[curr_arg],"-black"))
+      bBlack = true;
     else
       break;
   }
@@ -109,13 +120,13 @@ int main(int argc,char **argv)
           line,line_len,
           white,WHITE_LEN,
           &ix)) {
-          bWhite = true;
+          bIAmWhite = true;
         }
         else if (Contains(true,
           line,line_len,
           black,BLACK_LEN,
           &ix)) {
-          bWhite = false;
+          bIAmWhite = false;
         }
         else {
           printf("%s: couldn't determine whether %s is white or black\n",
@@ -140,20 +151,40 @@ int main(int argc,char **argv)
           get_time(time,line);
       }
       else if (!strncmp(line,"1. ",3)) {
-        num_checks = count_checks(line,line_len,bWhite);
+        total_checks = count_checks(line,line_len,&white_checks,&black_checks,bIAmWhite);
 
-        if (!bNone || (bNone && !num_checks)) {
+        if (!bNone || (bNone && !total_checks)) {
           if (!bDateTime) {
             if (bNone && bTerse)
               printf("%s\n",filename);
+            else if (bWhite) {
+              if (bBlack) {
+                printf("%3d white, %3d black, %3d total %s\n",white_checks,black_checks,total_checks,filename);
+              }
+              else {
+                printf("%3d white, %3d total %s\n",white_checks,total_checks,filename);
+              }
+            } else if (bBlack) {
+                printf("%3d black, %3d total %s\n",black_checks,total_checks,filename);
+            }
             else
-              printf("%3d %s\n",num_checks,filename);
+              printf("%3d %s\n",total_checks,filename);
           }
           else {
             if (bNone && bTerse)
               printf("%s %s %s\n",filename,date,time);
+            else if (bWhite) {
+              if (bBlack) {
+                printf("%3d white, %3d black, %3d total %s %s %s\n",white_checks,black_checks,total_checks,filename,date,time);
+              }
+              else {
+                printf("%3d white, %3d total %s %s %s\n",white_checks,total_checks,filename,date,time);
+              }
+            } else if (bBlack) {
+                printf("%3d black, %3d total %s %s %s\n",black_checks,total_checks,filename,date,time);
+            }
             else
-              printf("%3d %s %s %s\n",num_checks,filename,date,time);
+              printf("%3d %s %s %s\n",total_checks,filename,date,time);
           }
         }
 
@@ -240,17 +271,33 @@ static void get_time(char *time,char *line)
   strncpy(time,&line[10],8);
 }
 
-int count_checks(char *line,int line_len,bool bWhite)
+int count_checks(char *line,int line_len,int *white_checks_pt,int *black_checks_pt,bool bIAmWhite)
 {
   int n;
-  int num_checks;
+  int space_count;
+  int white_checks;
+  int black_checks;
 
-  num_checks = 0;
+  space_count = 0;
+  white_checks = 0;
+  black_checks = 0;
 
   for (n = 0; n < line_len; n++) {
-    if ((line[n] == '+') || (line[n] == '#'))
-      num_checks++;
+    if (line[n] == '.')
+      space_count = 0;
+    else if (line[n] == ' ')
+      space_count++;
+
+    if ((line[n] == '+') || (line[n] == '#')) {
+      if (space_count == 1)
+        white_checks++;
+      else
+        black_checks++;
+    }
   }
 
-  return num_checks;
+  *white_checks_pt = white_checks;
+  *black_checks_pt = black_checks;
+
+  return white_checks + black_checks;
 }
