@@ -98,6 +98,9 @@ int main(int argc,char **argv)
           &ix)) {
 
           whites++;
+
+          if (bVerbose)
+            printf("white %s\n",filename);
         }
         else if (Contains(true,
           line,line_len,
@@ -105,6 +108,9 @@ int main(int argc,char **argv)
           &ix)) {
 
           blacks++;
+
+          if (bVerbose)
+            printf("black %s\n",filename);
         }
         else {
           printf("%s: couldn't determine whether %s is white or black\n",
@@ -120,6 +126,9 @@ int main(int argc,char **argv)
   }
 
   fclose(fptr0);
+
+  if (bVerbose)
+    putchar(0x0a);
 
   printf("%6d whites\n",whites);
   printf("%6d blacks\n",blacks);
