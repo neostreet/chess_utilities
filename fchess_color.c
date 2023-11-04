@@ -10,11 +10,6 @@ static char line[MAX_LINE_LEN];
 static char usage[] = "usage: fchess_color (-verbose) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
-enum {
-  WHITE,
-  BLACK
-};
-
 static char white[] = "White";
 #define WHITE_LEN (sizeof (white) - 1)
 static char black[] = "Black";
