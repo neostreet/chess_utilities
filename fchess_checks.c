@@ -10,7 +10,8 @@ static char date[MAX_LINE_LEN];
 static char time[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fchess_checks (-verbose) (-date_time) (-none) (-terse) (-white) (-black) player_name filename\n";
+"usage: fchess_checks (-verbose) (-date_time) (-none) (-terse) (-white) (-black)\n"
+"  (-me) (-opponent) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -27,7 +28,7 @@ static int Contains(bool bCaseSens,char *line,int line_len,
   char *string,int string_len,int *index);
 static void get_date(char *date,char *line);
 static void get_time(char *time,char *line);
-int count_checks(char *line,int line_len,int *white_checks_pt,int *black_checks_pt,bool bIAmWhite);
+int count_checks(char *line,int line_len,int *white_checks_pt,int *black_checks_pt);
 
 int main(int argc,char **argv)
 {
@@ -39,6 +40,8 @@ int main(int argc,char **argv)
   bool bTerse;
   bool bWhite;
   bool bBlack;
+  bool bMe;
+  bool bOpponent;
   int player_name_ix;
   int player_name_len;
   FILE *fptr0;
@@ -50,9 +53,11 @@ int main(int argc,char **argv)
   int ix;
   int white_checks;
   int black_checks;
+  int my_checks;
+  int opponent_checks;
   int total_checks;
 
-  if ((argc < 3) || (argc > 9)) {
+  if ((argc < 3) || (argc > 11)) {
     printf(usage);
     return 1;
   }
@@ -63,6 +68,8 @@ int main(int argc,char **argv)
   bTerse = false;
   bWhite = false;
   bBlack = false;
+  bMe = false;
+  bOpponent = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
@@ -77,6 +84,10 @@ int main(int argc,char **argv)
       bWhite = true;
     else if (!strcmp(argv[curr_arg],"-black"))
       bBlack = true;
+    else if (!strcmp(argv[curr_arg],"-me"))
+      bMe = true;
+    else if (!strcmp(argv[curr_arg],"-opponent"))
+      bOpponent = true;
     else
       break;
   }
@@ -86,12 +97,17 @@ int main(int argc,char **argv)
     return 2;
   }
 
+  if ((bWhite || bBlack) && (bMe || bOpponent)) {
+    printf("can't specify -white and/or -black and also -me and/or -opponent\n");
+    return 3;
+  }
+
   player_name_ix = curr_arg++;
   player_name_len = strlen(argv[player_name_ix]);
 
   if ((fptr0 = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 3;
+    return 4;
   }
 
   for ( ; ; ) {
@@ -131,7 +147,7 @@ int main(int argc,char **argv)
         else {
           printf("%s: couldn't determine whether %s is white or black\n",
             filename,argv[player_name_ix]);
-          return 4;
+          return 5;
         }
       }
       else if (Contains(true,
@@ -151,37 +167,74 @@ int main(int argc,char **argv)
           get_time(time,line);
       }
       else if (!strncmp(line,"1. ",3)) {
-        total_checks = count_checks(line,line_len,&white_checks,&black_checks,bIAmWhite);
+        total_checks = count_checks(line,line_len,&white_checks,&black_checks);
+
+        if (bIAmWhite) {
+          my_checks = white_checks;
+          opponent_checks = black_checks;
+        }
+        else {
+          my_checks = black_checks;
+          opponent_checks = white_checks;
+        }
 
         if (!bNone || (bNone && !total_checks)) {
           if (!bDateTime) {
             if (bNone && bTerse)
               printf("%s\n",filename);
-            else if (bWhite) {
-              if (bBlack) {
-                printf("%3d white, %3d black, %3d total %s\n",white_checks,black_checks,total_checks,filename);
+            else if (bWhite || bBlack) {
+              if (bWhite) {
+                if (bBlack) {
+                  printf("%3d white, %3d black, %3d total %s\n",white_checks,black_checks,total_checks,filename);
+                }
+                else {
+                  printf("%3d white, %3d total %s\n",white_checks,total_checks,filename);
+                }
+              } else if (bBlack) {
+                  printf("%3d black, %3d total %s\n",black_checks,total_checks,filename);
               }
-              else {
-                printf("%3d white, %3d total %s\n",white_checks,total_checks,filename);
-              }
-            } else if (bBlack) {
-                printf("%3d black, %3d total %s\n",black_checks,total_checks,filename);
+              else
+                printf("%3d %s\n",total_checks,filename);
             }
-            else
-              printf("%3d %s\n",total_checks,filename);
+            else if (bMe || bOpponent) {
+              if (bMe) {
+                if (bOpponent) {
+                  printf("%3d me, %3d opponent, %3d total %s\n",my_checks,opponent_checks,total_checks,filename);
+                }
+                else {
+                  printf("%3d me, %3d total %s\n",my_checks,total_checks,filename);
+                }
+              } else if (bOpponent) {
+                  printf("%3d opponent, %3d total %s\n",opponent_checks,total_checks,filename);
+              }
+            }
           }
           else {
             if (bNone && bTerse)
               printf("%s %s %s\n",filename,date,time);
-            else if (bWhite) {
-              if (bBlack) {
-                printf("%3d white, %3d black, %3d total %s %s %s\n",white_checks,black_checks,total_checks,filename,date,time);
+            else if (bWhite || bBlack) {
+              if (bWhite) {
+                if (bBlack) {
+                  printf("%3d white, %3d black, %3d total %s %s %s\n",white_checks,black_checks,total_checks,filename,date,time);
+                }
+                else {
+                  printf("%3d white, %3d total %s %s %s\n",white_checks,total_checks,filename,date,time);
+                }
+              } else if (bBlack) {
+                  printf("%3d black, %3d total %s %s %s\n",black_checks,total_checks,filename,date,time);
               }
-              else {
-                printf("%3d white, %3d total %s %s %s\n",white_checks,total_checks,filename,date,time);
+            }
+            else if (bMe || bOpponent) {
+              if (bMe) {
+                if (bOpponent) {
+                  printf("%3d me, %3d opponent, %3d total %s %s %s\n",my_checks,opponent_checks,total_checks,filename,date,time);
+                }
+                else {
+                  printf("%3d me, %3d total %s %s %s\n",my_checks,total_checks,filename,date,time);
+                }
+              } else if (bOpponent) {
+                  printf("%3d opponent, %3d total %s %s %s\n",opponent_checks,total_checks,filename,date,time);
               }
-            } else if (bBlack) {
-                printf("%3d black, %3d total %s %s %s\n",black_checks,total_checks,filename,date,time);
             }
             else
               printf("%3d %s %s %s\n",total_checks,filename,date,time);
@@ -271,7 +324,7 @@ static void get_time(char *time,char *line)
   strncpy(time,&line[10],8);
 }
 
-int count_checks(char *line,int line_len,int *white_checks_pt,int *black_checks_pt,bool bIAmWhite)
+int count_checks(char *line,int line_len,int *white_checks_pt,int *black_checks_pt)
 {
   int n;
   int space_count;
