@@ -56,6 +56,11 @@ int main(int argc,char **argv)
   int my_checks;
   int opponent_checks;
   int total_checks;
+  int total_white_checks;
+  int total_black_checks;
+  int total_my_checks;
+  int total_opponent_checks;
+  int grand_total_checks;
 
   if ((argc < 3) || (argc > 11)) {
     printf(usage);
@@ -109,6 +114,12 @@ int main(int argc,char **argv)
     printf(couldnt_open,argv[curr_arg]);
     return 4;
   }
+
+  total_white_checks = 0;
+  total_black_checks = 0;
+  total_my_checks = 0;
+  total_opponent_checks = 0;
+  grand_total_checks = 0;
 
   for ( ; ; ) {
     GetLine(fptr0,filename,&filename_len,MAX_FILENAME_LEN);
@@ -177,6 +188,12 @@ int main(int argc,char **argv)
           my_checks = black_checks;
           opponent_checks = white_checks;
         }
+
+        total_white_checks += white_checks;
+        total_black_checks += black_checks;
+        total_my_checks += my_checks;
+        total_opponent_checks += opponent_checks;
+        grand_total_checks += total_checks;
 
         if (!bNone || (bNone && !total_checks)) {
           if (!bDateTime) {
@@ -249,6 +266,13 @@ int main(int argc,char **argv)
   }
 
   fclose(fptr0);
+
+  putchar(0x0a);
+  printf("%5d white checks\n",total_white_checks);
+  printf("%5d black checks\n",total_black_checks);
+  printf("%5d my checks\n",total_my_checks);
+  printf("%5d opponent checks\n",total_opponent_checks);
+  printf("%5d total checks\n",grand_total_checks);
 
   return 0;
 }
