@@ -11,7 +11,7 @@ static char time[MAX_LINE_LEN];
 
 static char usage[] =
 "usage: fchess_checks (-verbose) (-date_time) (-none) (-terse) (-white) (-black)\n"
-"  (-me) (-opponent) (-mate) player_name filename\n";
+"  (-me) (-opponent) (-mate) (-not_none) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -43,6 +43,7 @@ int main(int argc,char **argv)
   bool bMe;
   bool bOpponent;
   bool bMate;
+  bool bNotNone;
   int player_name_ix;
   int player_name_len;
   FILE *fptr0;
@@ -62,8 +63,9 @@ int main(int argc,char **argv)
   int total_my_checks;
   int total_opponent_checks;
   int grand_total_checks;
+  int num_games;
 
-  if ((argc < 3) || (argc > 12)) {
+  if ((argc < 3) || (argc > 13)) {
     printf(usage);
     return 1;
   }
@@ -77,6 +79,7 @@ int main(int argc,char **argv)
   bMe = false;
   bOpponent = false;
   bMate = false;
+  bNotNone = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
@@ -97,6 +100,8 @@ int main(int argc,char **argv)
       bOpponent = true;
     else if (!strcmp(argv[curr_arg],"-mate"))
       bMate = true;
+    else if (!strcmp(argv[curr_arg],"-not_none"))
+      bNotNone = true;
     else
       break;
   }
@@ -111,12 +116,17 @@ int main(int argc,char **argv)
     return 3;
   }
 
+  if (bNone && bNotNone) {
+    printf("can't specify both -none and -not_none\n");
+    return 4;
+  }
+
   player_name_ix = curr_arg++;
   player_name_len = strlen(argv[player_name_ix]);
 
   if ((fptr0 = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 4;
+    return 5;
   }
 
   total_white_checks = 0;
@@ -124,6 +134,7 @@ int main(int argc,char **argv)
   total_my_checks = 0;
   total_opponent_checks = 0;
   grand_total_checks = 0;
+  num_games = 0;
 
   for ( ; ; ) {
     GetLine(fptr0,filename,&filename_len,MAX_FILENAME_LEN);
@@ -135,6 +146,8 @@ int main(int argc,char **argv)
       printf(couldnt_open,filename);
       continue;
     }
+
+    num_games++;
 
     for ( ; ; ) {
       GetLine(fptr,line,&line_len,MAX_LINE_LEN);
@@ -162,7 +175,7 @@ int main(int argc,char **argv)
         else {
           printf("%s: couldn't determine whether %s is white or black\n",
             filename,argv[player_name_ix]);
-          return 5;
+          return 6;
         }
       }
       else if (Contains(true,
@@ -199,7 +212,7 @@ int main(int argc,char **argv)
         total_opponent_checks += opponent_checks;
         grand_total_checks += total_checks;
 
-        if (!bNone || (bNone && !total_checks)) {
+        if ((!bNone && !bNotNone) || (bNone && !total_checks) || (bNotNone && total_checks)) {
           if (!bDateTime) {
             if (bNone && bTerse)
               printf("%s\n",filename);
@@ -277,6 +290,8 @@ int main(int argc,char **argv)
   printf("%5d my checks\n",total_my_checks);
   printf("%5d opponent checks\n",total_opponent_checks);
   printf("%5d total checks\n",grand_total_checks);
+  putchar(0x0a);
+  printf("%5d games\n",num_games);
 
   return 0;
 }
@@ -379,8 +394,8 @@ int count_checks(char *line,int line_len,int *white_checks_pt,int *black_checks_
     }
   }
   else {
-    if (line[line_len - 1] == '#') {
-      for (n = line_len - 2; n >= 0; n--) {
+    if (line[line_len - 5] == '#') {
+      for (n = line_len - 6; n >= 0; n--) {
         if (line[n] == ' ')
           space_count++;
         else if (line[n] == '.') {
