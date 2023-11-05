@@ -11,7 +11,7 @@ static char time[MAX_LINE_LEN];
 
 static char usage[] =
 "usage: fchess_checks (-verbose) (-date_time) (-none) (-terse) (-white) (-black)\n"
-"  (-me) (-opponent) player_name filename\n";
+"  (-me) (-opponent) (-mate) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -28,7 +28,7 @@ static int Contains(bool bCaseSens,char *line,int line_len,
   char *string,int string_len,int *index);
 static void get_date(char *date,char *line);
 static void get_time(char *time,char *line);
-int count_checks(char *line,int line_len,int *white_checks_pt,int *black_checks_pt);
+int count_checks(char *line,int line_len,int *white_checks_pt,int *black_checks_pt,bool bMate);
 
 int main(int argc,char **argv)
 {
@@ -42,6 +42,7 @@ int main(int argc,char **argv)
   bool bBlack;
   bool bMe;
   bool bOpponent;
+  bool bMate;
   int player_name_ix;
   int player_name_len;
   FILE *fptr0;
@@ -62,7 +63,7 @@ int main(int argc,char **argv)
   int total_opponent_checks;
   int grand_total_checks;
 
-  if ((argc < 3) || (argc > 11)) {
+  if ((argc < 3) || (argc > 12)) {
     printf(usage);
     return 1;
   }
@@ -75,6 +76,7 @@ int main(int argc,char **argv)
   bBlack = false;
   bMe = false;
   bOpponent = false;
+  bMate = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
@@ -93,6 +95,8 @@ int main(int argc,char **argv)
       bMe = true;
     else if (!strcmp(argv[curr_arg],"-opponent"))
       bOpponent = true;
+    else if (!strcmp(argv[curr_arg],"-mate"))
+      bMate = true;
     else
       break;
   }
@@ -178,7 +182,7 @@ int main(int argc,char **argv)
           get_time(time,line);
       }
       else if (!strncmp(line,"1. ",3)) {
-        total_checks = count_checks(line,line_len,&white_checks,&black_checks);
+        total_checks = count_checks(line,line_len,&white_checks,&black_checks,bMate);
 
         if (bIAmWhite) {
           my_checks = white_checks;
@@ -348,7 +352,7 @@ static void get_time(char *time,char *line)
   strncpy(time,&line[10],8);
 }
 
-int count_checks(char *line,int line_len,int *white_checks_pt,int *black_checks_pt)
+int count_checks(char *line,int line_len,int *white_checks_pt,int *black_checks_pt,bool bMate)
 {
   int n;
   int space_count;
@@ -359,17 +363,35 @@ int count_checks(char *line,int line_len,int *white_checks_pt,int *black_checks_
   white_checks = 0;
   black_checks = 0;
 
-  for (n = 0; n < line_len; n++) {
-    if (line[n] == '.')
-      space_count = 0;
-    else if (line[n] == ' ')
-      space_count++;
+  if (!bMate) {
+    for (n = 0; n < line_len; n++) {
+      if (line[n] == '.')
+        space_count = 0;
+      else if (line[n] == ' ')
+        space_count++;
 
-    if ((line[n] == '+') || (line[n] == '#')) {
-      if (space_count == 1)
-        white_checks++;
-      else
-        black_checks++;
+      if ((line[n] == '+') || (line[n] == '#')) {
+        if (space_count == 1)
+          white_checks++;
+        else
+          black_checks++;
+      }
+    }
+  }
+  else {
+    if (line[line_len - 1] == '#') {
+      for (n = line_len - 2; n >= 0; n--) {
+        if (line[n] == ' ')
+          space_count++;
+        else if (line[n] == '.') {
+          if (space_count == 1)
+            white_checks++;
+          else
+            black_checks++;
+
+          break;
+        }
+      }
     }
   }
 
