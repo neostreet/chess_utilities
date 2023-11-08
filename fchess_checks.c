@@ -233,12 +233,21 @@ int main(int argc,char **argv)
             else if (bMe || bOpponent) {
               if (bMe) {
                 if (bOpponent) {
-                  printf("%3d me, %3d opponent, %3d total %s\n",my_checks,opponent_checks,total_checks,filename);
+                  if (bTerse)
+                    printf("%d %d %d\n",my_checks,opponent_checks,total_checks);
+                  else
+                    printf("%3d me, %3d opponent, %3d total %s\n",my_checks,opponent_checks,total_checks,filename);
                 }
                 else {
-                  printf("%3d me, %3d total %s\n",my_checks,total_checks,filename);
+                  if (bTerse)
+                    printf("%d %d\n",my_checks,total_checks);
+                  else
+                    printf("%3d me, %3d total %s\n",my_checks,total_checks,filename);
                 }
               } else if (bOpponent) {
+                if (bTerse)
+                  printf("%d %d\n",opponent_checks,total_checks);
+                else
                   printf("%3d opponent, %3d total %s\n",opponent_checks,total_checks,filename);
               }
             }
