@@ -12,6 +12,8 @@ enum {
   CHESS_GAME_OPPONENT_NAME,
   CHESS_GAME_COLOR,
   CHESS_GAME_NUM_MOVES,
+  CHESS_GAME_MY_CHECKS,
+  CHESS_GAME_OPPONENT_CHECKS,
   CHESS_GAME_RESULT,
   CHESS_GAME_MATE,
   CHESS_GAME_TERMINATION,
@@ -163,10 +165,13 @@ static void output_game_insert_statement(
   char *opponent_name,
   char *color,
   int num_moves,
+  int my_checks,
+  int opponent_checks,
   char *my_result,
   char *my_mate,
   char *termination
 );
+static void count_checks(char *line,int line_len,int *white_checks_pt,int *black_checks_pt);
 
 int main(int argc,char **argv)
 {
@@ -187,6 +192,10 @@ int main(int argc,char **argv)
   int ix;
   int retval;
   int num_moves;
+  int white_checks;
+  int black_checks;
+  int my_checks;
+  int opponent_checks;
   bool bHaveItem[NUM_CHESS_GAME_ITEMS];
 
   if ((argc < 4) || (argc > 5)) {
@@ -272,6 +281,8 @@ int main(int argc,char **argv)
               opponent_name,
               color,
               num_moves,
+              my_checks,
+              opponent_checks,
               my_result,
               my_mate,
               termination
@@ -467,6 +478,20 @@ int main(int argc,char **argv)
 
           my_mate[1] = 0;
           bHaveItem[CHESS_GAME_MATE] = true;
+
+          count_checks(line,line_len,&white_checks,&black_checks);
+
+          if (color[0] == 'W') {
+            my_checks = white_checks;
+            opponent_checks = black_checks;
+          }
+          else {
+            my_checks = black_checks;
+            opponent_checks = white_checks;
+          }
+
+          bHaveItem[CHESS_GAME_MY_CHECKS] = true;
+          bHaveItem[CHESS_GAME_OPPONENT_CHECKS] = true;
         }
       }
     }
@@ -485,6 +510,8 @@ int main(int argc,char **argv)
         opponent_name,
         color,
         num_moves,
+        my_checks,
+        opponent_checks,
         my_result,
         my_mate,
         termination
@@ -847,6 +874,8 @@ static void output_game_insert_statement(
   char *opponent_name,
   char *color,
   int num_moves,
+  int my_checks,
+  int opponent_checks,
   char *my_result,
   char *my_mate,
   char *termination
@@ -876,6 +905,8 @@ static void output_game_insert_statement(
     printf("  opponent_name,\n");
     printf("  color,\n");
     printf("  num_moves,\n");
+    printf("  my_checks,\n");
+    printf("  opponent_checks,\n");
     printf("  result,\n");
     printf("  mate,\n");
     printf("  result_detail,\n");
@@ -892,6 +923,8 @@ static void output_game_insert_statement(
     printf("  '%s',\n",opponent_name);
     printf("  '%s',\n",color);
     printf("  %d,\n",num_moves);
+    printf("  %d,\n",my_checks);
+    printf("  %d,\n",opponent_checks);
     printf("  '%s',\n",my_result);
     printf("  '%s',\n",my_mate);
     printf("  '%s',\n",termination);
@@ -905,4 +938,33 @@ static void output_game_insert_statement(
       ((color[0] == 'W') ? rating_diff[BLACK] : rating_diff[WHITE]));
     printf(");\n");
   }
+}
+
+static void count_checks(char *line,int line_len,int *white_checks_pt,int *black_checks_pt)
+{
+  int n;
+  int space_count;
+  int white_checks;
+  int black_checks;
+
+  space_count = 0;
+  white_checks = 0;
+  black_checks = 0;
+
+  for (n = 0; n < line_len; n++) {
+    if (line[n] == '.')
+      space_count = 0;
+    else if (line[n] == ' ')
+      space_count++;
+
+    if ((line[n] == '+') || (line[n] == '#')) {
+      if (space_count == 1)
+        white_checks++;
+      else
+        black_checks++;
+    }
+  }
+
+  *white_checks_pt = white_checks;
+  *black_checks_pt = black_checks;
 }
