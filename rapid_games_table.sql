@@ -10,6 +10,8 @@ create table rapid_games (
   opponent_name varchar(25) not null,
   color varchar(1) not null,
   num_moves smallint not null,
+  my_checks smallint not null,
+  opponent_checks smallint not null,
   result varchar(1) not null,
   mate varchar(1) not null,
   result_detail varchar(25) not null,
