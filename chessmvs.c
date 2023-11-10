@@ -3,298 +3,574 @@
 using namespace std;
 
 #include <stdio.h>
+#include <string.h>
 
 #include "chess.h"
 #include "chess.glb"
-#include "chess.fun"
 #include "chess.mac"
+#include "chess.fun"
 
-static int format_square(int square)
+using namespace std;
+
+int do_castle(struct game *gamept,int direction,char *word,int wordlen,struct move *move_ptr)
 {
-  bool bBlack;
-  int return_char;
+  int rank;
 
-  if (!square)
-    return (int)'.';
+  if (direction == 1)  /* if white's move: */
+    rank = 0;
+  else
+    rank = 7;
 
-  if (square < 0) {
-    bBlack = true;
-    square *= -1;
+  /* make sure the king is on his original square: */
+  if (get_piece2(gamept->board,rank,4) != 6 * direction)
+    return 1;
+
+  if (wordlen == 3) {  /* kingside castle */
+    /* make sure there is a rook in the corner: */
+    if (get_piece2(gamept->board,rank,7) != 2 * direction)
+      return 2;
+
+    /* make sure there are empty squares between king and rook: */
+    if (get_piece2(gamept->board,rank,5) || get_piece2(gamept->board,rank,6))
+      return 3;
+
+    if (direction == 1) {  /* if white's move: */
+      move_ptr->from = 4;
+      move_ptr->to = 6;
+    }
+    else {
+      move_ptr->from = 60;
+      move_ptr->to = 62;
+    }
+  }
+  else if (wordlen == 5) {  /* queenside castle */
+    /* make sure there is a rook in the corner: */
+    if (get_piece2(gamept->board,rank,0) != 2 * direction)
+      return 4;
+
+    /* make sure there are empty squares between king and rook: */
+    if (get_piece2(gamept->board,rank,1) || get_piece2(gamept->board,rank,2) || get_piece2(gamept->board,rank,3))
+      return 5;
+
+    if (direction == 1) {  /* if white's move: */
+      move_ptr->from = 4;
+      move_ptr->to = 2;
+    }
+    else {
+      move_ptr->from = 60;
+      move_ptr->to = 58;
+    }
   }
   else
-    bBlack = false;
+    return 6;
 
-  if (square == 1)
-    return_char = 'P';
-  else
-    return_char = piece_ids[square - 2];
+  move_ptr->special_move_info = SPECIAL_MOVE_CASTLE;
 
-  if (!bBlack)
-    return_char += ('a' - 'A');
-
-  return return_char;
+  return 0;  /* success */
 }
 
-void print_bd0(unsigned char *board,int orientation)
+int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen,struct move *move_ptr)
 {
-  int m;
   int n;
-  int square;
-
-  for (m = 0; m < 8; m++) {
-    for (n = 0; n < 8; n++) {
-      if (!orientation)
-        square = get_piece2(board,7 - m,n);
-      else
-        square = get_piece2(board,m,7 - n);
-
-      printf("%c",format_square(square));
-
-      if (n < 7)
-        putchar(' ');
-    }
-
-    putchar(0x0a);
-  }
-}
-
-void print_bd(struct game *gamept)
-{
-  int m;
-  int n;
-  int square;
-
-  for (m = 0; m < 8; m++) {
-    for (n = 0; n < 8; n++) {
-      if (!gamept->orientation)
-        square = get_piece2(gamept->board,7 - m,n);
-      else
-        square = get_piece2(gamept->board,m,7 - n);
-
-      printf("%c",format_square(square));
-
-      if (n < 7)
-        putchar(' ');
-    }
-
-    putchar(0x0a);
-  }
-}
-
-void fprint_game_bin(struct game *gamept,char *filename)
-{
-  FILE *fptr;
-
-  if ((fptr = fopen(filename,"w")) == NULL)
-    return;
-
-  fprintf(fptr,fmt_str,gamept->title);
-
-  set_initial_board(gamept);
-
-  for (gamept->curr_move = 0;
-       gamept->curr_move <= gamept->num_moves;
-       gamept->curr_move++) {
-
-    fprintf_move(fptr,gamept);
-
-    update_board(gamept,false);
-  }
-
-  fclose(fptr);
-}
-
-void fprint_game(struct game *gamept,char *filename)
-{
-  FILE *fptr;
-  char buf[20];
-
-  if ((fptr = fopen(filename,"w")) == NULL)
-    return;
-
-  fprintf(fptr,fmt_str,gamept->title);
-
-  set_initial_board(gamept);
-
-  for (gamept->curr_move = 0;
-       gamept->curr_move <= gamept->num_moves;
-       gamept->curr_move++) {
-
-    sprintf_move(gamept,buf,20,true);
-    fprintf(fptr,"%s",buf);
-
-    if (gamept->curr_move < gamept->num_moves)
-      update_board(gamept,false);
-  }
-
-  fclose(fptr);
-}
-
-void fprint_bd(struct game *gamept,char *filename)
-{
-  int m;
-  int n;
-  FILE *fptr;
-  int square;
-
-  if ((fptr = fopen(filename,"w")) == NULL)
-    return;
-
-  for (m = 0; m < 8; m++) {
-    for (n = 0; n < 8; n++) {
-      square = get_piece2(gamept->board,7 - m,n);
-      fprintf(fptr,"%c ",format_square(square));
-    }
-
-    fputc(0x0a,fptr);
-  }
-
-  fclose(fptr);
-}
-
-void print_pieces(struct game *gamept)
-{
-  int m;
-  int n;
+  int file;
+  int to_rank;
+  int rank;
+  int capture_file;
   int piece;
+  int which_piece;
 
-  for (m = 0; m < NUM_PLAYERS; m++) {
-    if (!m)
-      printf("White pieces: ");
+  /*printf("%s\n",word);/*for now*/
+  file = word[0] - 'a';
+
+  if ((file < 0) || (file > 7))
+    return 1;
+
+  /* pawn advance or capture: */
+  rank = word[1] - '1';
+
+  if ((rank >= 0) && (rank <= 7)) {
+    to_rank = rank;
+
+    /* pawn advance */
+    move_ptr->special_move_info = 0;
+    move_ptr->to = POS_OF(rank,file);
+
+    for (n = 0; n < 2; n++) {
+      rank -= direction;
+
+      if ((rank >= 1) && (rank <= 6)) {
+        piece = get_piece2(gamept->board,rank,file);
+
+        if (piece == direction)
+          break;
+
+        if (piece)
+          return 2;
+      }
+    }
+
+    if (n == 2)
+      return 3;
+
+    if (n == 1) {
+      /* only allow two square move from initial position */
+      if (direction == 1) {
+        if (rank != 1)
+          return 4;
+      }
+      else if (rank != 6)
+        return 5;
+    }
+
+    move_ptr->from = POS_OF(rank,file);
+
+    /* handle pawn promotion */
+    if (direction == 1) {
+      /* white's move */
+      if (to_rank == 7) {
+        if (wordlen != 3)
+          return 6;
+
+        switch (word[2]) {
+          case 'Q':
+            move_ptr->special_move_info =
+              SPECIAL_MOVE_PROMOTION_QUEEN;
+
+            break;
+          case 'R':
+            move_ptr->special_move_info =
+              SPECIAL_MOVE_PROMOTION_ROOK;
+
+            break;
+          case 'N':
+            move_ptr->special_move_info =
+              SPECIAL_MOVE_PROMOTION_KNIGHT;
+
+            break;
+          case 'B':
+            move_ptr->special_move_info =
+              SPECIAL_MOVE_PROMOTION_BISHOP;
+
+            break;
+        }
+      }
+    }
+    else {
+      /* black's move */
+      if (to_rank == 0) {
+        if (wordlen != 3)
+          return 8;
+
+        switch (word[2]) {
+          case 'Q':
+            move_ptr->special_move_info =
+              SPECIAL_MOVE_PROMOTION_QUEEN;
+
+            break;
+          case 'R':
+            move_ptr->special_move_info =
+              SPECIAL_MOVE_PROMOTION_ROOK;
+
+            break;
+          case 'N':
+            move_ptr->special_move_info =
+              SPECIAL_MOVE_PROMOTION_KNIGHT;
+
+            break;
+          case 'B':
+            move_ptr->special_move_info =
+              SPECIAL_MOVE_PROMOTION_BISHOP;
+
+            break;
+        }
+      }
+    }
+
+    return 0;
+  }
+
+  /* pawn capture */
+  capture_file = word[1] - 'a';
+
+  if ((capture_file < 0) || (capture_file > 7))
+    return 10;
+
+  if (capture_file > file) {
+    if (capture_file - file != 1)
+      return 11;
+  }
+  else if (file - capture_file != 1)
+    return 12;
+
+  if ((wordlen >= 2) && (wordlen <= 4)) {
+    if (direction == 1)
+      rank = 1;
     else
-      printf("Black pieces: ");
+      rank = 6;
 
-    for (n = 0; n < gamept->num_pieces[m]; n++) {
-      piece = get_piece1(gamept->board,(int)gamept->piece_offsets[m][n]);
-      printf("%c",format_square(piece));
+    for (n = 0; n < 6; n++, rank += direction) {
+      /*printf("%d %d\n",get_piece2(gamept->board,rank,file),
+        get_piece2(gamept->board,rank+direction,capture_file));/*for now*/
+      if ((get_piece2(gamept->board,rank,file) == direction) &&
+        (get_piece2(gamept->board,rank+direction,capture_file) * direction < 0)) {
 
-      if (n < gamept->num_pieces[m] - 1)
-        putchar(' ');
-      else
-        putchar(0x0a);
-    }
-  }
-}
+        if ((wordlen == 3) || (wordlen == 4))
+          if (word[2] - '1' != rank+direction)
+            continue;
 
-void print_special_moves(struct game *gamept)
-{
-  int n;
-  int and_val;
-  int hit;
+        move_ptr->from = POS_OF(rank,file);
+        move_ptr->to = POS_OF(rank+direction,capture_file);
 
-  and_val = 0x1;
-  hit = 0;
+        if (wordlen == 4) {
+          switch (word[3]) {
+            case 'Q':
+              move_ptr->special_move_info =
+                SPECIAL_MOVE_PROMOTION_QUEEN;
 
-  for (n = 0; n < num_special_moves; n++) {
-    if (gamept->moves[gamept->curr_move].special_move_info & and_val) {
-      if (hit)
-        putchar(' ' );
+              break;
+            case 'R':
+              move_ptr->special_move_info =
+                SPECIAL_MOVE_PROMOTION_ROOK;
 
-      printf("%s",special_moves[n]);
+              break;
+            case 'N':
+              move_ptr->special_move_info =
+                SPECIAL_MOVE_PROMOTION_KNIGHT;
 
-      hit++;
-    }
+              break;
+            case 'B':
+              move_ptr->special_move_info =
+                SPECIAL_MOVE_PROMOTION_BISHOP;
 
-    and_val <<= 1;
-  }
-
-  if (hit)
-    putchar(0x0a);
-}
-
-int match_board(unsigned char *board1,unsigned char *board2,bool bExactMatch)
-{
-  int m;
-  int n;
-  int square1;
-  int square2;
-
-  for (m = 0; m < 8; m++) {
-    for (n = 0; n < 8; n++) {
-      square1 = get_piece2(board1,7 - m,n);
-      square2 = get_piece2(board2,7 - m,n);
-
-      if (!bExactMatch) {
-        if (square2) {
-          if (square2 == EMPTY_ID) {
-            if (square1)
               break;
           }
-          else if (square1 != square2)
-            break;
+        }
+
+        return 0;
+      }
+    }
+
+    // handle en passant captures
+    if (wordlen == 3) {
+      if (direction == -1) {
+        // black
+        if (word[2] == '3') {
+          if ((get_piece2(gamept->board,3,file) == direction) &&
+              (get_piece2(gamept->board,3,capture_file) == direction * -1)) {
+            move_ptr->from = POS_OF(3,file);
+            move_ptr->to = POS_OF(2,capture_file);
+            move_ptr->special_move_info |=
+              SPECIAL_MOVE_CAPTURE | SPECIAL_MOVE_EN_PASSANT;
+            return 0;
+          }
         }
       }
       else {
-        if (square2 == EMPTY_ID) {
-          if (square1)
-            break;
+        // white
+        if (word[2] == '6') {
+          if ((get_piece2(gamept->board,4,file) == direction) &&
+              (get_piece2(gamept->board,4,capture_file) == direction * -1)) {
+            move_ptr->from = POS_OF(4,file);
+            move_ptr->to = POS_OF(5,capture_file);
+            move_ptr->special_move_info |=
+              SPECIAL_MOVE_CAPTURE | SPECIAL_MOVE_EN_PASSANT;
+            return 0;
+          }
         }
-        else if (square1 != square2)
-          break;
       }
     }
 
-    if (n < 8)
+    return 13;
+  }
+
+  return 14;
+}
+
+int get_piece_id_ix(char piece)
+{
+  int which_piece;
+
+  /* calculate the id to search for: */
+  for (which_piece = 0; which_piece < NUM_PIECE_TYPES; which_piece++) {
+    if (piece_ids[which_piece] == piece)
       break;
   }
 
-  if (m < 8)
-    return 0;
-
-  return 1;
+  return which_piece;
 }
 
-bool multiple_queens(unsigned char *board)
+int (*piece_functions[])(struct game *,int,int,int,int) = {
+  rook_move,
+  knight_move,
+  bishop_move,
+  queen_move,
+  king_move
+};
+
+int do_piece_move(struct game *gamept,int direction,char *word,int wordlen,struct move *move_ptr)
 {
-  int n;
-  int piece;
-  int num_white_queens = 0;
-  int num_black_queens = 0;
+  int which_piece;
+  int search_piece;
+  int curr_file;
+  int file_start;
+  int file_end;
+  int curr_rank;
+  int rank_start;
+  int rank_end;
+  int where;
+  int to_file;
+  int to_rank;
+  int to_piece;
+  int retval;
 
-  for (n = 0; n < NUM_BOARD_SQUARES; n++) {
-    piece = get_piece1(board,n);
+  if (wordlen == 4) {
+    where = word[1];
 
-    if (piece == QUEEN_ID)
-      num_white_queens++;
-    else if (piece == QUEEN_ID * -1)
-      num_black_queens++;
-  }
-
-  if ((num_white_queens > 1) || (num_black_queens > 1))
-    return true;
-
-  return false;
-}
-
-int get_enemy_king_file_and_rank(struct game *gamept,int *file_pt,int *rank_pt)
-{
-  int m;
-  int n;
-  int enemy_king_id;
-  int square;
-
-  if (!gamept->orientation)
-    enemy_king_id = KING_ID * -1;
-  else
-    enemy_king_id = KING_ID;
-
-  for (m = 0; m < 8; m++) {
-    for (n = 0; n < 8; n++) {
-      square = get_piece2(gamept->board,m,n);
-
-      if (square == enemy_king_id)
-        break;
+    if ((where >= 'a') && (where <= 'h')) {
+      file_start = where - 'a';
+      file_end = file_start + 1;
+      rank_start = 0;
+      rank_end = 8;
     }
+    else if ((where >= '1') && (where <= '8')) {
+      file_start = 0;
+      file_end = 8;
+      rank_start = where - '1';
+      rank_end = rank_start + 1;
+    }
+    else
+      return 1;
+  }
+  else {
+    file_start = 0;
+    file_end = 8;
+    rank_start = 0;
+    rank_end = 8;
+  }
 
-    if (n < 8)
+  if (!get_to_position(word,wordlen,&to_file,&to_rank))
+    return 2;
+
+  which_piece = get_piece_id_ix(word[0]);
+
+  /* error if not found (should never happen): */
+  if (which_piece == NUM_PIECE_TYPES)
+    return 3;
+
+  search_piece = (which_piece + 2) * direction; /* calculate search id */
+  to_piece = get_piece2(gamept->board,to_rank,to_file);
+
+  /* don't allow a capture of same color piece*/
+  if (to_piece * direction > 0)
+    return 4;
+
+  if (to_piece != 0) {
+    /* a capture; move the captured piece off the board: */
+    ;
+  }
+  else
+    move_ptr->special_move_info = 0;
+
+  /* search the board for the search piece: */
+  for (curr_rank = rank_start; curr_rank < rank_end; curr_rank++) {
+    for (curr_file = file_start; curr_file < file_end; curr_file++) {
+      if (get_piece2(gamept->board,curr_rank,curr_file) == search_piece) {
+        if ((curr_file == to_file) && (curr_rank == to_rank))
+          continue;
+        else {
+          /* see if a possible piece move: */
+          retval = (*piece_functions[which_piece])(
+            gamept,curr_file,curr_rank,to_file,to_rank);
+
+          if (!retval) {
+            move_ptr->from = POS_OF(curr_rank,curr_file);
+            move_ptr->to = POS_OF(to_rank,to_file);
+            return 0;  /* success */
+          }
+        }
+      }
+    }
+  }
+
+  return 5;
+}
+
+int get_to_position(char *word,int wordlen,int *to_filept,int *to_rankpt)
+{
+  *to_filept = word[wordlen - 2] - 'a';
+
+  if ((*to_filept < 0) || (*to_filept > 7))
+    return false;
+
+  *to_rankpt = word[wordlen - 1] - '1';
+
+  if ((*to_rankpt < 0) || (*to_rankpt > 7))
+    return false;
+
+  return true;
+}
+
+int rook_move(
+  struct game *gamept,
+  int file1,
+  int rank1,
+  int file2,
+  int rank2
+)
+{
+  int n;
+
+  if (file1 == file2) {
+    if (rank1 > rank2) {
+      for (n = rank2 + 1; n < rank1; n++)
+        if (get_piece2(gamept->board,n,file1))
+          return 1;  /* failure */
+    }
+    else
+      for (n = rank1 + 1; n < rank2; n++)
+        if (get_piece2(gamept->board,n,file1))
+          return 2;  /* failure */
+
+    return 0;  /* success */
+  }
+
+  if (rank1 == rank2) {
+    if (file1 > file2) {
+      for (n = file2 + 1; n < file1; n++)
+        if (get_piece2(gamept->board,rank1,n))
+          return 1;  /* failure */
+    }
+    else
+      for (n = file1 + 1; n < file2; n++)
+        if (get_piece2(gamept->board,rank1,n))
+          return 2;  /* failure */
+
+    return 0;  /* success */
+  }
+
+  return 3;  /* failure */
+}
+
+int knight_move(
+  struct game *gamept,
+  int file1,
+  int rank1,
+  int file2,
+  int rank2
+)
+{
+  int dist1;
+  int dist2;
+
+  dist1 = (file1 - file2);
+
+  if (dist1 < 0)
+    dist1 *= -1;
+
+  dist2 = (rank1 - rank2);
+
+  if (dist2 < 0)
+    dist2 *= -1;
+
+  if ((dist1 == 1) && (dist2 == 2))
+    return 0;  /* success */
+
+  if ((dist1 == 2) && (dist2 == 1))
+    return 0;  /* success */
+
+  return 1;    /* failure */
+}
+
+int bishop_move(
+  struct game *gamept,
+  int file1,
+  int rank1,
+  int file2,
+  int rank2
+)
+{
+  int dist1;
+  int dist2;
+  int file_dir;
+  int rank_dir;
+
+  dist1 = (file1 - file2);
+
+  if (dist1 < 0) {
+    dist1 *= -1;
+    file_dir = 1;
+  }
+  else
+    file_dir = -1;
+
+  dist2 = (rank1 - rank2);
+
+  if (dist2 < 0) {
+    dist2 *= -1;
+    rank_dir = 1;
+  }
+  else
+    rank_dir = -1;
+
+  if (dist1 != dist2)
+    return 1;  /* failure */
+
+  /* make sure there are no intervening pieces */
+  for ( ; ; ) {
+    file1 += file_dir;
+
+    if (file1 == file2)
       break;
+
+    rank1 += rank_dir;
+
+    if (get_piece2(gamept->board,rank1,file1))
+      return 2;  /* failure */
   }
 
-  if (m < 8) {
-    *file_pt = n;
-    *rank_pt = m;
-    return 1;
-  }
+  return 0;  /* success */
+}
 
-  return 0;
+int queen_move(
+  struct game *gamept,
+  int file1,
+  int rank1,
+  int file2,
+  int rank2
+)
+{
+  if (!rook_move(gamept,file1,rank1,file2,rank2))
+    return 0;  /* success */
+
+  if (!bishop_move(gamept,file1,rank1,file2,rank2))
+    return 0;  /* success */
+
+  return 1;    /* failure */
+}
+
+int king_move(
+  struct game *gamept,
+  int file1,
+  int rank1,
+  int file2,
+  int rank2
+)
+{
+  int dist1;
+  int dist2;
+
+  dist1 = (file1 - file2);
+
+  if (dist1 < 0)
+    dist1 *= -1;
+
+  dist2 = (rank1 - rank2);
+
+  if (dist2 < 0)
+    dist2 *= -1;
+
+  if ((dist1 < 2) && (dist2 < 2))
+    return 0;  /* success */
+
+  return 1;  /* failure */
 }
