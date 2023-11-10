@@ -1,11 +1,11 @@
 use chess
 
 select count(*),result
-from blitz_games
+from rapid_games
 group by 2
-order by 2 desc;
+order by count(*) desc,2 desc;
 
 select count(*)
-from blitz_games;
+from rapid_games;
 
 quit
