@@ -48,7 +48,7 @@ bool multiple_queens(unsigned char *board);
 int get_enemy_king_file_and_rank(struct game *gamept,int *file_pt,int *rank_pt);
 int count_num_pieces(int color,struct game *gamept);
 
-void print_bd0(unsigned char *board);
+void print_bd0(unsigned char *board,int orientation);
 void print_bd(struct game *gamept);
 void fprint_game_bin(struct game *gamept,char *filename);
 void fprint_game(struct game *gamept,char *filename);
