@@ -12,7 +12,7 @@ using namespace std;
 #include "chess.mac"
 
 static char usage[] =
-"usage: board_match (-debug) (-bin) board1_file board2_file\n";
+"usage: board_match (-debug) (-bin) (-exact_match) board1_file board2_file\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -33,22 +33,26 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bDebug;
   bool bBin;
+  bool bExactMatch;
   int retval;
   int match;
 
-  if ((argc < 3) || (argc > 5)) {
+  if ((argc < 3) || (argc > 6)) {
     printf(usage);
     return 1;
   }
 
   bDebug = false;
   bBin = false;
+  bExactMatch = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
       bDebug = true;
     else if (!strcmp(argv[curr_arg],"-bin"))
       bBin = true;
+    else if (!strcmp(argv[curr_arg],"-exact_match"))
+      bExactMatch = true;
     else
       break;
   }
@@ -89,7 +93,7 @@ int main(int argc,char **argv)
     }
   }
 
-  match = match_board(board1,board2);
+  match = match_board(board1,board2,bExactMatch);
 
   if (!match)
     printf("no match\n");
