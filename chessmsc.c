@@ -35,7 +35,7 @@ static int format_square(int square)
   return return_char;
 }
 
-void print_bd0(unsigned char *board)
+void print_bd0(unsigned char *board,int orientation)
 {
   int m;
   int n;
@@ -43,7 +43,10 @@ void print_bd0(unsigned char *board)
 
   for (m = 0; m < 8; m++) {
     for (n = 0; n < 8; n++) {
-      square = get_piece2(board,7 - m,n);
+      if (!orientation)
+        square = get_piece2(board,7 - m,n);
+      else
+        square = get_piece2(board,m,7 - n);
 
       printf("%c",format_square(square));
 
