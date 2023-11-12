@@ -47,6 +47,8 @@ void calculate_seirawan_counts(struct game *gamept);
 bool multiple_queens(unsigned char *board);
 int get_enemy_king_file_and_rank(struct game *gamept,int *file_pt,int *rank_pt);
 int count_num_pieces(int color,struct game *gamept);
+void get_piece_counts(unsigned char *board,int *piece_counts);
+int piece_counts_match(int *piece_counts,int *match_piece_counts);
 
 void print_bd0(unsigned char *board,int orientation);
 void print_bd(struct game *gamept);
