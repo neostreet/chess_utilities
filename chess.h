@@ -12,13 +12,14 @@
 
 #define NUM_PIECES_PER_PLAYER 16
 
-#define PAWN_ID       1
-#define ROOK_ID       2
-#define KNIGHT_ID     3
-#define BISHOP_ID     4
-#define QUEEN_ID      5
-#define KING_ID       6
-#define EMPTY_ID      7
+#define PAWN_ID           1
+#define ROOK_ID           2
+#define KNIGHT_ID         3
+#define BISHOP_ID         4
+#define QUEEN_ID          5
+#define KING_ID           6
+#define NUM_PIECE_TYPES_0 6
+#define EMPTY_ID          7
 
 #define FORCE_VALUE_QUEEN  9
 #define FORCE_VALUE_ROOK   5
