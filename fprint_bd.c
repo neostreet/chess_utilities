@@ -15,9 +15,9 @@ using namespace std;
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: fprint_bd (-debug) (-terse) (-toggle) (-space) (-force) (-initial_boardfilename)\n"
+"usage: fprint_bd (-debug) (-terse) (-toggle) (-initial_boardfilename)\n"
 "  (-init_bin_boardfilename) (-board_binfilename) (-num_white_piecesnum) (-num_black_piecesnum) (-print_pieces)\n"
-"  (-min_force_diffvalue) (-match_boardfilename) (-only_checks) (-only_castle)\n"
+"  (-match_boardfilename) (-match_forcefilename) (-only_checks) (-only_castle)\n"
 "  (-only_promotions) (-only_captures) (-only_en_passants) (-multiple_queens) (-move_number_only)\n"
 "  (-mine) (-not_mine) (-search_all_moves) (-exact_match)\n"
 "  (-white_force_countnum) (-black_force_countnum) (-qnn) [white | black] filename\n";
@@ -25,7 +25,6 @@ static char usage[] =
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
 
-static unsigned char match_board1[CHARS_IN_BOARD];
 static int afl_dbg;
 
 void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
@@ -40,8 +39,6 @@ int main(int argc,char **argv)
   bool bSearchAllMoves;
   bool bExactMatch;
   bool bToggle;
-  bool bSpace;
-  bool bForce;
   bool bBoardBin;
   int num_white_pieces;
   int num_black_pieces;
@@ -58,13 +55,16 @@ int main(int argc,char **argv)
   bool bMine;
   bool bNotMine;
   bool bHaveMatchBoard;
+  bool bHaveMatchForce;
   bool bPrintedFilename;
   bool bPrintedBoard;
   bool bSkip;
+  unsigned char match_board1[CHARS_IN_BOARD];
+  unsigned char force_board1[CHARS_IN_BOARD];
+  int match_piece_counts[NUM_PIECE_TYPES_0 * 2];
+  int curr_piece_counts[NUM_PIECE_TYPES_0 * 2];
   int board_bin_arg;
   int quiz_number;
-  int min_force_diff;
-  int force_diff;
   bool bBlack;
   int initial_move;
   int retval;
@@ -74,7 +74,7 @@ int main(int argc,char **argv)
   int filename_len;
   int num_pieces;
 
-  if ((argc < 2) || (argc > 29)) {
+  if ((argc < 2) || (argc > 27)) {
     printf(usage);
     return 1;
   }
@@ -85,8 +85,6 @@ int main(int argc,char **argv)
   bSearchAllMoves = false;
   bExactMatch = false;
   bToggle = false;
-  bSpace = false;
-  bForce = false;
   quiz_number = -1;
   bBoardBin = false;
   num_white_pieces = -1;
@@ -103,9 +101,8 @@ int main(int argc,char **argv)
   bMoveNumberOnly = false;
   bMine = false;
   bNotMine = false;
-  min_force_diff = -1;
-  force_diff = 0;
   bHaveMatchBoard = false;
+  bHaveMatchForce = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -116,10 +113,6 @@ int main(int argc,char **argv)
       bSearchAllMoves = true;
     else if (!strcmp(argv[curr_arg],"-toggle"))
       bToggle = true;
-    else if (!strcmp(argv[curr_arg],"-space"))
-      bSpace = true;
-    else if (!strcmp(argv[curr_arg],"-force"))
-      bForce = true;
     else if (!strncmp(argv[curr_arg],"-initial_board",14)) {
       retval = populate_initial_board_from_board_file(&argv[curr_arg][14]);
 
@@ -154,8 +147,6 @@ int main(int argc,char **argv)
     }
     else if (!strncmp(argv[curr_arg],"-qn",3))
       sscanf(&argv[curr_arg][3],"%d",&quiz_number);
-    else if (!strncmp(argv[curr_arg],"-min_force_diff",15))
-      sscanf(&argv[curr_arg][15],"%d",&min_force_diff);
     else if (!strncmp(argv[curr_arg],"-match_board",12)) {
       bHaveMatchBoard = true;
       retval = populate_board_from_bin_board_file(match_board1,&argv[curr_arg][12]);
@@ -165,6 +156,18 @@ int main(int argc,char **argv)
           &argv[curr_arg][12],retval);
         return 4;
       }
+    }
+    else if (!strncmp(argv[curr_arg],"-match_force",12)) {
+      bHaveMatchForce = true;
+      retval = populate_board_from_bin_board_file(force_board1,&argv[curr_arg][12]);
+
+      if (retval) {
+        printf("populate_board_from_board_file() failed on %s: %d\n",
+          &argv[curr_arg][12],retval);
+        return 5;
+      }
+
+      get_piece_counts(force_board1,match_piece_counts);
     }
     else if (!strcmp(argv[curr_arg],"-only_checks"))
       bOnlyChecks = true;
@@ -192,18 +195,18 @@ int main(int argc,char **argv)
 
   if (bOnlyChecks && bOnlyCastle) {
     printf("can't specify both -only_checks and -only_castle\n");
-    return 5;
+    return 6;
   }
 
   if (bMine && bNotMine) {
     printf("can't specify both -mine and -not_mine\n");
-    return 6;
+    return 7;
   }
 
   if (quiz_number != -1) {
     if (argc - curr_arg != 2) {
       printf(usage);
-      return 7;
+      return 8;
     }
 
     if (!strcmp(argv[curr_arg],"white"))
@@ -212,23 +215,19 @@ int main(int argc,char **argv)
       bBlack = true;
     else {
       printf(usage);
-      return 8;
+      return 9;
     }
   }
   else {
     if (argc - curr_arg != 1) {
       printf(usage);
-      return 9;
+      return 10;
     }
-  }
-
-  if (min_force_diff != -1) {
-    bForce = true;
   }
 
   if ((fptr = fopen(argv[argc-1],"r")) == NULL) {
     printf(couldnt_open,argv[argc-1]);
-    return 10;
+    return 11;
   }
 
   for ( ; ; ) {
@@ -250,7 +249,7 @@ int main(int argc,char **argv)
   }
 
   if (!bOnlyChecks && !bOnlyCastle && !bOnlyPromotions && !bOnlyCaptures && !bOnlyEnPassants && !bMultipleQueens &&
-    !bMine && !bNotMine && !bHaveMatchBoard && (min_force_diff == -1) && (num_white_pieces == -1) &&
+    !bMine && !bNotMine && !bHaveMatchBoard && !bHaveMatchForce && (num_white_pieces == -1) &&
     (num_black_pieces == -1) && (white_force_count == -1) && (black_force_count == -1))
     printf("%s\n",filename);
 
@@ -310,17 +309,17 @@ int main(int argc,char **argv)
           continue;
       }
 
-      if (min_force_diff != -1) {
-        force_diff = refresh_force_count(&curr_game);
-
-        if (force_diff < min_force_diff)
-          continue;
-      }
-
       if (bHaveMatchBoard) {
         match = match_board(curr_game.board,match_board1,bExactMatch);
 
         if (!match)
+          continue;
+      }
+
+      if (bHaveMatchForce) {
+        get_piece_counts(curr_game.board,curr_piece_counts);
+
+        if (!piece_counts_match(curr_piece_counts,match_piece_counts))
           continue;
       }
 
@@ -450,15 +449,6 @@ int main(int argc,char **argv)
       }
     }
 
-    if (!bSkip) {
-      if (min_force_diff != -1) {
-        force_diff = refresh_force_count(&curr_game);
-
-        if (force_diff < min_force_diff)
-          bSkip = true;
-      }
-    }
-
     if (!bSkip && bHaveMatchBoard) {
       match = match_board(curr_game.board,match_board1,bExactMatch);
 
@@ -498,7 +488,7 @@ int main(int argc,char **argv)
 
     if (!bSkip) {
       if (bOnlyChecks || bOnlyCastle || bOnlyPromotions || bOnlyCaptures || bMultipleQueens || bHaveMatchBoard ||
-        bMine || bNotMine || (min_force_diff != -1) || (num_white_pieces != -1) || (num_black_pieces != -1) ||
+        bMine || bNotMine || (num_white_pieces != -1) || (num_black_pieces != -1) ||
         (white_force_count != -1) || (black_force_count != -1)) {
         printf("%s\n",filename);
       }
