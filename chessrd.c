@@ -930,3 +930,40 @@ int count_num_pieces(int color,struct game *gamept)
 
   return count;
 }
+
+void get_piece_counts(unsigned char *board,int *piece_counts)
+{
+  int n;
+  short piece;
+
+  for (n = 0; n < NUM_PIECE_TYPES_0 * 2; n++) {
+    piece_counts[n] = 0;
+  }
+
+  for (n = 0; n < NUM_BOARD_SQUARES; n++) {
+    piece = get_piece1(board,n);
+
+    if (!piece)
+      continue;
+
+    if (piece > 0) {
+      piece_counts[piece - 1]++;
+    }
+    else {
+      piece *= -1;
+      piece_counts[NUM_PIECE_TYPES_0 + piece - 1]++;
+    }
+  }
+}
+
+int piece_counts_match(int *piece_counts,int *match_piece_counts)
+{
+  int n;
+
+  for (n = 0; n < NUM_PIECE_TYPES_0 * 2; n++) {
+    if (piece_counts[n] != match_piece_counts[n])
+      return 0;
+  }
+
+  return 1;
+}
