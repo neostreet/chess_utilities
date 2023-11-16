@@ -387,18 +387,14 @@ int do_piece_move(struct game *gamept,int direction,char *word,int wordlen,struc
   for (curr_rank = rank_start; curr_rank < rank_end; curr_rank++) {
     for (curr_file = file_start; curr_file < file_end; curr_file++) {
       if (get_piece2(gamept->board,curr_rank,curr_file) == search_piece) {
-        if ((curr_file == to_file) && (curr_rank == to_rank))
-          continue;
-        else {
-          /* see if a possible piece move: */
-          retval = (*piece_functions[which_piece])(
-            gamept,curr_file,curr_rank,to_file,to_rank);
+        /* see if a possible piece move: */
+        retval = (*piece_functions[which_piece])(
+          gamept,curr_file,curr_rank,to_file,to_rank);
 
-          if (!retval) {
-            move_ptr->from = POS_OF(curr_rank,curr_file);
-            move_ptr->to = POS_OF(to_rank,to_file);
-            return 0;  /* success */
-          }
+        if (!retval) {
+          move_ptr->from = POS_OF(curr_rank,curr_file);
+          move_ptr->to = POS_OF(to_rank,to_file);
+          return 0;  /* success */
         }
       }
     }
