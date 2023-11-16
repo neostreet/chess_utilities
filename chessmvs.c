@@ -22,17 +22,23 @@ int do_castle(struct game *gamept,int direction,char *word,int wordlen,struct mo
     rank = 7;
 
   /* make sure the king is on his original square: */
-  if (get_piece2(gamept->board,rank,4) != 6 * direction)
+  if (get_piece2(gamept->board,rank,4) != 6 * direction) {
+    do_castle_failures++;
     return 1;
+  }
 
   if (wordlen == 3) {  /* kingside castle */
     /* make sure there is a rook in the corner: */
-    if (get_piece2(gamept->board,rank,7) != 2 * direction)
+    if (get_piece2(gamept->board,rank,7) != 2 * direction) {
+      do_castle_failures++;
       return 2;
+    }
 
     /* make sure there are empty squares between king and rook: */
-    if (get_piece2(gamept->board,rank,5) || get_piece2(gamept->board,rank,6))
+    if (get_piece2(gamept->board,rank,5) || get_piece2(gamept->board,rank,6)) {
+      do_castle_failures++;
       return 3;
+    }
 
     if (direction == 1) {  /* if white's move: */
       move_ptr->from = 4;
@@ -45,12 +51,16 @@ int do_castle(struct game *gamept,int direction,char *word,int wordlen,struct mo
   }
   else if (wordlen == 5) {  /* queenside castle */
     /* make sure there is a rook in the corner: */
-    if (get_piece2(gamept->board,rank,0) != 2 * direction)
+    if (get_piece2(gamept->board,rank,0) != 2 * direction) {
+      do_castle_failures++;
       return 4;
+    }
 
     /* make sure there are empty squares between king and rook: */
-    if (get_piece2(gamept->board,rank,1) || get_piece2(gamept->board,rank,2) || get_piece2(gamept->board,rank,3))
+    if (get_piece2(gamept->board,rank,1) || get_piece2(gamept->board,rank,2) || get_piece2(gamept->board,rank,3)) {
+      do_castle_failures++;
       return 5;
+    }
 
     if (direction == 1) {  /* if white's move: */
       move_ptr->from = 4;
@@ -61,8 +71,10 @@ int do_castle(struct game *gamept,int direction,char *word,int wordlen,struct mo
       move_ptr->to = 58;
     }
   }
-  else
+  else {
+    do_castle_failures++;
     return 6;
+  }
 
   move_ptr->special_move_info = SPECIAL_MOVE_CASTLE;
 
