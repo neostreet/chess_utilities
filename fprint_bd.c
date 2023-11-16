@@ -27,8 +27,6 @@ char couldnt_open[] = "couldn't open %s\n";
 
 static int afl_dbg;
 
-void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
-
 int main(int argc,char **argv)
 {
   int n;
