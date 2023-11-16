@@ -513,5 +513,8 @@ int main(int argc,char **argv)
 
   fclose(fptr);
 
+  if (bDebug)
+    printf("%d do_castle() failures\n",do_castle_failures);
+
   return 0;
 }
