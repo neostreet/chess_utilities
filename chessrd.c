@@ -52,7 +52,6 @@ static char *bad_piece_move[] = {
   "bad king move"
 };
 
-void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int fen2pos(char *line,int line_len,unsigned char *pos_buf,int *black_to_play);
 
 short force_value_of(short piece)
