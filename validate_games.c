@@ -71,5 +71,8 @@ int main(int argc,char **argv)
     }
   }
 
+  if (bDebug)
+    printf("%d do_castle() successes\n",do_castle_successes);
+
   return 0;
 }
