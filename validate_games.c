@@ -65,11 +65,11 @@ int main(int argc,char **argv)
     if (retval) {
       printf("read_game of %s failed: %d\n",filename,retval);
       printf("curr_move = %d\n",curr_game.curr_move);
+
+      if (bDebug)
+        printf("%d do_castle() failures\n",do_castle_failures);
     }
   }
-
-  if (bDebug)
-    printf("%d do_castle() failures\n",do_castle_failures);
 
   return 0;
 }
