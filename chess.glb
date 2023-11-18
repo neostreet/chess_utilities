@@ -15,6 +15,7 @@ GLOBAL int highlight_file;
 
 GLOBAL int move_start_piece;
 GLOBAL int do_castle_failures;
+GLOBAL int do_castle_successes;
 
 #ifdef MAKE_GLOBALS_HERE
 char piece_ids[] = "RNBQK";
