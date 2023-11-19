@@ -147,6 +147,7 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
   int retval;
   int got_error;
   struct move move;
+  bool bCheck;
 
   gamept->curr_move = -1;
 
@@ -158,7 +159,7 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
   fscanf(fptr,"%d",&gamept->orientation);  /* get board orientation */
                                    /* 0 = standard, 1 = black on bottom */
 
-  end_of_file = get_word(fptr,word,WORDLEN,&wordlen);
+  end_of_file = get_word(fptr,word,WORDLEN,&wordlen,&bCheck);
 
   if (!strncmp(word,"FEN:",4)) {
     retval = read_fen(fptr,gamept);
@@ -187,7 +188,7 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
 
   for ( ; ; ) {
     if (word_no || !bHaveFirstWord)
-      end_of_file = get_word(fptr,word,WORDLEN,&wordlen);
+      end_of_file = get_word(fptr,word,WORDLEN,&wordlen,&bCheck);
 
     if (end_of_file)
       break;
@@ -276,6 +277,10 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
     if (got_error)
       break;
 
+    if (bCheck) {
+      move.special_move_info = SPECIAL_MOVE_CHECK;
+    }
+
     gamept->moves.push_back(move);
 
     update_board(gamept,false);
@@ -362,8 +367,11 @@ int write_binary_game(char *filename,struct game *gamept)
   return 0;
 }
 
-int ignore_character(int chara)
+int ignore_character(int chara,bool *bCheck)
 {
+  if ((chara == '+') || (chara == '#'))
+    *bCheck = true;
+
   if ((chara == 0x0d) ||
     (chara == '(') ||
     (chara == ')') ||
@@ -376,7 +384,7 @@ int ignore_character(int chara)
   return false;
 }
 
-int get_word(FILE *fptr,char *word,int maxlen,int *wordlenpt)
+int get_word(FILE *fptr,char *word,int maxlen,int *wordlenpt,bool *bCheck)
 {
   int chara;
   int started;
@@ -388,6 +396,7 @@ int get_word(FILE *fptr,char *word,int maxlen,int *wordlenpt)
   started = 0;
   comment = 0;
   end_of_file = 0;
+  *bCheck = false;
 
   for ( ; ; ) {
     chara = fgetc(fptr);
@@ -400,7 +409,7 @@ int get_word(FILE *fptr,char *word,int maxlen,int *wordlenpt)
     }
 
     // ignore carriage returns and other characters
-    if (ignore_character(chara))
+    if (ignore_character(chara,bCheck))
       continue;
 
     /* end of line ? */
