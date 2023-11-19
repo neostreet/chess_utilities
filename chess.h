@@ -36,6 +36,7 @@
 #define SPECIAL_MOVE_CHECK            0x20
 #define SPECIAL_MOVE_CAPTURE          0x40
 #define SPECIAL_MOVE_CASTLE           0x80
+#define SPECIAL_MOVE_MATE            0x100
 
 #define ORIG_FORCE_VALUE (FORCE_VALUE_QUEEN + 2 * FORCE_VALUE_ROOK + \
 2 * FORCE_VALUE_KNIGHT + 2 * FORCE_VALUE_BISHOP + 8 * FORCE_VALUE_PAWN)
@@ -73,7 +74,7 @@ BITS_PER_BYTE - 1) / BITS_PER_BYTE)
 struct move {
   char from;
   char to;
-  char special_move_info;
+  int special_move_info;
 };
 
 #define BITS_PER_BOARD_SQUARE 4
