@@ -328,6 +328,11 @@ int main(int argc,char **argv)
           continue;
       }
 
+      if (bOnlyMates) {
+        if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_MATE))
+          continue;
+      }
+
       if (bOnlyCastle) {
         if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CASTLE))
           continue;
@@ -458,6 +463,11 @@ int main(int argc,char **argv)
 
     if (!bSkip && bOnlyChecks) {
       if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK))
+        bSkip = true;
+    }
+
+    if (!bSkip && bOnlyMates) {
+      if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_MATE))
         bSkip = true;
     }
 
