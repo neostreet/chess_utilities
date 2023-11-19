@@ -148,6 +148,7 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
   int got_error;
   struct move move;
   bool bCheck;
+  bool bMate;
 
   gamept->curr_move = -1;
 
@@ -159,7 +160,7 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
   fscanf(fptr,"%d",&gamept->orientation);  /* get board orientation */
                                    /* 0 = standard, 1 = black on bottom */
 
-  end_of_file = get_word(fptr,word,WORDLEN,&wordlen,&bCheck);
+  end_of_file = get_word(fptr,word,WORDLEN,&wordlen,&bCheck,&bMate);
 
   if (!strncmp(word,"FEN:",4)) {
     retval = read_fen(fptr,gamept);
@@ -188,7 +189,7 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
 
   for ( ; ; ) {
     if (word_no || !bHaveFirstWord)
-      end_of_file = get_word(fptr,word,WORDLEN,&wordlen,&bCheck);
+      end_of_file = get_word(fptr,word,WORDLEN,&wordlen,&bCheck,&bMate);
 
     if (end_of_file)
       break;
@@ -278,7 +279,11 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
       break;
 
     if (bCheck) {
-      move.special_move_info = SPECIAL_MOVE_CHECK;
+      move.special_move_info |= SPECIAL_MOVE_CHECK;
+    }
+
+    if (bMate) {
+      move.special_move_info |= SPECIAL_MOVE_MATE;
     }
 
     gamept->moves.push_back(move);
@@ -367,10 +372,13 @@ int write_binary_game(char *filename,struct game *gamept)
   return 0;
 }
 
-int ignore_character(int chara,bool *bCheck)
+int ignore_character(int chara,bool *bCheck,bool *bMate)
 {
   if ((chara == '+') || (chara == '#'))
     *bCheck = true;
+
+  if (chara == '#')
+    *bMate = true;
 
   if ((chara == 0x0d) ||
     (chara == '(') ||
@@ -384,7 +392,7 @@ int ignore_character(int chara,bool *bCheck)
   return false;
 }
 
-int get_word(FILE *fptr,char *word,int maxlen,int *wordlenpt,bool *bCheck)
+int get_word(FILE *fptr,char *word,int maxlen,int *wordlenpt,bool *bCheck,bool *bMate)
 {
   int chara;
   int started;
@@ -397,6 +405,7 @@ int get_word(FILE *fptr,char *word,int maxlen,int *wordlenpt,bool *bCheck)
   comment = 0;
   end_of_file = 0;
   *bCheck = false;
+  *bMate = false;
 
   for ( ; ; ) {
     chara = fgetc(fptr);
@@ -409,7 +418,7 @@ int get_word(FILE *fptr,char *word,int maxlen,int *wordlenpt,bool *bCheck)
     }
 
     // ignore carriage returns and other characters
-    if (ignore_character(chara,bCheck))
+    if (ignore_character(chara,bCheck,bMate))
       continue;
 
     /* end of line ? */
