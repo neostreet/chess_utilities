@@ -16,7 +16,7 @@ static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
 "usage: fprint_bd (-debug) (-terse) (-toggle) (-initial_boardfilename)\n"
-"  (-init_bin_boardfilename) (-board_binfilename) (-num_white_piecesnum) (-num_black_piecesnum) (-print_pieces)\n"
+"  (-init_bin_boardfilename) (-board_binfilename) (-num_white_piecesnum) (-num_black_piecesnum)\n"
 "  (-match_boardfilename) (-match_forcefilename) (-only_checks) (-only_mates) (-only_castle)\n"
 "  (-only_promotions) (-only_captures) (-only_en_passants) (-multiple_queens) (-move_number_only)\n"
 "  (-mine) (-not_mine) (-search_all_moves) (-exact_match)\n"
@@ -42,7 +42,6 @@ int main(int argc,char **argv)
   int num_black_pieces;
   int white_force_count;
   int black_force_count;
-  bool bPrintPieces;
   bool bOnlyChecks;
   bool bOnlyMates;
   bool bOnlyCastle;
@@ -73,7 +72,7 @@ int main(int argc,char **argv)
   int filename_len;
   int num_pieces;
 
-  if ((argc < 2) || (argc > 28)) {
+  if ((argc < 2) || (argc > 27)) {
     printf(usage);
     return 1;
   }
@@ -90,7 +89,6 @@ int main(int argc,char **argv)
   num_black_pieces = -1;
   white_force_count = -1;
   black_force_count = -1;
-  bPrintPieces = false;
   bOnlyChecks = false;
   bOnlyMates = false;
   bOnlyCastle = false;
@@ -139,8 +137,6 @@ int main(int argc,char **argv)
       sscanf(&argv[curr_arg][18],"%d",&white_force_count);
     else if (!strncmp(argv[curr_arg],"-black_force_count",18))
       sscanf(&argv[curr_arg][18],"%d",&black_force_count);
-    else if (!strcmp(argv[curr_arg],"-print_pieces"))
-      bPrintPieces = true;
     else if (!strncmp(argv[curr_arg],"-board_bin",10)) {
       bBoardBin = true;
       board_bin_arg = curr_arg;
@@ -514,9 +510,6 @@ int main(int argc,char **argv)
 
   if (bBoardBin)
     write_board_to_binfile(curr_game.board,&argv[board_bin_arg][10]);
-
-  if (bPrintPieces)
-    print_pieces(&curr_game);
 
   if (bPrintedBoard)
     putchar(0x0a);
