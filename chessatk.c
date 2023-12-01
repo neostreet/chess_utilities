@@ -287,6 +287,7 @@ bool player_is_in_check(bool bWhite,struct game *gamept)
     other_king = KING_ID;
   }
 
+#ifdef UNDEF
   // first, find your own king
 
   king_offset = -1;
@@ -311,6 +312,7 @@ bool player_is_in_check(bool bWhite,struct game *gamept)
         return true;
     }
   }
+#endif
 
   return false;
 }
