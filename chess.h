@@ -101,10 +101,8 @@ struct game {
   int curr_move;
   unsigned char board[CHARS_IN_BOARD];  /* 8 columns * 8 rows / 2 (nibbles per char) */
   unsigned char num_pieces[NUM_PLAYERS];
-  char piece_offsets[NUM_PLAYERS][NUM_PIECES_PER_PLAYER];
-  vector<struct move> moves;
-  short seirawan_count[NUM_PLAYERS];
   short force_count[NUM_PLAYERS];
+  vector<struct move> moves;
 };
 
 typedef char (*CHESS_FILE_LIST)[MAX_FILE_NAME_LEN];
