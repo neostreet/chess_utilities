@@ -68,3 +68,4 @@ int bishop_attacks_square(struct game *gampt,int square1,int square2);
 int queen_attacks_square(struct game *gampt,int square1,int square2);
 int king_attacks_square(struct game *gampt,int square1,int square2);
 bool player_is_in_check(bool bWhite,struct game *gamept);
+int calc_square(char *algebraic_notation);
