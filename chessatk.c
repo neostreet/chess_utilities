@@ -316,3 +316,26 @@ bool player_is_in_check(bool bWhite,struct game *gamept)
 
   return false;
 }
+
+int calc_square(char *algebraic_notation)
+{
+  char file_char;
+  char rank_char;
+  int file;
+  int rank;
+
+  file_char = algebraic_notation[0];
+  rank_char = algebraic_notation[1];
+
+  if ((file_char >= 'a') && (file_char <= 'h'))
+    file = file_char - 'a';
+  else
+    return -1;
+
+  if ((rank_char >= '1') && (rank_char <= '8'))
+    rank = rank_char - '1';
+  else
+    return -1;
+
+  return rank * NUM_FILES + file;
+}
