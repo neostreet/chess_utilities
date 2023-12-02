@@ -76,16 +76,18 @@ int main(int argc,char **argv)
     bPrintedFilename = false;
 
     for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
-      if (curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK) {
-        if (!bPrintedFilename) {
-          printf("%s\n",filename);
-          bPrintedFilename = true;
-        }
-
-        printf("move %d is a check\n",curr_game.curr_move); // for now
-      }
-
       update_board(&curr_game,false);
+
+      if (curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK) {
+        if (!player_is_in_check(&curr_game)) {
+          if (!bPrintedFilename) {
+            printf("%s\n",filename);
+            bPrintedFilename = true;
+          }
+
+          printf("couldn't find a check on move %d\n",curr_game.curr_move);
+        }
+      }
     }
   }
 
