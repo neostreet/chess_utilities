@@ -56,8 +56,15 @@ int main(int argc,char **argv)
     return 3;
   }
 
-  sscanf(argv[curr_arg+1],"%d",&square1);
-  sscanf(argv[curr_arg+2],"%d",&square2);
+  if ((square1 = calc_square(argv[curr_arg+1])) == -1) {
+    printf("square1 is invalid\n");
+    return 4;
+  }
+
+  if ((square2 = calc_square(argv[curr_arg+2])) == -1) {
+    printf("square2 is invalid\n");
+    return 5;
+  }
 
   for ( ; ; ) {
     GetLine(fptr,filename,&filename_len,MAX_FILENAME_LEN);
