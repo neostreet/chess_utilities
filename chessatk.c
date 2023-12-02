@@ -264,55 +264,57 @@ int king_attacks_square(struct game *gamept,int square1,int square2)
   return false;
 }
 
-bool player_is_in_check(bool bWhite,struct game *gamept)
+bool player_is_in_check(struct game *gamept)
 {
   int n;
-  int player_to_move;
-  int other_player;
-  int king_to_find;
-  int other_king;
-  int king_offset;
+  bool bBlack;
+  int enemy_king;
+  int enemy_king_square;
   int piece;
 
-  if (bWhite) {
-    player_to_move = WHITE;
-    other_player = BLACK;
-    king_to_find = KING_ID;
-    other_king = KING_ID * -1;
-  }
-  else {
-    player_to_move = BLACK;
-    other_player = WHITE;
-    king_to_find = KING_ID * -1;
-    other_king = KING_ID;
-  }
+  bBlack = gamept->curr_move % 2;
 
-#ifdef UNDEF
-  // first, find your own king
+  if (bBlack)
+    enemy_king = KING_ID;
+  else
+    enemy_king = KING_ID * -1;
 
-  king_offset = -1;
+  // first, find the enemy king
 
-  for (n = 0; n < gamept->num_pieces[player_to_move]; n++) {
-    piece = get_piece1(gamept->board,(int)gamept->piece_offsets[player_to_move][n]);
+  enemy_king_square = -1;
 
-    if (piece == king_to_find) {
-      king_offset = (int)gamept->piece_offsets[player_to_move][n];
+  for (n = 0; n < NUM_BOARD_SQUARES; n++) {
+    piece = get_piece1(gamept->board,n);
+
+    if (piece == enemy_king) {
+      enemy_king_square = n;
       break;
     }
   }
 
-  if (n == gamept->num_pieces[player_to_move])
+  if (n == NUM_BOARD_SQUARES)
     return false; // should never happen
 
-  for (n = 0; n < gamept->num_pieces[other_player]; n++) {
-    piece = get_piece1(gamept->board,(int)gamept->piece_offsets[other_player][n]);
+  // now determine if any of your pieces attack the enemy king
 
-    if (piece != other_king) {
-      if (square_attacks_square(gamept,(int)gamept->piece_offsets[other_player][n],king_offset))
-        return true;
+  for (n = 0; n < NUM_BOARD_SQUARES; n++) {
+    piece = get_piece1(gamept->board,n);
+
+    if (!piece)
+      continue;
+
+    if (bBlack) {
+      if (piece > 0)
+        continue;
     }
+    else {
+      if (piece < 0)
+        continue;
+    }
+
+    if (square_attacks_square(gamept,n,enemy_king_square))
+      return true;
   }
-#endif
 
   return false;
 }
