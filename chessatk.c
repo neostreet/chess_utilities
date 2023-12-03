@@ -8,7 +8,7 @@ using namespace std;
 #include "chess.fun"
 #include "chess.mac"
 
-int square_attacks_square(struct game *gamept,int square1,int square2)
+int square_attacks_square(unsigned char *board,int square1,int square2)
 {
   int retval;
   int piece;
@@ -17,7 +17,7 @@ int square_attacks_square(struct game *gamept,int square1,int square2)
   if (square1 == square2)
     return false;
 
-  piece = get_piece1(gamept->board,square1);
+  piece = get_piece1(board,square1);
 
   if (!piece)
     return false;
@@ -33,27 +33,27 @@ int square_attacks_square(struct game *gamept,int square1,int square2)
 
   switch (piece) {
     case PAWN_ID:
-      retval = pawn_attacks_square(gamept,square1,color,square2);
+      retval = pawn_attacks_square(board,square1,color,square2);
 
       break;
     case ROOK_ID:
-      retval = rook_attacks_square(gamept,square1,square2);
+      retval = rook_attacks_square(board,square1,square2);
 
       break;
     case KNIGHT_ID:
-      retval = knight_attacks_square(gamept,square1,square2);
+      retval = knight_attacks_square(board,square1,square2);
 
       break;
     case BISHOP_ID:
-      retval = bishop_attacks_square(gamept,square1,square2);
+      retval = bishop_attacks_square(board,square1,square2);
 
       break;
     case QUEEN_ID:
-      retval = queen_attacks_square(gamept,square1,square2);
+      retval = queen_attacks_square(board,square1,square2);
 
       break;
     case KING_ID:
-      retval = king_attacks_square(gamept,square1,square2);
+      retval = king_attacks_square(board,square1,square2);
 
       break;
   }
@@ -61,7 +61,7 @@ int square_attacks_square(struct game *gamept,int square1,int square2)
   return retval;
 }
 
-int pawn_attacks_square(struct game *gamept,int square1,int color,int square2)
+int pawn_attacks_square(unsigned char *board,int square1,int color,int square2)
 {
   int rank1;
   int file1;
@@ -89,7 +89,7 @@ int pawn_attacks_square(struct game *gamept,int square1,int color,int square2)
   return false;
 }
 
-int rook_attacks_square(struct game *gamept,int square1,int square2)
+int rook_attacks_square(unsigned char *board,int square1,int square2)
 {
   int rank1;
   int file1;
@@ -109,7 +109,7 @@ int rook_attacks_square(struct game *gamept,int square1,int square2)
       for (work_file = file1 - 1; work_file > file2; work_file--) {
         work_pos = POS_OF(rank1,work_file);
 
-        if (get_piece1(gamept->board,work_pos))
+        if (get_piece1(board,work_pos))
           break;
       }
     }
@@ -117,7 +117,7 @@ int rook_attacks_square(struct game *gamept,int square1,int square2)
       for (work_file = file1 + 1; work_file < file2; work_file++) {
         work_pos = POS_OF(rank1,work_file);
 
-        if (get_piece1(gamept->board,work_pos))
+        if (get_piece1(board,work_pos))
           break;
       }
     }
@@ -130,7 +130,7 @@ int rook_attacks_square(struct game *gamept,int square1,int square2)
       for (work_rank = rank1 - 1; work_rank > rank2; work_rank--) {
         work_pos = POS_OF(work_rank,file1);
 
-        if (get_piece1(gamept->board,work_pos))
+        if (get_piece1(board,work_pos))
           break;
       }
     }
@@ -138,7 +138,7 @@ int rook_attacks_square(struct game *gamept,int square1,int square2)
       for (work_rank = rank1 + 1; work_rank < rank2; work_rank++) {
         work_pos = POS_OF(work_rank,file1);
 
-        if (get_piece1(gamept->board,work_pos))
+        if (get_piece1(board,work_pos))
           break;
       }
     }
@@ -150,7 +150,7 @@ int rook_attacks_square(struct game *gamept,int square1,int square2)
   return false;
 }
 
-int knight_attacks_square(struct game *gamept,int square1,int square2)
+int knight_attacks_square(unsigned char *board,int square1,int square2)
 {
   int rank1;
   int file1;
@@ -175,7 +175,7 @@ int knight_attacks_square(struct game *gamept,int square1,int square2)
   return false;
 }
 
-int bishop_attacks_square(struct game *gamept,int square1,int square2)
+int bishop_attacks_square(unsigned char *board,int square1,int square2)
 {
   int n;
   int rank1;
@@ -220,7 +220,7 @@ int bishop_attacks_square(struct game *gamept,int square1,int square2)
 
     work_pos = POS_OF(work_rank,work_file);
 
-    if (get_piece1(gamept->board,work_pos))
+    if (get_piece1(board,work_pos))
       break;
   }
 
@@ -230,18 +230,18 @@ int bishop_attacks_square(struct game *gamept,int square1,int square2)
   return false;
 }
 
-int queen_attacks_square(struct game *gamept,int square1,int square2)
+int queen_attacks_square(unsigned char *board,int square1,int square2)
 {
-  if (rook_attacks_square(gamept,square1,square2))
+  if (rook_attacks_square(board,square1,square2))
     return true;
 
-  if (bishop_attacks_square(gamept,square1,square2))
+  if (bishop_attacks_square(board,square1,square2))
     return true;
 
   return false;
 }
 
-int king_attacks_square(struct game *gamept,int square1,int square2)
+int king_attacks_square(unsigned char *board,int square1,int square2)
 {
   int rank1;
   int file1;
@@ -264,15 +264,12 @@ int king_attacks_square(struct game *gamept,int square1,int square2)
   return false;
 }
 
-bool player_is_in_check(struct game *gamept)
+bool player_is_in_check(bool bBlack,unsigned char *board)
 {
   int n;
-  bool bBlack;
   int enemy_king;
   int enemy_king_square;
   int piece;
-
-  bBlack = gamept->curr_move % 2;
 
   if (bBlack)
     enemy_king = KING_ID;
@@ -284,7 +281,7 @@ bool player_is_in_check(struct game *gamept)
   enemy_king_square = -1;
 
   for (n = 0; n < NUM_BOARD_SQUARES; n++) {
-    piece = get_piece1(gamept->board,n);
+    piece = get_piece1(board,n);
 
     if (piece == enemy_king) {
       enemy_king_square = n;
@@ -298,7 +295,7 @@ bool player_is_in_check(struct game *gamept)
   // now determine if any of your pieces attack the enemy king
 
   for (n = 0; n < NUM_BOARD_SQUARES; n++) {
-    piece = get_piece1(gamept->board,n);
+    piece = get_piece1(board,n);
 
     if (!piece)
       continue;
@@ -312,7 +309,7 @@ bool player_is_in_check(struct game *gamept)
         continue;
     }
 
-    if (square_attacks_square(gamept,n,enemy_king_square))
+    if (square_attacks_square(board,n,enemy_king_square))
       return true;
   }
 
