@@ -29,6 +29,7 @@ int main(int argc,char **argv)
   FILE *fptr;
   int filename_len;
   struct game curr_game;
+  bool bBlack;
   bool bPrintedFilename;
 
   if ((argc < 2) || (argc > 3)) {
@@ -79,7 +80,9 @@ int main(int argc,char **argv)
       update_board(&curr_game,false);
 
       if (curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK) {
-        if (!player_is_in_check(&curr_game)) {
+        bBlack = curr_game.curr_move % 2;
+
+        if (!player_is_in_check(bBlack,curr_game.board)) {
           if (!bPrintedFilename) {
             printf("%s\n",filename);
             bPrintedFilename = true;
