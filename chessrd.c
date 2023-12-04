@@ -258,7 +258,7 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
 
     gamept->moves.push_back(move);
 
-    update_board(gamept);
+    update_board(gamept->board,&gamept->moves[gamept->curr_move],gamept->curr_move & 0x1);
 
     gamept->curr_move++;
   }
@@ -431,7 +431,7 @@ int get_word(FILE *fptr,char *word,int maxlen,int *wordlenpt,bool *bCheck,bool *
   return end_of_file;
 }
 
-void update_board(struct game *gamept)
+void update_board(unsigned char *board,struct move *move_ptr,bool bBlack)
 {
   int dbg;
   int rank;
@@ -439,91 +439,89 @@ void update_board(struct game *gamept)
   int old_piece;
   int piece;
 
-  if (gamept->moves[gamept->curr_move].special_move_info) {
-    switch (gamept->moves[gamept->curr_move].special_move_info & 0x1f) {
+  if (move_ptr->special_move_info) {
+    switch (move_ptr->special_move_info & 0x1f) {
       case SPECIAL_MOVE_PROMOTION_QUEEN:
-        if (gamept->curr_move & 0x1)
+        if (bBlack)
           // black
-          set_piece1(gamept->board,gamept->moves[gamept->curr_move].from,QUEEN_ID * -1);
+          set_piece1(board,move_ptr->from,QUEEN_ID * -1);
         else
-          set_piece1(gamept->board,gamept->moves[gamept->curr_move].from,QUEEN_ID);
+          set_piece1(board,move_ptr->from,QUEEN_ID);
 
         break;
       case SPECIAL_MOVE_PROMOTION_ROOK:
-        if (gamept->curr_move & 0x1)
+        if (bBlack)
           // black
-          set_piece1(gamept->board,gamept->moves[gamept->curr_move].from,ROOK_ID * -1);
+          set_piece1(board,move_ptr->from,ROOK_ID * -1);
         else
-          set_piece1(gamept->board,gamept->moves[gamept->curr_move].from,ROOK_ID);
+          set_piece1(board,move_ptr->from,ROOK_ID);
 
         break;
       case SPECIAL_MOVE_PROMOTION_KNIGHT:
-        if (gamept->curr_move & 0x1)
+        if (bBlack)
           // black
-          set_piece1(gamept->board,gamept->moves[gamept->curr_move].from,KNIGHT_ID * -1);
+          set_piece1(board,move_ptr->from,KNIGHT_ID * -1);
         else
-          set_piece1(gamept->board,gamept->moves[gamept->curr_move].from,KNIGHT_ID);
+          set_piece1(board,move_ptr->from,KNIGHT_ID);
 
         break;
       case SPECIAL_MOVE_PROMOTION_BISHOP:
-        if (gamept->curr_move & 0x1)
+        if (bBlack)
           // black
-          set_piece1(gamept->board,gamept->moves[gamept->curr_move].from,BISHOP_ID * -1);
+          set_piece1(board,move_ptr->from,BISHOP_ID * -1);
         else
-          set_piece1(gamept->board,gamept->moves[gamept->curr_move].from,BISHOP_ID);
+          set_piece1(board,move_ptr->from,BISHOP_ID);
 
         break;
       case SPECIAL_MOVE_EN_PASSANT:
-        rank = RANK_OF(gamept->moves[gamept->curr_move].from);
-        file = FILE_OF(gamept->moves[gamept->curr_move].to);
-        set_piece1(gamept->board,POS_OF(rank,file),0);
+        rank = RANK_OF(move_ptr->from);
+        file = FILE_OF(move_ptr->to);
+        set_piece1(board,POS_OF(rank,file),0);
 
         break;
     }
   }
 
-  old_piece = get_piece1(gamept->board,gamept->moves[gamept->curr_move].to);
+  old_piece = get_piece1(board,move_ptr->to);
 
   if (old_piece)
-    gamept->moves[gamept->curr_move].special_move_info |= SPECIAL_MOVE_CAPTURE;
+    move_ptr->special_move_info |= SPECIAL_MOVE_CAPTURE;
 
-  piece = get_piece1(gamept->board,gamept->moves[gamept->curr_move].from);
+  piece = get_piece1(board,move_ptr->from);
 
-  set_piece1(gamept->board,gamept->moves[gamept->curr_move].to,piece);
+  set_piece1(board,move_ptr->to,piece);
 
-  set_piece1(gamept->board,gamept->moves[gamept->curr_move].from,0);  /* vacate previous square */
+  set_piece1(board,move_ptr->from,0);  /* vacate previous square */
 
   // now move the rook if this was a castling move
   if (piece == KING_ID) {
     // white
 
-    if ((gamept->moves[gamept->curr_move].from == 4) &&
-      (gamept->moves[gamept->curr_move].to == 6)) {
+    if ((move_ptr->from == 4) &&
+      (move_ptr->to == 6)) {
       // kingside castle
-      set_piece1(gamept->board,5,ROOK_ID);
-      set_piece1(gamept->board,7,0);
+      set_piece1(board,5,ROOK_ID);
+      set_piece1(board,7,0);
     }
-    else if ((gamept->moves[gamept->curr_move].from == 4) &&
-      (gamept->moves[gamept->curr_move].to == 2)) {
+    else if ((move_ptr->from == 4) &&
+      (move_ptr->to == 2)) {
       // kingside castle
-      set_piece1(gamept->board,3,ROOK_ID);
-      set_piece1(gamept->board,0,0);
+      set_piece1(board,3,ROOK_ID);
+      set_piece1(board,0,0);
     }
   }
   else if (piece == KING_ID * -1) {
     // black
 
-    if ((gamept->moves[gamept->curr_move].from == 60) &&
-      (gamept->moves[gamept->curr_move].to == 62)) {
+    if ((move_ptr->from == 60) && (move_ptr->to == 62)) {
       // kingside castle
-      set_piece1(gamept->board,61,ROOK_ID * -1);
-      set_piece1(gamept->board,63,0);
+      set_piece1(board,61,ROOK_ID * -1);
+      set_piece1(board,63,0);
     }
-    else if ((gamept->moves[gamept->curr_move].from == 60) &&
-      (gamept->moves[gamept->curr_move].to == 58)) {
+    else if ((move_ptr->from == 60) && (move_ptr->to == 58)) {
       // kingside castle
-      set_piece1(gamept->board,59,ROOK_ID * -1);
-      set_piece1(gamept->board,56,0);
+      set_piece1(board,59,ROOK_ID * -1);
+      set_piece1(board,56,0);
     }
   }
 }
