@@ -77,11 +77,10 @@ int main(int argc,char **argv)
     bPrintedFilename = false;
 
     for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
-      update_board(&curr_game);
+      bBlack = curr_game.curr_move & 0x1;
+      update_board(curr_game.board,&curr_game.moves[curr_game.curr_move],bBlack);
 
       if (curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK) {
-        bBlack = curr_game.curr_move % 2;
-
         if (!player_is_in_check(bBlack,curr_game.board)) {
           if (!bPrintedFilename) {
             printf("%s\n",filename);
