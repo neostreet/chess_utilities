@@ -258,7 +258,7 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
 
     gamept->moves.push_back(move);
 
-    update_board(gamept,false);
+    update_board(gamept);
 
     gamept->curr_move++;
   }
@@ -431,7 +431,7 @@ int get_word(FILE *fptr,char *word,int maxlen,int *wordlenpt,bool *bCheck,bool *
   return end_of_file;
 }
 
-void update_board(struct game *gamept,short bCalcCounts)
+void update_board(struct game *gamept)
 {
   int dbg;
   int rank;
