@@ -263,7 +263,7 @@ int main(int argc,char **argv)
     bPrintedBoard = false;
 
     for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
-      update_board(&curr_game);
+      update_board(curr_game.board,&curr_game.moves[curr_game.curr_move],curr_game.curr_move & 0x1);
 
       if (curr_game.curr_move == dbg_move)
         afl_dbg = 1;
@@ -396,7 +396,7 @@ int main(int argc,char **argv)
       curr_game.curr_move = 0;
 
       for (n = 0; n <= initial_move; n++) {
-        update_board(&curr_game);
+        update_board(curr_game.board,&curr_game.moves[curr_game.curr_move],curr_game.curr_move & 0x1);
 
         if (n < initial_move)
           curr_game.curr_move++;
