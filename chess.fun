@@ -37,7 +37,7 @@ int get_to_position(char *word,int wordlen,int *to_filept,int *to_rankpt);
 
 void set_initial_board(struct game *gamept);
 void print_special_moves(struct game *gamept);
-void update_board(struct game *gamept);
+void update_board(unsigned char *board,struct move *move_ptr,bool bBlack);
 int get_piece1(unsigned char *board,int board_offset);
 int get_piece2(unsigned char *board,int row,int column);
 void set_piece1(unsigned char *board,int board_offset,int piece);
