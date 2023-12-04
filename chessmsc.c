@@ -274,3 +274,11 @@ int get_enemy_king_file_and_rank(struct game *gamept,int *file_pt,int *rank_pt)
 
   return 0;
 }
+
+void copy_board(unsigned char *from_board,unsigned char *to_board)
+{
+  int n;
+
+  for (n = 0; n < CHARS_IN_BOARD; n++)
+    to_board[n] = from_board[n];
+}
