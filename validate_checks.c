@@ -77,7 +77,7 @@ int main(int argc,char **argv)
     bPrintedFilename = false;
 
     for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
-      update_board(&curr_game,false);
+      update_board(&curr_game);
 
       if (curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK) {
         bBlack = curr_game.curr_move % 2;
