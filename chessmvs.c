@@ -335,6 +335,9 @@ int do_piece_move(struct game *gamept,int direction,char *word,int wordlen,struc
   int to_rank;
   int to_piece;
   int retval;
+  unsigned char board[CHARS_IN_BOARD];
+  bool bBlack;
+  int dbg;
 
   if (wordlen == 4) {
     where = word[1];
@@ -377,12 +380,7 @@ int do_piece_move(struct game *gamept,int direction,char *word,int wordlen,struc
   if (to_piece * direction > 0)
     return 4;
 
-  if (to_piece != 0) {
-    /* a capture; move the captured piece off the board: */
-    ;
-  }
-  else
-    move_ptr->special_move_info = 0;
+  move_ptr->special_move_info = 0;
 
   /* search the board for the search piece: */
   for (curr_rank = rank_start; curr_rank < rank_end; curr_rank++) {
@@ -395,7 +393,18 @@ int do_piece_move(struct game *gamept,int direction,char *word,int wordlen,struc
         if (!retval) {
           move_ptr->from = POS_OF(curr_rank,curr_file);
           move_ptr->to = POS_OF(to_rank,to_file);
-          return 0;  /* success */
+
+          // don't allow the move if it would put the mover in check
+
+          copy_board(gamept->board,board);
+          bBlack = gamept->curr_move & 0x1;
+          update_board(board,move_ptr,bBlack);
+
+          if (gamept->curr_move == dbg_move)
+            dbg = 1;
+
+          if (!player_is_in_check(bBlack,board))
+            return 0;  /* success */
         }
       }
     }
