@@ -122,7 +122,7 @@ void print_game(struct game *gamept)
     if (gamept->curr_move % 2)
       putchar(0x0a);
 
-    update_board(gamept);
+    update_board(gamept->board,&gamept->moves[gamept->curr_move],gamept->curr_move & 0x1);
   }
 
   if (gamept->num_moves % 2)
