@@ -267,24 +267,24 @@ int king_attacks_square(unsigned char *board,int square1,int square2)
 bool player_is_in_check(bool bBlack,unsigned char *board)
 {
   int n;
-  int enemy_king;
-  int enemy_king_square;
+  int movers_king;
+  int movers_king_square;
   int piece;
 
+  // first, find the mover's king
+
   if (bBlack)
-    enemy_king = KING_ID;
+    movers_king = KING_ID * -1;
   else
-    enemy_king = KING_ID * -1;
+    movers_king = KING_ID;
 
-  // first, find the enemy king
-
-  enemy_king_square = -1;
+  movers_king_square = -1;
 
   for (n = 0; n < NUM_BOARD_SQUARES; n++) {
     piece = get_piece1(board,n);
 
-    if (piece == enemy_king) {
-      enemy_king_square = n;
+    if (piece == movers_king) {
+      movers_king_square = n;
       break;
     }
   }
@@ -292,7 +292,7 @@ bool player_is_in_check(bool bBlack,unsigned char *board)
   if (n == NUM_BOARD_SQUARES)
     return false; // should never happen
 
-  // now determine if any of your pieces attack the enemy king
+  // now determine if any of the opponent's pieces attack the mover's king
 
   for (n = 0; n < NUM_BOARD_SQUARES; n++) {
     piece = get_piece1(board,n);
@@ -301,15 +301,15 @@ bool player_is_in_check(bool bBlack,unsigned char *board)
       continue;
 
     if (bBlack) {
-      if (piece > 0)
-        continue;
-    }
-    else {
       if (piece < 0)
         continue;
     }
+    else {
+      if (piece > 0)
+        continue;
+    }
 
-    if (square_attacks_square(board,n,enemy_king_square))
+    if (square_attacks_square(board,n,movers_king_square))
       return true;
   }
 
