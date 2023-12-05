@@ -97,6 +97,7 @@ struct game {
   int orientation;
   int num_moves;
   int curr_move;
+  int moved_piece;
   unsigned char board[CHARS_IN_BOARD];  /* 8 columns * 8 rows / 2 (nibbles per char) */
   short force_count[NUM_PLAYERS];
   vector<struct move> moves;
