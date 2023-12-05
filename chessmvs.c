@@ -16,6 +16,8 @@ int do_castle(struct game *gamept,int direction,char *word,int wordlen,struct mo
 {
   int rank;
 
+  gamept->moved_piece = 'K';
+
   if (direction == 1)  /* if white's move: */
     rank = 0;
   else
@@ -91,6 +93,8 @@ int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen,struct
   int capture_file;
   int piece;
   int which_piece;
+
+  gamept->moved_piece = 'P';
 
   /*printf("%s\n",word);/*for now*/
   file = word[0] - 'a';
@@ -438,6 +442,8 @@ int rook_move(
 {
   int n;
 
+  gamept->moved_piece = 'R';
+
   if (file1 == file2) {
     if (rank1 > rank2) {
       for (n = rank2 + 1; n < rank1; n++)
@@ -480,6 +486,8 @@ int knight_move(
   int dist1;
   int dist2;
 
+  gamept->moved_piece = 'N';
+
   dist1 = (file1 - file2);
 
   if (dist1 < 0)
@@ -511,6 +519,8 @@ int bishop_move(
   int dist2;
   int file_dir;
   int rank_dir;
+
+  gamept->moved_piece = 'B';
 
   dist1 = (file1 - file2);
 
@@ -557,6 +567,8 @@ int queen_move(
   int rank2
 )
 {
+  gamept->moved_piece = 'Q';
+
   if (!rook_move(gamept,file1,rank1,file2,rank2))
     return 0;  /* success */
 
@@ -576,6 +588,8 @@ int king_move(
 {
   int dist1;
   int dist2;
+
+  gamept->moved_piece = 'K';
 
   dist1 = (file1 - file2);
 
