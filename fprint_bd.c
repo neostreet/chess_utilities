@@ -166,7 +166,7 @@ int main(int argc,char **argv)
       retval = populate_board_from_bin_board_file(force_board1,&argv[curr_arg][12]);
 
       if (retval) {
-        printf("populate_board_from_board_file() failed on %s: %d\n",
+        printf("populate_board_from_bin_board_file() failed on %s: %d\n",
           &argv[curr_arg][12],retval);
         return 5;
       }
@@ -348,7 +348,7 @@ int main(int argc,char **argv)
       if (bHaveMatchForce) {
         get_piece_counts(curr_game.board,curr_piece_counts);
 
-        if (!piece_counts_match(curr_piece_counts,match_piece_counts))
+        if (!piece_counts_match(curr_piece_counts,match_piece_counts,bExactMatch))
           continue;
       }
 
