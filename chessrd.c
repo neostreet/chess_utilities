@@ -939,13 +939,19 @@ void get_piece_counts(unsigned char *board,int *piece_counts)
   }
 }
 
-int piece_counts_match(int *piece_counts,int *match_piece_counts)
+int piece_counts_match(int *piece_counts,int *match_piece_counts,bool bExactMatch)
 {
   int n;
 
   for (n = 0; n < NUM_PIECE_TYPES_0 * 2; n++) {
-    if (piece_counts[n] != match_piece_counts[n])
-      return 0;
+    if (bExactMatch) {
+      if (piece_counts[n] != match_piece_counts[n])
+        return 0;
+    }
+    else {
+      if (match_piece_counts[n] && (piece_counts[n] != match_piece_counts[n]))
+        return 0;
+    }
   }
 
   return 1;
