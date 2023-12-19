@@ -17,6 +17,7 @@ void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 int populate_board_from_board_file(unsigned char *board,char *filename);
 int populate_initial_board_from_board_file(char *filename);
 int populate_board_from_bin_board_file(unsigned char *board,char *filename);
+int populate_piece_counts_from_piece_count_file(int *piece_counts,char *filename);
 int populate_initial_board_from_bin_board_file(char *filename);
 int write_board_to_binfile(unsigned char *board,char *filename);
 int refresh_force_count(struct game *gamept);
@@ -48,7 +49,9 @@ void copy_board(unsigned char *from_board,unsigned char *to_board);
 int count_num_pieces(int color,struct game *gamept);
 void get_piece_counts(unsigned char *board,int *piece_counts);
 int piece_counts_match(int *piece_counts,int *match_piece_counts,bool bExactMatch);
+void print_piece_counts(int *piece_counts);
 
+int format_square(int square);
 void print_bd0(unsigned char *board,int orientation);
 void print_bd(struct game *gamept);
 void fprint_game_bin(struct game *gamept,char *filename);
