@@ -832,6 +832,36 @@ int populate_board_from_bin_board_file(unsigned char *board,char *filename)
   return 0;
 }
 
+int populate_piece_counts_from_piece_count_file(int *piece_counts,char *filename)
+{
+  struct stat stat_buf;
+  int fhndl;
+  unsigned int bytes_to_read;
+  unsigned int bytes_read;
+
+  if (stat(filename,&stat_buf) == -1)
+    return 1;
+
+  if (stat_buf.st_size != (NUM_PIECE_TYPES_0 * 2) * sizeof (int))
+    return 2;
+
+  if ((fhndl = open(filename,O_RDONLY | O_BINARY)) == -1)
+    return 3;
+
+  bytes_to_read = (NUM_PIECE_TYPES_0 * 2) * sizeof (int);
+
+  bytes_read = read(fhndl,(char *)piece_counts,bytes_to_read);
+
+  if (bytes_read != bytes_to_read) {
+    close(fhndl);
+    return 4;
+  }
+
+  close(fhndl);
+
+  return 0;
+}
+
 int populate_initial_board_from_bin_board_file(char *filename)
 {
   return populate_board_from_bin_board_file(initial_board,filename);
@@ -955,4 +985,30 @@ int piece_counts_match(int *piece_counts,int *match_piece_counts,bool bExactMatc
   }
 
   return 1;
+}
+
+void print_piece_counts(int *piece_counts)
+{
+  int n;
+  int square;
+
+  putchar(0x0a);
+
+  for (n = 0; n < NUM_PIECE_TYPES_0 * 2; n++) {
+    if (!n)
+      square = 1;
+    else if (n == NUM_PIECE_TYPES_0)
+      square = -1;
+
+    if (n < (NUM_PIECE_TYPES_0 * 2) - 1) {
+      printf("%c %d ",format_square(square),piece_counts[n]);
+
+      if (square > 0)
+        square++;
+      else
+        square--;
+    }
+    else
+      printf("%c %d\n",format_square(square),piece_counts[n]);
+  }
 }
