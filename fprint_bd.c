@@ -17,10 +17,10 @@ static char filename[MAX_FILENAME_LEN];
 static char usage[] =
 "usage: fprint_bd (-debug) (-terse) (-toggle) (-initial_boardfilename)\n"
 "  (-init_bin_boardfilename) (-board_binfilename) (-num_white_piecesnum) (-num_black_piecesnum)\n"
-"  (-match_boardfilename) (-match_forcefilename) (-only_checks) (-only_mates) (-only_castle)\n"
+"  (-match_boardfilename) (-match_forcefilename) (-match_force2filename) (-only_checks) (-only_mates) (-only_castle)\n"
 "  (-only_promotions) (-only_captures) (-only_en_passants) (-multiple_queens) (-move_number_only)\n"
 "  (-mine) (-not_mine) (-search_all_moves) (-exact_match) (-only_no_promotions) (-only_underpromotions)\n"
-"  (-white_force_countnum) (-black_force_countnum) (-moved_pieceletter) (-qnn) [white | black] filename\n";
+"  (-white_force_countnum) (-black_force_countnum) (-moved_pieceletter) (-print_piece_counts) (-qnn) [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -57,6 +57,7 @@ int main(int argc,char **argv)
   bool bNotMine;
   bool bHaveMatchBoard;
   bool bHaveMatchForce;
+  bool bPrintPieceCounts;
   bool bPrintedFilename;
   bool bPrintedBoard;
   bool bSkip;
@@ -75,7 +76,7 @@ int main(int argc,char **argv)
   int filename_len;
   int num_pieces;
 
-  if ((argc < 2) || (argc > 30)) {
+  if ((argc < 2) || (argc > 32)) {
     printf(usage);
     return 1;
   }
@@ -107,6 +108,7 @@ int main(int argc,char **argv)
   bNotMine = false;
   bHaveMatchBoard = false;
   bHaveMatchForce = false;
+  bPrintPieceCounts = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -161,6 +163,16 @@ int main(int argc,char **argv)
         return 4;
       }
     }
+    else if (!strncmp(argv[curr_arg],"-match_force2",13)) {
+      bHaveMatchForce = true;
+      retval = populate_piece_counts_from_piece_count_file(match_piece_counts,&argv[curr_arg][13]);
+
+      if (retval) {
+        printf("populate_piece_counts_from_piece_count_file() failed on %s: %d\n",
+          &argv[curr_arg][13],retval);
+        return 5;
+      }
+    }
     else if (!strncmp(argv[curr_arg],"-match_force",12)) {
       bHaveMatchForce = true;
       retval = populate_board_from_bin_board_file(force_board1,&argv[curr_arg][12]);
@@ -168,7 +180,7 @@ int main(int argc,char **argv)
       if (retval) {
         printf("populate_board_from_bin_board_file() failed on %s: %d\n",
           &argv[curr_arg][12],retval);
-        return 5;
+        return 6;
       }
 
       get_piece_counts(force_board1,match_piece_counts);
@@ -199,39 +211,41 @@ int main(int argc,char **argv)
       bNotMine = true;
     else if (!strcmp(argv[curr_arg],"-exact_match"))
       bExactMatch = true;
+    else if (!strcmp(argv[curr_arg],"-print_piece_counts"))
+      bPrintPieceCounts = true;
     else
       break;
   }
 
   if (bOnlyChecks && bOnlyCastle) {
     printf("can't specify both -only_checks and -only_castle\n");
-    return 6;
+    return 7;
   }
 
   if (bMine && bNotMine) {
     printf("can't specify both -mine and -not_mine\n");
-    return 7;
+    return 8;
   }
 
   if (bOnlyPromotions && bOnlyNoPromotions) {
     printf("can't specify both -only_promotions and -only_no_promotions\n");
-    return 8;
+    return 9;
   }
 
   if (bOnlyPromotions && bOnlyUnderpromotions) {
     printf("can't specify both -only_promotions and -only_underpromotions\n");
-    return 9;
+    return 10;
   }
 
   if (bOnlyNoPromotions && bOnlyUnderpromotions) {
     printf("can't specify both -only_no_promotions and -only_underpromotions\n");
-    return 10;
+    return 11;
   }
 
   if (quiz_number != -1) {
     if (argc - curr_arg != 2) {
       printf(usage);
-      return 11;
+      return 12;
     }
 
     if (!strcmp(argv[curr_arg],"white"))
@@ -240,19 +254,19 @@ int main(int argc,char **argv)
       bBlack = true;
     else {
       printf(usage);
-      return 12;
+      return 13;
     }
   }
   else {
     if (argc - curr_arg != 1) {
       printf(usage);
-      return 13;
+      return 14;
     }
   }
 
   if ((fptr = fopen(argv[argc-1],"r")) == NULL) {
     printf(couldnt_open,argv[argc-1]);
-    return 14;
+    return 15;
   }
 
   for ( ; ; ) {
@@ -567,6 +581,11 @@ int main(int argc,char **argv)
         putchar(0x0a);
         print_bd(&curr_game);
         print_special_moves(&curr_game);
+
+        if (bPrintPieceCounts) {
+          get_piece_counts(curr_game.board,curr_piece_counts);
+          print_piece_counts(curr_piece_counts);
+        }
       }
     }
   }
