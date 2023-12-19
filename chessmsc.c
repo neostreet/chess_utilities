@@ -9,7 +9,7 @@ using namespace std;
 #include "chess.fun"
 #include "chess.mac"
 
-static int format_square(int square)
+int format_square(int square)
 {
   bool bBlack;
   int return_char;
