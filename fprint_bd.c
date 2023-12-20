@@ -523,6 +523,13 @@ int main(int argc,char **argv)
         bSkip = true;
     }
 
+    if (!bSkip && bHaveMatchForce) {
+      get_piece_counts(curr_game.board,curr_piece_counts);
+
+      if (!piece_counts_match(curr_piece_counts,match_piece_counts,bExactMatch))
+        bSkip = true;
+    }
+
     if (!bSkip && bOnlyChecks) {
       if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK))
         bSkip = true;
