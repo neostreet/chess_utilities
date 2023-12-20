@@ -974,6 +974,13 @@ int piece_counts_match(int *piece_counts,int *match_piece_counts,bool bExactMatc
   int n;
 
   for (n = 0; n < NUM_PIECE_TYPES_0 * 2; n++) {
+    if (match_piece_counts[n] == -1) {
+      if (piece_counts[n])
+        return 0;
+      else
+        continue;
+    }
+
     if (bExactMatch) {
       if (piece_counts[n] != match_piece_counts[n])
         return 0;
