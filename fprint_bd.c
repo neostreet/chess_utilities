@@ -570,7 +570,7 @@ int main(int argc,char **argv)
 
     if (!bSkip) {
       if (bOnlyChecks || bOnlyMates || bOnlyCastle || bOnlyPromotions || bOnlyUnderpromotions || bOnlyNoPromotions ||
-        bOnlyCaptures || bMultipleQueens || bHaveMatchBoard ||
+        bOnlyCaptures || bMultipleQueens || bHaveMatchBoard || bHaveMatchForce ||
         bMine || bNotMine || (num_white_pieces != -1) || (num_black_pieces != -1) ||
         (white_force_count != -1) || (black_force_count != -1) || (moved_piece != ' ')) {
         printf("%s\n",filename);
