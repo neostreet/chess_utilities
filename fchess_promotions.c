@@ -11,7 +11,7 @@ static char time[MAX_LINE_LEN];
 
 static char usage[] =
 "usage: fchess_promotions (-verbose) (-date_time) (-none) (-terse) (-white) (-black)\n"
-"  (-me) (-opponent) (-mate) (-not_none) player_name filename\n";
+"  (-me) (-opponent) (-mate) (-not_none) (-only_both_players) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -44,6 +44,7 @@ int main(int argc,char **argv)
   bool bOpponent;
   bool bMate;
   bool bNotNone;
+  bool bOnlyBothPlayers;
   int player_name_ix;
   int player_name_len;
   FILE *fptr0;
@@ -65,7 +66,7 @@ int main(int argc,char **argv)
   int grand_total_promotions;
   int num_games;
 
-  if ((argc < 3) || (argc > 13)) {
+  if ((argc < 3) || (argc > 14)) {
     printf(usage);
     return 1;
   }
@@ -80,6 +81,7 @@ int main(int argc,char **argv)
   bOpponent = false;
   bMate = false;
   bNotNone = false;
+  bOnlyBothPlayers = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
@@ -102,6 +104,8 @@ int main(int argc,char **argv)
       bMate = true;
     else if (!strcmp(argv[curr_arg],"-not_none"))
       bNotNone = true;
+    else if (!strcmp(argv[curr_arg],"-only_both_players"))
+      bOnlyBothPlayers = true;
     else
       break;
   }
@@ -204,6 +208,11 @@ int main(int argc,char **argv)
         else {
           my_promotions = black_promotions;
           opponent_promotions = white_promotions;
+        }
+
+        if (bOnlyBothPlayers) {
+          if (!white_promotions || !black_promotions)
+            break;
         }
 
         total_white_promotions += white_promotions;
