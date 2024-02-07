@@ -216,71 +216,78 @@ int main(int argc,char **argv)
           if (!bDateTime) {
             if (bNone && bTerse)
               printf("%s\n",filename);
-            else if (bWhite || bBlack) {
-              if (bWhite) {
-                if (bBlack) {
-                  printf("%3d white, %3d black, %3d total %s\n",white_checks,black_checks,total_checks,filename);
-                }
-                else {
-                  printf("%3d white, %3d total %s\n",white_checks,total_checks,filename);
-                }
-              } else if (bBlack) {
+            else {
+              if (bWhite || bBlack) {
+                if (bWhite) {
+                  if (bBlack) {
+                    printf("%3d white, %3d black, %3d total %s\n",white_checks,black_checks,total_checks,filename);
+                  }
+                  else {
+                    printf("%3d white, %3d total %s\n",white_checks,total_checks,filename);
+                  }
+                } else if (bBlack) {
                   printf("%3d black, %3d total %s\n",black_checks,total_checks,filename);
+                }
               }
-              else
-                printf("%3d %s\n",total_checks,filename);
-            }
-            else if (bMe || bOpponent) {
-              if (bMe) {
-                if (bOpponent) {
-                  if (bTerse)
-                    printf("%d %d %d\n",my_checks,opponent_checks,total_checks);
-                  else
-                    printf("%3d me, %3d opponent, %3d total %s\n",my_checks,opponent_checks,total_checks,filename);
+
+              if (bVerbose || bMe || bOpponent) {
+                if (bVerbose || bMe) {
+                  if (bVerbose || bOpponent) {
+                    if (bTerse)
+                      printf("%d %d %d\n",my_checks,opponent_checks,total_checks);
+                    else
+                      printf("%3d me, %3d opponent, %3d total %s\n",my_checks,opponent_checks,total_checks,filename);
+                  }
+                  else {
+                    if (bTerse)
+                      printf("%d %d\n",my_checks,total_checks);
+                    else
+                      printf("%3d me, %3d total %s\n",my_checks,total_checks,filename);
+                  }
                 }
                 else {
-                  if (bTerse)
-                    printf("%d %d\n",my_checks,total_checks);
-                  else
-                    printf("%3d me, %3d total %s\n",my_checks,total_checks,filename);
+                  if (bVerbose || bOpponent) {
+                    if (bTerse)
+                      printf("%d %d\n",opponent_checks,total_checks);
+                    else
+                      printf("%3d opponent, %3d total %s\n",opponent_checks,total_checks,filename);
+                  }
                 }
-              } else if (bOpponent) {
-                if (bTerse)
-                  printf("%d %d\n",opponent_checks,total_checks);
-                else
-                  printf("%3d opponent, %3d total %s\n",opponent_checks,total_checks,filename);
               }
             }
           }
           else {
             if (bNone && bTerse)
               printf("%s %s %s\n",filename,date,time);
-            else if (bWhite || bBlack) {
-              if (bWhite) {
-                if (bBlack) {
-                  printf("%3d white, %3d black, %3d total %s %s %s\n",white_checks,black_checks,total_checks,filename,date,time);
+            else {
+              if (bWhite || bBlack) {
+                if (bWhite) {
+                  if (bBlack) {
+                    printf("%3d white, %3d black, %3d total %s %s %s\n",white_checks,black_checks,total_checks,filename,date,time);
+                  }
+                  else {
+                    printf("%3d white, %3d total %s %s %s\n",white_checks,total_checks,filename,date,time);
+                  }
+                } else if (bBlack) {
+                    printf("%3d black, %3d total %s %s %s\n",black_checks,total_checks,filename,date,time);
                 }
-                else {
-                  printf("%3d white, %3d total %s %s %s\n",white_checks,total_checks,filename,date,time);
-                }
-              } else if (bBlack) {
-                  printf("%3d black, %3d total %s %s %s\n",black_checks,total_checks,filename,date,time);
               }
-            }
-            else if (bMe || bOpponent) {
-              if (bMe) {
-                if (bOpponent) {
-                  printf("%3d me, %3d opponent, %3d total %s %s %s\n",my_checks,opponent_checks,total_checks,filename,date,time);
+
+              if (bMe || bOpponent) {
+                if (bMe) {
+                  if (bOpponent) {
+                    printf("%3d me, %3d opponent, %3d total %s %s %s\n",my_checks,opponent_checks,total_checks,filename,date,time);
+                  }
+                  else {
+                    printf("%3d me, %3d total %s %s %s\n",my_checks,total_checks,filename,date,time);
+                  }
+                } else if (bOpponent) {
+                    printf("%3d opponent, %3d total %s %s %s\n",opponent_checks,total_checks,filename,date,time);
                 }
-                else {
-                  printf("%3d me, %3d total %s %s %s\n",my_checks,total_checks,filename,date,time);
-                }
-              } else if (bOpponent) {
-                  printf("%3d opponent, %3d total %s %s %s\n",opponent_checks,total_checks,filename,date,time);
               }
-            }
-            else
+
               printf("%3d %s %s %s\n",total_checks,filename,date,time);
+            }
           }
         }
 
