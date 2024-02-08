@@ -9,7 +9,7 @@ static char line[MAX_LINE_LEN];
 static char date[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fchess_score (-verbose) (-runtots) (-colorcolor) (-plus_minus) player_name filename\n";
+"usage: fchess_score (-terse) (-verbose) (-runtots) (-colorcolor) (-plus_minus) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 enum {
@@ -41,6 +41,7 @@ int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
+  bool bTerse;
   bool bVerbose;
   bool bRuntots;
   int color;
@@ -60,18 +61,21 @@ int main(int argc,char **argv)
   int ix;
   double points;
 
-  if ((argc < 3) || (argc > 7)) {
+  if ((argc < 3) || (argc > 8)) {
     printf(usage);
     return 1;
   }
 
+  bTerse = false;
   bVerbose = false;
   bRuntots = false;
   color = -1;
   bPlusMinus = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-verbose"))
+    if (!strcmp(argv[curr_arg],"-terse"))
+      bTerse = true;
+    else if (!strcmp(argv[curr_arg],"-verbose"))
       bVerbose = true;
     else if (!strcmp(argv[curr_arg],"-runtots"))
       bRuntots = true;
@@ -96,12 +100,17 @@ int main(int argc,char **argv)
     return 3;
   }
 
+  if (bTerse && bVerbose) {
+    printf("can't specify both -terse and -verbose\n");
+    return 4;
+  }
+
   player_name_ix = curr_arg++;
   player_name_len = strlen(argv[player_name_ix]);
 
   if ((fptr0 = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 4;
+    return 5;
   }
 
   wins = 0;
@@ -145,7 +154,7 @@ int main(int argc,char **argv)
                 else
                   printf("%d %s ",wins - losses,filename);
               }
-              else {
+              else if (!bTerse) {
                 if (!bPlusMinus)
                   printf("1.0\n");
                 else
@@ -163,7 +172,7 @@ int main(int argc,char **argv)
                 else
                   printf("%d %s ",wins - losses,filename);
               }
-              else {
+              else if (!bTerse) {
                 if (!bPlusMinus)
                   printf("0.0\n");
                 else
@@ -187,7 +196,7 @@ int main(int argc,char **argv)
                 else
                   printf("%d %s ",wins - losses,filename);
               }
-              else {
+              else if (!bTerse) {
                 if (!bPlusMinus)
                   printf("1.0\n");
                 else
@@ -205,7 +214,7 @@ int main(int argc,char **argv)
                 else
                   printf("%d %s ",wins - losses,filename);
               }
-              else {
+              else if (!bTerse) {
                 if (!bPlusMinus)
                   printf("0.0\n");
                 else
@@ -228,7 +237,7 @@ int main(int argc,char **argv)
               else
                 printf("%d %s ",wins - losses,filename);
             }
-            else {
+            else if (!bTerse) {
               if (!bPlusMinus)
                 printf("0.5\n");
               else
@@ -238,7 +247,7 @@ int main(int argc,char **argv)
         }
         else {
           printf("%s: couldn't determine result\n",filename);
-          return 5;
+          return 6;
         }
       }
       else if (Contains(true,
@@ -279,7 +288,7 @@ int main(int argc,char **argv)
         else {
           printf("%s: couldn't determine whether %s is white or black\n",
             filename,argv[player_name_ix]);
-          return 6;
+          return 7;
         }
       }
     }
@@ -289,9 +298,9 @@ int main(int argc,char **argv)
 
   fclose(fptr0);
 
-  total_games = wins + losses + draws;
+  total_games = wins + draws + losses;
 
-  if (!bRuntots && !bPlusMinus && bVerbose) {
+  if (!bRuntots && !bPlusMinus && (bTerse || bVerbose)) {
     printf("\n%6d wins\n",wins);
     printf("%6d draws\n",draws);
     printf("%6d losses\n",losses);
