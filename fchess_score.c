@@ -60,6 +60,7 @@ int main(int argc,char **argv)
   int total_games;
   int ix;
   double points;
+  double pct;
 
   if ((argc < 3) || (argc > 8)) {
     printf(usage);
@@ -306,8 +307,9 @@ int main(int argc,char **argv)
     printf("%6d losses\n",losses);
 
     points = (double)wins + ((double)(0.5) * (double)draws);
+    pct = points / (double)total_games * (double)100;
 
-    printf("\n%6.2lf out of %6.2lf\n",points,(double)total_games);
+    printf("\n%6.2lf out of %6.2lf (%5.2lf%%)\n",points,(double)total_games,pct);
   }
 
   return 0;
