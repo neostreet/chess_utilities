@@ -15,12 +15,13 @@ using namespace std;
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: fprint_bd (-debug) (-terse) (-toggle) (-initial_boardfilename)\n"
+"usage: fprint_bd (-debug) (-terse) (-toggle) (-initial_boardfilename) (-i_am_white) (-i_am_black)\n"
 "  (-init_bin_boardfilename) (-board_binfilename) (-num_white_piecesnum) (-num_black_piecesnum)\n"
 "  (-match_boardfilename) (-match_forcefilename) (-match_force2filename) (-only_checks) (-only_mates) (-only_castle)\n"
 "  (-only_promotions) (-only_captures) (-only_en_passants) (-multiple_queens) (-move_number_only)\n"
 "  (-mine) (-not_mine) (-search_all_moves) (-exact_match) (-only_no_promotions) (-only_underpromotions)\n"
-"  (-white_force_countnum) (-black_force_countnum) (-moved_pieceletter) (-print_piece_counts) (-qnn) [white | black] filename\n";
+"  (-white_force_countnum) (-black_force_countnum) (-moved_pieceletter) (-print_piece_counts) (-qnn) [white | black]\n"
+"  filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -37,6 +38,8 @@ int main(int argc,char **argv)
   bool bSearchAllMoves;
   bool bExactMatch;
   bool bToggle;
+  bool bIAmWhite;
+  bool bIAmBlack;
   bool bBoardBin;
   int num_white_pieces;
   int num_black_pieces;
@@ -76,7 +79,7 @@ int main(int argc,char **argv)
   int filename_len;
   int num_pieces;
 
-  if ((argc < 2) || (argc > 32)) {
+  if ((argc < 2) || (argc > 34)) {
     printf(usage);
     return 1;
   }
@@ -87,6 +90,8 @@ int main(int argc,char **argv)
   bSearchAllMoves = false;
   bExactMatch = false;
   bToggle = false;
+  bIAmWhite = false;
+  bIAmBlack = false;
   quiz_number = -1;
   bBoardBin = false;
   num_white_pieces = -1;
@@ -119,6 +124,10 @@ int main(int argc,char **argv)
       bSearchAllMoves = true;
     else if (!strcmp(argv[curr_arg],"-toggle"))
       bToggle = true;
+    else if (!strcmp(argv[curr_arg],"-i_am_white"))
+      bIAmWhite = true;
+    else if (!strcmp(argv[curr_arg],"-i_am_black"))
+      bIAmBlack = true;
     else if (!strncmp(argv[curr_arg],"-initial_board",14)) {
       retval = populate_initial_board_from_board_file(&argv[curr_arg][14]);
 
@@ -242,10 +251,15 @@ int main(int argc,char **argv)
     return 11;
   }
 
+  if (bIAmWhite and bIAmBlack) {
+    printf("can't specify both -i_am_white and -i_am_black\n");
+    return 12;
+  }
+
   if (quiz_number != -1) {
     if (argc - curr_arg != 2) {
       printf(usage);
-      return 12;
+      return 13;
     }
 
     if (!strcmp(argv[curr_arg],"white"))
@@ -254,19 +268,19 @@ int main(int argc,char **argv)
       bBlack = true;
     else {
       printf(usage);
-      return 13;
+      return 14;
     }
   }
   else {
     if (argc - curr_arg != 1) {
       printf(usage);
-      return 14;
+      return 15;
     }
   }
 
   if ((fptr = fopen(argv[argc-1],"r")) == NULL) {
     printf(couldnt_open,argv[argc-1]);
-    return 15;
+    return 16;
   }
 
   for ( ; ; ) {
@@ -284,6 +298,12 @@ int main(int argc,char **argv)
 
     continue;
   }
+
+  if (bIAmWhite && curr_game.orientation)
+    continue;
+
+  if (bIAmBlack && !curr_game.orientation)
+    continue;
 
   if (!bOnlyChecks && !bOnlyMates && !bOnlyCastle && !bOnlyCaptures && !bOnlyEnPassants && !bMultipleQueens &&
     !bOnlyPromotions && !bOnlyUnderpromotions && !bOnlyNoPromotions &&
