@@ -1,7 +1,3 @@
-#include <vector>
-
-using namespace std;
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -116,7 +112,6 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
   int dbg;
   int retval;
   int got_error;
-  struct move move;
   bool bCheck;
   bool bMate;
 
@@ -154,8 +149,6 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
   gamept->title[0] = 0;
   word_no = 0;
   got_error = 0;
-
-  gamept->moves.clear();
 
   for ( ; ; ) {
     if (word_no || !bHaveFirstWord)
@@ -200,12 +193,12 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
     else
       direction = 1;            /* white's move */
 
-    move.special_move_info = 0;
+    gamept->moves[gamept->curr_move].special_move_info = 0;
 
     switch(word[0]) {
       case 'O':
       case '0':
-        retval = do_castle(gamept,direction,word,wordlen,&move);
+        retval = do_castle(gamept,direction,word,wordlen,&gamept->moves[gamept->curr_move]);
 
         if (retval) {
           /*printf(corrupted_msg);*/
@@ -221,7 +214,7 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
       case 'B':
       case 'Q':
       case 'K':
-        retval = do_piece_move(gamept,direction,word,wordlen,&move);
+        retval = do_piece_move(gamept,direction,word,wordlen,&gamept->moves[gamept->curr_move]);
 
         if (retval) {
           /*printf(corrupted_msg);*/
@@ -233,7 +226,7 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
         break;
 
       default:
-        retval = do_pawn_move(gamept,direction,word,wordlen,&move);
+        retval = do_pawn_move(gamept,direction,word,wordlen,&gamept->moves[gamept->curr_move]);
 
         if (retval) {
           /*printf(corrupted_msg);*/
@@ -249,14 +242,12 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
       break;
 
     if (bCheck) {
-      move.special_move_info |= SPECIAL_MOVE_CHECK;
+      gamept->moves[gamept->curr_move].special_move_info |= SPECIAL_MOVE_CHECK;
     }
 
     if (bMate) {
-      move.special_move_info |= SPECIAL_MOVE_MATE;
+      gamept->moves[gamept->curr_move].special_move_info |= SPECIAL_MOVE_MATE;
     }
-
-    gamept->moves.push_back(move);
 
     update_board(gamept->board,&gamept->moves[gamept->curr_move],gamept->curr_move & 0x1);
 
