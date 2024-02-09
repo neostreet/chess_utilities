@@ -12,7 +12,7 @@ static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
 "usage: fprint_bd (-debug) (-terse) (-toggle) (-initial_boardfilename) (-i_am_white) (-i_am_black)\n"
-"  (-init_bin_boardfilename) (-board_binfilename) (-num_white_piecesnum) (-num_black_piecesnum)\n"
+"  (-init_bin_boardfilename) (-board_binfilename) (-num_white_piecesnum) (-num_black_piecesnum) -binary_format\n"
 "  (-match_boardfilename) (-match_forcefilename) (-match_force2filename) (-only_checks) (-only_mates) (-only_castle)\n"
 "  (-only_promotions) (-only_captures) (-only_en_passants) (-multiple_queens) (-move_number_only)\n"
 "  (-mine) (-not_mine) (-search_all_moves) (-exact_match) (-only_no_promotions) (-only_underpromotions)\n"
@@ -57,6 +57,7 @@ int main(int argc,char **argv)
   bool bHaveMatchBoard;
   bool bHaveMatchForce;
   bool bPrintPieceCounts;
+  bool bBinaryFormat;
   bool bPrintedFilename;
   bool bPrintedBoard;
   bool bSkip;
@@ -75,7 +76,7 @@ int main(int argc,char **argv)
   int filename_len;
   int num_pieces;
 
-  if ((argc < 2) || (argc > 34)) {
+  if ((argc < 2) || (argc > 35)) {
     printf(usage);
     return 1;
   }
@@ -110,6 +111,7 @@ int main(int argc,char **argv)
   bHaveMatchBoard = false;
   bHaveMatchForce = false;
   bPrintPieceCounts = false;
+  bBinaryFormat = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -218,6 +220,8 @@ int main(int argc,char **argv)
       bExactMatch = true;
     else if (!strcmp(argv[curr_arg],"-print_piece_counts"))
       bPrintPieceCounts = true;
+    else if (!strcmp(argv[curr_arg],"-binary_format"))
+      bBinaryFormat = true;
     else
       break;
   }
@@ -286,13 +290,25 @@ int main(int argc,char **argv)
   if (feof(fptr))
     break;
 
-  retval = read_game(filename,&curr_game,err_msg);
+  if (!bBinaryFormat) {
+    retval = read_game(filename,&curr_game,err_msg);
 
-  if (retval) {
-    printf("read_game of %s failed: %d\n",filename,retval);
-    printf("curr_move = %d\n",curr_game.curr_move);
+    if (retval) {
+      printf("read_game of %s failed: %d\n",filename,retval);
+      printf("curr_move = %d\n",curr_game.curr_move);
 
-    continue;
+      continue;
+    }
+  }
+  else {
+    retval = read_binary_game(filename,&curr_game);
+
+    if (retval) {
+      printf("read_binary_game of %s failed: %d\n",filename,retval);
+      printf("curr_move = %d\n",curr_game.curr_move);
+
+      continue;
+    }
   }
 
   if (bIAmWhite && curr_game.orientation)
