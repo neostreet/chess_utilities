@@ -1,7 +1,3 @@
-#include <vector>
-
-using namespace std;
-
 #include <stdio.h>
 #include "chess.h"
 #include "chess.glb"
