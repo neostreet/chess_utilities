@@ -40,6 +40,7 @@
 2 * FORCE_VALUE_KNIGHT + 2 * FORCE_VALUE_BISHOP + 8 * FORCE_VALUE_PAWN)
 
 #define WORDLEN 80
+#define MAX_MOVES 400
 
 #define WIDTH_IN_PIXELS 50
 #define XLEN WIDTH_IN_PIXELS
@@ -100,7 +101,7 @@ struct game {
   int moved_piece;
   unsigned char board[CHARS_IN_BOARD];  /* 8 columns * 8 rows / 2 (nibbles per char) */
   short force_count[NUM_PLAYERS];
-  vector<struct move> moves;
+  struct move moves[MAX_MOVES];
 };
 
 typedef char (*CHESS_FILE_LIST)[MAX_FILE_NAME_LEN];
