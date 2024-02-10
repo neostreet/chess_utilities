@@ -12,7 +12,6 @@ int get_ystart(struct game *gamept,int board_offset);
 int get_color(int);
 void put_square(struct game *gamept,int what,int where);
 void update_move_number(struct game *gamept);
-int read_fen(FILE *fptr,struct game *gamept);
 void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 int populate_board_from_board_file(unsigned char *board,char *filename);
 int populate_initial_board_from_board_file(char *filename);
