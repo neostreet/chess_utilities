@@ -14,6 +14,8 @@ static char bin_filename[MAX_FILENAME_LEN];
 static char usage[] =
 "usage: ch2bin (-debug) filename\n";
 
+static struct game curr_game;
+
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
 
@@ -29,7 +31,6 @@ int main(int argc,char **argv)
   bool bDebug;
   int ch_filename_len;
   int retval;
-  struct game curr_game;
 
   if ((argc < 2) || (argc > 3)) {
     printf(usage);
