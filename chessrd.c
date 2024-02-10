@@ -126,20 +126,7 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
                                    /* 0 = standard, 1 = black on bottom */
 
   end_of_file = get_word(fptr,word,WORDLEN,&wordlen,&bCheck,&bMate);
-
-  if (!strncmp(word,"FEN:",4)) {
-    retval = read_fen(fptr,gamept);
-
-    if (retval) {
-      printf("read_fen() failed: %d\n",retval);
-      fclose(fptr);
-      return 2;
-    }
-
-    bHaveFirstWord = false;
-  }
-  else
-    bHaveFirstWord = true;
+  bHaveFirstWord = true;
 
   set_initial_board(gamept);
 
@@ -552,25 +539,6 @@ void set_piece2(unsigned char *board,int row,int column,int piece)
 
   board_offset = row * 8 + column;
   set_piece1(board,board_offset,piece);
-}
-
-#define MAX_FEN_LINE_LEN 256
-static char fen_line[MAX_FEN_LINE_LEN];
-
-int read_fen(FILE *fptr,struct game *gamept)
-{
-  int fen_line_len;
-  int retval;
-
-  GetLine(fptr,fen_line,&fen_line_len,MAX_FEN_LINE_LEN);
-
-  retval = fen2pos(fen_line,fen_line_len,initial_board,
-    &gamept->black_to_play);
-
-  if (retval)
-    return retval;
-
-  return 0;
 }
 
 void GetLine(FILE *fptr,char *line,int *line_len,int maxllen)
