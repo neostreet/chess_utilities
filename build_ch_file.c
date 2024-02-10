@@ -10,13 +10,14 @@ static char ch_filename[MAX_FILENAME_LEN];
 static char line[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: build_ch_file filename\n";
+"usage: build_ch_file ext1 ext2 filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int build_ch_filename(
+  char *ext,
   char *txt_filename,
   int txt_filename_len,
   char *ch_filename,
@@ -32,22 +33,22 @@ int main(int argc,char **argv)
   int line_no;
   int line_len;
 
-  if (argc != 2) {
+  if (argc != 4) {
     printf(usage);
     return 1;
   }
 
-  txt_filename_len = strlen(argv[1]);
+  txt_filename_len = strlen(argv[3]);
 
-  retval = build_ch_filename(argv[1],txt_filename_len,ch_filename,MAX_FILENAME_LEN);
+  retval = build_ch_filename(argv[1],argv[3],txt_filename_len,ch_filename,MAX_FILENAME_LEN);
 
   if (retval) {
-    printf("build_ch_filename failed on %s: %d\n",argv[1],retval);
+    printf("build_ch_filename failed on %s: %d\n",argv[3],retval);
     return 2;
   }
 
-  if ((fptr0 = fopen(argv[1],"r")) == NULL) {
-    printf(couldnt_open,argv[1]);
+  if ((fptr0 = fopen(argv[3],"r")) == NULL) {
+    printf(couldnt_open,argv[3]);
     return 3;
   }
 
@@ -76,7 +77,7 @@ int main(int argc,char **argv)
       return 5;
     }
 
-    strcpy(&line[n],".ch");
+    strcpy(&line[n],argv[2]);
     fprintf(fptr1,"%s\n",line);
   }
 
@@ -111,6 +112,7 @@ static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen)
 }
 
 static int build_ch_filename(
+  char *ext,
   char *txt_filename,
   int txt_filename_len,
   char *ch_filename,
@@ -130,7 +132,7 @@ static int build_ch_filename(
     return 2;
 
   strncpy(ch_filename,txt_filename,n);
-  strcpy(&ch_filename[n],".ch.lst");
+  strcpy(&ch_filename[n],ext);
 
   return 0;
 }
