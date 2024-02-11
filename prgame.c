@@ -28,6 +28,7 @@ int main(int argc,char **argv)
   }
 
   print_game(&curr_game);
+  print_bd(&curr_game);
 
   return 0;
 }
