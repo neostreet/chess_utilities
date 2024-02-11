@@ -93,8 +93,6 @@ void set_initial_board(struct game *gamept)
 
   for (n = 0; n < CHARS_IN_BOARD; n++)
     gamept->board[n] = initial_board[n];
-
-  refresh_force_count(gamept);
 }
 
 int read_game(char *filename,struct game *gamept,char *err_msg)
@@ -844,32 +842,6 @@ int write_board_to_binfile(unsigned char *board,char *filename)
   close(fhndl);
 
   return 0;
-}
-
-int refresh_force_count(struct game *gamept)
-{
-  int n;
-  short piece;
-
-  for (n = 0; n < 2; n++)
-    gamept->force_count[n] = 0;
-
-  for (n = 0; n < NUM_BOARD_SQUARES; n++) {
-    piece = get_piece1(gamept->board,n);
-
-    if (!piece)
-      continue;
-
-    if (piece < 0)
-      gamept->force_count[BLACK] += force_value_of(piece);
-    else
-      gamept->force_count[WHITE] += force_value_of(piece);
-  }
-
-  if (gamept->force_count[WHITE] > gamept->force_count[BLACK])
-    return gamept->force_count[WHITE] - gamept->force_count[BLACK];
-  else
-    return gamept->force_count[BLACK] - gamept->force_count[WHITE];
 }
 
 int count_num_pieces(int color,struct game *gamept)
