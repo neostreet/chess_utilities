@@ -12,7 +12,7 @@ static char date_time[MAX_LINE_LEN];
 
 static char usage[] =
 "usage: fchess_elo (-terse) (-verbose) (-rating_diff) (-after) (-before_and_after) (-before_and_after_diff) (-opponent)\n"
-"  (-opponent_name) (-date) (-time) (-boundaryboundary) (-ge_eloelo) (-is_ge_eloelo) (-filename) player_name filename\n";
+"  (-opponent_name) (-date) (-time) (-boundaryboundary) (-ge_eloelo) (-is_ge_eloelo) (-lt_eloelo) (-filename) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "[White \"";
@@ -52,6 +52,8 @@ static void get_time(char *time,char *line);
               break; \
           } \
           if ((ge_elo != -1) && (elo + rating_diff < ge_elo)) \
+            break; \
+          else if ((lt_elo != -1) && (elo + rating_diff >= lt_elo)) \
             break; \
           if (bTerse) { \
             if (bRatingDiff) \
@@ -174,6 +176,7 @@ int main(int argc,char **argv)
   int boundary;
   int ge_elo;
   int is_ge_elo;
+  int lt_elo;
   int player_name_ix;
   int player_name_len;
   FILE *fptr0;
@@ -186,7 +189,7 @@ int main(int argc,char **argv)
   int elo;
   int rating_diff;
 
-  if ((argc < 3) || (argc > 17)) {
+  if ((argc < 3) || (argc > 18)) {
     printf(usage);
     return 1;
   }
@@ -204,6 +207,7 @@ int main(int argc,char **argv)
   boundary = -1;
   ge_elo = -1;
   is_ge_elo = -1;
+  lt_elo = -1;
   bFilename = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
@@ -233,6 +237,8 @@ int main(int argc,char **argv)
       sscanf(&argv[curr_arg][7],"%d",&ge_elo);
     else if (!strncmp(argv[curr_arg],"-is_ge_elo",10))
       sscanf(&argv[curr_arg][10],"%d",&is_ge_elo);
+    else if (!strncmp(argv[curr_arg],"-lt_elo",7))
+      sscanf(&argv[curr_arg][7],"%d",&lt_elo);
     else if (!strcmp(argv[curr_arg],"-filename"))
       bFilename = true;
     else
