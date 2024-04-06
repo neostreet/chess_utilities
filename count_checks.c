@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: count_checks (-verbose) filename\n";
+"usage: count_checks (-verbose) (-consecutive) (-game_ending) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -21,6 +21,8 @@ int main(int argc,char **argv)
   int n;
   int curr_arg;
   bool bVerbose;
+  bool bConsecutive;
+  bool bGameEnding;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -28,17 +30,27 @@ int main(int argc,char **argv)
   bool bBlack;
   int num_white_checks;
   int num_black_checks;
+  int num_checks;
+  int max_consecutive_white_checks;
+  int max_consecutive_black_checks;
+  int check;
 
-  if ((argc < 2) || (argc > 3)) {
+  if ((argc < 2) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
   bVerbose = false;
+  bConsecutive = false;
+  bGameEnding = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
       bVerbose = true;
+    else if (!strcmp(argv[curr_arg],"-consecutive"))
+      bConsecutive = true;
+    else if (!strcmp(argv[curr_arg],"-game_ending"))
+      bGameEnding = true;
     else
       break;
   }
@@ -64,31 +76,91 @@ int main(int argc,char **argv)
     if (retval) {
       printf("read_game of %s failed: %d\n",filename,retval);
       printf("curr_move = %d\n",curr_game.curr_move);
+      continue;
     }
 
-    set_initial_board(&curr_game);
+    if (bGameEnding) {
+      num_checks = 0;
 
-    num_white_checks = 0;
-    num_black_checks = 0;
+      for (curr_game.curr_move = curr_game.num_moves - 1; curr_game.curr_move >= 0; curr_game.curr_move -= 2) {
+        check = curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK;
 
-    for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
-      bBlack = curr_game.curr_move & 0x1;
-      update_board(curr_game.board,&curr_game.moves[curr_game.curr_move],bBlack);
-
-      if (curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK) {
-        if (bBlack)
-          num_black_checks++;
+        if (!check)
+          break;
         else
-          num_white_checks++;
+          num_checks++;
       }
-    }
 
-    if (bVerbose) {
-      printf("%d white %d black %d total %s\n",
-        num_white_checks,num_black_checks,num_white_checks + num_black_checks,filename);
+      if (num_checks)
+        printf("%d %s\n",num_checks,filename);
     }
-    else
-      printf("%d %s\n",num_white_checks + num_black_checks,filename);
+    else {
+      num_white_checks = 0;
+      num_black_checks = 0;
+
+      if (!bConsecutive) {
+        for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
+          bBlack = curr_game.curr_move & 0x1;
+
+          if (curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK) {
+            if (bBlack)
+              num_black_checks++;
+            else
+              num_white_checks++;
+          }
+        }
+      }
+      else {
+        // do white
+
+        num_checks = 0;
+        max_consecutive_white_checks = 0;
+
+        for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move += 2) {
+          if (curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK)
+            num_checks++;
+          else {
+            if (num_checks > max_consecutive_white_checks)
+              max_consecutive_white_checks = num_checks;
+
+            num_checks = 0;
+          }
+        }
+
+        if (num_checks > max_consecutive_white_checks)
+          max_consecutive_white_checks = num_checks;
+
+        // do black
+
+        num_checks = 0;
+        max_consecutive_black_checks = 0;
+
+        for (curr_game.curr_move = 1; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move += 2) {
+          if (curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK)
+            num_checks++;
+          else {
+            if (num_checks > max_consecutive_black_checks)
+              max_consecutive_black_checks = num_checks;
+
+            num_checks = 0;
+          }
+        }
+
+        if (num_checks > max_consecutive_black_checks)
+          max_consecutive_black_checks = num_checks;
+      }
+
+      if (!bConsecutive) {
+        if (!bVerbose)
+          printf("%d %s\n",num_white_checks + num_black_checks,filename);
+        else {
+          printf("%d white %d black %d total %s\n",
+            num_white_checks,num_black_checks,num_white_checks + num_black_checks,filename);
+        }
+      }
+      else
+        printf("%d white %d black %s\n",max_consecutive_white_checks,max_consecutive_black_checks,filename);
+    }
   }
 
   return 0;
