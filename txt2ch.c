@@ -79,6 +79,7 @@ int main(int argc,char **argv)
   }
 
   color = -1;
+  line_no = 0;
 
   for ( ; ; ) {
     GetLine(fptr,line,&line_len,MAX_LINE_LEN);
@@ -86,9 +87,11 @@ int main(int argc,char **argv)
     if (feof(fptr))
       break;
 
+    line_no++;
+
     if (Contains(true,
       line,line_len,
-      (char *)"White",5,
+      (char *)"[White",6,
       &ix)) {
 
       if (Contains(true,
@@ -105,7 +108,7 @@ int main(int argc,char **argv)
     }
     else if (Contains(true,
       line,line_len,
-      (char *)"Black",5,
+      (char *)"[Black",6,
       &ix)) {
 
       if (!color)
