@@ -199,12 +199,22 @@ int main(int argc,char **argv)
           total_num_checks2 += num_checks2;
         }
       }
-      else
-        printf("%d white %d black %s\n",max_consecutive_checks1,max_consecutive_checks2,filename);
+      else {
+        if (!bByPlayer)
+          printf("%d white, %d black %s\n",max_consecutive_checks1,max_consecutive_checks2,filename);
+        else {
+          if (!curr_game.orientation)
+            printf("%d me, %d opponent %s\n",max_consecutive_checks1,max_consecutive_checks2,filename);
+          else
+            printf("%d me, %d opponent %s\n",max_consecutive_checks2,max_consecutive_checks1,filename);
+        }
+      }
     }
   }
 
-  if (!bConsecutive) {
+  fclose(fptr);
+
+  if (!bConsecutive && !bGameEnding) {
     if (!bVerbose)
       printf("\n%d\n",total_num_checks);
     else {
