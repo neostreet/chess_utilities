@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: count_checks (-verbose) (-consecutive) (-game_ending) (-by_player) (-mate) filename\n";
+"usage: count_checks (-verbose) (-consecutive) (-game_ending) (-by_player) (-mate) (-none) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -25,6 +25,7 @@ int main(int argc,char **argv)
   bool bGameEnding;
   bool bByPlayer;
   bool bMate;
+  bool bNone;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -41,7 +42,7 @@ int main(int argc,char **argv)
   int check;
   bool bHaveCheck;
 
-  if ((argc < 2) || (argc > 7)) {
+  if ((argc < 2) || (argc > 8)) {
     printf(usage);
     return 1;
   }
@@ -51,6 +52,7 @@ int main(int argc,char **argv)
   bGameEnding = false;
   bByPlayer = false;
   bMate = false;
+  bNone = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
@@ -63,6 +65,8 @@ int main(int argc,char **argv)
       bByPlayer = true;
     else if (!strcmp(argv[curr_arg],"-mate"))
       bMate = true;
+    else if (!strcmp(argv[curr_arg],"-none"))
+      bNone = true;
     else
       break;
   }
@@ -72,9 +76,14 @@ int main(int argc,char **argv)
     return 2;
   }
 
+  if (bMate && bNone) {
+    printf("can't specify both -mate and -none\n");
+    return 3;
+  }
+
   if ((fptr = fopen(argv[argc-1],"r")) == NULL) {
     printf(couldnt_open,argv[argc-1]);
-    return 3;
+    return 4;
   }
 
   if (!bVerbose)
@@ -191,7 +200,7 @@ int main(int argc,char **argv)
       }
 
       if (!bConsecutive) {
-        if (num_checks1 + num_checks2) {
+        if ((!bNone && (num_checks1 + num_checks2)) || (bNone && !(num_checks1 + num_checks2))) {
           if (!bVerbose) {
             printf("%d %s\n",num_checks1 + num_checks2,filename);
             total_num_checks += num_checks1 + num_checks2;
