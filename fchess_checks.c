@@ -301,11 +301,11 @@ int main(int argc,char **argv)
   fclose(fptr0);
 
   putchar(0x0a);
-  printf("%5d white checks\n",total_white_checks);
-  printf("%5d black checks\n",total_black_checks);
-  printf("%5d my checks\n",total_my_checks);
-  printf("%5d opponent checks\n",total_opponent_checks);
-  printf("%5d total checks\n",grand_total_checks);
+  printf("%5d white %s\n",total_white_checks,(bMate ? "mates" : "checks"));
+  printf("%5d black %s\n",total_black_checks,(bMate ? "mates" : "checks"));
+  printf("%5d my %s\n",total_my_checks,(bMate ? "mates" : "checks"));
+  printf("%5d opponent %s\n",total_opponent_checks,(bMate ? "mates" : "checks"));
+  printf("%5d total %s\n",grand_total_checks,(bMate ? "mates" : "checks"));
   putchar(0x0a);
   printf("%5d games\n",num_games);
 
