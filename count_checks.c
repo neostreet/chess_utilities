@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: count_checks (-verbose) (-consecutive) (-game_ending) (-by_player) filename\n";
+"usage: count_checks (-verbose) (-consecutive) (-game_ending) (-by_player) (-mate) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -24,6 +24,7 @@ int main(int argc,char **argv)
   bool bConsecutive;
   bool bGameEnding;
   bool bByPlayer;
+  bool bMate;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -38,8 +39,9 @@ int main(int argc,char **argv)
   int max_consecutive_checks1;
   int max_consecutive_checks2;
   int check;
+  bool bHaveCheck;
 
-  if ((argc < 2) || (argc > 6)) {
+  if ((argc < 2) || (argc > 7)) {
     printf(usage);
     return 1;
   }
@@ -47,7 +49,8 @@ int main(int argc,char **argv)
   bVerbose = false;
   bConsecutive = false;
   bGameEnding = false;
-  bByPlayer= false;
+  bByPlayer = false;
+  bMate = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
@@ -58,6 +61,8 @@ int main(int argc,char **argv)
       bGameEnding = true;
     else if (!strcmp(argv[curr_arg],"-by_player"))
       bByPlayer = true;
+    else if (!strcmp(argv[curr_arg],"-mate"))
+      bMate = true;
     else
       break;
   }
@@ -116,7 +121,12 @@ int main(int argc,char **argv)
         for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
           bBlack = curr_game.curr_move & 0x1;
 
-          if (curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK) {
+          if (!bMate)
+            bHaveCheck = curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK;
+          else
+            bHaveCheck = curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_MATE;
+
+          if (bHaveCheck) {
             if (!bByPlayer) {
               if (bBlack)
                 num_checks2++;
@@ -181,22 +191,24 @@ int main(int argc,char **argv)
       }
 
       if (!bConsecutive) {
-        if (!bVerbose) {
-          printf("%d %s\n",num_checks1 + num_checks2,filename);
-          total_num_checks += num_checks1 + num_checks2;
-        }
-        else {
-          if (!bByPlayer) {
-            printf("%3d white, %3d black, %3d total %s\n",
-              num_checks1,num_checks2,num_checks1 + num_checks2,filename);
+        if (num_checks1 + num_checks2) {
+          if (!bVerbose) {
+            printf("%d %s\n",num_checks1 + num_checks2,filename);
+            total_num_checks += num_checks1 + num_checks2;
           }
           else {
-            printf("%3d me, %3d opponent, %3d total %s\n",
-              num_checks1,num_checks2,num_checks1 + num_checks2,filename);
-          }
+            if (!bByPlayer) {
+              printf("%3d white, %3d black, %3d total %s\n",
+                num_checks1,num_checks2,num_checks1 + num_checks2,filename);
+            }
+            else {
+              printf("%3d me, %3d opponent, %3d total %s\n",
+                num_checks1,num_checks2,num_checks1 + num_checks2,filename);
+            }
 
-          total_num_checks1 += num_checks1;
-          total_num_checks2 += num_checks2;
+            total_num_checks1 += num_checks1;
+            total_num_checks2 += num_checks2;
+          }
         }
       }
       else {
