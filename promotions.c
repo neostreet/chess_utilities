@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: promotions (-by_player) (-none) filename\n";
+"usage: promotions (-by_player) (-none) (-maskmask) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -33,19 +33,22 @@ int main(int argc,char **argv)
   int total_num_promotions2;
   int mask;
 
-  if ((argc < 2) || (argc > 4)) {
+  if ((argc < 2) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
   bByPlayer = false;
   bNone = false;
+  mask = 0;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-by_player"))
       bByPlayer = true;
     else if (!strcmp(argv[curr_arg],"-none"))
       bNone = true;
+    else if (!strncmp(argv[curr_arg],"-mask",5))
+      sscanf(&argv[curr_arg][5],"%x",&mask);
     else
       break;
   }
@@ -82,8 +85,11 @@ int main(int argc,char **argv)
 
     for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
       bBlack = curr_game.curr_move & 0x1;
-      mask = SPECIAL_MOVE_PROMOTION_QUEEN | SPECIAL_MOVE_PROMOTION_ROOK |
-        SPECIAL_MOVE_PROMOTION_KNIGHT | SPECIAL_MOVE_PROMOTION_BISHOP;
+
+      if (!mask) {
+        mask = SPECIAL_MOVE_PROMOTION_QUEEN | SPECIAL_MOVE_PROMOTION_ROOK |
+          SPECIAL_MOVE_PROMOTION_KNIGHT | SPECIAL_MOVE_PROMOTION_BISHOP;
+      }
 
       if (curr_game.moves[curr_game.curr_move].special_move_info & mask) {
         if (!bByPlayer) {
