@@ -19,35 +19,19 @@ char couldnt_open[] = "couldn't open %s\n";
 int main(int argc,char **argv)
 {
   int n;
-  int curr_arg;
-  bool bVerbose;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 3)) {
+  if (argc != 2) {
     printf(usage);
     return 1;
   }
 
-  bVerbose = false;
-
-  for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-verbose"))
-      bVerbose = true;
-    else
-      break;
-  }
-
-  if (argc - curr_arg != 1) {
-    printf(usage);
+  if ((fptr = fopen(argv[1],"r")) == NULL) {
+    printf(couldnt_open,argv[1]);
     return 2;
-  }
-
-  if ((fptr = fopen(argv[argc-1],"r")) == NULL) {
-    printf(couldnt_open,argv[argc-1]);
-    return 3;
   }
 
   for ( ; ; ) {
