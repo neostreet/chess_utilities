@@ -27,7 +27,9 @@ char *special_moves[] = {
   "SPECIAL_MOVE_PROMOTION_KNIGHT",
   "SPECIAL_MOVE_PROMOTION_BISHOP",
   "SPECIAL_MOVE_CHECK",
-  "SPECIAL_MOVE_CAPTURE"
+  "SPECIAL_MOVE_CAPTURE",
+  "SPECIAL_MOVE_CASTLE",
+  "SPECIAL_MOVE_MATE"
 };
 int num_special_moves = (sizeof special_moves / sizeof (char *));
 #else
