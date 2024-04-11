@@ -11,6 +11,7 @@ using namespace std;
 int do_castle(struct game *gamept,int direction,char *word,int wordlen,struct move *move_ptr)
 {
   int rank;
+  int special_move_info;
 
   if (direction == 1)  /* if white's move: */
     rank = 0;
@@ -44,6 +45,8 @@ int do_castle(struct game *gamept,int direction,char *word,int wordlen,struct mo
       move_ptr->from = 60;
       move_ptr->to = 62;
     }
+
+    special_move_info = SPECIAL_MOVE_KINGSIDE_CASTLE;
   }
   else if (wordlen == 5) {  /* queenside castle */
     /* make sure there is a rook in the corner: */
@@ -66,13 +69,15 @@ int do_castle(struct game *gamept,int direction,char *word,int wordlen,struct mo
       move_ptr->from = 60;
       move_ptr->to = 58;
     }
+
+    special_move_info = SPECIAL_MOVE_QUEENSIDE_CASTLE;
   }
   else {
     do_castle_failures++;
     return 6;
   }
 
-  move_ptr->special_move_info = SPECIAL_MOVE_CASTLE;
+  move_ptr->special_move_info = special_move_info;
   do_castle_successes++;
 
   return 0;  /* success */
