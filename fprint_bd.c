@@ -13,7 +13,7 @@ static char filename[MAX_FILENAME_LEN];
 static char usage[] =
 "usage: fprint_bd (-debug) (-terse) (-toggle) (-initial_boardfilename) (-i_am_white) (-i_am_black)\n"
 "  (-init_bin_boardfilename) (-board_binfilename) (-num_white_piecesnum) (-num_black_piecesnum) -binary_format\n"
-"  (-match_boardfilename) (-match_forcefilename) (-match_force2filename) (-only_checks) (-only_mates) (-only_castle)\n"
+"  (-match_boardfilename) (-match_forcefilename) (-match_force2filename) (-only_checks) (-only_mates) (-only_castles)\n"
 "  (-only_promotions) (-only_captures) (-only_en_passants) (-multiple_queens) (-move_number_only)\n"
 "  (-mine) (-not_mine) (-search_all_moves) (-exact_match) (-only_no_promotions) (-only_underpromotions)\n"
 "  (-print_piece_counts) (-qnn) [white | black]\n"
@@ -41,7 +41,7 @@ int main(int argc,char **argv)
   int num_black_pieces;
   bool bOnlyChecks;
   bool bOnlyMates;
-  bool bOnlyCastle;
+  bool bOnlyCastles;
   bool bOnlyPromotions;
   bool bOnlyUnderpromotions;
   bool bOnlyNoPromotions;
@@ -92,7 +92,7 @@ int main(int argc,char **argv)
   num_black_pieces = -1;
   bOnlyChecks = false;
   bOnlyMates = false;
-  bOnlyCastle = false;
+  bOnlyCastles = false;
   bOnlyPromotions = false;
   bOnlyUnderpromotions = false;
   bOnlyNoPromotions = false;
@@ -184,8 +184,8 @@ int main(int argc,char **argv)
       bOnlyChecks = true;
     else if (!strcmp(argv[curr_arg],"-only_mates"))
       bOnlyMates = true;
-    else if (!strcmp(argv[curr_arg],"-only_castle"))
-      bOnlyCastle = true;
+    else if (!strcmp(argv[curr_arg],"-only_castles"))
+      bOnlyCastles = true;
     else if (!strcmp(argv[curr_arg],"-only_promotions"))
       bOnlyPromotions = true;
     else if (!strcmp(argv[curr_arg],"-only_underpromotions"))
@@ -214,8 +214,8 @@ int main(int argc,char **argv)
       break;
   }
 
-  if (bOnlyChecks && bOnlyCastle) {
-    printf("can't specify both -only_checks and -only_castle\n");
+  if (bOnlyChecks && bOnlyCastles) {
+    printf("can't specify both -only_checks and -only_castles\n");
     return 7;
   }
 
@@ -305,7 +305,7 @@ int main(int argc,char **argv)
   if (bIAmBlack && !curr_game.orientation)
     continue;
 
-  if (!bOnlyChecks && !bOnlyMates && !bOnlyCastle && !bOnlyCaptures && !bOnlyEnPassants && !bMultipleQueens &&
+  if (!bOnlyChecks && !bOnlyMates && !bOnlyCastles && !bOnlyCaptures && !bOnlyEnPassants && !bMultipleQueens &&
     !bOnlyPromotions && !bOnlyUnderpromotions && !bOnlyNoPromotions &&
     !bMine && !bNotMine && !bHaveMatchBoard && !bHaveMatchForce && (num_white_pieces == -1) &&
     (num_black_pieces == -1))
@@ -377,8 +377,8 @@ int main(int argc,char **argv)
           continue;
       }
 
-      if (bOnlyCastle) {
-        if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CASTLE))
+      if (bOnlyCastles) {
+        if (!(curr_game.moves[curr_game.curr_move].special_move_info & (SPECIAL_MOVE_KINGSIDE_CASTLE | SPECIAL_MOVE_QUEENSIDE_CASTLE)))
           continue;
       }
 
@@ -412,7 +412,7 @@ int main(int argc,char **argv)
           continue;
       }
 
-      if (bOnlyChecks || bOnlyMates || bOnlyCastle || bOnlyPromotions || bOnlyUnderpromotions || bOnlyNoPromotions || bOnlyCaptures ||
+      if (bOnlyChecks || bOnlyMates || bOnlyCastles || bOnlyPromotions || bOnlyUnderpromotions || bOnlyNoPromotions || bOnlyCaptures ||
         bOnlyEnPassants || bMultipleQueens || bHaveMatchBoard || bHaveMatchForce || bMine || bNotMine) {
 
         if (!bPrintedFilename) {
@@ -516,8 +516,8 @@ int main(int argc,char **argv)
         bSkip = true;
     }
 
-    if (!bSkip && bOnlyCastle) {
-      if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CASTLE))
+    if (!bSkip && bOnlyCastles) {
+      if (!(curr_game.moves[curr_game.curr_move].special_move_info & (SPECIAL_MOVE_KINGSIDE_CASTLE | SPECIAL_MOVE_QUEENSIDE_CASTLE)))
         bSkip = true;
     }
 
@@ -552,7 +552,7 @@ int main(int argc,char **argv)
     }
 
     if (!bSkip) {
-      if (bOnlyChecks || bOnlyMates || bOnlyCastle || bOnlyPromotions || bOnlyUnderpromotions || bOnlyNoPromotions ||
+      if (bOnlyChecks || bOnlyMates || bOnlyCastles || bOnlyPromotions || bOnlyUnderpromotions || bOnlyNoPromotions ||
         bOnlyCaptures || bMultipleQueens || bHaveMatchBoard || bHaveMatchForce ||
         bMine || bNotMine || (num_white_pieces != -1) || (num_black_pieces != -1)) {
         printf("%s\n",filename);
