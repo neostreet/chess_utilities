@@ -12,11 +12,11 @@ static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
 "usage: fprint_bd (-debug) (-terse) (-toggle) (-initial_boardfilename) (-i_am_white) (-i_am_black)\n"
-"  (-init_bin_boardfilename) (-board_binfilename) (-num_white_piecesnum) (-num_black_piecesnum) -binary_format\n"
+"  (-init_bin_boardfilename) (-board_binfilename) (-num_white_piecesnum) (-num_black_piecesnum) (-binary_format)\n"
 "  (-match_boardfilename) (-match_forcefilename) (-match_force2filename) (-only_checks) (-only_mates) (-only_castles)\n"
 "  (-only_promotions) (-only_captures) (-only_en_passants) (-multiple_queens) (-move_number_only)\n"
 "  (-mine) (-not_mine) (-search_all_moves) (-exact_match) (-only_no_promotions) (-only_underpromotions)\n"
-"  (-print_piece_counts) (-qnn) [white | black]\n"
+"  (-print_piece_counts) (-only_no_checks) (-only_no_mates) (-qnn) [white | black]\n"
 "  filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
@@ -40,7 +40,9 @@ int main(int argc,char **argv)
   int num_white_pieces;
   int num_black_pieces;
   bool bOnlyChecks;
+  bool bOnlyNoChecks;
   bool bOnlyMates;
+  bool bOnlyNoMates;
   bool bOnlyCastles;
   bool bOnlyPromotions;
   bool bOnlyUnderpromotions;
@@ -73,7 +75,7 @@ int main(int argc,char **argv)
   int filename_len;
   int num_pieces;
 
-  if ((argc < 2) || (argc > 32)) {
+  if ((argc < 2) || (argc > 34)) {
     printf(usage);
     return 1;
   }
@@ -91,7 +93,9 @@ int main(int argc,char **argv)
   num_white_pieces = -1;
   num_black_pieces = -1;
   bOnlyChecks = false;
+  bOnlyNoChecks = false;
   bOnlyMates = false;
+  bOnlyNoMates = false;
   bOnlyCastles = false;
   bOnlyPromotions = false;
   bOnlyUnderpromotions = false;
@@ -182,8 +186,12 @@ int main(int argc,char **argv)
     }
     else if (!strcmp(argv[curr_arg],"-only_checks"))
       bOnlyChecks = true;
+    else if (!strcmp(argv[curr_arg],"-only_no_checks"))
+      bOnlyNoChecks = true;
     else if (!strcmp(argv[curr_arg],"-only_mates"))
       bOnlyMates = true;
+    else if (!strcmp(argv[curr_arg],"-only_no_mates"))
+      bOnlyNoMates = true;
     else if (!strcmp(argv[curr_arg],"-only_castles"))
       bOnlyCastles = true;
     else if (!strcmp(argv[curr_arg],"-only_promotions"))
@@ -219,35 +227,45 @@ int main(int argc,char **argv)
     return 7;
   }
 
+  if (bOnlyChecks && bOnlyNoChecks) {
+    printf("can't specify both -only_checks and -only_no_checks\n");
+    return 8;
+  }
+
+  if (bOnlyMates && bOnlyNoMates) {
+    printf("can't specify both -only_mates and -only_no_mates\n");
+    return 9;
+  }
+
   if (bMine && bNotMine) {
     printf("can't specify both -mine and -not_mine\n");
-    return 8;
+    return 10;
   }
 
   if (bOnlyPromotions && bOnlyNoPromotions) {
     printf("can't specify both -only_promotions and -only_no_promotions\n");
-    return 9;
+    return 11;
   }
 
   if (bOnlyPromotions && bOnlyUnderpromotions) {
     printf("can't specify both -only_promotions and -only_underpromotions\n");
-    return 10;
+    return 12;
   }
 
   if (bOnlyNoPromotions && bOnlyUnderpromotions) {
     printf("can't specify both -only_no_promotions and -only_underpromotions\n");
-    return 11;
+    return 13;
   }
 
   if (bIAmWhite and bIAmBlack) {
     printf("can't specify both -i_am_white and -i_am_black\n");
-    return 12;
+    return 14;
   }
 
   if (quiz_number != -1) {
     if (argc - curr_arg != 2) {
       printf(usage);
-      return 13;
+      return 15;
     }
 
     if (!strcmp(argv[curr_arg],"white"))
@@ -256,19 +274,19 @@ int main(int argc,char **argv)
       bBlack = true;
     else {
       printf(usage);
-      return 14;
+      return 16;
     }
   }
   else {
     if (argc - curr_arg != 1) {
       printf(usage);
-      return 15;
+      return 17;
     }
   }
 
   if ((fptr = fopen(argv[argc-1],"r")) == NULL) {
     printf(couldnt_open,argv[argc-1]);
-    return 16;
+    return 18;
   }
 
   for ( ; ; ) {
@@ -305,8 +323,8 @@ int main(int argc,char **argv)
   if (bIAmBlack && !curr_game.orientation)
     continue;
 
-  if (!bOnlyChecks && !bOnlyMates && !bOnlyCastles && !bOnlyCaptures && !bOnlyEnPassants && !bMultipleQueens &&
-    !bOnlyPromotions && !bOnlyUnderpromotions && !bOnlyNoPromotions &&
+  if (!bOnlyChecks && !bOnlyNoChecks && !bOnlyMates && !bOnlyNoMates && !bOnlyCastles && !bOnlyCaptures &&
+    !bOnlyEnPassants && !bMultipleQueens && !bOnlyPromotions && !bOnlyUnderpromotions && !bOnlyNoPromotions &&
     !bMine && !bNotMine && !bHaveMatchBoard && !bHaveMatchForce && (num_white_pieces == -1) &&
     (num_black_pieces == -1))
     printf("%s\n",filename);
@@ -372,8 +390,18 @@ int main(int argc,char **argv)
           continue;
       }
 
+      if (bOnlyNoChecks) {
+        if (curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK)
+          continue;
+      }
+
       if (bOnlyMates) {
         if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_MATE))
+          continue;
+      }
+
+      if (bOnlyNoMates) {
+        if (curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_MATE)
           continue;
       }
 
@@ -412,8 +440,9 @@ int main(int argc,char **argv)
           continue;
       }
 
-      if (bOnlyChecks || bOnlyMates || bOnlyCastles || bOnlyPromotions || bOnlyUnderpromotions || bOnlyNoPromotions || bOnlyCaptures ||
-        bOnlyEnPassants || bMultipleQueens || bHaveMatchBoard || bHaveMatchForce || bMine || bNotMine) {
+      if (bOnlyChecks || bOnlyNoChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles || bOnlyPromotions ||
+        bOnlyUnderpromotions || bOnlyNoPromotions || bOnlyCaptures || bOnlyEnPassants || bMultipleQueens ||
+        bHaveMatchBoard || bHaveMatchForce || bMine || bNotMine) {
 
         if (!bPrintedFilename) {
           printf("%s\n",filename);
@@ -511,8 +540,18 @@ int main(int argc,char **argv)
         bSkip = true;
     }
 
+    if (!bSkip && bOnlyNoChecks) {
+      if (curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK)
+        bSkip = true;
+    }
+
     if (!bSkip && bOnlyMates) {
       if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_MATE))
+        bSkip = true;
+    }
+
+    if (!bSkip && bOnlyNoMates) {
+      if (curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_MATE)
         bSkip = true;
     }
 
@@ -552,7 +591,8 @@ int main(int argc,char **argv)
     }
 
     if (!bSkip) {
-      if (bOnlyChecks || bOnlyMates || bOnlyCastles || bOnlyPromotions || bOnlyUnderpromotions || bOnlyNoPromotions ||
+      if (bOnlyChecks || bOnlyNoChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles ||
+        bOnlyPromotions || bOnlyUnderpromotions || bOnlyNoPromotions ||
         bOnlyCaptures || bMultipleQueens || bHaveMatchBoard || bHaveMatchForce ||
         bMine || bNotMine || (num_white_pieces != -1) || (num_black_pieces != -1)) {
         printf("%s\n",filename);
