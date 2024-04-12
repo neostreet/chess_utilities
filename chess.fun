@@ -45,6 +45,7 @@ void set_piece2(unsigned char *board,int row,int column,int piece);
 bool multiple_queens(unsigned char *board);
 bool opposite_colored_bishops(unsigned char *board);
 bool opposite_side_castling(struct game *gamept);
+bool same_side_castling(struct game *gamept);
 int get_enemy_king_file_and_rank(struct game *gamept,int *file_pt,int *rank_pt);
 void copy_board(unsigned char *from_board,unsigned char *to_board);
 int count_num_pieces(int color,struct game *gamept);
