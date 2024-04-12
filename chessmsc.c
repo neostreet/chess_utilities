@@ -312,6 +312,23 @@ bool same_side_castling(struct game *gamept)
   return ((kingside_castles == 2) || (queenside_castles == 2));
 }
 
+bool less_than_2_castles(struct game *gamept)
+{
+  int n;
+  int castles;
+
+  castles = 0;
+
+  for (n = 0; n < gamept->num_moves; n++) {
+    if (gamept->moves[n].special_move_info & SPECIAL_MOVE_KINGSIDE_CASTLE)
+      castles++;
+    else if (gamept->moves[n].special_move_info & SPECIAL_MOVE_QUEENSIDE_CASTLE)
+      castles++;
+  }
+
+  return (castles < 2);
+}
+
 int get_enemy_king_file_and_rank(struct game *gamept,int *file_pt,int *rank_pt)
 {
   int m;
