@@ -266,6 +266,34 @@ bool opposite_colored_bishops(unsigned char *board)
   return false;
 }
 
+bool same_colored_bishops(unsigned char *board)
+{
+  int n;
+  int piece;
+  int num_white_bishops = 0;
+  bool bWhiteBishopOnEvenSquare;
+  int num_black_bishops = 0;
+  bool bBlackBishopOnEvenSquare;
+
+  for (n = 0; n < NUM_BOARD_SQUARES; n++) {
+    piece = get_piece1(board,n);
+
+    if (piece == BISHOP_ID) {
+      num_white_bishops++;
+      bWhiteBishopOnEvenSquare = !(n % 2);
+    }
+    else if (piece == BISHOP_ID * -1) {
+      num_black_bishops++;
+      bBlackBishopOnEvenSquare = !(n % 2);
+    }
+  }
+
+  if ((num_white_bishops == 1) && (num_black_bishops == 1) && (bWhiteBishopOnEvenSquare == bBlackBishopOnEvenSquare))
+    return true;
+
+  return false;
+}
+
 bool opposite_side_castling(struct game *gamept)
 {
   int n;
