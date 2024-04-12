@@ -16,7 +16,8 @@ static char usage[] =
 "  (-match_boardfilename) (-match_forcefilename) (-match_force2filename) (-only_checks) (-only_mates) (-only_castles)\n"
 "  (-only_promotions) (-only_captures) (-only_en_passants) (-multiple_queens) (-move_number_only)\n"
 "  (-mine) (-not_mine) (-search_all_moves) (-exact_match) (-only_no_promotions) (-only_underpromotions)\n"
-"  (-print_piece_counts) (-only_no_checks) (-only_no_mates) (-opposite_colored_bishops) (-qnn) [white | black]\n"
+"  (-print_piece_counts) (-only_no_checks) (-only_no_mates) (-opposite_colored_bishops)\n"
+"  (-opposite_side_castling) (-qnn) [white | black]\n"
 "  filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
@@ -58,6 +59,7 @@ int main(int argc,char **argv)
   bool bPrintPieceCounts;
   bool bBinaryFormat;
   bool bOppositeColoredBishops;
+  bool bOppositeSideCastling;
   bool bPrintedFilename;
   bool bPrintedBoard;
   bool bSkip;
@@ -76,7 +78,7 @@ int main(int argc,char **argv)
   int filename_len;
   int num_pieces;
 
-  if ((argc < 2) || (argc > 35)) {
+  if ((argc < 2) || (argc > 36)) {
     printf(usage);
     return 1;
   }
@@ -112,6 +114,7 @@ int main(int argc,char **argv)
   bPrintPieceCounts = false;
   bBinaryFormat = false;
   bOppositeColoredBishops = false;
+  bOppositeSideCastling = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -220,6 +223,8 @@ int main(int argc,char **argv)
       bPrintPieceCounts = true;
     else if (!strcmp(argv[curr_arg],"-opposite_colored_bishops"))
       bOppositeColoredBishops = true;
+    else if (!strcmp(argv[curr_arg],"-opposite_side_castling"))
+      bOppositeSideCastling = true;
     else if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
     else
@@ -330,7 +335,7 @@ int main(int argc,char **argv)
   if (!bOnlyChecks && !bOnlyNoChecks && !bOnlyMates && !bOnlyNoMates && !bOnlyCastles && !bOnlyCaptures &&
     !bOnlyEnPassants && !bMultipleQueens && !bOnlyPromotions && !bOnlyUnderpromotions && !bOnlyNoPromotions &&
     !bMine && !bNotMine && !bHaveMatchBoard && !bHaveMatchForce && (num_white_pieces == -1) &&
-    (num_black_pieces == -1) && !bOppositeColoredBishops)
+    (num_black_pieces == -1) && !bOppositeColoredBishops && !bOppositeSideCastling)
     printf("%s\n",filename);
 
   curr_game.curr_move--;
@@ -449,9 +454,14 @@ int main(int argc,char **argv)
           continue;
       }
 
+      if (bOppositeSideCastling) {
+        if (!opposite_side_castling(&curr_game))
+          continue;
+      }
+
       if (bOnlyChecks || bOnlyNoChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles || bOnlyPromotions ||
         bOnlyUnderpromotions || bOnlyNoPromotions || bOnlyCaptures || bOnlyEnPassants || bMultipleQueens ||
-        bHaveMatchBoard || bHaveMatchForce || bMine || bNotMine || bOppositeColoredBishops) {
+        bHaveMatchBoard || bHaveMatchForce || bMine || bNotMine || bOppositeColoredBishops || bOppositeSideCastling) {
 
         if (!bPrintedFilename) {
           printf("%s\n",filename);
@@ -604,11 +614,17 @@ int main(int argc,char **argv)
         bSkip = true;
     }
 
+    if (!bSkip && bOppositeSideCastling) {
+      if (!opposite_side_castling(&curr_game))
+        bSkip = true;
+    }
+
     if (!bSkip) {
       if (bOnlyChecks || bOnlyNoChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles ||
         bOnlyPromotions || bOnlyUnderpromotions || bOnlyNoPromotions ||
         bOnlyCaptures || bMultipleQueens || bHaveMatchBoard || bHaveMatchForce ||
-        bMine || bNotMine || (num_white_pieces != -1) || (num_black_pieces != -1) || bOppositeColoredBishops) {
+        bMine || bNotMine || (num_white_pieces != -1) || (num_black_pieces != -1) ||
+        bOppositeColoredBishops || bOppositeSideCastling) {
         printf("%s\n",filename);
       }
 
