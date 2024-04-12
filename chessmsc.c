@@ -238,6 +238,34 @@ bool multiple_queens(unsigned char *board)
   return false;
 }
 
+bool opposite_colored_bishops(unsigned char *board)
+{
+  int n;
+  int piece;
+  int num_white_bishops = 0;
+  bool bWhiteBishopOnEvenSquare;
+  int num_black_bishops = 0;
+  bool bBlackBishopOnEvenSquare;
+
+  for (n = 0; n < NUM_BOARD_SQUARES; n++) {
+    piece = get_piece1(board,n);
+
+    if (piece == BISHOP_ID) {
+      num_white_bishops++;
+      bWhiteBishopOnEvenSquare = !(n % 2);
+    }
+    else if (piece == BISHOP_ID * -1) {
+      num_black_bishops++;
+      bBlackBishopOnEvenSquare = !(n % 2);
+    }
+  }
+
+  if ((num_white_bishops == 1) && (num_black_bishops == 1) && (bWhiteBishopOnEvenSquare != bBlackBishopOnEvenSquare))
+    return true;
+
+  return false;
+}
+
 int get_enemy_king_file_and_rank(struct game *gamept,int *file_pt,int *rank_pt)
 {
   int m;
