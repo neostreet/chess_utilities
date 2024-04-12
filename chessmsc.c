@@ -293,6 +293,25 @@ bool opposite_side_castling(struct game *gamept)
   return false;;
 }
 
+bool same_side_castling(struct game *gamept)
+{
+  int n;
+  int kingside_castles;
+  int queenside_castles;
+
+  kingside_castles = 0;
+  queenside_castles = 0;
+
+  for (n = 0; n < gamept->num_moves; n++) {
+    if (gamept->moves[n].special_move_info & SPECIAL_MOVE_KINGSIDE_CASTLE)
+      kingside_castles++;
+    else if (gamept->moves[n].special_move_info & SPECIAL_MOVE_QUEENSIDE_CASTLE)
+      queenside_castles++;
+  }
+
+  return ((kingside_castles == 2) || (queenside_castles == 2));
+}
+
 int get_enemy_king_file_and_rank(struct game *gamept,int *file_pt,int *rank_pt)
 {
   int m;
