@@ -266,6 +266,33 @@ bool opposite_colored_bishops(unsigned char *board)
   return false;
 }
 
+bool opposite_side_castling(struct game *gamept)
+{
+  int n;
+  bool bHaveKingsideCastle;
+  bool bHaveQueensideCastle;
+
+  bHaveKingsideCastle = false;
+  bHaveQueensideCastle = false;
+
+  for (n = 0; n < gamept->num_moves; n++) {
+    if (gamept->moves[n].special_move_info & SPECIAL_MOVE_KINGSIDE_CASTLE) {
+      bHaveKingsideCastle = true;
+
+      if (bHaveQueensideCastle)
+        return true;
+    }
+    else if (gamept->moves[n].special_move_info & SPECIAL_MOVE_QUEENSIDE_CASTLE) {
+      bHaveQueensideCastle = true;
+
+      if (bHaveKingsideCastle)
+        return true;
+    }
+  }
+
+  return false;;
+}
+
 int get_enemy_king_file_and_rank(struct game *gamept,int *file_pt,int *rank_pt)
 {
   int m;
