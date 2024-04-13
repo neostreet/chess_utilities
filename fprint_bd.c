@@ -17,7 +17,7 @@ static char usage[] =
 "  (-only_promotions) (-only_captures) (-only_en_passants) (-multiple_queens) (-move_number_only)\n"
 "  (-mine) (-not_mine) (-search_all_moves) (-exact_match) (-only_no_promotions) (-only_underpromotions)\n"
 "  (-print_piece_counts) (-only_no_checks) (-only_no_mates) (-opposite_colored_bishops) (-same_colored_bishops)\n"
-"  (-opposite_side_castling) (-same_side_castling) (-less_than_2_castles) (-qnn) [white | black]\n"
+"  (-two_bishops) (-opposite_side_castling) (-same_side_castling) (-less_than_2_castles) (-qnn) [white | black]\n"
 "  filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
@@ -60,6 +60,7 @@ int main(int argc,char **argv)
   bool bBinaryFormat;
   bool bOppositeColoredBishops;
   bool bSameColoredBishops;
+  bool bTwoBishops;
   bool bOppositeSideCastling;
   bool bSameSideCastling;
   bool bLessThan2Castles;
@@ -81,7 +82,7 @@ int main(int argc,char **argv)
   int filename_len;
   int num_pieces;
 
-  if ((argc < 2) || (argc > 39)) {
+  if ((argc < 2) || (argc > 40)) {
     printf(usage);
     return 1;
   }
@@ -118,6 +119,7 @@ int main(int argc,char **argv)
   bBinaryFormat = false;
   bOppositeColoredBishops = false;
   bSameColoredBishops = false;
+  bTwoBishops = false;
   bOppositeSideCastling = false;
   bSameSideCastling = false;
   bLessThan2Castles = false;
@@ -231,6 +233,8 @@ int main(int argc,char **argv)
       bOppositeColoredBishops = true;
     else if (!strcmp(argv[curr_arg],"-same_colored_bishops"))
       bSameColoredBishops = true;
+    else if (!strcmp(argv[curr_arg],"-two_bishops"))
+      bTwoBishops = true;
     else if (!strcmp(argv[curr_arg],"-opposite_side_castling"))
       bOppositeSideCastling = true;
     else if (!strcmp(argv[curr_arg],"-same_side_castling"))
@@ -347,7 +351,7 @@ int main(int argc,char **argv)
   if (!bOnlyChecks && !bOnlyNoChecks && !bOnlyMates && !bOnlyNoMates && !bOnlyCastles && !bOnlyCaptures &&
     !bOnlyEnPassants && !bMultipleQueens && !bOnlyPromotions && !bOnlyUnderpromotions && !bOnlyNoPromotions &&
     !bMine && !bNotMine && !bHaveMatchBoard && !bHaveMatchForce && (num_white_pieces == -1) &&
-    (num_black_pieces == -1) && !bOppositeColoredBishops && !bSameColoredBishops &&
+    (num_black_pieces == -1) && !bOppositeColoredBishops && !bSameColoredBishops && !bTwoBishops &&
     !bOppositeSideCastling && !bSameSideCastling && !bLessThan2Castles)
     printf("%s\n",filename);
 
@@ -472,6 +476,11 @@ int main(int argc,char **argv)
           continue;
       }
 
+      if (bTwoBishops) {
+        if (!two_bishops((unsigned char *)&curr_game.board))
+          continue;
+      }
+
       if (bOppositeSideCastling) {
         if (!opposite_side_castling(&curr_game))
           continue;
@@ -490,7 +499,7 @@ int main(int argc,char **argv)
       if (bOnlyChecks || bOnlyNoChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles || bOnlyPromotions ||
         bOnlyUnderpromotions || bOnlyNoPromotions || bOnlyCaptures || bOnlyEnPassants || bMultipleQueens ||
         bHaveMatchBoard || bHaveMatchForce || bMine || bNotMine || bOppositeColoredBishops || bSameColoredBishops ||
-        bOppositeSideCastling || bSameSideCastling || bLessThan2Castles) {
+        bTwoBishops || bOppositeSideCastling || bSameSideCastling || bLessThan2Castles) {
 
         if (!bPrintedFilename) {
           printf("%s\n",filename);
@@ -648,6 +657,11 @@ int main(int argc,char **argv)
         bSkip = true;
     }
 
+    if (!bSkip && bTwoBishops) {
+      if (!two_bishops((unsigned char *)&curr_game.board))
+        bSkip = true;
+    }
+
     if (!bSkip && bOppositeSideCastling) {
       if (!opposite_side_castling(&curr_game))
         bSkip = true;
@@ -668,8 +682,8 @@ int main(int argc,char **argv)
         bOnlyPromotions || bOnlyUnderpromotions || bOnlyNoPromotions ||
         bOnlyCaptures || bMultipleQueens || bHaveMatchBoard || bHaveMatchForce ||
         bMine || bNotMine || (num_white_pieces != -1) || (num_black_pieces != -1) ||
-        bOppositeColoredBishops || bSameColoredBishops || bOppositeSideCastling || bSameSideCastling ||
-        bLessThan2Castles) {
+        bOppositeColoredBishops || bSameColoredBishops || bTwoBishops || bOppositeSideCastling ||
+        bSameSideCastling || bLessThan2Castles) {
         printf("%s\n",filename);
       }
 
