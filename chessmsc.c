@@ -242,25 +242,29 @@ bool opposite_colored_bishops(unsigned char *board)
 {
   int n;
   int piece;
+  int rank;
+  int file;
   int num_white_bishops = 0;
-  bool bWhiteBishopOnEvenSquare;
+  bool bWhiteBishopOnWhiteSquare;
   int num_black_bishops = 0;
-  bool bBlackBishopOnEvenSquare;
+  bool bBlackBishopOnWhiteSquare;
 
   for (n = 0; n < NUM_BOARD_SQUARES; n++) {
     piece = get_piece1(board,n);
+    rank = RANK_OF(n);
+    file = FILE_OF(n);
 
     if (piece == BISHOP_ID) {
       num_white_bishops++;
-      bWhiteBishopOnEvenSquare = !(n % 2);
+      bWhiteBishopOnWhiteSquare = (rank % 2) ? (file % 2) : !(file % 2);
     }
     else if (piece == BISHOP_ID * -1) {
       num_black_bishops++;
-      bBlackBishopOnEvenSquare = !(n % 2);
+      bBlackBishopOnWhiteSquare = (rank % 2) ? (file % 2) : !(file % 2);
     }
   }
 
-  if ((num_white_bishops == 1) && (num_black_bishops == 1) && (bWhiteBishopOnEvenSquare != bBlackBishopOnEvenSquare))
+  if ((num_white_bishops == 1) && (num_black_bishops == 1) && (bWhiteBishopOnWhiteSquare != bBlackBishopOnWhiteSquare))
     return true;
 
   return false;
@@ -270,25 +274,29 @@ bool same_colored_bishops(unsigned char *board)
 {
   int n;
   int piece;
+  int rank;
+  int file;
   int num_white_bishops = 0;
-  bool bWhiteBishopOnEvenSquare;
+  bool bWhiteBishopOnWhiteSquare;
   int num_black_bishops = 0;
-  bool bBlackBishopOnEvenSquare;
+  bool bBlackBishopOnWhiteSquare;
 
   for (n = 0; n < NUM_BOARD_SQUARES; n++) {
     piece = get_piece1(board,n);
+    rank = RANK_OF(n);
+    file = FILE_OF(n);
 
     if (piece == BISHOP_ID) {
       num_white_bishops++;
-      bWhiteBishopOnEvenSquare = !(n % 2);
+      bWhiteBishopOnWhiteSquare = (rank % 2) ? (file % 2) : !(file % 2);
     }
     else if (piece == BISHOP_ID * -1) {
       num_black_bishops++;
-      bBlackBishopOnEvenSquare = !(n % 2);
+      bBlackBishopOnWhiteSquare = (rank % 2) ? (file % 2) : !(file % 2);
     }
   }
 
-  if ((num_white_bishops == 1) && (num_black_bishops == 1) && (bWhiteBishopOnEvenSquare == bBlackBishopOnEvenSquare))
+  if ((num_white_bishops == 1) && (num_black_bishops == 1) && (bWhiteBishopOnWhiteSquare == bBlackBishopOnWhiteSquare))
     return true;
 
   return false;
