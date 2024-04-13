@@ -45,6 +45,7 @@ void set_piece2(unsigned char *board,int row,int column,int piece);
 bool multiple_queens(unsigned char *board);
 bool opposite_colored_bishops(unsigned char *board);
 bool same_colored_bishops(unsigned char *board);
+bool two_bishops(unsigned char *board);
 bool opposite_side_castling(struct game *gamept);
 bool same_side_castling(struct game *gamept);
 bool less_than_2_castles(struct game *gamept);
