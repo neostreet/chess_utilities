@@ -302,6 +302,28 @@ bool same_colored_bishops(unsigned char *board)
   return false;
 }
 
+bool two_bishops(unsigned char *board)
+{
+  int n;
+  int piece;
+  int num_white_bishops = 0;
+  int num_black_bishops = 0;
+
+  for (n = 0; n < NUM_BOARD_SQUARES; n++) {
+    piece = get_piece1(board,n);
+
+    if (piece == BISHOP_ID)
+      num_white_bishops++;
+    else if (piece == BISHOP_ID * -1)
+      num_black_bishops++;
+  }
+
+  if (((num_white_bishops < 2) && (num_black_bishops == 2)) || ((num_white_bishops == 2) && (num_black_bishops < 2)))
+    return true;
+
+  return false;
+}
+
 bool opposite_side_castling(struct game *gamept)
 {
   int n;
