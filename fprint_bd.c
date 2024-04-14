@@ -521,6 +521,11 @@ int main(int argc,char **argv)
         print_bd(&curr_game);
         print_special_moves(&curr_game);
         bPrintedBoard = true;
+
+        if (bPrintPieceCounts) {
+          get_piece_counts(curr_game.board,curr_piece_counts);
+          print_piece_counts(curr_piece_counts);
+        }
       }
     }
   }
@@ -692,6 +697,7 @@ int main(int argc,char **argv)
         putchar(0x0a);
         print_bd(&curr_game);
         print_special_moves(&curr_game);
+        bPrintedBoard = true;
 
         if (bPrintPieceCounts) {
           get_piece_counts(curr_game.board,curr_piece_counts);
