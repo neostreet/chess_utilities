@@ -116,8 +116,12 @@ int main(int argc,char **argv)
           &ix)) {
 
           if (bIsDraw) {
-            if (!bTerse)
-              printf("1 %s\n",filename);
+            if (!bTerse) {
+              if (!bDateTime)
+                printf("1 %s\n",filename);
+              else
+                printf("1 %s %s %s\n",filename,date,time);
+            }
             else
               printf("1\n");
           }
@@ -128,8 +132,12 @@ int main(int argc,char **argv)
               printf("%s %s %s\n",filename,date,time);
           }
         }
-        else if (bIsDraw)
-          printf("0 %s\n",filename);
+        else if (bIsDraw) {
+          if (!bDateTime)
+            printf("0 %s\n",filename);
+          else
+            printf("0 %s %s %s\n",filename,date,time);
+        }
       }
     }
 
