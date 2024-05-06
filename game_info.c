@@ -47,7 +47,7 @@ int main(int argc,char **argv)
     return 3;
   }
 
-  printf("%s\n",curr_game.chessfilename);
+  printf("%s\n",argv[argc-1]);
   printf("title = %s\n",curr_game.title);
   printf("orientation = %d\n",curr_game.orientation);
   printf("num_moves = %d\n",curr_game.num_moves);
