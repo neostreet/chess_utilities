@@ -94,7 +94,6 @@ struct move {
 #define MAX_TITLE_LEN 128
 
 struct game {
-  char chessfilename[MAX_FILE_NAME_LEN];
   char title[MAX_TITLE_LEN];
   int orientation;
   int num_moves;
