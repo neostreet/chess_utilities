@@ -118,8 +118,6 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
   if ((fptr = fopen(filename,"r")) == NULL)
     return 1;
 
-  strcpy(gamept->chessfilename,filename);
-
   fscanf(fptr,"%d",&gamept->orientation);  /* get board orientation */
                                    /* 0 = standard, 1 = black on bottom */
 
