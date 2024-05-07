@@ -15,7 +15,7 @@ static char opponent_name[MAX_OPPONENT_NAME_LEN+1];
 #define MAX_RESULT_LEN 7
 static char result[MAX_RESULT_LEN+1];
 
-static char usage[] = "usage: ftxt2ch (-dont_do_removes) filename\n";
+static char usage[] = "usage: ftxt2ch (-dont_do_removes) (-skip_mate) filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 static char couldnt_determine_color[] = "%s: couldn't determine color\n";
 
@@ -27,7 +27,7 @@ static int build_ch_filename(
   int max_filename_len);
 static bool Contains(int bCaseSens,char *line,int line_len,
   char *string,int string_len,int *index);
-int split_line(char *line,int line_len,FILE *ch_fptr,bool bDontDoRemoves);
+int split_line(char *line,int line_len,FILE *ch_fptr,bool bDontDoRemoves,bool bSkipMate);
 void remove_checks_and_promotions(char *line);
 void get_opponent_name(char *line,int line_len,char *opponent_name,int max_opponent_name_len);
 void get_result(char *line,int line_len,char *result,int max_result_len);
@@ -36,6 +36,7 @@ int main(int argc,char **argv)
 {
   int curr_arg;
   bool bDontDoRemoves;
+  bool bSkipMate;
   FILE *fptr0;
   int file_len;
   int file_no;
@@ -48,16 +49,19 @@ int main(int argc,char **argv)
   int line_no;
   int ix;
 
-  if ((argc < 2) || (argc > 3)) {
+  if ((argc < 2) || (argc > 4)) {
     printf(usage);
     return 1;
   }
 
   bDontDoRemoves = false;
+  bSkipMate = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-dont_do_removes"))
       bDontDoRemoves = true;
+    else if (!strcmp(argv[curr_arg],"-skip_mate"))
+      bSkipMate = true;
     else
       break;
   }
@@ -175,7 +179,7 @@ int main(int argc,char **argv)
       if ((line_len >= 1) && (line[0] == '['))
         fprintf(ch_fptr,"/ %s\n",line);
       else if (!strncmp(line,"1. ",3)) {
-        retval = split_line(line,line_len,ch_fptr,bDontDoRemoves);
+        retval = split_line(line,line_len,ch_fptr,bDontDoRemoves,bSkipMate);
 
         if (retval) {
           printf("split_line failed on line %d\n",line_no);
@@ -279,10 +283,11 @@ static bool Contains(int bCaseSens,char *line,int line_len,
   return false;
 }
 
-int split_line(char *line,int line_len,FILE *ch_fptr,bool bDontDoRemoves)
+int split_line(char *line,int line_len,FILE *ch_fptr,bool bDontDoRemoves,bool bSkipMate)
 {
   int m;
   int n;
+  int o;
   int ix;
 
   ix = 0;
@@ -304,15 +309,34 @@ int split_line(char *line,int line_len,FILE *ch_fptr,bool bDontDoRemoves)
         return 1;
     }
 
-    for (n = ix + n - 1; (n >= 0); n--) {
+    for (n = ix + n - 1; (n > ix); n--) {
       if (line[n] == ' ')
         break;
     }
 
-    if (n < 0)
+    if (n == ix)
       return 2;
 
     line[n] = 0;
+
+    if (bSkipMate) {
+      o = n - 1;
+
+      if (line[o] == '#') {
+        for (o--; (o > ix); o--) {
+          if (line[o] == ' ')
+            break;
+        }
+
+        if (o == ix)
+          return 3;
+
+        line[o] = 0;
+        fprintf(ch_fptr,"%s\n",&line[ix]);
+
+        return 0;
+      }
+    }
 
     if (!bDontDoRemoves)
       remove_checks_and_promotions(&line[ix]);
