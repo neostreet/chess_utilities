@@ -94,7 +94,7 @@ void fprint_game_bin(struct game *gamept,char *filename)
 
     fprintf_move(fptr,gamept);
 
-    update_board(gamept->board,&gamept->moves[gamept->curr_move],gamept->curr_move & 0x1);
+    update_board(gamept,NULL,NULL);
   }
 
   fclose(fptr);
@@ -120,10 +120,29 @@ void fprint_game(struct game *gamept,char *filename)
     fprintf(fptr,"%s",buf);
 
     if (gamept->curr_move < gamept->num_moves)
-      update_board(gamept->board,&gamept->moves[gamept->curr_move],gamept->curr_move & 0x1);
+      update_board(gamept,NULL,NULL);
   }
 
   fclose(fptr);
+}
+
+void fprint_game2(struct game *gamept,FILE *fptr)
+{
+  char buf[20];
+
+  fprintf(fptr,fmt_str,gamept->title);
+
+  set_initial_board(gamept);
+
+  for (gamept->curr_move = 0;
+       gamept->curr_move <= gamept->num_moves;
+       gamept->curr_move++) {
+
+    sprintf_move(gamept,buf,20,true);
+    fprintf(fptr,fmt_str,buf);
+
+    update_board(gamept,NULL,NULL);
+  }
 }
 
 void fprint_bd(struct game *gamept,char *filename)
@@ -146,6 +165,46 @@ void fprint_bd(struct game *gamept,char *filename)
   }
 
   fclose(fptr);
+}
+
+void fprint_bd2(unsigned char *board,FILE *fptr)
+{
+  int m;
+  int n;
+  int square;
+
+  for (m = 0; m < NUM_RANKS; m++) {
+    for (n = 0; n < NUM_FILES; n++) {
+      square = get_piece2(board,(NUM_RANKS - 1) - m,n);
+      fprintf(fptr,"%c ",format_square(square));
+    }
+
+    fputc(0x0a,fptr);
+  }
+}
+
+void fprint_moves(struct game *gamept,char *filename)
+{
+  int n;
+  FILE *fptr;
+
+  if ((fptr = fopen(filename,"w")) == NULL)
+    return;
+
+  for (n = 0; n < gamept->num_moves; n++) {
+    fprintf(fptr,"%d %d\n",gamept->moves[n].from,gamept->moves[n].to);
+  }
+
+  fclose(fptr);
+}
+
+void fprint_moves2(struct game *gamept,FILE *fptr)
+{
+  int n;
+
+  for (n = 0; n < gamept->num_moves; n++) {
+    fprintf(fptr,"%d %d\n",gamept->moves[n].from,gamept->moves[n].to);
+  }
 }
 
 void print_special_moves(struct game *gamept)
@@ -426,4 +485,13 @@ void copy_board(unsigned char *from_board,unsigned char *to_board)
 
   for (n = 0; n < CHARS_IN_BOARD; n++)
     to_board[n] = from_board[n];
+}
+
+void position_game(struct game *gamept,int move)
+{
+  set_initial_board(gamept);
+
+  for (gamept->curr_move = 0; gamept->curr_move < move; gamept->curr_move++) {
+    update_board(gamept,NULL,NULL);
+  }
 }
