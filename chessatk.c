@@ -260,12 +260,15 @@ int king_attacks_square(unsigned char *board,int square1,int square2)
   return false;
 }
 
-bool player_is_in_check(bool bBlack,unsigned char *board)
+bool player_is_in_check(bool bBlack,unsigned char *board,int curr_move)
 {
   int n;
   int movers_king;
   int movers_king_square;
   int piece;
+
+  if (debug_fptr)
+    fprintf(debug_fptr,"player_is_in_check: bBlack = %d, curr_move = %d\n",bBlack,curr_move);
 
   // first, find the mover's king
 
@@ -305,8 +308,12 @@ bool player_is_in_check(bool bBlack,unsigned char *board)
         continue;
     }
 
-    if (square_attacks_square(board,n,movers_king_square))
+    if (square_attacks_square(board,n,movers_king_square)) {
+      if (debug_fptr)
+        fprint_bd2(board,debug_fptr);
+
       return true;
+    }
   }
 
   return false;
