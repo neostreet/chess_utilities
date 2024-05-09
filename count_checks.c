@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: count_checks (-verbose) (-consecutive) (-game_ending) (-by_player) (-mate) (-none) filename\n";
+"usage: count_checks (-verbose) (-consecutive) (-game_ending) (-game_ending_countcount) (-by_player) (-mate) (-none) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -26,6 +26,7 @@ int main(int argc,char **argv)
   bool bByPlayer;
   bool bMate;
   bool bNone;
+  int game_ending_count;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -42,7 +43,7 @@ int main(int argc,char **argv)
   int check;
   bool bHaveCheck;
 
-  if ((argc < 2) || (argc > 8)) {
+  if ((argc < 2) || (argc > 9)) {
     printf(usage);
     return 1;
   }
@@ -50,6 +51,7 @@ int main(int argc,char **argv)
   bVerbose = false;
   bConsecutive = false;
   bGameEnding = false;
+  game_ending_count = 0;
   bByPlayer = false;
   bMate = false;
   bNone = false;
@@ -61,6 +63,8 @@ int main(int argc,char **argv)
       bConsecutive = true;
     else if (!strcmp(argv[curr_arg],"-game_ending"))
       bGameEnding = true;
+    else if (!strncmp(argv[curr_arg],"-game_ending_count",18))
+      sscanf(&argv[curr_arg][18],"%d",&game_ending_count);
     else if (!strcmp(argv[curr_arg],"-by_player"))
       bByPlayer = true;
     else if (!strcmp(argv[curr_arg],"-mate"))
@@ -119,8 +123,10 @@ int main(int argc,char **argv)
           num_checks++;
       }
 
-      if (num_checks)
-        printf("%d %s\n",num_checks,filename);
+      if (num_checks) {
+        if (!game_ending_count || (num_checks == game_ending_count))
+          printf("%d %s\n",num_checks,filename);
+      }
     }
     else {
       num_checks1 = 0;
