@@ -8,6 +8,8 @@
 
 using namespace std;
 
+static struct game scratch;
+
 int do_castle(struct game *gamept,int direction,char *word,int wordlen,struct move *move_ptr)
 {
   int rank;
@@ -92,6 +94,10 @@ int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen,struct
   int capture_file;
   int piece;
   int which_piece;
+  bool bBlack;
+
+  if (debug_fptr)
+    fprintf(debug_fptr,"do_pawn_move: curr_move = %d, word = %s\n",gamept->curr_move,word);
 
   /*printf("%s\n",word);/*for now*/
   file = word[0] - 'a';
@@ -260,7 +266,7 @@ int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen,struct
           }
         }
 
-        return 0;
+        goto check_for_illegal_move;
       }
     }
 
@@ -274,8 +280,8 @@ int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen,struct
             move_ptr->from = POS_OF(3,file);
             move_ptr->to = POS_OF(2,capture_file);
             move_ptr->special_move_info |=
-              SPECIAL_MOVE_CAPTURE | SPECIAL_MOVE_EN_PASSANT;
-            return 0;
+              SPECIAL_MOVE_CAPTURE | SPECIAL_MOVE_EN_PASSANT_CAPTURE;
+            goto check_for_illegal_move;
           }
         }
       }
@@ -287,8 +293,8 @@ int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen,struct
             move_ptr->from = POS_OF(4,file);
             move_ptr->to = POS_OF(5,capture_file);
             move_ptr->special_move_info |=
-              SPECIAL_MOVE_CAPTURE | SPECIAL_MOVE_EN_PASSANT;
-            return 0;
+              SPECIAL_MOVE_CAPTURE | SPECIAL_MOVE_EN_PASSANT_CAPTURE;
+            goto check_for_illegal_move;
           }
         }
       }
@@ -298,6 +304,137 @@ int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen,struct
   }
 
   return 14;
+
+check_for_illegal_move:
+
+  // don't allow moves which would put the mover in check; use a scratch game
+  // to achieve this
+
+  copy_game(&scratch,gamept);
+  scratch.moves[scratch.curr_move].from = move_ptr->from;
+  scratch.moves[scratch.curr_move].to = move_ptr->to;
+  update_board(&scratch,NULL,NULL);
+  bBlack = scratch.curr_move & 0x1;
+
+  if (player_is_in_check(bBlack,scratch.board,scratch.curr_move))
+    return 15;
+
+  return 0;
+}
+
+int do_pawn_move2(struct game *gamept)
+{
+  bool bWhiteMove;
+  bool bBlack;
+  int start_rank;
+  int start_file;
+  int end_rank;
+  int end_file;
+  int rank_diff;
+  int file_diff;
+  int retval;
+
+  bWhiteMove = (move_start_square_piece > 0);
+
+  if (bWhiteMove) {
+    // white pawn move
+
+    if (move_start_square > move_end_square)
+      return 1; // failure
+  }
+  else {
+    // black pawn move
+
+    if (move_start_square < move_end_square)
+      return 2; // failure
+  }
+
+  start_rank = RANK_OF(move_start_square);
+  start_file = FILE_OF(move_start_square);
+  end_rank = RANK_OF(move_end_square);
+  end_file = FILE_OF(move_end_square);
+
+  if (start_rank >= end_rank)
+    rank_diff = start_rank - end_rank;
+  else
+    rank_diff = end_rank - start_rank;
+
+  if (start_file >= end_file)
+    file_diff = start_file - end_file;
+  else
+    file_diff = end_file - start_file;
+
+  if (file_diff == 0) {
+    if (move_end_square_piece)
+      return 3; // failure
+  }
+
+  if (rank_diff == 0)
+    return 4; // failure
+
+  if (file_diff > 1)
+    return 5; // failure
+
+  if (rank_diff > 2)
+    return 6; // failure
+
+  if (rank_diff > 1) {
+    if (file_diff)
+      return 7; // failure
+
+    if (bWhiteMove) {
+      if (start_rank != 1)
+        return 8; // failure
+    }
+    else {
+      if (start_rank != 6)
+        return 9; // failure
+    }
+  }
+
+  if (file_diff == 1) {
+    if (rank_diff != 1)
+      return 10; // failure
+
+    if (!move_end_square_piece) {
+      // check for en passant capture
+      if (bWhiteMove && (start_rank == 4) &&
+        (get_piece2(gamept->board,4,end_file) == PAWN_ID * -1) &&
+        (gamept->moves[gamept->curr_move-1].special_move_info == SPECIAL_MOVE_TWO_SQUARE_PAWN_ADVANCE)) {
+
+        gamept->moves[gamept->curr_move].special_move_info = SPECIAL_MOVE_EN_PASSANT_CAPTURE;
+      }
+      else if (!bWhiteMove && (start_rank == 3) &&
+        (get_piece2(gamept->board,3,end_file) == PAWN_ID) &&
+        (gamept->moves[gamept->curr_move-1].special_move_info == SPECIAL_MOVE_TWO_SQUARE_PAWN_ADVANCE)) {
+
+        gamept->moves[gamept->curr_move].special_move_info = SPECIAL_MOVE_EN_PASSANT_CAPTURE;
+      }
+      else
+        return 11; // failure
+    }
+  }
+
+  // don't allow moves which would put the mover in check; use a scratch game
+  // to achieve this
+
+  copy_game(&scratch,gamept);
+  scratch.moves[scratch.curr_move].from = move_start_square;
+  scratch.moves[scratch.curr_move].to = move_end_square;
+  update_board(&scratch,NULL,NULL);
+  bBlack = scratch.curr_move & 0x1;
+
+  if (player_is_in_check(bBlack,scratch.board,scratch.curr_move))
+    return 12;
+
+  gamept->moves[gamept->curr_move].from = move_start_square;
+  gamept->moves[gamept->curr_move].to = move_end_square;
+  retval = 0;
+
+  if (rank_diff > 1)
+    gamept->moves[gamept->curr_move].special_move_info = SPECIAL_MOVE_TWO_SQUARE_PAWN_ADVANCE;
+
+  return retval; // success
 }
 
 int get_piece_id_ix(char piece)
@@ -321,6 +458,14 @@ int (*piece_functions[])(struct game *,int,int,int,int) = {
   king_move
 };
 
+int (*piece_functions2[])(struct game *) = {
+  rook_move2,
+  knight_move2,
+  bishop_move2,
+  queen_move2,
+  king_move2
+};
+
 int do_piece_move(struct game *gamept,int direction,char *word,int wordlen,struct move *move_ptr)
 {
   int which_piece;
@@ -336,9 +481,11 @@ int do_piece_move(struct game *gamept,int direction,char *word,int wordlen,struc
   int to_rank;
   int to_piece;
   int retval;
-  unsigned char board[CHARS_IN_BOARD];
   bool bBlack;
   int dbg;
+
+  if (debug_fptr)
+    fprintf(debug_fptr,"do_piece_move: curr_move = %d, word = %s\n",gamept->curr_move,word);
 
   if (wordlen == 4) {
     where = word[1];
@@ -395,16 +542,16 @@ int do_piece_move(struct game *gamept,int direction,char *word,int wordlen,struc
           move_ptr->from = POS_OF(curr_rank,curr_file);
           move_ptr->to = POS_OF(to_rank,to_file);
 
-          // don't allow the move if it would put the mover in check
+          // don't allow moves which would put the mover in check; use a scratch game
+          // to achieve this
 
-          copy_board(gamept->board,board);
-          bBlack = gamept->curr_move & 0x1;
-          update_board(board,move_ptr,bBlack);
+          copy_game(&scratch,gamept);
+          scratch.moves[scratch.curr_move].from = move_ptr->from;
+          scratch.moves[scratch.curr_move].to = move_ptr->to;
+          update_board(&scratch,NULL,NULL);
+          bBlack = scratch.curr_move & 0x1;
 
-          if (gamept->curr_move == dbg_move)
-            dbg = 1;
-
-          if (!player_is_in_check(bBlack,board))
+          if (!player_is_in_check(bBlack,scratch.board,scratch.curr_move))
             return 0;  /* success */
         }
       }
@@ -412,6 +559,41 @@ int do_piece_move(struct game *gamept,int direction,char *word,int wordlen,struc
   }
 
   return 5;
+}
+
+int do_piece_move2(struct game *gamept)
+{
+  int which_piece;
+  int retval;
+  bool bBlack;
+
+  which_piece = move_start_square_piece;
+
+  if (which_piece < 0)
+    which_piece *= -1;
+
+  which_piece -= ROOK_ID;
+
+  retval = (*piece_functions2[which_piece])(gamept);
+
+  if (retval)
+    return 1;
+
+  // don't allow moves which would put the mover in check; use a scratch game
+  // to achieve this
+
+  copy_game(&scratch,gamept);
+  scratch.moves[scratch.curr_move].from = move_start_square;
+  scratch.moves[scratch.curr_move].to = move_end_square;
+  update_board(&scratch,NULL,NULL);
+  bBlack = scratch.curr_move & 0x1;
+
+  if (player_is_in_check(bBlack,scratch.board,scratch.curr_move))
+    return 1;
+
+  gamept->moves[gamept->curr_move].from = move_start_square;
+  gamept->moves[gamept->curr_move].to = move_end_square;
+  return 0;  /* success */
 }
 
 int get_to_position(char *word,int wordlen,int *to_filept,int *to_rankpt)
@@ -470,6 +652,23 @@ int rook_move(
   return 3;  /* failure */
 }
 
+int rook_move2(
+  struct game *gamept
+)
+{
+  int retval;
+
+  retval = rook_move(
+    gamept,
+    FILE_OF(move_start_square),
+    RANK_OF(move_start_square),
+    FILE_OF(move_end_square),
+    RANK_OF(move_end_square)
+    );
+
+  return retval;
+}
+
 int knight_move(
   struct game *gamept,
   int file1,
@@ -498,6 +697,23 @@ int knight_move(
     return 0;  /* success */
 
   return 1;    /* failure */
+}
+
+int knight_move2(
+  struct game *gamept
+)
+{
+  int retval;
+
+  retval = knight_move(
+    gamept,
+    FILE_OF(move_start_square),
+    RANK_OF(move_start_square),
+    FILE_OF(move_end_square),
+    RANK_OF(move_end_square)
+    );
+
+  return retval;
 }
 
 int bishop_move(
@@ -550,6 +766,23 @@ int bishop_move(
   return 0;  /* success */
 }
 
+int bishop_move2(
+  struct game *gamept
+)
+{
+  int retval;
+
+  retval = bishop_move(
+    gamept,
+    FILE_OF(move_start_square),
+    RANK_OF(move_start_square),
+    FILE_OF(move_end_square),
+    RANK_OF(move_end_square)
+    );
+
+  return retval;
+}
+
 int queen_move(
   struct game *gamept,
   int file1,
@@ -565,6 +798,23 @@ int queen_move(
     return 0;  /* success */
 
   return 1;    /* failure */
+}
+
+int queen_move2(
+  struct game *gamept
+)
+{
+  int retval;
+
+  retval = queen_move(
+    gamept,
+    FILE_OF(move_start_square),
+    RANK_OF(move_start_square),
+    FILE_OF(move_end_square),
+    RANK_OF(move_end_square)
+    );
+
+  return retval;
 }
 
 int king_move(
@@ -592,4 +842,21 @@ int king_move(
     return 0;  /* success */
 
   return 1;  /* failure */
+}
+
+int king_move2(
+  struct game *gamept
+)
+{
+  int retval;
+
+  retval = king_move(
+    gamept,
+    FILE_OF(move_start_square),
+    RANK_OF(move_start_square),
+    FILE_OF(move_end_square),
+    RANK_OF(move_end_square)
+    );
+
+  return retval;
 }
