@@ -369,7 +369,7 @@ int main(int argc,char **argv)
     bPrintedBoard = false;
 
     for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
-      update_board(curr_game.board,&curr_game.moves[curr_game.curr_move],curr_game.curr_move & 0x1);
+      update_board(&curr_game,NULL,NULL);
 
       if (curr_game.curr_move == dbg_move)
         afl_dbg = 1;
@@ -457,7 +457,7 @@ int main(int argc,char **argv)
       }
 
       if (bOnlyEnPassants) {
-        if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_EN_PASSANT))
+        if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_EN_PASSANT_CAPTURE))
           continue;
       }
 
@@ -547,7 +547,7 @@ int main(int argc,char **argv)
       curr_game.curr_move = 0;
 
       for (n = 0; n <= initial_move; n++) {
-        update_board(curr_game.board,&curr_game.moves[curr_game.curr_move],curr_game.curr_move & 0x1);
+        update_board(&curr_game,NULL,NULL);
 
         if (n < initial_move)
           curr_game.curr_move++;
@@ -643,7 +643,7 @@ int main(int argc,char **argv)
     }
 
     if (!bSkip && bOnlyEnPassants) {
-      if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_EN_PASSANT))
+      if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_EN_PASSANT_CAPTURE))
         bSkip = true;
     }
 
