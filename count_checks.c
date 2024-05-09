@@ -124,8 +124,10 @@ int main(int argc,char **argv)
       }
 
       if (num_checks) {
-        if (!game_ending_count || (num_checks == game_ending_count))
+        if (!game_ending_count)
           printf("%d %s\n",num_checks,filename);
+        else if (num_checks == game_ending_count)
+          printf("%s\n",filename);
       }
     }
     else {
