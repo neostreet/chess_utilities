@@ -11,7 +11,8 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: count_checks (-debug) (-verbose) (-consecutive) (-game_ending) (-game_ending_countcount) (-by_player) (-mate) (-none) filename\n";
+"usage: count_checks (-debug) (-verbose) (-consecutive) (-game_ending) (-game_ending_countcount) (-by_player)\n"
+" (-mate) (-mate_piecepiece) (-none) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -43,8 +44,11 @@ int main(int argc,char **argv)
   int max_consecutive_checks2;
   int check;
   bool bHaveCheck;
+  char mate_piece;
+  int last_piece;
+  char last_piece_char;
 
-  if ((argc < 2) || (argc > 10)) {
+  if ((argc < 2) || (argc > 11)) {
     printf(usage);
     return 1;
   }
@@ -56,6 +60,7 @@ int main(int argc,char **argv)
   game_ending_count = 0;
   bByPlayer = false;
   bMate = false;
+  mate_piece = ' ';
   bNone = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
@@ -73,6 +78,8 @@ int main(int argc,char **argv)
       bByPlayer = true;
     else if (!strcmp(argv[curr_arg],"-mate"))
       bMate = true;
+    else if (!strncmp(argv[curr_arg],"-mate_piece",11))
+      mate_piece = argv[curr_arg][11];
     else if (!strcmp(argv[curr_arg],"-none"))
       bNone = true;
     else
@@ -144,8 +151,26 @@ int main(int argc,char **argv)
 
           if (!bMate)
             bHaveCheck = curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK;
-          else
+          else {
             bHaveCheck = curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_MATE;
+
+            if (bHaveCheck) {
+              if (mate_piece != ' ') {
+                last_piece = get_piece1(curr_game.board,curr_game.moves[curr_game.num_moves-1].to);
+
+                if (last_piece < 0)
+                  last_piece *= -1;
+
+                if (last_piece == 1)
+                  last_piece_char = 'P';
+                else
+                  last_piece_char = piece_ids[last_piece - 2];
+
+                if (last_piece_char != mate_piece)
+                  bHaveCheck = false;
+              }
+            }
+          }
 
           if (bHaveCheck) {
             if (!bByPlayer) {
