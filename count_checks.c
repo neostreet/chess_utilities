@@ -118,8 +118,6 @@ int main(int argc,char **argv)
     if (feof(fptr))
       break;
 
-    retval = read_game(filename,&curr_game,err_msg);
-
     if (!bBinaryFormat) {
       retval = read_game(filename,&curr_game,err_msg);
 
