@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: count_checks (-verbose) (-consecutive) (-game_ending) (-game_ending_countcount) (-by_player) (-mate) (-none) filename\n";
+"usage: count_checks (-debug) (-verbose) (-consecutive) (-game_ending) (-game_ending_countcount) (-by_player) (-mate) (-none) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -20,6 +20,7 @@ int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
+  bool bDebug;
   bool bVerbose;
   bool bConsecutive;
   bool bGameEnding;
@@ -43,11 +44,12 @@ int main(int argc,char **argv)
   int check;
   bool bHaveCheck;
 
-  if ((argc < 2) || (argc > 9)) {
+  if ((argc < 2) || (argc > 10)) {
     printf(usage);
     return 1;
   }
 
+  bDebug = false;
   bVerbose = false;
   bConsecutive = false;
   bGameEnding = false;
@@ -57,7 +59,9 @@ int main(int argc,char **argv)
   bNone = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-verbose"))
+    if (!strcmp(argv[curr_arg],"-debug"))
+      bDebug = true;
+    else if (!strcmp(argv[curr_arg],"-verbose"))
       bVerbose = true;
     else if (!strcmp(argv[curr_arg],"-consecutive"))
       bConsecutive = true;
@@ -212,8 +216,12 @@ int main(int argc,char **argv)
           if (!bVerbose) {
             if (!bMate)
               printf("%d %s\n",num_checks1 + num_checks2,filename);
-            else
-              printf("%s\n",filename);
+            else {
+              if (!bDebug)
+                printf("%s\n",filename);
+              else
+                printf("%s %d %x\n",filename,curr_game.num_moves,curr_game.moves[curr_game.num_moves-1].special_move_info); // for now
+            }
 
             total_num_checks += num_checks1 + num_checks2;
           }
