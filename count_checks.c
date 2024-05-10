@@ -210,7 +210,11 @@ int main(int argc,char **argv)
       if (!bConsecutive) {
         if ((!bNone && (num_checks1 + num_checks2)) || (bNone && !(num_checks1 + num_checks2))) {
           if (!bVerbose) {
-            printf("%d %s\n",num_checks1 + num_checks2,filename);
+            if (!bMate)
+              printf("%d %s\n",num_checks1 + num_checks2,filename);
+            else
+              printf("%s\n",filename);
+
             total_num_checks += num_checks1 + num_checks2;
           }
           else {
@@ -244,8 +248,10 @@ int main(int argc,char **argv)
   fclose(fptr);
 
   if (!bConsecutive && !bGameEnding) {
-    if (!bVerbose)
-      printf("\n%d\n",total_num_checks);
+    if (!bVerbose) {
+      if (!bMate)
+        printf("\n%d\n",total_num_checks);
+    }
     else {
       if (!bByPlayer)
         printf("\n%d white, %d black, %d total\n",total_num_checks1,total_num_checks2,total_num_checks1 + total_num_checks2);
