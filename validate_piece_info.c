@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: validate_piece_info (-verbose) filename\n";
+"usage: validate_piece_info (-verbose) (-show_matches) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -21,6 +21,7 @@ int main(int argc,char **argv)
   int n;
   int curr_arg;
   bool bVerbose;
+  bool bShowMatches;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -28,16 +29,19 @@ int main(int argc,char **argv)
   bool bPrintedFilename;
   unsigned char board[CHARS_IN_BOARD];
 
-  if ((argc < 2) || (argc > 3)) {
+  if ((argc < 2) || (argc > 4)) {
     printf(usage);
     return 1;
   }
 
   bVerbose = false;
+  bShowMatches = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
       bVerbose = true;
+    else if (!strcmp(argv[curr_arg],"-show_matches"))
+      bShowMatches = true;
     else
       break;
   }
@@ -74,18 +78,24 @@ int main(int argc,char **argv)
       update_piece_info(&curr_game);
       populate_board_from_piece_info(&curr_game,board);
 
-      if (!compare_boards(curr_game.board,board)) {
+      retval = compare_boards(curr_game.board,board);
+
+      if ((!bShowMatches && !retval) || (bShowMatches && retval)) {
         if (!bPrintedFilename) {
           printf("%s\n",filename);
           bPrintedFilename = true;
         }
 
-        printf("boards differ on move %d\n",curr_game.curr_move);
+        if (!bShowMatches) {
+          printf("boards differ on move %d\n",curr_game.curr_move);
 
-        if (bVerbose) {
-          print_bd0(curr_game.board,curr_game.orientation);
-          print_bd0(board,curr_game.orientation);
+          if (bVerbose) {
+            print_bd0(curr_game.board,curr_game.orientation);
+            print_bd0(board,curr_game.orientation);
+          }
         }
+        else
+          printf("boards match on move %d\n",curr_game.curr_move);
       }
     }
   }
