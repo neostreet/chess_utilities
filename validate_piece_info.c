@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: validate_piece_info (-debug) filename\n";
+"usage: validate_piece_info (-verbose) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -20,7 +20,7 @@ int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
-  bool bDebug;
+  bool bVerbose;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -33,11 +33,11 @@ int main(int argc,char **argv)
     return 1;
   }
 
-  bDebug = false;
+  bVerbose = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-debug"))
-      bDebug = true;
+    if (!strcmp(argv[curr_arg],"-verbose"))
+      bVerbose = true;
     else
       break;
   }
@@ -81,8 +81,11 @@ int main(int argc,char **argv)
         }
 
         printf("boards differ on move %d\n",curr_game.curr_move);
-        print_bd0(curr_game.board,curr_game.orientation);
-        print_bd0(board,curr_game.orientation);
+
+        if (bVerbose) {
+          print_bd0(curr_game.board,curr_game.orientation);
+          print_bd0(board,curr_game.orientation);
+        }
       }
     }
   }
