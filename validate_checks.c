@@ -74,16 +74,17 @@ int main(int argc,char **argv)
 
     for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
       bBlack = curr_game.curr_move & 0x1;
-      update_board(curr_game.board,&curr_game.moves[curr_game.curr_move],bBlack);
+      update_board(&curr_game,NULL,NULL);
 
       if (curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK) {
-        if (!player_is_in_check(bBlack,curr_game.board)) {
+        if (!player_is_in_check(!bBlack,curr_game.board,curr_game.curr_move)) {
           if (!bPrintedFilename) {
             printf("%s\n",filename);
             bPrintedFilename = true;
           }
 
           printf("couldn't find a check on move %d\n",curr_game.curr_move);
+          print_bd0(curr_game.board,curr_game.orientation);
         }
       }
     }
