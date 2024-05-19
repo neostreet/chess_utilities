@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: validate_piece_info (-verbose) (-show_matches) filename\n";
+"usage: validate_piece_info (-verbose) (-show_matches) (-terse) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -22,6 +22,7 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bVerbose;
   bool bShowMatches;
+  bool bTerse;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -29,19 +30,22 @@ int main(int argc,char **argv)
   bool bPrintedFilename;
   unsigned char board[CHARS_IN_BOARD];
 
-  if ((argc < 2) || (argc > 4)) {
+  if ((argc < 2) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
   bVerbose = false;
   bShowMatches = false;
+  bTerse = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
       bVerbose = true;
     else if (!strcmp(argv[curr_arg],"-show_matches"))
       bShowMatches = true;
+    else if (!strcmp(argv[curr_arg],"-terse"))
+      bTerse = true;
     else
       break;
   }
@@ -51,9 +55,19 @@ int main(int argc,char **argv)
     return 2;
   }
 
+  if (bVerbose && bTerse) {
+    printf("can't specify both -verbose and -terse\n");
+    return 3;
+  }
+
+  if (bShowMatches && bTerse) {
+    printf("can't specify both -show_matches and -terse\n");
+    return 4;
+  }
+
   if ((fptr = fopen(argv[argc-1],"r")) == NULL) {
     printf(couldnt_open,argv[argc-1]);
-    return 3;
+    return 5;
   }
 
   for ( ; ; ) {
@@ -86,7 +100,9 @@ int main(int argc,char **argv)
           bPrintedFilename = true;
         }
 
-        if (!bShowMatches) {
+        if (bTerse)
+          break;
+        else if (!bShowMatches) {
           printf("boards differ on move %d\n",curr_game.curr_move);
 
           if (bVerbose) {
