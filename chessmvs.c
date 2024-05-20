@@ -860,3 +860,33 @@ int king_move2(
 
   return retval;
 }
+
+void legal_pawn_moves(struct game *gamept,char current_board_position)
+{
+  printf("legal_pawn_moves()\n"); // for now
+}
+
+void legal_rook_moves(struct game *gamept,char current_board_position)
+{
+  printf("legal_rook_moves()\n"); // for now
+}
+
+void legal_knight_moves(struct game *gamept,char current_board_position)
+{
+  printf("legal_knight_moves()\n"); // for now
+}
+
+void legal_bishop_moves(struct game *gamept,char current_board_position)
+{
+  printf("legal_bishop_moves()\n"); // for now
+}
+
+void legal_queen_moves(struct game *gamept,char current_board_position)
+{
+  printf("legal_queen_moves()\n"); // for now
+}
+
+void legal_king_moves(struct game *gamept,char current_board_position)
+{
+  printf("legal_king_moves()\n"); // for now
+}
