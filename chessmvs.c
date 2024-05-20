@@ -889,11 +889,32 @@ void legal_rook_moves(struct game *gamept,char current_board_position)
   printf("square = %d, rank = %d, file = %d\n",square,rank,file);
 }
 
+struct knight_move_offset {
+  char rank_offset;
+  char file_offset;
+};
+
+struct knight_move_offset offsets[] = {
+  1, 2,
+  2, 1,
+  1, -2,
+  2, -1,
+  -1, -2,
+  -2, -1,
+  -1, 2,
+  -2, 1
+};
+#define NUM_OFFSETS (sizeof offsets / sizeof(struct knight_move_offset))
+
 void legal_knight_moves(struct game *gamept,char current_board_position)
 {
+  int n;
   int square;
   int rank;
   int file;
+  int work_rank;
+  int work_file;
+  int square2;
 
   printf("legal_knight_moves()\n"); // for now
 
@@ -901,6 +922,24 @@ void legal_knight_moves(struct game *gamept,char current_board_position)
   rank = RANK_OF(current_board_position);
   file = FILE_OF(current_board_position);
   printf("square = %d, rank = %d, file = %d\n",square,rank,file);
+
+  for (n = 0; n < NUM_OFFSETS; n++) {
+    work_rank = rank + offsets[n].rank_offset;
+    work_file = file + offsets[n].file_offset;
+
+    if ((work_rank < 0) || (work_rank >= NUM_RANKS))
+      continue;
+
+    if ((work_file < 0) || (work_file >= NUM_FILES))
+      continue;
+
+    square2 = get_piece2(gamept->board,work_rank,work_file);
+
+    if ((square * square2) > 0)
+      continue;
+
+    printf("%c%c\n",'a' + work_file,'1' + work_rank);
+  }
 }
 
 void legal_bishop_moves(struct game *gamept,char current_board_position)
