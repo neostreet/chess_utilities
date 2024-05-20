@@ -861,7 +861,7 @@ int king_move2(
   return retval;
 }
 
-void legal_pawn_moves(struct game *gamept,char current_board_position)
+void legal_pawn_moves(struct game *gamept,char current_board_position,struct move *legal_moves,int *legal_moves_count)
 {
   int square;
   int rank;
@@ -875,7 +875,7 @@ void legal_pawn_moves(struct game *gamept,char current_board_position)
   printf("square = %d, rank = %d, file = %d\n",square,rank,file);
 }
 
-void legal_rook_moves(struct game *gamept,char current_board_position)
+void legal_rook_moves(struct game *gamept,char current_board_position,struct move *legal_moves,int *legal_moves_count)
 {
   int square;
   int rank;
@@ -906,7 +906,7 @@ struct knight_move_offset offsets[] = {
 };
 #define NUM_OFFSETS (sizeof offsets / sizeof(struct knight_move_offset))
 
-void legal_knight_moves(struct game *gamept,char current_board_position)
+void legal_knight_moves(struct game *gamept,char current_board_position,struct move *legal_moves,int *legal_moves_count)
 {
   int n;
   int square;
@@ -915,6 +915,7 @@ void legal_knight_moves(struct game *gamept,char current_board_position)
   int work_rank;
   int work_file;
   int square2;
+  bool bBlack;
 
   printf("legal_knight_moves()\n"); // for now
 
@@ -935,14 +936,27 @@ void legal_knight_moves(struct game *gamept,char current_board_position)
 
     square2 = get_piece2(gamept->board,work_rank,work_file);
 
+    // can't capture a piece of the same color
     if ((square * square2) > 0)
+      continue;
+
+    // don't allow moves which would put the mover in check; use a scratch game
+    // to achieve this
+
+    copy_game(&scratch,gamept);
+    scratch.moves[scratch.curr_move].from = current_board_position;
+    scratch.moves[scratch.curr_move].to = POS_OF(work_rank,work_file);
+    update_board(&scratch,NULL,NULL);
+    bBlack = scratch.curr_move & 0x1;
+
+    if (player_is_in_check(bBlack,scratch.board,scratch.curr_move))
       continue;
 
     printf("%c%c\n",'a' + work_file,'1' + work_rank);
   }
 }
 
-void legal_bishop_moves(struct game *gamept,char current_board_position)
+void legal_bishop_moves(struct game *gamept,char current_board_position,struct move *legal_moves,int *legal_moves_count)
 {
   int square;
   int rank;
@@ -956,7 +970,7 @@ void legal_bishop_moves(struct game *gamept,char current_board_position)
   printf("square = %d, rank = %d, file = %d\n",square,rank,file);
 }
 
-void legal_queen_moves(struct game *gamept,char current_board_position)
+void legal_queen_moves(struct game *gamept,char current_board_position,struct move *legal_moves,int *legal_moves_count)
 {
   int square;
   int rank;
@@ -970,7 +984,7 @@ void legal_queen_moves(struct game *gamept,char current_board_position)
   printf("square = %d, rank = %d, file = %d\n",square,rank,file);
 }
 
-void legal_king_moves(struct game *gamept,char current_board_position)
+void legal_king_moves(struct game *gamept,char current_board_position,struct move *legal_moves,int *legal_moves_count)
 {
   int square;
   int rank;
