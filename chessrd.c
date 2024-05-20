@@ -759,6 +759,74 @@ void fprint_piece_info(struct game *gamept,FILE *fptr)
   }
 }
 
+void print_piece_info(struct game *gamept)
+{
+  int n;
+
+  printf("White:\n");
+
+  for (n = 0; n < NUM_PIECES_PER_PLAYER; n++) {
+    if (gamept->white_pieces[n].current_board_position == -1) {
+      printf("  %d %s %d\n",
+        gamept->white_pieces[n].piece_ix,
+        piece_names[gamept->white_pieces[n].piece_id - 1],
+        gamept->white_pieces[n].current_board_position);
+    }
+    else {
+      printf("  %d %s %c%c\n",
+        gamept->white_pieces[n].piece_ix,
+        piece_names[gamept->white_pieces[n].piece_id - 1],
+        'a' + FILE_OF(gamept->white_pieces[n].current_board_position),
+        '1' + RANK_OF(gamept->white_pieces[n].current_board_position));
+    }
+  }
+
+  printf("Black:\n");
+
+  for (n = 0; n < NUM_PIECES_PER_PLAYER; n++) {
+    if (gamept->black_pieces[n].current_board_position == -1) {
+      printf("  %d %s %d\n",
+        gamept->black_pieces[n].piece_ix,
+        piece_names[(gamept->black_pieces[n].piece_id * -1) - 1],
+        gamept->black_pieces[n].current_board_position);
+    }
+    else {
+      printf("  %d %s %c%c\n",
+        gamept->black_pieces[n].piece_ix,
+        piece_names[(gamept->black_pieces[n].piece_id * -1) - 1],
+        'a' + FILE_OF(gamept->black_pieces[n].current_board_position),
+        '1' + RANK_OF(gamept->black_pieces[n].current_board_position));
+    }
+  }
+}
+
+void print_piece_info2(struct piece_info *info_pt)
+{
+  int n;
+  char piece_id;
+
+  for (n = 0; n < NUM_PIECES_PER_PLAYER; n++) {
+    piece_id = info_pt[n].piece_id;
+
+    if (piece_id < 0)
+      piece_id *= -1;
+
+    if (info_pt[n].current_board_position == -1) {
+      printf("  %d %s %d\n",
+        info_pt[n].piece_ix,
+        piece_names[piece_id - 1],
+        info_pt[n].current_board_position);
+    }
+    else {
+      printf("  %d %s %c%c\n",
+        info_pt[n].piece_ix,
+        piece_names[piece_id - 1],
+        'a' + FILE_OF(info_pt[n].current_board_position),
+        '1' + RANK_OF(info_pt[n].current_board_position));
+    }
+  }
+}
+
 void populate_board_from_piece_info(struct game *gamept,unsigned char *board)
 {
   int n;
