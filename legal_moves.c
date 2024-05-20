@@ -13,10 +13,6 @@ static char usage[] =
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
 
-#define MAX_LEGAL_MOVES 500
-static struct move legal_moves[MAX_LEGAL_MOVES];
-static int legal_moves_count;
-
 int main(int argc,char **argv)
 {
   int n;
@@ -103,6 +99,14 @@ int main(int argc,char **argv)
 
         break;
     }
+  }
+
+  printf("legal_moves:\n\n");
+
+  for (n = 0; n < legal_moves_count; n++) {
+    printf("from: %c%c to: %c%c\n",
+    'a' + FILE_OF(legal_moves[n].from),'1' + RANK_OF(legal_moves[n].from),
+    'a' + FILE_OF(legal_moves[n].to),'1' + RANK_OF(legal_moves[n].to));
   }
 
   return 0;
