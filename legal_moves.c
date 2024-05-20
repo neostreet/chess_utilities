@@ -15,6 +15,7 @@ char couldnt_open[] = "couldn't open %s\n";
 
 int main(int argc,char **argv)
 {
+  int n;
   int curr_arg;
   bool bDebug;
   int retval;
@@ -22,6 +23,7 @@ int main(int argc,char **argv)
   bool bWhiteToMove;
   struct piece_info *info_pt;
   unsigned char board[CHARS_IN_BOARD];
+  char piece_id;
 
   if ((argc < 2) || (argc > 3)) {
     printf(usage);
@@ -61,6 +63,43 @@ int main(int argc,char **argv)
   putchar(0x0a);
   populate_board_from_piece_info(&curr_game,board);
   print_bd0(board,curr_game.orientation);
+
+  for (n = 0; n < NUM_PIECES_PER_PLAYER; n++) {
+    if (info_pt[n].current_board_position == -1)
+      continue;
+
+    piece_id = info_pt[n].piece_id;
+
+    if (piece_id < 0)
+      piece_id *= -1;
+
+    switch (piece_id) {
+      case PAWN_ID:
+        legal_pawn_moves(&curr_game,info_pt[n].current_board_position);
+
+        break;
+      case ROOK_ID:
+        legal_rook_moves(&curr_game,info_pt[n].current_board_position);
+
+        break;
+      case KNIGHT_ID:
+        legal_knight_moves(&curr_game,info_pt[n].current_board_position);
+
+        break;
+      case BISHOP_ID:
+        legal_bishop_moves(&curr_game,info_pt[n].current_board_position);
+
+        break;
+      case QUEEN_ID:
+        legal_queen_moves(&curr_game,info_pt[n].current_board_position);
+
+        break;
+      case KING_ID:
+        legal_king_moves(&curr_game,info_pt[n].current_board_position);
+
+        break;
+    }
+  }
 
   return 0;
 }
