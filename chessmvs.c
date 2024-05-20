@@ -917,8 +917,6 @@ void legal_knight_moves(struct game *gamept,char current_board_position,struct m
   int square2;
   bool bBlack;
 
-  printf("legal_knight_moves()\n"); // for now
-
   square = get_piece1(gamept->board,current_board_position);
   rank = RANK_OF(current_board_position);
   file = FILE_OF(current_board_position);
@@ -952,7 +950,12 @@ void legal_knight_moves(struct game *gamept,char current_board_position,struct m
     if (player_is_in_check(bBlack,scratch.board,scratch.curr_move))
       continue;
 
-    printf("%c%c\n",'a' + work_file,'1' + work_rank);
+    if (*legal_moves_count < MAX_LEGAL_MOVES) {
+      legal_moves[*legal_moves_count].from = current_board_position;
+      legal_moves[*legal_moves_count].to = POS_OF(work_rank,work_file);
+      legal_moves[*legal_moves_count].special_move_info = 0;
+      (*legal_moves_count)++;
+    }
   }
 }
 
