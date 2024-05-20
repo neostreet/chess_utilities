@@ -13,6 +13,10 @@ static char usage[] =
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
 
+#define MAX_LEGAL_MOVES 500
+static struct move legal_moves[MAX_LEGAL_MOVES];
+static int legal_moves_count;
+
 int main(int argc,char **argv)
 {
   int n;
@@ -75,27 +79,27 @@ int main(int argc,char **argv)
 
     switch (piece_id) {
       case PAWN_ID:
-        legal_pawn_moves(&curr_game,info_pt[n].current_board_position);
+        legal_pawn_moves(&curr_game,info_pt[n].current_board_position,legal_moves,&legal_moves_count);
 
         break;
       case ROOK_ID:
-        legal_rook_moves(&curr_game,info_pt[n].current_board_position);
+        legal_rook_moves(&curr_game,info_pt[n].current_board_position,legal_moves,&legal_moves_count);
 
         break;
       case KNIGHT_ID:
-        legal_knight_moves(&curr_game,info_pt[n].current_board_position);
+        legal_knight_moves(&curr_game,info_pt[n].current_board_position,legal_moves,&legal_moves_count);
 
         break;
       case BISHOP_ID:
-        legal_bishop_moves(&curr_game,info_pt[n].current_board_position);
+        legal_bishop_moves(&curr_game,info_pt[n].current_board_position,legal_moves,&legal_moves_count);
 
         break;
       case QUEEN_ID:
-        legal_queen_moves(&curr_game,info_pt[n].current_board_position);
+        legal_queen_moves(&curr_game,info_pt[n].current_board_position,legal_moves,&legal_moves_count);
 
         break;
       case KING_ID:
-        legal_king_moves(&curr_game,info_pt[n].current_board_position);
+        legal_king_moves(&curr_game,info_pt[n].current_board_position,legal_moves,&legal_moves_count);
 
         break;
     }
