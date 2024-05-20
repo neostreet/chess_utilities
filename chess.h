@@ -82,7 +82,6 @@ struct move {
 };
 
 struct piece_info {
-  char piece_ix;
   char piece_id;
   char current_board_position;
 };
