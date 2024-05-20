@@ -863,30 +863,84 @@ int king_move2(
 
 void legal_pawn_moves(struct game *gamept,char current_board_position)
 {
+  int square;
+  int rank;
+  int file;
+
   printf("legal_pawn_moves()\n"); // for now
+
+  square = get_piece1(gamept->board,current_board_position);
+  rank = RANK_OF(current_board_position);
+  file = FILE_OF(current_board_position);
+  printf("square = %d, rank = %d, file = %d\n",square,rank,file);
 }
 
 void legal_rook_moves(struct game *gamept,char current_board_position)
 {
+  int square;
+  int rank;
+  int file;
+
   printf("legal_rook_moves()\n"); // for now
+
+  square = get_piece1(gamept->board,current_board_position);
+  rank = RANK_OF(current_board_position);
+  file = FILE_OF(current_board_position);
+  printf("square = %d, rank = %d, file = %d\n",square,rank,file);
 }
 
 void legal_knight_moves(struct game *gamept,char current_board_position)
 {
+  int square;
+  int rank;
+  int file;
+
   printf("legal_knight_moves()\n"); // for now
+
+  square = get_piece1(gamept->board,current_board_position);
+  rank = RANK_OF(current_board_position);
+  file = FILE_OF(current_board_position);
+  printf("square = %d, rank = %d, file = %d\n",square,rank,file);
 }
 
 void legal_bishop_moves(struct game *gamept,char current_board_position)
 {
+  int square;
+  int rank;
+  int file;
+
   printf("legal_bishop_moves()\n"); // for now
+
+  square = get_piece1(gamept->board,current_board_position);
+  rank = RANK_OF(current_board_position);
+  file = FILE_OF(current_board_position);
+  printf("square = %d, rank = %d, file = %d\n",square,rank,file);
 }
 
 void legal_queen_moves(struct game *gamept,char current_board_position)
 {
+  int square;
+  int rank;
+  int file;
+
   printf("legal_queen_moves()\n"); // for now
+
+  square = get_piece1(gamept->board,current_board_position);
+  rank = RANK_OF(current_board_position);
+  file = FILE_OF(current_board_position);
+  printf("square = %d, rank = %d, file = %d\n",square,rank,file);
 }
 
 void legal_king_moves(struct game *gamept,char current_board_position)
 {
+  int square;
+  int rank;
+  int file;
+
   printf("legal_king_moves()\n"); // for now
+
+  square = get_piece1(gamept->board,current_board_position);
+  rank = RANK_OF(current_board_position);
+  file = FILE_OF(current_board_position);
+  printf("square = %d, rank = %d, file = %d\n",square,rank,file);
 }
