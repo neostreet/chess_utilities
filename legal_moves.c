@@ -21,10 +21,6 @@ int main(int argc,char **argv)
   bool bBinaryFormat;
   int retval;
   struct game curr_game;
-  bool bWhiteToMove;
-  struct piece_info *info_pt;
-  unsigned char board[CHARS_IN_BOARD];
-  char piece_id;
 
   if ((argc < 2) || (argc > 4)) {
     printf(usage);
@@ -69,54 +65,9 @@ int main(int argc,char **argv)
     }
   }
 
-  bWhiteToMove = !(curr_game.num_moves % 2);
+  legal_moves_count =  0;
 
-  if (bWhiteToMove)
-    info_pt = curr_game.white_pieces;
-  else
-    info_pt = curr_game.black_pieces;
-
-  print_piece_info2(info_pt); // for now
-  putchar(0x0a);
-  populate_board_from_piece_info(&curr_game,board);
-  print_bd0(board,curr_game.orientation);
-
-  for (n = 0; n < NUM_PIECES_PER_PLAYER; n++) {
-    if (info_pt[n].current_board_position == -1)
-      continue;
-
-    piece_id = info_pt[n].piece_id;
-
-    if (piece_id < 0)
-      piece_id *= -1;
-
-    switch (piece_id) {
-      case PAWN_ID:
-        legal_pawn_moves(&curr_game,info_pt[n].current_board_position,legal_moves,&legal_moves_count);
-
-        break;
-      case ROOK_ID:
-        legal_rook_moves(&curr_game,info_pt[n].current_board_position,legal_moves,&legal_moves_count);
-
-        break;
-      case KNIGHT_ID:
-        legal_knight_moves(&curr_game,info_pt[n].current_board_position,legal_moves,&legal_moves_count);
-
-        break;
-      case BISHOP_ID:
-        legal_bishop_moves(&curr_game,info_pt[n].current_board_position,legal_moves,&legal_moves_count);
-
-        break;
-      case QUEEN_ID:
-        legal_queen_moves(&curr_game,info_pt[n].current_board_position,legal_moves,&legal_moves_count);
-
-        break;
-      case KING_ID:
-        legal_king_moves(&curr_game,info_pt[n].current_board_position,legal_moves,&legal_moves_count);
-
-        break;
-    }
-  }
+  get_legal_moves(&curr_game,legal_moves,&legal_moves_count);
 
   printf("legal_moves:\n\n");
 
