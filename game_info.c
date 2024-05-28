@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+
 #include "chess.h"
 #define MAKE_GLOBALS_HERE
 #include "chess.glb"
@@ -8,14 +9,14 @@
 
 static char usage[] = "usage: game_info (-debug) (-binary_format) filename\n";
 
+static struct game curr_game;
+
 int main(int argc,char **argv)
 {
   int curr_arg;
   bool bDebug;
   bool bBinaryFormat;
-  int initial_move;
   int retval;
-  struct game curr_game;
 
   if ((argc < 2) || (argc > 4)) {
     printf(usage);
@@ -64,6 +65,7 @@ int main(int argc,char **argv)
   printf("title = %s\n",curr_game.title);
   printf("orientation = %d\n",curr_game.orientation);
   printf("num_moves = %d\n",curr_game.num_moves);
+  printf("curr_move = %d\n",curr_game.curr_move);
 
   return 0;
 }
