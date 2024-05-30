@@ -234,13 +234,13 @@ int main(int argc,char **argv)
                 if (bVerbose || bMe) {
                   if (bVerbose || bOpponent) {
                     if (bTerse)
-                      printf("%d %d %d\n",my_checks,opponent_checks,total_checks);
+                      printf("%s\n",filename);
                     else
                       printf("%3d me, %3d opponent, %3d total %s\n",my_checks,opponent_checks,total_checks,filename);
                   }
                   else {
                     if (bTerse)
-                      printf("%d %d\n",my_checks,total_checks);
+                      printf("%s\n",filename);
                     else
                       printf("%3d me, %3d total %s\n",my_checks,total_checks,filename);
                   }
@@ -248,7 +248,7 @@ int main(int argc,char **argv)
                 else {
                   if (bVerbose || bOpponent) {
                     if (bTerse)
-                      printf("%d %d\n",opponent_checks,total_checks);
+                      printf("%s\n",filename);
                     else
                       printf("%3d opponent, %3d total %s\n",opponent_checks,total_checks,filename);
                   }
