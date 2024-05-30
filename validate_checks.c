@@ -66,6 +66,8 @@ int main(int argc,char **argv)
 
       if (bDebug)
         printf("%d do_castle() failures\n",do_castle_failures);
+
+      continue;
     }
 
     set_initial_board(&curr_game);
