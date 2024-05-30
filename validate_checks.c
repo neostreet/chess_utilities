@@ -74,7 +74,7 @@ int main(int argc,char **argv)
 
     for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
       bBlack = curr_game.curr_move & 0x1;
-      update_board(&curr_game,NULL,NULL);
+      update_board(&curr_game,NULL,NULL,false);
 
       if (curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK) {
         if (!player_is_in_check(!bBlack,curr_game.board,curr_game.curr_move)) {
