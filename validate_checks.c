@@ -89,6 +89,17 @@ int main(int argc,char **argv)
           print_bd0(curr_game.board,curr_game.orientation);
         }
       }
+      else {
+        if (player_is_in_check(!bBlack,curr_game.board,curr_game.curr_move)) {
+          if (!bPrintedFilename) {
+            printf("%s\n",filename);
+            bPrintedFilename = true;
+          }
+
+          printf("found a spurious check on move %d\n",curr_game.curr_move);
+          print_bd0(curr_game.board,curr_game.orientation);
+        }
+      }
     }
   }
 
