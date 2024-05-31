@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: validate_checks (-debug) filename\n";
+"usage: validate_checks (-debug) (-binary_format) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -21,6 +21,7 @@ int main(int argc,char **argv)
   int n;
   int curr_arg;
   bool bDebug;
+  bool bBinaryFormat;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -28,16 +29,19 @@ int main(int argc,char **argv)
   bool bBlack;
   bool bPrintedFilename;
 
-  if ((argc < 2) || (argc > 3)) {
+  if ((argc < 2) || (argc > 4)) {
     printf(usage);
     return 1;
   }
 
   bDebug = false;
+  bBinaryFormat = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
       bDebug = true;
+    else if (!strcmp(argv[curr_arg],"-binary_format"))
+      bBinaryFormat = true;
     else
       break;
   }
@@ -58,16 +62,25 @@ int main(int argc,char **argv)
     if (feof(fptr))
       break;
 
-    retval = read_game(filename,&curr_game,err_msg);
+    if (!bBinaryFormat) {
+      retval = read_game(filename,&curr_game,err_msg);
 
-    if (retval) {
-      printf("read_game of %s failed: %d\n",filename,retval);
-      printf("curr_move = %d\n",curr_game.curr_move);
+      if (retval) {
+        printf("read_game of %s failed: %d\n",filename,retval);
+        printf("curr_move = %d\n",curr_game.curr_move);
 
-      if (bDebug)
-        printf("%d do_castle() failures\n",do_castle_failures);
+        continue;
+      }
+    }
+    else {
+      retval = read_binary_game(filename,&curr_game);
 
-      continue;
+      if (retval) {
+        printf("read_binary_game of %s failed: %d\n",filename,retval);
+        printf("curr_move = %d\n",curr_game.curr_move);
+
+        continue;
+      }
     }
 
     set_initial_board(&curr_game);
@@ -102,9 +115,6 @@ int main(int argc,char **argv)
       }
     }
   }
-
-  if (bDebug)
-    printf("%d do_castle() successes\n",do_castle_successes);
 
   return 0;
 }
