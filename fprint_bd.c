@@ -17,7 +17,8 @@ static char usage[] =
 "  (-only_promotions) (-only_captures) (-only_en_passants) (-multiple_queens) (-move_number_only)\n"
 "  (-mine) (-not_mine) (-search_all_moves) (-exact_match) (-only_no_promotions) (-only_underpromotions)\n"
 "  (-print_piece_counts) (-only_no_checks) (-only_no_mates) (-opposite_colored_bishops) (-same_colored_bishops)\n"
-"  (-two_bishops) (-opposite_side_castling) (-same_side_castling) (-less_than_2_castles) (-qnn) [white | black]\n"
+"  (-two_bishops) (-opposite_side_castling) (-same_side_castling) (-less_than_2_castles)\n"
+"  (-truncate_filename) (-qnn) [white | black]\n"
 "  filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
@@ -64,6 +65,7 @@ int main(int argc,char **argv)
   bool bOppositeSideCastling;
   bool bSameSideCastling;
   bool bLessThan2Castles;
+  bool bTruncateFilename;
   bool bPrintedFilename;
   bool bPrintedBoard;
   bool bSkip;
@@ -82,7 +84,7 @@ int main(int argc,char **argv)
   int filename_len;
   int num_pieces;
 
-  if ((argc < 2) || (argc > 40)) {
+  if ((argc < 2) || (argc > 41)) {
     printf(usage);
     return 1;
   }
@@ -123,6 +125,7 @@ int main(int argc,char **argv)
   bOppositeSideCastling = false;
   bSameSideCastling = false;
   bLessThan2Castles = false;
+  bTruncateFilename = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -241,6 +244,8 @@ int main(int argc,char **argv)
       bSameSideCastling = true;
     else if (!strcmp(argv[curr_arg],"-less_than_2_castles"))
       bLessThan2Castles = true;
+    else if (!strcmp(argv[curr_arg],"-truncate_filename"))
+      bTruncateFilename = true;
     else if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
     else
@@ -339,6 +344,18 @@ int main(int argc,char **argv)
       printf("curr_move = %d\n",curr_game.curr_move);
 
       continue;
+    }
+  }
+
+  if (bTruncateFilename) {
+    for (n = 0; n < MAX_FILENAME_LEN - 1; n++) {
+      if (!filename[n])
+        break;
+
+      if (filename[n] == '.') {
+        filename[n] = 0;
+        break;
+      }
     }
   }
 
