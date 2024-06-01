@@ -160,6 +160,9 @@ static void get_time(char *time,char *line);
             } \
           }
 
+static int dbg_line_no;
+static int dbg;
+
 int main(int argc,char **argv)
 {
   int m;
@@ -289,11 +292,18 @@ int main(int argc,char **argv)
       continue;
     }
 
+    line_no = 0;
+
     for ( ; ; ) {
       GetLine(fptr,line,&line_len,MAX_LINE_LEN);
 
       if (feof(fptr))
         break;
+
+      line_no++;
+
+      if (line_no == dbg_line_no)
+        dbg = 1;
 
       if (Contains(true,
         line,line_len,
@@ -315,6 +325,18 @@ int main(int argc,char **argv)
         line,line_len,
         white_elo,WHITE_ELO_LEN,
         &ix)) {
+
+        // build date_time from date and time
+        if (bDate) {
+          strcpy(date_time,date);
+
+          if (bTime) {
+            strcat(date_time," ");
+            strcat(date_time,time);
+          }
+        }
+        else if (bTime)
+          strcpy(date_time,time);
 
         if ((bPlayerIsWhite && !bOpponent) ||
           (!bPlayerIsWhite && bOpponent)) {
