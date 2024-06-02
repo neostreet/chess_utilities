@@ -27,6 +27,7 @@ int main(int argc,char **argv)
   int filename_len;
   struct game curr_game;
   bool bBlack;
+  int dbg;
 
   if ((argc < 2) || (argc > 4)) {
     printf(usage);
@@ -90,8 +91,18 @@ int main(int argc,char **argv)
       bBlack = curr_game.curr_move & 0x1;
       update_board(&curr_game,NULL,NULL,false);
 
+      if (curr_game.curr_move == dbg_move)
+        dbg = 1;
+
       if (player_is_in_check(bBlack,curr_game.board,curr_game.curr_move)) {
-        printf("%s\n",filename);
+        if (!bVerbose)
+          printf("%s\n",filename);
+        else {
+          printf("%s: on move %d, %s didn't respond to a check made on the previous move\n",
+            filename,curr_game.curr_move,(bBlack ? "Black" : "White"));
+          print_bd0(curr_game.board,curr_game.orientation);
+        }
+
         break;
       }
     }
