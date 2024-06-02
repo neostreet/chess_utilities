@@ -1,8 +1,11 @@
 @echo off
 split_pgn %1 %2
 call reverse_it %2_games.lst
+build_ch_file .ch.lst .ch %2_games.lst.rev
+build_ch_file .bin.lst .bin %2_games.lst.rev
 
-ftxt2ch %2_games.lst.rev
+call ftxt2ch_dont %2_games.lst.rev
+call fch2bin %2_games.ch.lst
 
 call fchess_score_plus_minus_it %2_games.lst.rev
 call fchess_rating_diff_it %2_games.lst.rev
