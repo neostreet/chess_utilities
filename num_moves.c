@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: num_moves filename\n";
+"usage: num_moves (-binary_format) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -19,19 +19,35 @@ char couldnt_open[] = "couldn't open %s\n";
 int main(int argc,char **argv)
 {
   int n;
+  int curr_arg;
+  bool bBinaryFormat;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if (argc != 2) {
+  if ((argc < 2) || (argc > 3)) {
     printf(usage);
     return 1;
   }
 
-  if ((fptr = fopen(argv[1],"r")) == NULL) {
-    printf(couldnt_open,argv[1]);
+  bBinaryFormat = false;
+
+  for (curr_arg = 1; curr_arg < argc; curr_arg++) {
+    if (!strcmp(argv[curr_arg],"-binary_format"))
+      bBinaryFormat = true;
+    else
+      break;
+  }
+
+  if (argc - curr_arg != 1) {
+    printf(usage);
     return 2;
+  }
+
+  if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
+    printf(couldnt_open,argv[curr_arg]);
+    return 3;
   }
 
   for ( ; ; ) {
@@ -40,12 +56,25 @@ int main(int argc,char **argv)
     if (feof(fptr))
       break;
 
-    retval = read_game(filename,&curr_game,err_msg);
+    if (!bBinaryFormat) {
+      retval = read_game(filename,&curr_game,err_msg);
 
-    if (retval) {
-      printf("read_game of %s failed: %d\n",filename,retval);
-      printf("curr_move = %d\n",curr_game.curr_move);
-      continue;
+      if (retval) {
+        printf("read_game of %s failed: %d\n",filename,retval);
+        printf("curr_move = %d\n",curr_game.curr_move);
+
+        continue;
+      }
+    }
+    else {
+      retval = read_binary_game(filename,&curr_game);
+
+      if (retval) {
+        printf("read_binary_game of %s failed: %d\n",filename,retval);
+        printf("curr_move = %d\n",curr_game.curr_move);
+
+        continue;
+      }
     }
 
     printf("%d %s\n",(curr_game.num_moves + 1) / 2,filename);
