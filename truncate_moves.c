@@ -52,7 +52,7 @@ int main(int argc,char **argv)
   }
 
   if (curr_game.num_moves < num_moves) {
-    printf("can't truncate %s to %d moves, as it only contains %d\n",num_moves,curr_game.num_moves);
+    printf("can't truncate %s to %d moves, as it only contains %d\n",argv[curr_arg+1],num_moves,curr_game.num_moves);
     return 4;
   }
 
