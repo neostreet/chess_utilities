@@ -57,6 +57,7 @@ int main(int argc,char **argv)
   }
 
   curr_game.num_moves = num_moves;
+  curr_game.curr_move = num_moves;
 
   retval = write_binary_game(argv[curr_arg+2],&curr_game);
 
