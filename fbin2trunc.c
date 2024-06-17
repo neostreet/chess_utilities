@@ -59,7 +59,6 @@ int main(int argc,char **argv)
   }
 
   sscanf(argv[curr_arg],"%d",&num_moves);
-  num_moves *= 2;
 
   if ((fptr0 = fopen(argv[curr_arg+1],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg+1]);
