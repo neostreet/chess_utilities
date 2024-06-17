@@ -39,7 +39,6 @@ int main(int argc,char **argv)
   }
 
   sscanf(argv[curr_arg],"%d",&num_moves);
-  num_moves *= 2;
 
   bzero(&curr_game,sizeof (struct game));
 
