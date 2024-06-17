@@ -11,7 +11,8 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: num_moves (-binary_format) (-ge_num_movesnum_moves) (-eq_num_movesnum_moves) (-terse) filename\n";
+"usage: num_moves (-binary_format) (-gt_num_movesnum_moves) (-eq_num_movesnum_moves)\n"
+"  (-lt_num_movesnum_moves) (-terse) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -22,31 +23,35 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bBinaryFormat;
   int num_moves;
-  int ge_num_moves;
+  int gt_num_moves;
   int eq_num_moves;
+  int lt_num_moves;
   bool bTerse;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 6)) {
+  if ((argc < 2) || (argc > 7)) {
     printf(usage);
     return 1;
   }
 
   bBinaryFormat = false;
-  ge_num_moves = -1;
+  gt_num_moves = -1;
   eq_num_moves = -1;
+  lt_num_moves = -1;
   bTerse = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
-    else if (!strncmp(argv[curr_arg],"-ge_num_moves",13))
-      sscanf(&argv[curr_arg][13],"%d",&ge_num_moves);
+    else if (!strncmp(argv[curr_arg],"-gt_num_moves",13))
+      sscanf(&argv[curr_arg][13],"%d",&gt_num_moves);
     else if (!strncmp(argv[curr_arg],"-eq_num_moves",13))
       sscanf(&argv[curr_arg][13],"%d",&eq_num_moves);
+    else if (!strncmp(argv[curr_arg],"-lt_num_moves",13))
+      sscanf(&argv[curr_arg][13],"%d",&lt_num_moves);
     else if (!strcmp(argv[curr_arg],"-terse"))
       bTerse = true;
     else
@@ -58,14 +63,24 @@ int main(int argc,char **argv)
     return 2;
   }
 
-  if ((ge_num_moves != -1) && (eq_num_moves != -1)) {
-    printf("can't specify both -ge_num_moves and -eq_num_moves\n");
+  if ((gt_num_moves != -1) && (eq_num_moves != -1)) {
+    printf("can't specify both -gt_num_moves and -eq_num_moves\n");
     return 3;
+  }
+
+  if ((gt_num_moves != -1) && (lt_num_moves != -1)) {
+    printf("can't specify both -gt_num_moves and -lt_num_moves\n");
+    return 4;
+  }
+
+  if ((eq_num_moves != -1) && (lt_num_moves != -1)) {
+    printf("can't specify both -eq_num_moves and -lt_num_moves\n");
+    return 5;
   }
 
   if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 4;
+    return 6;
   }
 
   for ( ; ; ) {
@@ -95,9 +110,17 @@ int main(int argc,char **argv)
       }
     }
 
-    num_moves = (curr_game.num_moves + 1) / 2;
+    num_moves = curr_game.num_moves;
 
-    if (eq_num_moves != -1) {
+    if (gt_num_moves != -1) {
+      if (num_moves > gt_num_moves) {
+        if (!bTerse)
+          printf("%d %s\n",num_moves,filename);
+        else
+          printf("%s\n",filename);
+      }
+    }
+    else if (eq_num_moves != -1) {
       if (num_moves == eq_num_moves) {
         if (!bTerse)
           printf("%d %s\n",num_moves,filename);
@@ -105,7 +128,15 @@ int main(int argc,char **argv)
           printf("%s\n",filename);
       }
     }
-    else if (num_moves >= ge_num_moves) {
+    else if (lt_num_moves != -1) {
+      if (num_moves < lt_num_moves) {
+        if (!bTerse)
+          printf("%d %s\n",num_moves,filename);
+        else
+          printf("%s\n",filename);
+      }
+    }
+    else {
       if (!bTerse)
         printf("%d %s\n",num_moves,filename);
       else
