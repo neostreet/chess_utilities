@@ -16,7 +16,7 @@ static char line[MAX_LINE_LEN];
 #include "chess.mac"
 
 static char usage[] =
-"usage: fbin2trunc (-debug) num_moves filename\n";
+"usage: fbin2trunc (-debug) (-alternate_colors) num_moves filename\n";
 
 static struct game curr_game;
 
@@ -33,22 +33,27 @@ int main(int argc,char **argv)
 {
   int curr_arg;
   bool bDebug;
+  bool bAlternateColors;
   int num_moves;
   FILE *fptr0;
   int file_len;
   int bin_filename_len;
   int retval;
+  int file_no;
 
-  if ((argc < 3) || (argc > 4)) {
+  if ((argc < 3) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
   bDebug = false;
+  bAlternateColors = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
       bDebug = true;
+    else if (!strcmp(argv[curr_arg],"-alternate_colors"))
+      bAlternateColors = true;
     else
       break;
   }
@@ -65,11 +70,15 @@ int main(int argc,char **argv)
     return 3;
   }
 
+  file_no = 0;
+
   for ( ; ; ) {
     GetLine(fptr0,filename,&file_len,MAX_FILENAME_LEN);
 
     if (feof(fptr0))
       break;
+
+    file_no++;
 
     bin_filename_len = strlen(filename);
 
@@ -95,8 +104,23 @@ int main(int argc,char **argv)
       continue;
     }
 
-    curr_game.num_moves = num_moves;
-    curr_game.curr_move = num_moves;
+    if (!bAlternateColors) {
+      curr_game.num_moves = num_moves;
+      curr_game.curr_move = num_moves;
+      curr_game.orientation = (num_moves % 2);
+    }
+    else {
+      if (!((file_no - 1) % 2)) {
+        curr_game.num_moves = num_moves;
+        curr_game.curr_move = num_moves;
+        curr_game.orientation = (num_moves % 2);
+      }
+      else {
+        curr_game.num_moves = num_moves - 1;
+        curr_game.curr_move = num_moves - 1;
+        curr_game.orientation = ((num_moves - 1) % 2);
+      }
+    }
 
     retval = write_binary_game(trunc_filename,&curr_game);
 
