@@ -65,11 +65,16 @@ int main(int argc,char **argv)
     }
   }
 
+  printf("%s\n",argv[curr_arg]);
+  putchar(0x0a);
+  print_bd(&curr_game);
+  putchar(0x0a);
+
   legal_moves_count =  0;
 
   get_legal_moves(&curr_game,legal_moves,&legal_moves_count);
 
-  printf("legal_moves:\n\n");
+  printf("%d legal_moves:\n\n",legal_moves_count);
 
   for (n = 0; n < legal_moves_count; n++) {
     printf("from: %c%c to: %c%c\n",
