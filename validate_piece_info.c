@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: validate_piece_info (-verbose) (-show_matches) (-terse) filename\n";
+"usage: validate_piece_info (-verbose) (-show_matches) (-terse) (-binary_format) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -23,6 +23,7 @@ int main(int argc,char **argv)
   bool bVerbose;
   bool bShowMatches;
   bool bTerse;
+  bool bBinaryFormat;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -30,7 +31,7 @@ int main(int argc,char **argv)
   bool bPrintedFilename;
   unsigned char board[CHARS_IN_BOARD];
 
-  if ((argc < 2) || (argc > 5)) {
+  if ((argc < 2) || (argc > 6)) {
     printf(usage);
     return 1;
   }
@@ -38,6 +39,7 @@ int main(int argc,char **argv)
   bVerbose = false;
   bShowMatches = false;
   bTerse = false;
+  bBinaryFormat = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
@@ -46,6 +48,8 @@ int main(int argc,char **argv)
       bShowMatches = true;
     else if (!strcmp(argv[curr_arg],"-terse"))
       bTerse = true;
+    else if (!strcmp(argv[curr_arg],"-binary_format"))
+      bBinaryFormat = true;
     else
       break;
   }
@@ -76,11 +80,27 @@ int main(int argc,char **argv)
     if (feof(fptr))
       break;
 
-    retval = read_game(filename,&curr_game,err_msg);
+    bzero(&curr_game,sizeof (struct game));
 
-    if (retval) {
-      printf("read_game of %s failed: %d\n",filename,retval);
-      printf("curr_move = %d\n",curr_game.curr_move);
+    if (!bBinaryFormat) {
+      retval = read_game(filename,&curr_game,err_msg);
+
+      if (retval) {
+        printf("read_game of %s failed: %d\n",filename,retval);
+        printf("curr_move = %d\n",curr_game.curr_move);
+
+        continue;
+      }
+    }
+    else {
+      retval = read_binary_game(filename,&curr_game);
+
+      if (retval) {
+        printf("read_binary_game of %s failed: %d\n",filename,retval);
+        printf("curr_move = %d\n",curr_game.curr_move);
+
+        continue;
+      }
     }
 
     set_initial_board(&curr_game);
