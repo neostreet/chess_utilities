@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: validate_checks (-debug) (-binary_format) filename\n";
+"usage: validate_checks (-verbose) (-binary_format) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -20,7 +20,7 @@ int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
-  bool bDebug;
+  bool bVerbose;
   bool bBinaryFormat;
   int retval;
   FILE *fptr;
@@ -34,12 +34,12 @@ int main(int argc,char **argv)
     return 1;
   }
 
-  bDebug = false;
+  bVerbose = false;
   bBinaryFormat = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-debug"))
-      bDebug = true;
+    if (!strcmp(argv[curr_arg],"-verbose"))
+      bVerbose = true;
     else if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
     else
@@ -110,7 +110,9 @@ int main(int argc,char **argv)
           }
 
           printf("found a spurious check on move %d\n",curr_game.curr_move);
-          print_bd0(curr_game.board,curr_game.orientation);
+
+          if (bVerbose)
+            print_bd0(curr_game.board,curr_game.orientation);
         }
       }
     }
