@@ -16,7 +16,7 @@ static char line[MAX_LINE_LEN];
 #include "chess.mac"
 
 static char usage[] =
-"usage: fch2bin (-debug) filename\n";
+"usage: fch2bin (-debug) (-skip_checks) filename\n";
 
 static struct game curr_game;
 
@@ -38,16 +38,19 @@ int main(int argc,char **argv)
   int ch_filename_len;
   int retval;
 
-  if ((argc < 2) || (argc > 3)) {
+  if ((argc < 2) || (argc > 4)) {
     printf(usage);
     return 1;
   }
 
   bDebug = false;
+  bSkipChecks = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
       bDebug = true;
+    else if (!strcmp(argv[curr_arg],"-skip_checks"))
+      bSkipChecks = true;
     else
       break;
   }
