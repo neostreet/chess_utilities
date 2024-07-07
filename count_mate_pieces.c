@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "chess.h"
@@ -10,11 +11,15 @@
 #define MAX_FILENAME_LEN 256
 static char filename[MAX_FILENAME_LEN];
 
+int mate_counts[NUM_PIECE_TYPES_0];
+
 static char usage[] =
-"usage: count_mate_pieces (-verbose) (-binary_format) filename\n";
+"usage: count_mate_pieces (-verbose) (-binary_format) (-sort) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
+
+int elem_compare(const void *elem1,const void *elem2);
 
 int main(int argc,char **argv)
 {
@@ -22,28 +27,32 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bVerbose;
   bool bBinaryFormat;
+  bool bSort;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
   int last_piece;
-  int mate_counts[NUM_PIECE_TYPES_0];
+  int ixs[NUM_PIECE_TYPES_0];
   int ix;
   int total_counts;
 
-  if ((argc < 2) || (argc > 4)) {
+  if ((argc < 2) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
   bVerbose = false;
   bBinaryFormat = false;
+  bSort = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
       bVerbose = true;
     else if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
+    else if (!strcmp(argv[curr_arg],"-sort"))
+      bSort = true;
     else
       break;
   }
@@ -123,12 +132,29 @@ int main(int argc,char **argv)
 
   total_counts = 0;
 
+  for (n = 0; n < NUM_PIECE_TYPES_0; n++)
+    ixs[n] = n;
+
+  if (bSort)
+    qsort(ixs,NUM_PIECE_TYPES_0,sizeof (int),elem_compare);
+
   for (n = 0; n < NUM_PIECE_TYPES_0; n++) {
-    printf("%5d %c\n",mate_counts[n],((n == 0) ? 'P' : piece_ids[n-1]));
-    total_counts += mate_counts[n];
+    printf("%5d %c\n",mate_counts[ixs[n]],((ixs[n] == 0) ? 'P' : piece_ids[ixs[n]-1]));
+    total_counts += mate_counts[ixs[n]];
   }
 
   printf("\n%5d total\n",total_counts);
 
   return 0;
+}
+
+int elem_compare(const void *elem1,const void *elem2)
+{
+  int ix1;
+  int ix2;
+
+  ix1 = *(int *)elem1;
+  ix2 = *(int *)elem2;
+
+  return mate_counts[ix2] - mate_counts[ix1];
 }
