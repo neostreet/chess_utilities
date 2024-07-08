@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_mates (-binary_format) (-mine) (-not_mine) filename\n";
+"usage: find_mates (-binary_format) (-mine) (-not_mine) (-white) (-black) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -23,13 +23,15 @@ int main(int argc,char **argv)
   bool bBinaryFormat;
   bool bMine;
   bool bNotMine;
+  bool bWhite;
+  bool bBlack;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
   unsigned char board[CHARS_IN_BOARD];
 
-  if ((argc < 2) || (argc > 5)) {
+  if ((argc < 2) || (argc > 7)) {
     printf(usage);
     return 1;
   }
@@ -37,6 +39,8 @@ int main(int argc,char **argv)
   bBinaryFormat = false;
   bMine = false;
   bNotMine = false;
+  bWhite = false;
+  bBlack = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-binary_format"))
@@ -45,6 +49,10 @@ int main(int argc,char **argv)
       bMine = true;
     else if (!strcmp(argv[curr_arg],"-not_mine"))
       bNotMine = true;
+    else if (!strcmp(argv[curr_arg],"-white"))
+      bWhite = true;
+    else if (!strcmp(argv[curr_arg],"-black"))
+      bBlack = true;
     else
       break;
   }
@@ -59,9 +67,14 @@ int main(int argc,char **argv)
     return 3;
   }
 
+  if (bWhite && bBlack) {
+    printf("can't specify both -white and -black\n");
+    return 4;
+  }
+
   if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 4;
+    return 5;
   }
 
   for ( ; ; ) {
@@ -94,6 +107,15 @@ int main(int argc,char **argv)
     }
 
     if (curr_game.moves[curr_game.num_moves-1].special_move_info & SPECIAL_MOVE_MATE) {
+      if (bWhite) {
+        if (!(curr_game.num_moves % 2))
+          continue;
+      }
+      else if (bBlack) {
+        if (curr_game.num_moves % 2)
+          continue;
+      }
+
       if (!bMine && !bNotMine)
         printf("%s\n",filename);
       else if (bMine) {
