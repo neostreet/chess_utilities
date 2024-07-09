@@ -12,10 +12,12 @@ static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
 "usage: find_mates (-binary_format) (-mine) (-not_mine) (-white) (-black) (-mating_squaresquare)\n"
-"   (-mated_squaresquare) filename\n";
+"   (-mated_squaresquare) (-mate_distancedistance) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
+
+int get_mate_distance(int mating_square,int mated_square);
 
 int main(int argc,char **argv)
 {
@@ -31,13 +33,16 @@ int main(int argc,char **argv)
   int mating_square;
   int mated_square;
   int curr_mated_square;
+  int mate_distance;
+  int curr_mate_distance;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
   unsigned char board[CHARS_IN_BOARD];
+  int dbg;
 
-  if ((argc < 2) || (argc > 9)) {
+  if ((argc < 2) || (argc > 10)) {
     printf(usage);
     return 1;
   }
@@ -49,6 +54,7 @@ int main(int argc,char **argv)
   bBlack = false;
   mating_square = -1;
   mated_square = -1;
+  mate_distance = -1;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-binary_format"))
@@ -79,6 +85,10 @@ int main(int argc,char **argv)
       rank = argv[curr_arg][14] - '1';
       mated_square = POS_OF(rank,file);
     }
+    else if (!strncmp(argv[curr_arg],"-mate_distance",14)) {
+      sscanf(&argv[curr_arg][14],"%d",&mate_distance);
+      mate_distance--;
+    }
     else
       break;
   }
@@ -103,9 +113,19 @@ int main(int argc,char **argv)
     return 5;
   }
 
+  if ((mating_square != -1) && (mate_distance != -1)) {
+    printf("can't specify both -mating_square and -mate_distance\n");
+    return 6;
+  }
+
+  if ((mated_square != -1) && (mate_distance != -1)) {
+    printf("can't specify both -mated_square and -mate_distance\n");
+    return 7;
+  }
+
   if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 6;
+    return 8;
   }
 
   for ( ; ; ) {
@@ -153,6 +173,22 @@ int main(int argc,char **argv)
           continue;
       }
 
+      if (mate_distance != -1) {
+        mating_square = curr_game.moves[curr_game.num_moves-1].to;
+
+        if (curr_game.num_moves % 2)
+          mated_square = curr_game.black_pieces[12].current_board_position;
+        else
+          mated_square = curr_game.white_pieces[4].current_board_position;
+
+        curr_mate_distance = get_mate_distance(mating_square,mated_square);
+
+        if (curr_mate_distance != mate_distance)
+          continue;
+
+        dbg = 1;
+      }
+
       if (bWhite) {
         if (!(curr_game.num_moves % 2))
           continue;
@@ -188,4 +224,31 @@ int main(int argc,char **argv)
   }
 
   return 0;
+}
+
+int get_mate_distance(int mating_square,int mated_square)
+{
+  int mating_file;
+  int mating_rank;
+  int mated_file;
+  int mated_rank;
+  int file_distance;
+  int rank_distance;
+
+  mating_file = FILE_OF(mating_square);
+  mating_rank = RANK_OF(mating_square);
+  mated_file = FILE_OF(mated_square);
+  mated_rank = RANK_OF(mated_square);
+
+  if (mating_file > mated_file)
+    file_distance = mating_file - mated_file;
+  else
+    file_distance = mated_file - mating_file;
+
+  if (mating_rank > mated_rank)
+    rank_distance = mating_rank - mated_rank;
+  else
+    rank_distance = mated_rank - mating_rank;
+
+  return file_distance + rank_distance - 1;
 }
