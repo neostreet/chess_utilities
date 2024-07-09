@@ -11,7 +11,8 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_mates (-binary_format) (-mine) (-not_mine) (-white) (-black) (-mating_squaresquare) filename\n";
+"usage: find_mates (-binary_format) (-mine) (-not_mine) (-white) (-black) (-mating_squaresquare)\n"
+"   (-mated_squaresquare) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -28,13 +29,15 @@ int main(int argc,char **argv)
   int file;
   int rank;
   int mating_square;
+  int mated_square;
+  int curr_mated_square;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
   unsigned char board[CHARS_IN_BOARD];
 
-  if ((argc < 2) || (argc > 8)) {
+  if ((argc < 2) || (argc > 9)) {
     printf(usage);
     return 1;
   }
@@ -45,6 +48,7 @@ int main(int argc,char **argv)
   bWhite = false;
   bBlack = false;
   mating_square = -1;
+  mated_square = -1;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-binary_format"))
@@ -66,6 +70,15 @@ int main(int argc,char **argv)
       rank = argv[curr_arg][15] - '1';
       mating_square = POS_OF(rank,file);
     }
+    else if ((strlen(argv[curr_arg]) == 15) &&
+      !strncmp(argv[curr_arg],"-mated_square",13) &&
+      (argv[curr_arg][13] >= 'a') && (argv[curr_arg][13] <= 'h') &&
+      (argv[curr_arg][14] >= '1') && (argv[curr_arg][14] <= '8')) {
+
+      file = argv[curr_arg][13] - 'a';
+      rank = argv[curr_arg][14] - '1';
+      mated_square = POS_OF(rank,file);
+    }
     else
       break;
   }
@@ -85,9 +98,14 @@ int main(int argc,char **argv)
     return 4;
   }
 
+  if ((mating_square != -1) && (mated_square != -1)) {
+    printf("can't specify both -mating_square and -mated_square\n");
+    return 5;
+  }
+
   if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 5;
+    return 6;
   }
 
   for ( ; ; ) {
@@ -122,6 +140,16 @@ int main(int argc,char **argv)
     if (curr_game.moves[curr_game.num_moves-1].special_move_info & SPECIAL_MOVE_MATE) {
       if (mating_square != -1 ) {
         if (curr_game.moves[curr_game.num_moves-1].to != mating_square)
+          continue;
+      }
+
+      if (mated_square != -1 ) {
+        if (curr_game.num_moves % 2)
+          curr_mated_square = curr_game.black_pieces[12].current_board_position;
+        else
+          curr_mated_square = curr_game.white_pieces[4].current_board_position;
+
+        if (curr_mated_square != mated_square)
           continue;
       }
 
