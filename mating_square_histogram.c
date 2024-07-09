@@ -142,4 +142,3 @@ int elem_compare(const void *elem1,const void *elem2)
 
   return mating_square_counts[ix2] - mating_square_counts[ix1];
 }
-
