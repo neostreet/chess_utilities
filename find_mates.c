@@ -44,7 +44,7 @@ int main(int argc,char **argv)
   int read_count;
   int match_count;
 
-  if ((argc < 2) || (argc > 12)) {
+  if ((argc < 2) || (argc > 11)) {
     printf(usage);
     return 1;
   }
