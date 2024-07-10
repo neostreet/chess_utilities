@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_mates (-binary_format) (-mine) (-not_mine) (-white) (-black) (-mating_squaresquare)\n"
+"usage: find_mates (-debug) (-binary_format) (-mine) (-not_mine) (-white) (-black) (-mating_squaresquare)\n"
 "   (-mated_squaresquare) (-mate_distancedistance) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
@@ -23,6 +23,7 @@ int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
+  bool bDebug;
   bool bBinaryFormat;
   bool bMine;
   bool bNotMine;
@@ -31,6 +32,7 @@ int main(int argc,char **argv)
   int file;
   int rank;
   int mating_square;
+  int curr_mating_square;
   int mated_square;
   int curr_mated_square;
   int mate_distance;
@@ -39,14 +41,15 @@ int main(int argc,char **argv)
   FILE *fptr;
   int filename_len;
   struct game curr_game;
-  unsigned char board[CHARS_IN_BOARD];
-  int dbg;
+  int read_count;
+  int match_count;
 
-  if ((argc < 2) || (argc > 10)) {
+  if ((argc < 2) || (argc > 12)) {
     printf(usage);
     return 1;
   }
 
+  bDebug = false;
   bBinaryFormat = false;
   bMine = false;
   bNotMine = false;
@@ -57,7 +60,9 @@ int main(int argc,char **argv)
   mate_distance = -1;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-binary_format"))
+    if (!strcmp(argv[curr_arg],"-debug"))
+      bDebug = true;
+    else if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
     else if (!strcmp(argv[curr_arg],"-mine"))
       bMine = true;
@@ -128,11 +133,21 @@ int main(int argc,char **argv)
     return 8;
   }
 
+  read_count = 0;
+  match_count = 0;
+
   for ( ; ; ) {
     GetLine(fptr,filename,&filename_len,MAX_FILENAME_LEN);
 
     if (feof(fptr))
       break;
+
+    if (bDebug) {
+      read_count++;
+
+      if (!(read_count % 100))
+        printf("about to read %s\n",filename);
+    }
 
     bzero(&curr_game,sizeof (struct game));
 
@@ -174,19 +189,17 @@ int main(int argc,char **argv)
       }
 
       if (mate_distance != -1) {
-        mating_square = curr_game.moves[curr_game.num_moves-1].to;
+        curr_mating_square = curr_game.moves[curr_game.num_moves-1].to;
 
         if (curr_game.num_moves % 2)
-          mated_square = curr_game.black_pieces[12].current_board_position;
+          curr_mated_square = curr_game.black_pieces[12].current_board_position;
         else
-          mated_square = curr_game.white_pieces[4].current_board_position;
+          curr_mated_square = curr_game.white_pieces[4].current_board_position;
 
-        curr_mate_distance = get_mate_distance(mating_square,mated_square);
+        curr_mate_distance = get_mate_distance(curr_mating_square,curr_mated_square);
 
         if (curr_mate_distance != mate_distance)
           continue;
-
-        dbg = 1;
       }
 
       if (bWhite) {
@@ -198,30 +211,45 @@ int main(int argc,char **argv)
           continue;
       }
 
-      if (!bMine && !bNotMine)
+      if (!bMine && !bNotMine) {
         printf("%s\n",filename);
+        match_count++;
+      }
       else if (bMine) {
         if (curr_game.num_moves % 2) {
-          if (!curr_game.orientation)
+          if (!curr_game.orientation) {
             printf("%s\n",filename);
+            match_count++;
+          }
         }
         else {
-          if (curr_game.orientation)
+          if (curr_game.orientation) {
             printf("%s\n",filename);
+            match_count++;
+          }
         }
       }
       else {
         if (curr_game.num_moves % 2) {
-          if (curr_game.orientation)
+          if (curr_game.orientation) {
             printf("%s\n",filename);
+            match_count++;
+          }
         }
         else {
-          if (!curr_game.orientation)
+          if (!curr_game.orientation) {
             printf("%s\n",filename);
+            match_count++;
+          }
         }
       }
     }
   }
+
+  fclose(fptr);
+
+  if (bDebug)
+    printf("read_count = %d, match_count = %d\n",read_count,match_count);
 
   return 0;
 }
