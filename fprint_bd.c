@@ -18,7 +18,7 @@ static char usage[] =
 "  (-mine) (-not_mine) (-search_all_moves) (-exact_match) (-only_no_promotions) (-only_underpromotions)\n"
 "  (-print_piece_counts) (-only_no_checks) (-only_no_mates) (-opposite_colored_bishops) (-same_colored_bishops)\n"
 "  (-two_bishops) (-opposite_side_castling) (-same_side_castling) (-less_than_2_castles)\n"
-"  (-truncate_filename) (-qnn) [white | black]\n"
+"  (-truncate_filename) (-only_stalemates) (-qnn) [white | black]\n"
 "  filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
@@ -66,6 +66,7 @@ int main(int argc,char **argv)
   bool bSameSideCastling;
   bool bLessThan2Castles;
   bool bTruncateFilename;
+  bool bOnlyStalemates;
   bool bPrintedFilename;
   bool bPrintedBoard;
   bool bSkip;
@@ -84,7 +85,7 @@ int main(int argc,char **argv)
   int filename_len;
   int num_pieces;
 
-  if ((argc < 2) || (argc > 41)) {
+  if ((argc < 2) || (argc > 42)) {
     printf(usage);
     return 1;
   }
@@ -126,6 +127,7 @@ int main(int argc,char **argv)
   bSameSideCastling = false;
   bLessThan2Castles = false;
   bTruncateFilename = false;
+  bOnlyStalemates = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -248,6 +250,8 @@ int main(int argc,char **argv)
       bTruncateFilename = true;
     else if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
+    else if (!strcmp(argv[curr_arg],"-only_stalemates"))
+      bOnlyStalemates = true;
     else
       break;
   }
@@ -369,7 +373,7 @@ int main(int argc,char **argv)
     !bOnlyEnPassants && !bMultipleQueens && !bOnlyPromotions && !bOnlyUnderpromotions && !bOnlyNoPromotions &&
     !bMine && !bNotMine && !bHaveMatchBoard && !bHaveMatchForce && (num_white_pieces == -1) &&
     (num_black_pieces == -1) && !bOppositeColoredBishops && !bSameColoredBishops && !bTwoBishops &&
-    !bOppositeSideCastling && !bSameSideCastling && !bLessThan2Castles)
+    !bOppositeSideCastling && !bSameSideCastling && !bLessThan2Castles && !bOnlyStalemates)
     printf("%s\n",filename);
 
   curr_game.curr_move--;
@@ -448,6 +452,11 @@ int main(int argc,char **argv)
           continue;
       }
 
+      if (bOnlyStalemates) {
+        if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_STALEMATE))
+          continue;
+      }
+
       if (bOnlyCastles) {
         if (!(curr_game.moves[curr_game.curr_move].special_move_info & (SPECIAL_MOVE_KINGSIDE_CASTLE | SPECIAL_MOVE_QUEENSIDE_CASTLE)))
           continue;
@@ -516,7 +525,7 @@ int main(int argc,char **argv)
       if (bOnlyChecks || bOnlyNoChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles || bOnlyPromotions ||
         bOnlyUnderpromotions || bOnlyNoPromotions || bOnlyCaptures || bOnlyEnPassants || bMultipleQueens ||
         bHaveMatchBoard || bHaveMatchForce || bMine || bNotMine || bOppositeColoredBishops || bSameColoredBishops ||
-        bTwoBishops || bOppositeSideCastling || bSameSideCastling || bLessThan2Castles) {
+        bTwoBishops || bOppositeSideCastling || bSameSideCastling || bLessThan2Castles || bOnlyStalemates) {
 
         if (!bPrintedFilename) {
           printf("%s\n",filename);
@@ -634,6 +643,11 @@ int main(int argc,char **argv)
         bSkip = true;
     }
 
+    if (!bSkip && bOnlyStalemates) {
+      if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_STALEMATE))
+        bSkip = true;
+    }
+
     if (!bSkip && bOnlyCastles) {
       if (!(curr_game.moves[curr_game.curr_move].special_move_info & (SPECIAL_MOVE_KINGSIDE_CASTLE | SPECIAL_MOVE_QUEENSIDE_CASTLE)))
         bSkip = true;
@@ -705,7 +719,7 @@ int main(int argc,char **argv)
         bOnlyCaptures || bMultipleQueens || bHaveMatchBoard || bHaveMatchForce ||
         bMine || bNotMine || (num_white_pieces != -1) || (num_black_pieces != -1) ||
         bOppositeColoredBishops || bSameColoredBishops || bTwoBishops || bOppositeSideCastling ||
-        bSameSideCastling || bLessThan2Castles) {
+        bSameSideCastling || bLessThan2Castles || bOnlyStalemates) {
         printf("%s\n",filename);
       }
 
