@@ -122,7 +122,7 @@ int main(int argc,char **argv)
 
   fclose(fptr0);
 
-  printf("%d %d %d\n",wins,losses,draws);
+  printf("%d %d %d\n",wins,draws,losses);
 
   return 0;
 }
