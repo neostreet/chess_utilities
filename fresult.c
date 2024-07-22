@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: fresult (-debug) (-binary_format) filename\n";
+"usage: fresult (-debug) (-binary_format) (-my_wins) (-my_draws) (-my_losses) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -21,6 +21,9 @@ int main(int argc,char **argv)
   int n;
   int curr_arg;
   bool bDebug;
+  bool bMyWins;
+  bool bMyDraws;
+  bool bMyLosses;
   bool bBinaryFormat;
   int retval;
   FILE *fptr;
@@ -28,19 +31,28 @@ int main(int argc,char **argv)
   struct game curr_game;
   bool bPrintedFilename;
 
-  if ((argc < 2) || (argc > 4)) {
+  if ((argc < 2) || (argc > 7)) {
     printf(usage);
     return 1;
   }
 
   bDebug = false;
   bBinaryFormat = false;
+  bMyWins = false;
+  bMyDraws = false;
+  bMyLosses = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
       bDebug = true;
     else if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
+    else if (!strcmp(argv[curr_arg],"-my_wins"))
+      bMyWins = true;
+    else if (!strcmp(argv[curr_arg],"-my_draws"))
+      bMyDraws = true;
+    else if (!strcmp(argv[curr_arg],"-my_losses"))
+      bMyLosses = true;
     else
       break;
   }
@@ -50,9 +62,17 @@ int main(int argc,char **argv)
     return 2;
   }
 
+  if ((bMyWins && bMyDraws) ||
+      (bMyWins && bMyLosses) ||
+      (bMyDraws && bMyLosses)) {
+
+    printf("can only specify one of the -my_* options\n");
+    return 3;
+  }
+
   if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 3;
+    return 4;
   }
 
   for ( ; ; ) {
@@ -84,7 +104,28 @@ int main(int argc,char **argv)
       }
     }
 
-    printf("%d %s\n",curr_game.result,filename);
+    if (bMyWins) {
+      if ((!curr_game.orientation && (curr_game.result == WHITE_WIN)) ||
+          (curr_game.orientation && (curr_game.result == BLACK_WIN))) {
+
+        printf("%s\n",filename);
+      }
+    }
+    else if (bMyDraws) {
+      if (curr_game.result == DRAW) {
+        printf("%s\n",filename);
+      }
+    }
+    else if (bMyLosses) {
+      if ((!curr_game.orientation && (curr_game.result == BLACK_WIN)) ||
+          (curr_game.orientation && (curr_game.result == WHITE_WIN))) {
+
+        printf("%s\n",filename);
+      }
+    }
+    else {
+      printf("%d %s\n",curr_game.result,filename);
+    }
   }
 
   fclose(fptr);
