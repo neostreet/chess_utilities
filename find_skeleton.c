@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_skeleton (-debug) (-binary_format) filename\n";
+"usage: find_skeleton (-binary_format) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -20,26 +20,21 @@ int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
-  bool bDebug;
   bool bBinaryFormat;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
-  bool bPrintedFilename;
 
-  if ((argc < 2) || (argc > 4)) {
+  if ((argc < 2) || (argc > 3)) {
     printf(usage);
     return 1;
   }
 
-  bDebug = false;
   bBinaryFormat = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-debug"))
-      bDebug = true;
-    else if (!strcmp(argv[curr_arg],"-binary_format"))
+    if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
     else
       break;
@@ -86,8 +81,6 @@ int main(int argc,char **argv)
 
 #ifdef UNDEF
     set_initial_board(&curr_game);
-
-    bPrintedFilename = false;
 
     for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
       update_board(&curr_game,NULL,NULL,false);
