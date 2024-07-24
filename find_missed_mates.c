@@ -90,6 +90,12 @@ int main(int argc,char **argv)
       get_legal_moves(&curr_game,legal_moves,&legal_moves_count);
 
       for (n = 0; n < legal_moves_count; n++) {
+        // only search for alternative moves to what was actually played
+        if ((legal_moves[n].from == curr_game.moves[curr_game.curr_move].from) &&
+            (legal_moves[n].to == curr_game.moves[curr_game.curr_move].to)) {
+          continue;
+        }
+
         copy_game(&work_game,&curr_game);
         work_game.moves[work_game.curr_move].from = legal_moves[n].from;
         work_game.moves[work_game.curr_move].to = legal_moves[n].to;
