@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_missed_mates -binary_format filename\n";
+"usage: find_missed_mates (-binary_format) (-all) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -23,6 +23,7 @@ int main(int argc,char **argv)
   int n;
   int curr_arg;
   bool bBinaryFormat;
+  bool bAll;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -30,16 +31,19 @@ int main(int argc,char **argv)
   struct game work_game;
   int work_legal_moves_count;
 
-  if ((argc < 2) || (argc > 3)) {
+  if ((argc < 2) || (argc > 4)) {
     printf(usage);
     return 1;
   }
 
   bBinaryFormat = false;
+  bAll = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
+    else if (!strcmp(argv[curr_arg],"-all"))
+      bAll = true;
     else
       break;
   }
@@ -90,12 +94,6 @@ int main(int argc,char **argv)
       get_legal_moves(&curr_game,legal_moves,&legal_moves_count);
 
       for (n = 0; n < legal_moves_count; n++) {
-        // only search for alternative moves to what was actually played
-        if ((legal_moves[n].from == curr_game.moves[curr_game.curr_move].from) &&
-            (legal_moves[n].to == curr_game.moves[curr_game.curr_move].to)) {
-          continue;
-        }
-
         copy_game(&work_game,&curr_game);
         work_game.moves[work_game.curr_move].from = legal_moves[n].from;
         work_game.moves[work_game.curr_move].to = legal_moves[n].to;
@@ -106,11 +104,19 @@ int main(int argc,char **argv)
         get_legal_moves(&work_game,work_legal_moves,&work_legal_moves_count);
 
         if (!work_legal_moves_count) {
-          printf("%s: a mate was missed on move %d:\n",filename,curr_game.curr_move);
-          print_bd(&work_game);
-          break;
+          // don't report alternative mates if there was a mate in the game at the same move number
+          if (curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_MATE)
+            ;
+          else {
+            printf("%s: a mate was missed on move %d:\n",filename,curr_game.curr_move);
+            print_bd(&work_game);
+            break;
+          }
         }
       }
+
+      if (!bAll && (n < legal_moves_count))
+        break;
 
       update_board(&curr_game,NULL,NULL,false);
       update_piece_info(&curr_game);
