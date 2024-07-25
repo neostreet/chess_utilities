@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_missed_mates (-binary_format) (-all) filename\n";
+"usage: find_missed_mates (-binary_format) (-all) (in_a_loss) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -24,6 +24,8 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bBinaryFormat;
   bool bAll;
+  bool bInALoss;
+  bool bLoss;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -33,19 +35,22 @@ int main(int argc,char **argv)
   int work_legal_moves_count;
   int dbg;
 
-  if ((argc < 2) || (argc > 4)) {
+  if ((argc < 2) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
   bBinaryFormat = false;
   bAll = false;
+  bInALoss = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
     else if (!strcmp(argv[curr_arg],"-all"))
       bAll = true;
+    else if (!strcmp(argv[curr_arg],"-in_a_loss"))
+      bInALoss = true;
     else
       break;
   }
@@ -123,9 +128,29 @@ int main(int argc,char **argv)
             get_legal_moves(&work_game,work_legal_moves,&work_legal_moves_count);
 
             if (!work_legal_moves_count) {
-              printf("%s: a mate was missed on move %d:\n",filename,curr_game.curr_move);
-              print_bd(&work_game);
-              break;
+              if (!bInALoss) {
+                printf("%s: a mate was missed on move %d:\n",filename,curr_game.curr_move);
+                print_bd(&work_game);
+                break;
+              }
+              else {
+                bLoss = false;
+
+                if (!curr_game.orientation) {
+                  if (curr_game.result == BLACK_WIN)
+                    bLoss = true;
+                }
+                else {
+                  if (curr_game.result == WHITE_WIN)
+                    bLoss = true;
+                }
+
+                if (bLoss) {
+                  printf("%s: a mate was missed on move %d, in a loss:\n",filename,curr_game.curr_move);
+                  print_bd(&work_game);
+                  break;
+                }
+              }
             }
           }
         }
