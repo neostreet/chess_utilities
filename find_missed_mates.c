@@ -11,7 +11,8 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_missed_mates (-terse) (-binary_format) (-all) (in_a_loss) (-mine) (-opponent) filename\n";
+"usage: find_missed_mates (-terse) (-binary_format) (-all) (in_a_loss) (-mine) (-opponent)\n"
+"  (-count) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -28,6 +29,7 @@ int main(int argc,char **argv)
   bool bInALoss;
   bool bMine;
   bool bOpponent;
+  bool bCount;
   bool bLoss;
   int retval;
   FILE *fptr;
@@ -37,8 +39,9 @@ int main(int argc,char **argv)
   struct game work_game;
   int work_legal_moves_count;
   int dbg;
+  int count;
 
-  if ((argc < 2) || (argc > 8)) {
+  if ((argc < 2) || (argc > 9)) {
     printf(usage);
     return 1;
   }
@@ -49,6 +52,7 @@ int main(int argc,char **argv)
   bInALoss = false;
   bMine = false;
   bOpponent = false;
+  bCount = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
@@ -63,6 +67,8 @@ int main(int argc,char **argv)
       bMine = true;
     else if (!strcmp(argv[curr_arg],"-opponent"))
       bOpponent = true;
+    else if (!strcmp(argv[curr_arg],"-count"))
+      bCount = true;
     else
       break;
   }
@@ -112,6 +118,9 @@ int main(int argc,char **argv)
     }
 
     set_initial_board(&curr_game);
+
+    if (bCount)
+      count = 0;
 
     for (curr_game.curr_move = 0;
          curr_game.curr_move < curr_game.num_moves;
@@ -170,15 +179,20 @@ int main(int argc,char **argv)
 
             if (!work_legal_moves_count) {
               if (!bInALoss) {
-                if (bTerse) {
-                  printf("%s\n",filename);
+                if (bCount) {
+                  count++;
                 }
                 else {
-                  printf("%s: a mate was missed on move %d, from = %c%c, to = %c%c:\n",
-                    filename,curr_game.curr_move,
-                    'a' + FILE_OF(legal_moves[n].from),'1' + RANK_OF(legal_moves[n].from),
-                    'a' + FILE_OF(legal_moves[n].to),'1' + RANK_OF(legal_moves[n].to));
-                  print_bd(&work_game);
+                  if (bTerse) {
+                    printf("%s\n",filename);
+                  }
+                  else {
+                    printf("%s: a mate was missed on move %d, from = %c%c, to = %c%c:\n",
+                      filename,curr_game.curr_move,
+                      'a' + FILE_OF(legal_moves[n].from),'1' + RANK_OF(legal_moves[n].from),
+                      'a' + FILE_OF(legal_moves[n].to),'1' + RANK_OF(legal_moves[n].to));
+                    print_bd(&work_game);
+                  }
                 }
 
                 break;
@@ -196,15 +210,20 @@ int main(int argc,char **argv)
                 }
 
                 if (bLoss) {
-                  if (bTerse) {
-                    printf("%s\n",filename);
+                  if (bCount) {
+                    count++;
                   }
                   else {
-                    printf("%s: a mate was missed on move %d, from = %c%c, to = %c%c, in a loss:\n",
-                      filename,curr_game.curr_move,
-                      'a' + FILE_OF(legal_moves[n].from),'1' + RANK_OF(legal_moves[n].from),
-                      'a' + FILE_OF(legal_moves[n].to),'1' + RANK_OF(legal_moves[n].to));
-                    print_bd(&work_game);
+                    if (bTerse) {
+                      printf("%s\n",filename);
+                    }
+                    else {
+                      printf("%s: a mate was missed on move %d, from = %c%c, to = %c%c, in a loss:\n",
+                        filename,curr_game.curr_move,
+                        'a' + FILE_OF(legal_moves[n].from),'1' + RANK_OF(legal_moves[n].from),
+                        'a' + FILE_OF(legal_moves[n].to),'1' + RANK_OF(legal_moves[n].to));
+                      print_bd(&work_game);
+                    }
                   }
 
                   break;
@@ -215,9 +234,12 @@ int main(int argc,char **argv)
         }
       }
 
-      if (!bAll && (n < legal_moves_count))
+      if (!bAll && !bCount && (n < legal_moves_count))
         break;
     }
+
+    if (bCount && count)
+      printf("%d missed mates found in %s\n",count,filename);
   }
 
   fclose(fptr);
