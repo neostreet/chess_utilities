@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_missed_mates (-binary_format) (-all) (in_a_loss) filename\n";
+"usage: find_missed_mates (-terse) (-binary_format) (-all) (in_a_loss) (-mine) (-opponent) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -22,9 +22,12 @@ int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
+  bool bTerse;
   bool bBinaryFormat;
   bool bAll;
   bool bInALoss;
+  bool bMine;
+  bool bOpponent;
   bool bLoss;
   int retval;
   FILE *fptr;
@@ -35,22 +38,31 @@ int main(int argc,char **argv)
   int work_legal_moves_count;
   int dbg;
 
-  if ((argc < 2) || (argc > 5)) {
+  if ((argc < 2) || (argc > 8)) {
     printf(usage);
     return 1;
   }
 
+  bTerse = false;
   bBinaryFormat = false;
   bAll = false;
   bInALoss = false;
+  bMine = false;
+  bOpponent = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-binary_format"))
+    if (!strcmp(argv[curr_arg],"-terse"))
+      bTerse = true;
+    else if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
     else if (!strcmp(argv[curr_arg],"-all"))
       bAll = true;
     else if (!strcmp(argv[curr_arg],"-in_a_loss"))
       bInALoss = true;
+    else if (!strcmp(argv[curr_arg],"-mine"))
+      bMine = true;
+    else if (!strcmp(argv[curr_arg],"-opponent"))
+      bOpponent = true;
     else
       break;
   }
@@ -60,9 +72,14 @@ int main(int argc,char **argv)
     return 2;
   }
 
+  if (bMine && bOpponent) {
+    printf("can't specify both -mine and -opponent\n");
+    return 3;
+  }
+
   if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 3;
+    return 4;
   }
 
   for ( ; ; ) {
@@ -96,9 +113,33 @@ int main(int argc,char **argv)
 
     set_initial_board(&curr_game);
 
-    for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
+    for (curr_game.curr_move = 0;
+         curr_game.curr_move < curr_game.num_moves;
+         update_board(&curr_game,NULL,NULL,false),update_piece_info(&curr_game),curr_game.curr_move++) {
+
       if (curr_game.curr_move == dbg_move)
         dbg = 1;
+
+      if (bMine) {
+        if (!curr_game.orientation) {
+          if (curr_game.curr_move % 2)
+            continue;
+        }
+        else {
+          if (!(curr_game.curr_move % 2))
+            continue;
+        }
+      }
+      else if (bOpponent) {
+        if (!curr_game.orientation) {
+          if (!(curr_game.curr_move % 2))
+            continue;
+        }
+        else {
+          if (curr_game.curr_move % 2)
+            continue;
+        }
+      }
 
       legal_moves_count = 0;
       get_legal_moves(&curr_game,legal_moves,&legal_moves_count);
@@ -129,8 +170,17 @@ int main(int argc,char **argv)
 
             if (!work_legal_moves_count) {
               if (!bInALoss) {
-                printf("%s: a mate was missed on move %d:\n",filename,curr_game.curr_move);
-                print_bd(&work_game);
+                if (bTerse) {
+                  printf("%s\n",filename);
+                }
+                else {
+                  printf("%s: a mate was missed on move %d, from = %c%c, to = %c%c:\n",
+                    filename,curr_game.curr_move,
+                    'a' + FILE_OF(legal_moves[n].from),'1' + RANK_OF(legal_moves[n].from),
+                    'a' + FILE_OF(legal_moves[n].to),'1' + RANK_OF(legal_moves[n].to));
+                  print_bd(&work_game);
+                }
+
                 break;
               }
               else {
@@ -146,8 +196,17 @@ int main(int argc,char **argv)
                 }
 
                 if (bLoss) {
-                  printf("%s: a mate was missed on move %d, in a loss:\n",filename,curr_game.curr_move);
-                  print_bd(&work_game);
+                  if (bTerse) {
+                    printf("%s\n",filename);
+                  }
+                  else {
+                    printf("%s: a mate was missed on move %d, from = %c%c, to = %c%c, in a loss:\n",
+                      filename,curr_game.curr_move,
+                      'a' + FILE_OF(legal_moves[n].from),'1' + RANK_OF(legal_moves[n].from),
+                      'a' + FILE_OF(legal_moves[n].to),'1' + RANK_OF(legal_moves[n].to));
+                    print_bd(&work_game);
+                  }
+
                   break;
                 }
               }
@@ -158,9 +217,6 @@ int main(int argc,char **argv)
 
       if (!bAll && (n < legal_moves_count))
         break;
-
-      update_board(&curr_game,NULL,NULL,false);
-      update_piece_info(&curr_game);
     }
   }
 
