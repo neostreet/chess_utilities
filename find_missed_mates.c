@@ -41,6 +41,7 @@ int main(int argc,char **argv)
   int work_legal_moves_count;
   int dbg;
   int count;
+  int total_count;
   int white_count;
   int black_count;
 
@@ -98,6 +99,9 @@ int main(int argc,char **argv)
     printf(couldnt_open,argv[curr_arg]);
     return 5;
   }
+
+  if (bCount)
+    total_count = 0;
 
   for ( ; ; ) {
     GetLine(fptr,filename,&filename_len,MAX_FILENAME_LEN);
@@ -216,7 +220,8 @@ int main(int argc,char **argv)
                   }
                 }
 
-                break;
+                if (!bAll && !bCount && !bBothPlayers)
+                  break;
               }
               else {
                 bLoss = false;
@@ -253,7 +258,8 @@ int main(int argc,char **argv)
                     }
                   }
 
-                  break;
+                  if (!bAll && !bCount && !bBothPlayers)
+                    break;
                 }
               }
             }
@@ -268,6 +274,7 @@ int main(int argc,char **argv)
     if (bCount) {
       if (count) {
         printf("%d missed mates found in %s\n",count,filename);
+        total_count++;
       }
     }
     else if (bBothPlayers) {
@@ -278,6 +285,9 @@ int main(int argc,char **argv)
   }
 
   fclose(fptr);
+
+  if (bCount)
+    printf("\n%d total count\n",total_count);
 
   return 0;
 }
