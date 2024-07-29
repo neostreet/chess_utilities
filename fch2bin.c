@@ -147,4 +147,3 @@ static int build_bin_filename(
 
   return 0;
 }
-chessist blitz_game01773.bin
