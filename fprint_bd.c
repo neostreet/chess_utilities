@@ -18,7 +18,7 @@ static char usage[] =
 "  (-mine) (-not_mine) (-search_all_moves) (-exact_match) (-only_no_promotions) (-only_underpromotions)\n"
 "  (-print_piece_counts) (-only_no_checks) (-only_no_mates) (-opposite_colored_bishops) (-same_colored_bishops)\n"
 "  (-two_bishops) (-opposite_side_castling) (-same_side_castling) (-less_than_2_castles)\n"
-"  (-truncate_filename) (-only_stalemates) (-qnn) [white | black]\n"
+"  (-truncate_filename) (-only_stalemates) (-no_queens) (-qnn) [white | black]\n"
 "  filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
@@ -52,6 +52,7 @@ int main(int argc,char **argv)
   bool bOnlyCaptures;
   bool bOnlyEnPassants;
   bool bMultipleQueens;
+  bool bNoQueens;
   bool bMoveNumberOnly;
   bool bMine;
   bool bNotMine;
@@ -85,7 +86,7 @@ int main(int argc,char **argv)
   int filename_len;
   int num_pieces;
 
-  if ((argc < 2) || (argc > 42)) {
+  if ((argc < 2) || (argc > 43)) {
     printf(usage);
     return 1;
   }
@@ -113,6 +114,7 @@ int main(int argc,char **argv)
   bOnlyCaptures = false;
   bOnlyEnPassants = false;
   bMultipleQueens = false;
+  bNoQueens = false;
   bMoveNumberOnly = false;
   bMine = false;
   bNotMine = false;
@@ -224,6 +226,8 @@ int main(int argc,char **argv)
       bOnlyEnPassants = true;
     else if (!strcmp(argv[curr_arg],"-multiple_queens"))
       bMultipleQueens = true;
+    else if (!strcmp(argv[curr_arg],"-no_queens"))
+      bNoQueens = true;
     else if (!strcmp(argv[curr_arg],"-move_number_only"))
       bMoveNumberOnly = true;
     else if (!strcmp(argv[curr_arg],"-mine"))
@@ -370,7 +374,7 @@ int main(int argc,char **argv)
     continue;
 
   if (!bOnlyChecks && !bOnlyNoChecks && !bOnlyMates && !bOnlyNoMates && !bOnlyCastles && !bOnlyCaptures &&
-    !bOnlyEnPassants && !bMultipleQueens && !bOnlyPromotions && !bOnlyUnderpromotions && !bOnlyNoPromotions &&
+    !bOnlyEnPassants && !bMultipleQueens && !bNoQueens && !bOnlyPromotions && !bOnlyUnderpromotions && !bOnlyNoPromotions &&
     !bMine && !bNotMine && !bHaveMatchBoard && !bHaveMatchForce && (num_white_pieces == -1) &&
     (num_black_pieces == -1) && !bOppositeColoredBishops && !bSameColoredBishops && !bTwoBishops &&
     !bOppositeSideCastling && !bSameSideCastling && !bLessThan2Castles && !bOnlyStalemates)
@@ -492,6 +496,11 @@ int main(int argc,char **argv)
           continue;
       }
 
+      if (bNoQueens) {
+        if (!no_queens((unsigned char *)&curr_game.board))
+          continue;
+      }
+
       if (bOppositeColoredBishops) {
         if (!opposite_colored_bishops((unsigned char *)&curr_game.board))
           continue;
@@ -523,7 +532,7 @@ int main(int argc,char **argv)
       }
 
       if (bOnlyChecks || bOnlyNoChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles || bOnlyPromotions ||
-        bOnlyUnderpromotions || bOnlyNoPromotions || bOnlyCaptures || bOnlyEnPassants || bMultipleQueens ||
+        bOnlyUnderpromotions || bOnlyNoPromotions || bOnlyCaptures || bOnlyEnPassants || bMultipleQueens || bNoQueens ||
         bHaveMatchBoard || bHaveMatchForce || bMine || bNotMine || bOppositeColoredBishops || bSameColoredBishops ||
         bTwoBishops || bOppositeSideCastling || bSameSideCastling || bLessThan2Castles || bOnlyStalemates) {
 
@@ -683,6 +692,11 @@ int main(int argc,char **argv)
         bSkip = true;
     }
 
+    if (!bSkip && bNoQueens) {
+      if (!no_queens((unsigned char *)&curr_game.board))
+        bSkip = true;
+    }
+
     if (!bSkip && bOppositeColoredBishops) {
       if (!opposite_colored_bishops((unsigned char *)&curr_game.board))
         bSkip = true;
@@ -716,7 +730,7 @@ int main(int argc,char **argv)
     if (!bSkip) {
       if (bOnlyChecks || bOnlyNoChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles ||
         bOnlyPromotions || bOnlyUnderpromotions || bOnlyNoPromotions ||
-        bOnlyCaptures || bMultipleQueens || bHaveMatchBoard || bHaveMatchForce ||
+        bOnlyCaptures || bMultipleQueens || bNoQueens || bHaveMatchBoard || bHaveMatchForce ||
         bMine || bNotMine || (num_white_pieces != -1) || (num_black_pieces != -1) ||
         bOppositeColoredBishops || bSameColoredBishops || bTwoBishops || bOppositeSideCastling ||
         bSameSideCastling || bLessThan2Castles || bOnlyStalemates) {
