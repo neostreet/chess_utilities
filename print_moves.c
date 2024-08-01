@@ -6,30 +6,34 @@
 #include "chess.fun"
 #include "chess.mac"
 
-static char usage[] = "usage: print_moves (-debug) (-binary_format) filename\n";
+static char usage[] = "usage: print_moves (-debug) (-binary_format) (-hex) filename\n";
 
 int main(int argc,char **argv)
 {
   int curr_arg;
   bool bDebug;
   bool bBinaryFormat;
+  bool bHex;
   int initial_move;
   int retval;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 4)) {
+  if ((argc < 2) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
   bDebug = false;
   bBinaryFormat = false;
+  bHex = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
       bDebug = true;
     else if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
+    else if (!strcmp(argv[curr_arg],"-hex"))
+      bHex = true;
     else
       break;
   }
@@ -60,7 +64,7 @@ int main(int argc,char **argv)
     }
   }
 
-  print_moves(&curr_game);
+  print_moves(&curr_game,bHex);
 
   return 0;
 }
