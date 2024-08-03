@@ -18,7 +18,7 @@ static char usage[] =
 "  (-mine) (-not_mine) (-search_all_moves) (-exact_match) (-only_no_promotions) (-only_underpromotions)\n"
 "  (-print_piece_counts) (-only_no_checks) (-only_no_mates) (-opposite_colored_bishops) (-same_colored_bishops)\n"
 "  (-two_bishops) (-opposite_side_castling) (-same_side_castling) (-less_than_2_castles)\n"
-"  (-truncate_filename) (-only_stalemates) (-no_queens) (-qnn) [white | black]\n"
+"  (-truncate_filename) (-only_stalemates) (-no_queens) (-mate_in_one) (-qnn) [white | black]\n"
 "  filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
@@ -68,6 +68,7 @@ int main(int argc,char **argv)
   bool bLessThan2Castles;
   bool bTruncateFilename;
   bool bOnlyStalemates;
+  bool bMateInOne;
   bool bPrintedFilename;
   bool bPrintedBoard;
   bool bSkip;
@@ -86,7 +87,7 @@ int main(int argc,char **argv)
   int filename_len;
   int num_pieces;
 
-  if ((argc < 2) || (argc > 43)) {
+  if ((argc < 2) || (argc > 44)) {
     printf(usage);
     return 1;
   }
@@ -130,6 +131,7 @@ int main(int argc,char **argv)
   bLessThan2Castles = false;
   bTruncateFilename = false;
   bOnlyStalemates = false;
+  bMateInOne = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -256,6 +258,8 @@ int main(int argc,char **argv)
       bBinaryFormat = true;
     else if (!strcmp(argv[curr_arg],"-only_stalemates"))
       bOnlyStalemates = true;
+    else if (!strcmp(argv[curr_arg],"-mate_in_one"))
+      bMateInOne = true;
     else
       break;
   }
@@ -377,7 +381,7 @@ int main(int argc,char **argv)
     !bOnlyEnPassants && !bMultipleQueens && !bNoQueens && !bOnlyPromotions && !bOnlyUnderpromotions && !bOnlyNoPromotions &&
     !bMine && !bNotMine && !bHaveMatchBoard && !bHaveMatchForce && (num_white_pieces == -1) &&
     (num_black_pieces == -1) && !bOppositeColoredBishops && !bSameColoredBishops && !bTwoBishops &&
-    !bOppositeSideCastling && !bSameSideCastling && !bLessThan2Castles && !bOnlyStalemates)
+    !bOppositeSideCastling && !bSameSideCastling && !bLessThan2Castles && !bOnlyStalemates && !bMateInOne)
     printf("%s\n",filename);
 
   curr_game.curr_move--;
@@ -461,6 +465,11 @@ int main(int argc,char **argv)
           continue;
       }
 
+      if (bMateInOne) {
+        if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_MATE_IN_ONE))
+          continue;
+      }
+
       if (bOnlyCastles) {
         if (!(curr_game.moves[curr_game.curr_move].special_move_info & (SPECIAL_MOVE_KINGSIDE_CASTLE | SPECIAL_MOVE_QUEENSIDE_CASTLE)))
           continue;
@@ -534,7 +543,7 @@ int main(int argc,char **argv)
       if (bOnlyChecks || bOnlyNoChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles || bOnlyPromotions ||
         bOnlyUnderpromotions || bOnlyNoPromotions || bOnlyCaptures || bOnlyEnPassants || bMultipleQueens || bNoQueens ||
         bHaveMatchBoard || bHaveMatchForce || bMine || bNotMine || bOppositeColoredBishops || bSameColoredBishops ||
-        bTwoBishops || bOppositeSideCastling || bSameSideCastling || bLessThan2Castles || bOnlyStalemates) {
+        bTwoBishops || bOppositeSideCastling || bSameSideCastling || bLessThan2Castles || bOnlyStalemates || bMateInOne) {
 
         if (!bPrintedFilename) {
           printf("%s\n",filename);
@@ -657,6 +666,11 @@ int main(int argc,char **argv)
         bSkip = true;
     }
 
+    if (!bSkip && bMateInOne) {
+      if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_MATE_IN_ONE))
+        bSkip = true;
+    }
+
     if (!bSkip && bOnlyCastles) {
       if (!(curr_game.moves[curr_game.curr_move].special_move_info & (SPECIAL_MOVE_KINGSIDE_CASTLE | SPECIAL_MOVE_QUEENSIDE_CASTLE)))
         bSkip = true;
@@ -733,7 +747,7 @@ int main(int argc,char **argv)
         bOnlyCaptures || bMultipleQueens || bNoQueens || bHaveMatchBoard || bHaveMatchForce ||
         bMine || bNotMine || (num_white_pieces != -1) || (num_black_pieces != -1) ||
         bOppositeColoredBishops || bSameColoredBishops || bTwoBishops || bOppositeSideCastling ||
-        bSameSideCastling || bLessThan2Castles || bOnlyStalemates) {
+        bSameSideCastling || bLessThan2Castles || bOnlyStalemates || bMateInOne) {
         printf("%s\n",filename);
       }
 
