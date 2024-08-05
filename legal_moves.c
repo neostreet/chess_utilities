@@ -8,33 +8,36 @@
 #include "chess.mac"
 
 static char usage[] =
-"usage: legal_moves (-debug) (-binary_format) filename\n";
+"usage: legal_moves (-debug) (-binary_format) (-hex) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
 
 int main(int argc,char **argv)
 {
-  int n;
   int curr_arg;
   bool bDebug;
   bool bBinaryFormat;
+  bool bHex;
   int retval;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 4)) {
+  if ((argc < 2) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
   bDebug = false;
   bBinaryFormat = false;
+  bHex = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
       bDebug = true;
     else if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
+    else if (!strcmp(argv[curr_arg],"-hex"))
+      bHex = true;
     else
       break;
   }
@@ -87,11 +90,7 @@ int main(int argc,char **argv)
 
   printf("%d legal_moves:\n\n",legal_moves_count);
 
-  for (n = 0; n < legal_moves_count; n++) {
-    printf("from: %c%c to: %c%c\n",
-    'a' + FILE_OF(legal_moves[n].from),'1' + RANK_OF(legal_moves[n].from),
-    'a' + FILE_OF(legal_moves[n].to),'1' + RANK_OF(legal_moves[n].to));
-  }
+  print_moves(legal_moves,legal_moves_count,bHex);
 
   return 0;
 }
