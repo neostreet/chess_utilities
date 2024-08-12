@@ -5,7 +5,7 @@
 #define MAX_LINE_LEN 1024
 static char line[MAX_LINE_LEN];
 
-static char usage[] = "usage: time_controls filename\n";
+static char usage[] = "usage: tc_counts filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 struct tc_count {
