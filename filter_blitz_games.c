@@ -7,7 +7,7 @@ static char filename[MAX_FILENAME_LEN];
 #define MAX_LINE_LEN 1024
 static char line[MAX_LINE_LEN];
 
-static char usage[] = "usage: fskeleton (-verbose) filename\n";
+static char usage[] = "usage: filter_blitz_games (-verbose) filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char *blitz_time_controls[] = {
