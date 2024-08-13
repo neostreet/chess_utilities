@@ -1,13 +1,15 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define MAX_FILENAME_LEN 256
 static char filename[MAX_FILENAME_LEN];
+static char filename2[MAX_FILENAME_LEN];
 
 #define MAX_LINE_LEN 1024
 static char line[MAX_LINE_LEN];
 
-static char usage[] = "usage: filter_blitz_games (-verbose) filename\n";
+static char usage[] = "usage: filter_blitz_games (-verbose) (-rename) filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char *blitz_time_controls[] = {
@@ -24,22 +26,28 @@ int main(int argc,char **argv)
 {
   int curr_arg;
   bool bVerbose;
+  bool bRename;
   int n;
   FILE *fptr0;
   int filename_len;
   FILE *fptr;
   int linelen;
+  int num_blitz_files;
+  bool bIsBlitz;
 
-  if ((argc < 2) || (argc > 3)) {
+  if ((argc < 2) || (argc > 4)) {
     printf(usage);
     return 1;
   }
 
   bVerbose = false;
+  bRename = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
       bVerbose = true;
+    else if (!strcmp(argv[curr_arg],"-rename"))
+      bRename = true;
     else
       break;
   }
@@ -54,6 +62,8 @@ int main(int argc,char **argv)
     return 3;
   }
 
+  num_blitz_files = 0;
+
   for ( ; ; ) {
     GetLine(fptr0,filename,&filename_len,MAX_FILENAME_LEN);
 
@@ -64,6 +74,8 @@ int main(int argc,char **argv)
       printf(couldnt_open,filename);
       continue;
     }
+
+    bIsBlitz = false;
 
     for ( ; ; ) {
       GetLine(fptr,line,&linelen,MAX_LINE_LEN);
@@ -77,14 +89,26 @@ int main(int argc,char **argv)
             break;
         }
 
-        if (n < NUM_BLITZ_TIME_CONTROLS)
-          printf("%s\n",filename);
+        if (n < NUM_BLITZ_TIME_CONTROLS) {
+          if (!bRename)
+            printf("%s\n",filename);
+          else {
+            num_blitz_files++;
+            bIsBlitz = true;
+          }
+        }
 
         break;
       }
     }
 
     fclose(fptr);
+
+    if (bRename && bIsBlitz) {
+      sprintf(filename2,"blitz_game%05d.txt",num_blitz_files);
+      remove(filename2);
+      rename(filename,filename2);
+    }
   }
 
   fclose(fptr0);
