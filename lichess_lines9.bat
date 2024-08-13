@@ -1,2 +1,2 @@
 @echo off
-lines -no_sort games.lst.rev.frapid%1.fchess_wins games.lst.rev.frapid%1.fchess_draws games.lst.rev.frapid%1.fchess_losses games.lst.rev.frapid%1
+lines -no_sort %1_games.txt.lst.fchess_wins %1_games.txt.lst.fchess_draws %1_games.txt.lst.fchess_losses %1_games.txt.lst
