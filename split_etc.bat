@@ -1,6 +1,8 @@
 @echo off
+
 split_pgn %1 %2
 call reverse_it %2_games.lst
+
 build_ch_file .ch.lst .ch %2_games.lst.rev
 build_ch_file .bin.lst .bin %2_games.lst.rev
 
