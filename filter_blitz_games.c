@@ -62,7 +62,8 @@ int main(int argc,char **argv)
     return 3;
   }
 
-  num_blitz_files = 0;
+  if (bRename)
+    num_blitz_files = 0;
 
   for ( ; ; ) {
     GetLine(fptr0,filename,&filename_len,MAX_FILENAME_LEN);
@@ -104,10 +105,16 @@ int main(int argc,char **argv)
 
     fclose(fptr);
 
-    if (bRename && bIsBlitz) {
-      sprintf(filename2,"blitz_game%05d.txt",num_blitz_files);
-      remove(filename2);
-      rename(filename,filename2);
+    if (bRename) {
+      if (bIsBlitz) {
+        sprintf(filename2,"blitz_game%05d.txt",num_blitz_files);
+        remove(filename2);
+        rename(filename,filename2);
+        printf("%s\n",filename2);
+      }
+      else {
+        printf("%s\n",filename);
+      }
     }
   }
 
