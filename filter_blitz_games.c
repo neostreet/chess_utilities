@@ -85,17 +85,26 @@ int main(int argc,char **argv)
         break;
 
       if (!strncmp(line,"[TimeControl ",13)) {
-        for (n = 0; n < NUM_BLITZ_TIME_CONTROLS; n++) {
-          if (!strncmp(&line[14],blitz_time_controls[n],5))
+        for (n = 14; n < linelen; n++) {
+          if (line[n] == '"') {
+            line[n] = 0;
             break;
+          }
         }
 
-        if (n < NUM_BLITZ_TIME_CONTROLS) {
-          if (!bRename)
-            printf("%s\n",filename);
-          else {
-            num_blitz_files++;
-            bIsBlitz = true;
+        if (n < linelen) {
+          for (n = 0; n < NUM_BLITZ_TIME_CONTROLS; n++) {
+            if (!strcmp(&line[14],blitz_time_controls[n]))
+              break;
+          }
+
+          if (n < NUM_BLITZ_TIME_CONTROLS) {
+            if (!bRename)
+              printf("%s\n",filename);
+            else {
+              num_blitz_files++;
+              bIsBlitz = true;
+            }
           }
         }
 
