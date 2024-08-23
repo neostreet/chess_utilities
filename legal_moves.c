@@ -8,7 +8,7 @@
 #include "chess.mac"
 
 static char usage[] =
-"usage: legal_moves (-debug) (-binary_format) (-hex) filename\n";
+"usage: legal_moves (-debug) (-binary_format) (-hex) (-move_numbers) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -19,10 +19,11 @@ int main(int argc,char **argv)
   bool bDebug;
   bool bBinaryFormat;
   bool bHex;
+  bool bMoveNumbers;
   int retval;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 5)) {
+  if ((argc < 2) || (argc > 6)) {
     printf(usage);
     return 1;
   }
@@ -30,14 +31,15 @@ int main(int argc,char **argv)
   bDebug = false;
   bBinaryFormat = false;
   bHex = false;
+  bMoveNumbers = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
       bDebug = true;
     else if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
-    else if (!strcmp(argv[curr_arg],"-hex"))
-      bHex = true;
+    else if (!strcmp(argv[curr_arg],"-move_numbers"))
+      bMoveNumbers = true;
     else
       break;
   }
@@ -90,7 +92,7 @@ int main(int argc,char **argv)
 
   printf("%d legal_moves:\n\n",legal_moves_count);
 
-  print_moves(legal_moves,legal_moves_count,bHex);
+  print_moves(legal_moves,legal_moves_count,bHex,bMoveNumbers);
 
   return 0;
 }
