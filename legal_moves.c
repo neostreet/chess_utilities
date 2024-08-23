@@ -38,6 +38,8 @@ int main(int argc,char **argv)
       bDebug = true;
     else if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
+    else if (!strcmp(argv[curr_arg],"-hex"))
+      bHex = true;
     else if (!strcmp(argv[curr_arg],"-move_numbers"))
       bMoveNumbers = true;
     else
