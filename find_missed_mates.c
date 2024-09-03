@@ -11,8 +11,8 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_missed_mates (-terse) (-binary_format) (-all) (in_a_loss) (-mine) (-opponent)\n"
-"  (-count) (-both_players) filename\n";
+"usage: find_missed_mates (-terse) (-binary_format) (-all) (-in_a_loss) (-mine) (-opponent)\n"
+"  (-count) (-both_players) (-missed_distance) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -31,6 +31,7 @@ int main(int argc,char **argv)
   bool bOpponent;
   bool bCount;
   bool bBothPlayers;
+  bool bMissedDistance;
   bool bLoss;
   int retval;
   FILE *fptr;
@@ -44,8 +45,9 @@ int main(int argc,char **argv)
   int total_count;
   int white_count;
   int black_count;
+  int missed_distance;
 
-  if ((argc < 2) || (argc > 10)) {
+  if ((argc < 2) || (argc > 11)) {
     printf(usage);
     return 1;
   }
@@ -58,6 +60,7 @@ int main(int argc,char **argv)
   bOpponent = false;
   bCount = false;
   bBothPlayers = false;
+  bMissedDistance = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
@@ -76,6 +79,8 @@ int main(int argc,char **argv)
       bCount = true;
     else if (!strcmp(argv[curr_arg],"-both_players"))
       bBothPlayers = true;
+    else if (!strcmp(argv[curr_arg],"-missed_distance"))
+      bMissedDistance = true;
     else
       break;
   }
@@ -209,7 +214,13 @@ int main(int argc,char **argv)
                 }
                 else {
                   if (bTerse) {
-                    printf("%s\n",filename);
+                    if (!bMissedDistance) {
+                      printf("%s\n",filename);
+                    }
+                    else {
+                      missed_distance = curr_game.num_moves - curr_game.curr_move;
+                      printf("%d %s\n",missed_distance,filename);
+                    }
                   }
                   else {
                     printf("%s: a mate was missed on move %d, from = %c%c, to = %c%c:\n",
