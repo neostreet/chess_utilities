@@ -162,11 +162,11 @@ int main(int argc,char **argv)
 
     if (!color) {
       fprintf(ch_fptr,"0\n\n");
-      fprintf(ch_fptr,"titleneostreet\\vs\\%s\\\\\\\\%s\n\n",opponent_name,result);
+      fprintf(ch_fptr,"title%s\\vs\\%s\\\\\\\\%s\n\n",argv[player_name_ix],opponent_name,result);
     }
     else {
       fprintf(ch_fptr,"1\n\n");
-      fprintf(ch_fptr,"title%s\\vs\\neostreet\\\\\\\\%s\n\n",opponent_name,result);
+      fprintf(ch_fptr,"title%s\\vs\\%s\\\\\\\\%s\n\n",opponent_name,argv[player_name_ix],result);
     }
 
     fseek(fptr,0L,SEEK_SET);
