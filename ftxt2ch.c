@@ -15,7 +15,7 @@ static char opponent_name[MAX_OPPONENT_NAME_LEN+1];
 #define MAX_RESULT_LEN 7
 static char result[MAX_RESULT_LEN+1];
 
-static char usage[] = "usage: ftxt2ch (-dont_do_removes) (-skip_mate) filename\n";
+static char usage[] = "usage: ftxt2ch (-dont_do_removes) (-skip_mate) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 static char couldnt_determine_color[] = "%s: couldn't determine color\n";
 
@@ -37,6 +37,8 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bDontDoRemoves;
   bool bSkipMate;
+  int player_name_ix;
+  int player_name_len;
   FILE *fptr0;
   int file_len;
   int file_no;
@@ -49,7 +51,7 @@ int main(int argc,char **argv)
   int line_no;
   int ix;
 
-  if ((argc < 2) || (argc > 4)) {
+  if ((argc < 3) || (argc > 5)) {
     printf(usage);
     return 1;
   }
@@ -66,13 +68,16 @@ int main(int argc,char **argv)
       break;
   }
 
-  if (argc - curr_arg != 1) {
+  if (argc - curr_arg != 2) {
     printf(usage);
     return 2;
   }
 
-  if ((fptr0 = fopen(argv[curr_arg],"r")) == NULL) {
-    printf(couldnt_open,argv[curr_arg]);
+  player_name_ix = curr_arg;
+  player_name_len = strlen(argv[player_name_ix]);
+
+  if ((fptr0 = fopen(argv[curr_arg + 1],"r")) == NULL) {
+    printf(couldnt_open,argv[curr_arg + 1]);
     return 3;
   }
 
@@ -116,7 +121,7 @@ int main(int argc,char **argv)
 
         if (Contains(true,
           line,line_len,
-          (char *)"neostreet",9,
+          argv[player_name_ix],player_name_len,
           &ix)) {
 
           color = 0;
