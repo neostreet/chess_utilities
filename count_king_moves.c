@@ -111,7 +111,7 @@ int main(int argc,char **argv)
     else {
       printf("white king: %d, black king: %d %s\n",
         curr_game.white_pieces[4].move_count,
-        curr_game.white_pieces[12].move_count,
+        curr_game.black_pieces[12].move_count,
         filename);
     }
   }
