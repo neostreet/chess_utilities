@@ -16,8 +16,8 @@ static char usage[] =
 "  (-match_boardfilename) (-match_forcefilename) (-match_force2filename) (-only_checks) (-only_mates) (-only_castles)\n"
 "  (-only_promotions) (-only_captures) (-only_en_passants) (-multiple_queens) (-move_number_only)\n"
 "  (-mine) (-not_mine) (-search_all_moves) (-exact_match) (-only_no_promotions) (-only_underpromotions)\n"
-"  (-print_piece_counts) (-only_no_checks) (-only_no_mates) (-opposite_colored_bishops) (-same_colored_bishops)\n"
-"  (-two_bishops) (-opposite_side_castling) (-same_side_castling) (-less_than_2_castles)\n"
+"  (-print_piece_counts) (-print_move_counts) (-only_no_checks) (-only_no_mates) (-opposite_colored_bishops)\n"
+"  (-same_colored_bishops (-two_bishops) (-opposite_side_castling) (-same_side_castling) (-less_than_2_castles)\n"
 "  (-truncate_filename) (-only_stalemates) (-no_queens) (-mate_in_one) (-qnn) [white | black]\n"
 "  filename\n";
 
@@ -59,6 +59,7 @@ int main(int argc,char **argv)
   bool bHaveMatchBoard;
   bool bHaveMatchForce;
   bool bPrintPieceCounts;
+  bool bPrintMoveCounts;
   bool bBinaryFormat;
   bool bOppositeColoredBishops;
   bool bSameColoredBishops;
@@ -87,7 +88,7 @@ int main(int argc,char **argv)
   int filename_len;
   int num_pieces;
 
-  if ((argc < 2) || (argc > 44)) {
+  if ((argc < 2) || (argc > 45)) {
     printf(usage);
     return 1;
   }
@@ -122,6 +123,7 @@ int main(int argc,char **argv)
   bHaveMatchBoard = false;
   bHaveMatchForce = false;
   bPrintPieceCounts = false;
+  bPrintMoveCounts = false;
   bBinaryFormat = false;
   bOppositeColoredBishops = false;
   bSameColoredBishops = false;
@@ -240,6 +242,8 @@ int main(int argc,char **argv)
       bExactMatch = true;
     else if (!strcmp(argv[curr_arg],"-print_piece_counts"))
       bPrintPieceCounts = true;
+    else if (!strcmp(argv[curr_arg],"-print_move_counts"))
+      bPrintMoveCounts = true;
     else if (!strcmp(argv[curr_arg],"-opposite_colored_bishops"))
       bOppositeColoredBishops = true;
     else if (!strcmp(argv[curr_arg],"-same_colored_bishops"))
@@ -570,6 +574,9 @@ int main(int argc,char **argv)
           get_piece_counts(curr_game.board,curr_piece_counts);
           print_piece_counts(curr_piece_counts);
         }
+
+        if (bPrintMoveCounts)
+          print_move_counts(&curr_game);
       }
     }
   }
@@ -762,6 +769,9 @@ int main(int argc,char **argv)
           get_piece_counts(curr_game.board,curr_piece_counts);
           print_piece_counts(curr_piece_counts);
         }
+
+        if (bPrintMoveCounts)
+          print_move_counts(&curr_game);
       }
     }
   }
