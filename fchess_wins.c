@@ -134,7 +134,7 @@ int main(int argc,char **argv)
       if (Contains(true,
         line,line_len,
         argv[player_name_ix],player_name_len,
-        &ix)) {
+        &ix) && (ix > 0) && (line[ix-1] == '"')) {
 
         if (Contains(true,
           line,line_len,
