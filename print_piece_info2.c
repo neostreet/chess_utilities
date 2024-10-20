@@ -8,7 +8,7 @@
 #include "chess.mac"
 
 static char usage[] =
-"usage: print_piece_info2 (-debug) (-binary_format) filename\n";
+"usage: print_piece_info2 (-debug) (-binary_format) (-abbrev) (-only_remaining) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -20,22 +20,30 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bDebug;
   bool bBinaryFormat;
+  bool bAbbrev;
+  bool bOnlyRemaining;
   int retval;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 4)) {
+  if ((argc < 2) || (argc > 6)) {
     printf(usage);
     return 1;
   }
 
   bDebug = false;
   bBinaryFormat = false;
+  bAbbrev = false;
+  bOnlyRemaining = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
       bDebug = true;
     else if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
+    else if (!strcmp(argv[curr_arg],"-abbrev"))
+      bAbbrev = true;
+    else if (!strcmp(argv[curr_arg],"-only_remaining"))
+      bOnlyRemaining = true;
     else
       break;
   }
@@ -72,10 +80,10 @@ int main(int argc,char **argv)
   putchar(0x0a);
 
   printf("White:\n");
-  print_piece_info2(curr_game.white_pieces);
+  print_piece_info2(curr_game.white_pieces,true,bAbbrev,bOnlyRemaining);
 
   printf("Black:\n");
-  print_piece_info2(curr_game.black_pieces);
+  print_piece_info2(curr_game.black_pieces,false,bAbbrev,bOnlyRemaining);
 
   return 0;
 }
