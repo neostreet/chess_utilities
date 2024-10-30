@@ -12,7 +12,7 @@ static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
 "usage: find_missed_mates (-terse) (-binary_format) (-all) (-in_a_loss) (-mine) (-opponent)\n"
-"  (-count) (-both_players) (-missed_distance) filename\n";
+"  (-count) (-both_players) (-missed_distance) (-white) (-black) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -32,12 +32,14 @@ int main(int argc,char **argv)
   bool bCount;
   bool bBothPlayers;
   bool bMissedDistance;
+  bool bWhite;
+  bool bBlack;
   bool bLoss;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
-  bool bBlack;
+  bool bBlacksMove;
   struct game work_game;
   int work_legal_moves_count;
   int dbg;
@@ -47,7 +49,7 @@ int main(int argc,char **argv)
   int black_count;
   int missed_distance;
 
-  if ((argc < 2) || (argc > 11)) {
+  if ((argc < 2) || (argc > 13)) {
     printf(usage);
     return 1;
   }
@@ -61,6 +63,8 @@ int main(int argc,char **argv)
   bCount = false;
   bBothPlayers = false;
   bMissedDistance = false;
+  bWhite = false;
+  bBlack = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
@@ -81,6 +85,10 @@ int main(int argc,char **argv)
       bBothPlayers = true;
     else if (!strcmp(argv[curr_arg],"-missed_distance"))
       bMissedDistance = true;
+    else if (!strcmp(argv[curr_arg],"-white"))
+      bWhite = true;
+    else if (!strcmp(argv[curr_arg],"-black"))
+      bBlack = true;
     else
       break;
   }
@@ -100,9 +108,14 @@ int main(int argc,char **argv)
     return 4;
   }
 
+  if (bWhite && bBlack) {
+    printf("can't specify both -white and -black\n");
+    return 5;
+  }
+
   if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 5;
+    return 6;
   }
 
   if (bCount)
@@ -191,9 +204,9 @@ int main(int argc,char **argv)
         update_board(&work_game,NULL,NULL,true);
         work_game.curr_move++;
 
-        bBlack = work_game.curr_move & 0x1;
+        bBlacksMove = work_game.curr_move & 0x1;
 
-        if (player_is_in_check(bBlack,work_game.board,work_game.curr_move)) {
+        if (player_is_in_check(bBlacksMove,work_game.board,work_game.curr_move)) {
           // don't report alternative mates if there was a mate in the game at the same move number
           if (curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_MATE)
             ;
@@ -213,21 +226,26 @@ int main(int argc,char **argv)
                     black_count++;
                 }
                 else {
-                  if (bTerse) {
-                    if (!bMissedDistance) {
-                      printf("%s\n",filename);
-                    }
-                    else {
-                      missed_distance = curr_game.num_moves - curr_game.curr_move;
-                      printf("%d %s\n",missed_distance,filename);
-                    }
+                  if ((bWhite && !bBlacksMove) || (bBlack && bBlacksMove)) {
+                      ;
                   }
                   else {
-                    printf("%s: a mate was missed on move %d, from = %c%c, to = %c%c:\n",
-                      filename,curr_game.curr_move,
-                      'a' + FILE_OF(legal_moves[n].from),'1' + RANK_OF(legal_moves[n].from),
-                      'a' + FILE_OF(legal_moves[n].to),'1' + RANK_OF(legal_moves[n].to));
-                    print_bd(&work_game);
+                    if (bTerse) {
+                      if (!bMissedDistance) {
+                        printf("%s\n",filename);
+                      }
+                      else {
+                        missed_distance = curr_game.num_moves - curr_game.curr_move;
+                        printf("%d %s\n",missed_distance,filename);
+                      }
+                    }
+                    else {
+                      printf("%s: a mate was missed on move %d, from = %c%c, to = %c%c:\n",
+                        filename,curr_game.curr_move,
+                        'a' + FILE_OF(legal_moves[n].from),'1' + RANK_OF(legal_moves[n].from),
+                        'a' + FILE_OF(legal_moves[n].to),'1' + RANK_OF(legal_moves[n].to));
+                      print_bd(&work_game);
+                    }
                   }
                 }
 
