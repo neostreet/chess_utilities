@@ -12,7 +12,7 @@ static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
 "usage: num_moves (-binary_format) (-gt_num_movesnum_moves) (-eq_num_movesnum_moves)\n"
-"  (-lt_num_movesnum_moves) (-terse) filename\n";
+"  (-lt_num_movesnum_moves) (-terse) (-even) (-odd) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -27,12 +27,14 @@ int main(int argc,char **argv)
   int eq_num_moves;
   int lt_num_moves;
   bool bTerse;
+  bool bEven;
+  bool bOdd;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 7)) {
+  if ((argc < 2) || (argc > 9)) {
     printf(usage);
     return 1;
   }
@@ -42,6 +44,8 @@ int main(int argc,char **argv)
   eq_num_moves = -1;
   lt_num_moves = -1;
   bTerse = false;
+  bEven = false;
+  bOdd = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-binary_format"))
@@ -54,6 +58,10 @@ int main(int argc,char **argv)
       sscanf(&argv[curr_arg][13],"%d",&lt_num_moves);
     else if (!strcmp(argv[curr_arg],"-terse"))
       bTerse = true;
+    else if (!strcmp(argv[curr_arg],"-even"))
+      bEven = true;
+    else if (!strcmp(argv[curr_arg],"-odd"))
+      bOdd = true;
     else
       break;
   }
@@ -78,9 +86,14 @@ int main(int argc,char **argv)
     return 5;
   }
 
+  if (bEven && bOdd) {
+    printf("can't specify both -even and -odd\n");
+    return 6;
+  }
+
   if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 6;
+    return 7;
   }
 
   for ( ; ; ) {
@@ -137,10 +150,30 @@ int main(int argc,char **argv)
       }
     }
     else {
-      if (!bTerse)
-        printf("%d %s\n",num_moves,filename);
-      else
-        printf("%s\n",filename);
+      if (!bTerse) {
+        if (bEven) {
+          if (!(num_moves % 2))
+            printf("%d %s\n",num_moves,filename);
+        }
+        else if (bOdd) {
+          if (num_moves % 2)
+            printf("%d %s\n",num_moves,filename);
+        }
+        else
+          printf("%d %s\n",num_moves,filename);
+      }
+      else {
+        if (bEven) {
+          if (!(num_moves % 2))
+            printf("%s\n",filename);
+        }
+        else if (bOdd) {
+          if (num_moves % 2)
+            printf("%s\n",filename);
+        }
+        else
+          printf("%s\n",filename);
+      }
     }
   }
 
