@@ -29,6 +29,14 @@ static char black_rating_diff[] = "BlackRatingDiff \"";
 #define BLACK_RATING_DIFF_LEN (sizeof (black_rating_diff) - 1)
 #define MAX_OPPONENT_NAME_LEN 50
 static char opponent_name[MAX_OPPONENT_NAME_LEN + 1];
+static char result[] = "Result";
+#define RESULT_LEN (sizeof (result) - 1)
+static char white_wins[] = "1-0";
+#define WHITE_WINS_LEN (sizeof (white_wins) - 1)
+static char black_wins[] = "0-1";
+#define BLACK_WINS_LEN (sizeof (black_wins) - 1)
+static char draw[] = "1/2-1/2";
+#define DRAW_LEN (sizeof (draw) - 1)
 static char utcdate[] = "UTCDate";
 #define UTCDATE_LEN (sizeof (utcdate) - 1)
 static char utctime[] = "UTCTime";
@@ -83,7 +91,7 @@ static void get_time(char *time,char *line);
                 if (!bFilename) \
                   printf("%d %s\n",rating_diff,date_time); \
                 else \
-                  printf("%d %s %s\n",rating_diff,filename,date_time); \
+                  printf("%d %s %s %d\n",rating_diff,filename,date_time,wins - losses); \
               } \
             } \
             else if (bAfter) { \
@@ -95,9 +103,9 @@ static void get_time(char *time,char *line);
               } \
               else { \
                 if (is_ge_elo == -1) \
-                  printf("%d (%d) %s %s\n",elo+rating_diff,rating_diff,filename,date_time); \
+                  printf("%d (%d) %s %s %d\n",elo+rating_diff,rating_diff,filename,date_time,wins - losses); \
                 else \
-                  printf("%d %d (%d) %s %s\n",(elo + rating_diff >= is_ge_elo),elo+rating_diff,rating_diff,filename,date_time); \
+                  printf("%d %d (%d) %s %s %d\n",(elo + rating_diff >= is_ge_elo),elo+rating_diff,rating_diff,filename,date_time,wins - losses); \
               } \
             } \
             else { \
@@ -112,10 +120,10 @@ static void get_time(char *time,char *line);
                   if (!bFilename) \
                     printf("%d %d (%d) %s\n",elo,elo+rating_diff,rating_diff,date_time); \
                   else \
-                    printf("%d %d (%d) %s %s\n",elo,elo+rating_diff,rating_diff,filename,date_time); \
+                    printf("%d %d (%d) %s %s %d\n",elo,elo+rating_diff,rating_diff,filename,date_time,wins - losses); \
                 } \
                 else \
-                  printf("%d %d %d (%d) %s %s\n",(elo + rating_diff >= is_ge_elo),elo,elo+rating_diff,rating_diff,filename,date_time); \
+                  printf("%d %d %d (%d) %s %s %d\n",(elo + rating_diff >= is_ge_elo),elo,elo+rating_diff,rating_diff,filename,date_time,wins - losses); \
               } \
             } \
           } \
@@ -124,7 +132,7 @@ static void get_time(char *time,char *line);
               if (!bDate && !bTime) \
                 printf("%d %s\n",rating_diff,filename); \
               else \
-                printf("%d %s %s\n",rating_diff,filename,date_time); \
+                printf("%d %s %s %d\n",rating_diff,filename,date_time,wins - losses); \
             } \
             else if (bAfter) { \
               if (!bDate && !bTime) { \
@@ -135,9 +143,9 @@ static void get_time(char *time,char *line);
               } \
               else { \
                 if (is_ge_elo == -1) \
-                  printf("%d %s %s\n",elo+rating_diff,filename,date_time); \
+                  printf("%d %s %s %d\n",elo+rating_diff,filename,date_time,wins - losses); \
                 else \
-                  printf("%d %d %s %s\n",(elo + rating_diff >= is_ge_elo),elo+rating_diff,filename,date_time); \
+                  printf("%d %d %s %s %d\n",(elo + rating_diff >= is_ge_elo),elo+rating_diff,filename,date_time,wins - losses); \
               } \
             } \
             else { \
@@ -152,10 +160,10 @@ static void get_time(char *time,char *line);
                   if (!bFilename) \
                     printf("%d %d %s\n",elo,elo+rating_diff,date_time); \
                   else \
-                    printf("%d %d %s %s\n",elo,elo+rating_diff,filename,date_time); \
+                    printf("%d %d %s %s %d\n",elo,elo+rating_diff,filename,date_time,wins - losses); \
                 } \
                 else \
-                  printf("%d %d %d %s %s\n",(elo + rating_diff >= is_ge_elo),elo,elo+rating_diff,filename,date_time); \
+                  printf("%d %d %d %s %s %d\n",(elo + rating_diff >= is_ge_elo),elo,elo+rating_diff,filename,date_time,wins - losses); \
               } \
             } \
           }
@@ -188,6 +196,8 @@ int main(int argc,char **argv)
   int line_len;
   int line_no;
   bool bPlayerIsWhite;
+  int wins;
+  int losses;
   int ix;
   int elo;
   int rating_diff;
@@ -281,6 +291,9 @@ int main(int argc,char **argv)
     return 5;
   }
 
+  wins = 0;
+  losses = 0;
+
   for ( ; ; ) {
     GetLine(fptr0,filename,&filename_len,MAX_FILENAME_LEN);
 
@@ -306,6 +319,41 @@ int main(int argc,char **argv)
         dbg = 1;
 
       if (Contains(true,
+        line,line_len,
+        result,RESULT_LEN,
+        &ix)) {
+
+        if (Contains(true,
+          line,line_len,
+          white_wins,WHITE_WINS_LEN,
+          &ix)) {
+
+          if (bPlayerIsWhite)
+            wins++;
+          else
+            losses++;
+        }
+        else if (Contains(true,
+          line,line_len,
+          black_wins,BLACK_WINS_LEN,
+          &ix)) {
+
+          if (!bPlayerIsWhite)
+            wins++;
+          else
+            losses++;
+        }
+        else if (Contains(true,
+          line,line_len,
+          draw,DRAW_LEN,
+          &ix)) {
+        }
+        else {
+          printf("%s: couldn't determine result\n",filename);
+          return 6;
+        }
+      }
+      else if (Contains(true,
         line,line_len,
         utcdate,UTCDATE_LEN,
         &ix)) {
@@ -370,15 +418,15 @@ int main(int argc,char **argv)
               else {
                 if (!bOpponentName) {
                   if (is_ge_elo == -1)
-                    printf("%d %s %s\n",elo,filename,date_time);
+                    printf("%d %s %s %d\n",elo,filename,date_time,wins - losses);
                   else
-                    printf("%d %d %s %s\n",(elo >= is_ge_elo),elo,filename,date_time);
+                    printf("%d %d %s %s %d\n",(elo >= is_ge_elo),elo,filename,date_time,wins - losses);
                 }
                 else {
                   if (is_ge_elo == -1)
-                    printf("%d %s %s %s\n",elo,opponent_name,filename,date_time);
+                    printf("%d %s %s %s %d\n",elo,opponent_name,filename,date_time,wins - losses);
                   else
-                    printf("%d %d %s %s %s\n",(elo >= is_ge_elo),elo,opponent_name,filename,date_time);
+                    printf("%d %d %s %s %s %d\n",(elo >= is_ge_elo),elo,opponent_name,filename,date_time,wins - losses);
                 }
               }
             }
@@ -436,15 +484,15 @@ int main(int argc,char **argv)
               else {
                 if (!bOpponentName) {
                   if (is_ge_elo == -1)
-                    printf("%d %s %s\n",elo,filename,date_time);
+                    printf("%d %s %s %d\n",elo,filename,date_time,wins - losses);
                   else
-                    printf("%d %d %s %s\n",(elo >= is_ge_elo),elo,filename,date_time);
+                    printf("%d %d %s %s %d\n",(elo >= is_ge_elo),elo,filename,date_time,wins - losses);
                 }
                 else {
                   if (is_ge_elo == -1)
-                    printf("%d %s %s %s\n",elo,opponent_name,filename,date_time);
+                    printf("%d %s %s %s %d\n",elo,opponent_name,filename,date_time,wins - losses);
                   else
-                    printf("%d %d %s %s %s\n",(elo >= is_ge_elo),elo,opponent_name,filename,date_time);
+                    printf("%d %d %s %s %s %d\n",(elo >= is_ge_elo),elo,opponent_name,filename,date_time,wins - losses);
                 }
               }
             }
