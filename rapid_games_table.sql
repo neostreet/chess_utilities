@@ -13,6 +13,7 @@ create table rapid_games (
   my_checks smallint not null,
   opponent_checks smallint not null,
   result varchar(1) not null,
+  result_value double null,
   mate varchar(1) not null,
   result_detail varchar(25) not null,
   my_elo_before int not null,
