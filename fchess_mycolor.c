@@ -15,9 +15,9 @@ enum {
   BLACK
 };
 
-static char white[] = "White";
+static char white[] = "[White ";
 #define WHITE_LEN (sizeof (white) - 1)
-static char black[] = "Black";
+static char black[] = "[Black ";
 #define BLACK_LEN (sizeof (black) - 1)
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
