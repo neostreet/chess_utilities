@@ -9,68 +9,70 @@
 
 #define MAX_FILENAME_LEN 256
 static char filename[MAX_FILENAME_LEN];
+static char trunc_filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_missed_mates (-terse) (-binary_format) (-all) (-in_a_loss) (-mine) (-opponent)\n"
-"  (-count) (-both_players) (-missed_distance) (-white) (-black) filename\n";
+"usage: find_missed_mates (-terse) (-all) (in_a_loss) (-mine) (-opponent)\n"
+"  (-count) (-both_players) (-white) (-black) (-truncate) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
 
 static struct move work_legal_moves[MAX_LEGAL_MOVES];
 
+static int build_trunc_filename(
+  char *bin_filename,
+  int bin_filename_len,
+  char *trunc_filename,
+  int max_filename_len);
+
 int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
   bool bTerse;
-  bool bBinaryFormat;
   bool bAll;
   bool bInALoss;
   bool bMine;
   bool bOpponent;
   bool bCount;
   bool bBothPlayers;
-  bool bMissedDistance;
   bool bWhite;
   bool bBlack;
+  bool bTruncate;
   bool bLoss;
   int retval;
   FILE *fptr;
   int filename_len;
+  int bin_filename_len;
   struct game curr_game;
   bool bBlacksMove;
   struct game work_game;
   int work_legal_moves_count;
   int dbg;
   int count;
-  int total_count;
   int white_count;
   int black_count;
-  int missed_distance;
 
-  if ((argc < 2) || (argc > 13)) {
+  if ((argc < 2) || (argc > 12)) {
     printf(usage);
     return 1;
   }
 
   bTerse = false;
-  bBinaryFormat = false;
   bAll = false;
   bInALoss = false;
   bMine = false;
   bOpponent = false;
   bCount = false;
   bBothPlayers = false;
-  bMissedDistance = false;
   bWhite = false;
   bBlack = false;
+  bTruncate = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
       bTerse = true;
-    else if (!strcmp(argv[curr_arg],"-binary_format"))
-      bBinaryFormat = true;
     else if (!strcmp(argv[curr_arg],"-all"))
       bAll = true;
     else if (!strcmp(argv[curr_arg],"-in_a_loss"))
@@ -83,12 +85,12 @@ int main(int argc,char **argv)
       bCount = true;
     else if (!strcmp(argv[curr_arg],"-both_players"))
       bBothPlayers = true;
-    else if (!strcmp(argv[curr_arg],"-missed_distance"))
-      bMissedDistance = true;
     else if (!strcmp(argv[curr_arg],"-white"))
       bWhite = true;
     else if (!strcmp(argv[curr_arg],"-black"))
       bBlack = true;
+    else if (!strcmp(argv[curr_arg],"-truncate"))
+      bTruncate = true;
     else
       break;
   }
@@ -118,9 +120,6 @@ int main(int argc,char **argv)
     return 6;
   }
 
-  if (bCount)
-    total_count = 0;
-
   for ( ; ; ) {
     GetLine(fptr,filename,&filename_len,MAX_FILENAME_LEN);
 
@@ -129,25 +128,13 @@ int main(int argc,char **argv)
 
     bzero(&curr_game,sizeof (struct game));
 
-    if (!bBinaryFormat) {
-      retval = read_game(filename,&curr_game,err_msg);
+    retval = read_binary_game(filename,&curr_game);
 
-      if (retval) {
-        printf("read_game of %s failed: %d\n",filename,retval);
-        printf("curr_move = %d\n",curr_game.curr_move);
+    if (retval) {
+      printf("read_binary_game of %s failed: %d\n",filename,retval);
+      printf("curr_move = %d\n",curr_game.curr_move);
 
-        continue;
-      }
-    }
-    else {
-      retval = read_binary_game(filename,&curr_game);
-
-      if (retval) {
-        printf("read_binary_game of %s failed: %d\n",filename,retval);
-        printf("curr_move = %d\n",curr_game.curr_move);
-
-        continue;
-      }
+      continue;
     }
 
     set_initial_board(&curr_game);
@@ -231,12 +218,24 @@ int main(int argc,char **argv)
                   }
                   else {
                     if (bTerse) {
-                      if (!bMissedDistance) {
-                        printf("%s\n",filename);
-                      }
-                      else {
-                        missed_distance = curr_game.num_moves - curr_game.curr_move;
-                        printf("%d %s\n",missed_distance,filename);
+                      printf("%s\n",filename);
+
+                      if (bTruncate) {
+                        curr_game.num_moves = curr_game.curr_move;
+
+                        bin_filename_len = strlen(filename);
+
+                        retval = build_trunc_filename(filename,bin_filename_len,trunc_filename,MAX_FILENAME_LEN);
+
+                        if (retval) {
+                          printf("build_trunc_filename failed on %s: %d\n",filename,retval);
+                        }
+                        else {
+                          retval = write_binary_game(trunc_filename,&curr_game);
+
+                          if (retval)
+                            printf("write_binary_game of %s failed: %d\n",trunc_filename,retval);
+                        }
                       }
                     }
                     else {
@@ -249,8 +248,7 @@ int main(int argc,char **argv)
                   }
                 }
 
-                if (!bAll && !bCount && !bBothPlayers)
-                  break;
+                break;
               }
               else {
                 bLoss = false;
@@ -287,8 +285,7 @@ int main(int argc,char **argv)
                     }
                   }
 
-                  if (!bAll && !bCount && !bBothPlayers)
-                    break;
+                  break;
                 }
               }
             }
@@ -303,7 +300,6 @@ int main(int argc,char **argv)
     if (bCount) {
       if (count) {
         printf("%d missed mates found in %s\n",count,filename);
-        total_count++;
       }
     }
     else if (bBothPlayers) {
@@ -315,8 +311,30 @@ int main(int argc,char **argv)
 
   fclose(fptr);
 
-  if (bCount)
-    printf("\n%d total count\n",total_count);
+  return 0;
+}
+
+static int build_trunc_filename(
+  char *bin_filename,
+  int bin_filename_len,
+  char *trunc_filename,
+  int max_filename_len)
+{
+  int n;
+
+  for (n = 0; n < bin_filename_len; n++) {
+    if (bin_filename[n] == '.')
+      break;
+  }
+
+  if (n == bin_filename_len)
+    return 1;
+
+  if (n + 6 > max_filename_len - 1)
+    return 2;
+
+  strncpy(trunc_filename,bin_filename,n);
+  strcpy(&trunc_filename[n],".trunc");
 
   return 0;
 }
