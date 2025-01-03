@@ -16,7 +16,7 @@ static char line[MAX_LINE_LEN];
 #include "chess.mac"
 
 static char usage[] =
-"usage: fbin2trunc2 (-debug) moves_to_truncate filename\n";
+"usage: fbin2trunc2 (-debug) moves_to_truncate filename extension\n";
 
 static struct game curr_game;
 
@@ -27,7 +27,8 @@ static int build_trunc_filename(
   char *bin_filename,
   int bin_filename_len,
   char *trunc_filename,
-  int max_filename_len);
+  int max_filename_len,
+  char *extension);
 
 int main(int argc,char **argv)
 {
@@ -39,7 +40,7 @@ int main(int argc,char **argv)
   int bin_filename_len;
   int retval;
 
-  if ((argc < 3) || (argc > 4)) {
+  if ((argc < 4) || (argc > 5)) {
     printf(usage);
     return 1;
   }
@@ -53,7 +54,7 @@ int main(int argc,char **argv)
       break;
   }
 
-  if (argc - curr_arg != 2) {
+  if (argc - curr_arg != 3) {
     printf(usage);
     return 2;
   }
@@ -73,7 +74,7 @@ int main(int argc,char **argv)
 
     bin_filename_len = strlen(filename);
 
-    retval = build_trunc_filename(filename,bin_filename_len,trunc_filename,MAX_FILENAME_LEN);
+    retval = build_trunc_filename(filename,bin_filename_len,trunc_filename,MAX_FILENAME_LEN,argv[curr_arg+2]);
 
     if (retval) {
       printf("build_trunc_filename failed on %s: %d\n",filename,retval);
@@ -114,9 +115,13 @@ static int build_trunc_filename(
   char *bin_filename,
   int bin_filename_len,
   char *trunc_filename,
-  int max_filename_len)
+  int max_filename_len,
+  char *extension)
 {
   int n;
+  int ext_len;
+
+  ext_len = strlen(extension) + 1;
 
   for (n = 0; n < bin_filename_len; n++) {
     if (bin_filename[n] == '.')
@@ -126,11 +131,10 @@ static int build_trunc_filename(
   if (n == bin_filename_len)
     return 1;
 
-  if (n + 7 > max_filename_len - 1)
+  if (n + ext_len > max_filename_len - 1)
     return 2;
 
-  strncpy(trunc_filename,bin_filename,n);
-  strcpy(&trunc_filename[n],".trunc2");
+  sprintf(trunc_filename,"%s.%s",bin_filename,extension);
 
   return 0;
 }
