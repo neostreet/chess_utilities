@@ -21,6 +21,7 @@ int populate_piece_counts_from_piece_count_file(int *piece_counts,char *filename
 int populate_initial_board_from_bin_board_file(char *filename);
 int write_board_to_binfile(unsigned char *board,char *filename);
 int refresh_force_count(struct game *gamept);
+void calculate_seirawan_counts(struct game *gamept);
 
 int do_castle(struct game *gamept,int direction,char *word,int wordlen,struct move *move_ptr);
 int do_pawn_move(struct game *gamept,int direction,char *word,int wordlen,struct move *move_ptr);
@@ -62,7 +63,7 @@ void update_board(struct game *gamept,int *invalid_squares,int *num_invalid_squa
 void update_piece_info(struct game *gamept);
 void fprint_piece_info(struct game *gamept,FILE *fptr);
 void print_piece_info(struct game *gamept);
-void print_piece_info2(struct piece_info *info_pt,bool bWhite,bool bAbbrev,bool bOnlyRemaining);
+void print_piece_info2(struct piece_info *info_pt);
 void populate_board_from_piece_info(struct game *gamept,unsigned char *board);
 int compare_boards(unsigned char *board1,unsigned char *board2);
 int get_piece1(unsigned char *board,int board_offset);
