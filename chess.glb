@@ -25,10 +25,16 @@ GLOBAL int do_castle_successes;
 GLOBAL int seed;
 GLOBAL bool bBinaryFormat;
 GLOBAL bool bAutoSave;
+GLOBAL bool bUnsavedChanges;
 GLOBAL bool bAssumeMoveIsLegal;
 GLOBAL bool bSkipChecks;
 GLOBAL bool bInGetLegalMoves;
 GLOBAL bool bDoColorChanges;
+GLOBAL bool bAutoAdvance;
+GLOBAL bool bPuzzleMode;
+
+GLOBAL int puzzle_count;
+GLOBAL int puzzles_solved;
 
 #ifdef MAKE_GLOBALS_HERE
 char piece_ids[] = "RNBQK";
@@ -61,6 +67,7 @@ char *special_moves[] = {
 int num_special_moves = (sizeof special_moves / sizeof (char *));
 struct move legal_moves[MAX_LEGAL_MOVES];
 int legal_moves_count;
+short seirawan_count[NUM_PLAYERS];
 #else
 extern char piece_ids[];
 extern char *piece_names[];
@@ -69,4 +76,5 @@ extern char *special_moves[];
 extern int num_special_moves;
 extern struct move legal_moves[];
 extern int legal_moves_count;
+extern short seirawan_count[];
 #endif
