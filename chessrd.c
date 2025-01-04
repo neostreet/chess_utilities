@@ -360,6 +360,8 @@ int read_game(char *filename,struct game *gamept,char *err_msg)
   if (got_error)
     return got_error;
 
+  calculate_seirawan_counts(gamept);
+
   return 0;
 }
 
@@ -880,7 +882,7 @@ void print_piece_info(struct game *gamept)
   }
 }
 
-void print_piece_info2(struct piece_info *info_pt,bool bWhite,bool bAbbrev,bool bOnlyRemaining)
+void print_piece_info2(struct piece_info *info_pt)
 {
   int n;
   char piece_id;
@@ -892,49 +894,17 @@ void print_piece_info2(struct piece_info *info_pt,bool bWhite,bool bAbbrev,bool 
       piece_id *= -1;
 
     if (info_pt[n].current_board_position == -1) {
-      if (!bOnlyRemaining) {
-        if (!bAbbrev) {
-          printf("  %s %d %d\n",
-            piece_names[piece_id - 1],
-            info_pt[n].current_board_position,
-            info_pt[n].move_count);
-        }
-        else if (bWhite) {
-          printf("  %c %d %d\n",
-            piece_names[piece_id - 1][0] + ('a' - 'A'),
-            info_pt[n].current_board_position,
-            info_pt[n].move_count);
-        }
-        else {
-          printf("  %c %d %d\n",
-            piece_names[piece_id - 1][0],
-            info_pt[n].current_board_position,
-            info_pt[n].move_count);
-        }
-      }
+      printf("  %s %d %d\n",
+        piece_names[piece_id - 1],
+        info_pt[n].current_board_position,
+        info_pt[n].move_count);
     }
     else {
-      if (!bAbbrev) {
-        printf("  %s %c%c %d\n",
-          piece_names[piece_id - 1],
-          'a' + FILE_OF(info_pt[n].current_board_position),
-          '1' + RANK_OF(info_pt[n].current_board_position),
-          info_pt[n].move_count);
-      }
-      else if (bWhite) {
-        printf("  %c %c%c %d\n",
-          piece_names[piece_id - 1][0] + ('a' - 'A'),
-          'a' + FILE_OF(info_pt[n].current_board_position),
-          '1' + RANK_OF(info_pt[n].current_board_position),
-          info_pt[n].move_count);
-      }
-      else {
-        printf("  %c %c%c %d\n",
-          piece_names[piece_id - 1][0],
-          'a' + FILE_OF(info_pt[n].current_board_position),
-          '1' + RANK_OF(info_pt[n].current_board_position),
-          info_pt[n].move_count);
-      }
+      printf("  %s %c%c %d\n",
+        piece_names[piece_id - 1],
+        'a' + FILE_OF(info_pt[n].current_board_position),
+        '1' + RANK_OF(info_pt[n].current_board_position),
+        info_pt[n].move_count);
     }
   }
 }
@@ -1450,5 +1420,52 @@ void print_move_counts(struct game *gamept)
       printf("%d ",gamept->black_pieces[n].move_count);
     else
       printf("%d\n",gamept->black_pieces[n].move_count);
+  }
+}
+
+void calculate_seirawan_counts(struct game *gamept)
+{
+  int m;
+  int n;
+  int o;
+  int direction;
+  int piece;
+  int low;
+  int high;
+
+  for (m = 0; m < 2; m++) {
+    seirawan_count[m] = 0;
+
+    if (!m)
+      direction = 1;
+    else
+      direction = -1;
+
+    for (n = 0; n < NUM_BOARD_SQUARES; n++) {
+      piece = get_piece1(gamept->board,n);
+
+      if (piece * direction > 0) {
+        if (piece < 0) {
+          low = 0;
+          high = 32;
+        }
+        else {
+          low = 32;
+          high = 64;
+        }
+
+        for (o = low; o < high; o++) {
+          if (square_attacks_square(gamept->board,n,o))
+            seirawan_count[m]++;
+        }
+      }
+    }
+  }
+
+  if (debug_fptr && (debug_level == 16)) {
+    fprintf(debug_fptr,"calculate_seirawan_counts: board:\n");
+    fprint_bd2(gamept->board,debug_fptr);
+    fprintf(debug_fptr,"calculate_seirawan_counts: White: %d Black: %d\n",
+      seirawan_count[0],seirawan_count[1]);
   }
 }
