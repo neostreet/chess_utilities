@@ -12,7 +12,7 @@ static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
 "usage: count_checks (-debug) (-verbose) (-consecutive) (-game_ending) (-game_ending_countcount) (-by_player)\n"
-" (-mate) (-mate_piecepiece) (-none) (-binary_format) filename\n";
+" (-mate) (-mate_piecepiece) (-none) (-binary_format) (-mine) (-opponent) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -29,6 +29,8 @@ int main(int argc,char **argv)
   bool bMate;
   bool bNone;
   bool bBinaryFormat;
+  bool bMine;
+  bool bOpponent;
   int game_ending_count;
   int retval;
   FILE *fptr;
@@ -49,7 +51,7 @@ int main(int argc,char **argv)
   int last_piece;
   char last_piece_char;
 
-  if ((argc < 2) || (argc > 12)) {
+  if ((argc < 2) || (argc > 14)) {
     printf(usage);
     return 1;
   }
@@ -64,6 +66,8 @@ int main(int argc,char **argv)
   mate_piece = ' ';
   bNone = false;
   bBinaryFormat = false;
+  bMine = false;
+  bOpponent = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -86,6 +90,10 @@ int main(int argc,char **argv)
       bNone = true;
     else if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
+    else if (!strcmp(argv[curr_arg],"-mine"))
+      bMine = true;
+    else if (!strcmp(argv[curr_arg],"-opponent"))
+      bOpponent = true;
     else
       break;
   }
@@ -100,9 +108,14 @@ int main(int argc,char **argv)
     return 3;
   }
 
+  if (bMine && bOpponent) {
+    printf("can't specify both -mine and -opponent\n");
+    return 4;
+  }
+
   if ((fptr = fopen(argv[argc-1],"r")) == NULL) {
     printf(couldnt_open,argv[argc-1]);
-    return 4;
+    return 5;
   }
 
   if (!bVerbose)
@@ -111,6 +124,9 @@ int main(int argc,char **argv)
     total_num_checks1 = 0;
     total_num_checks2 = 0;
   }
+
+  if (bMine || bOpponent)
+    bByPlayer = true;
 
   for ( ; ; ) {
     GetLine(fptr,filename,&filename_len,MAX_FILENAME_LEN);
@@ -273,8 +289,18 @@ int main(int argc,char **argv)
                 num_checks1,num_checks2,num_checks1 + num_checks2,filename);
             }
             else {
-              printf("%3d me, %3d opponent, %3d total %s\n",
-                num_checks1,num_checks2,num_checks1 + num_checks2,filename);
+              if (bMine) {
+                if (num_checks1)
+                  printf("%3d %s\n",num_checks1,filename);
+              }
+              else if (bOpponent) {
+                if (num_checks2)
+                  printf("%3d %s\n",num_checks2,filename);
+              }
+              else {
+                printf("%3d me, %3d opponent, %3d total %s\n",
+                  num_checks1,num_checks2,num_checks1 + num_checks2,filename);
+              }
             }
 
             total_num_checks1 += num_checks1;
@@ -305,8 +331,16 @@ int main(int argc,char **argv)
     else {
       if (!bByPlayer)
         printf("\n%d white, %d black, %d total\n",total_num_checks1,total_num_checks2,total_num_checks1 + total_num_checks2);
-      else
-        printf("\n%d me, %d opponent, %d total\n",total_num_checks1,total_num_checks2,total_num_checks1 + total_num_checks2);
+      else {
+        if (bMine)
+          printf("\n%d\n",total_num_checks1);
+        else if (bOpponent)
+          printf("\n%d\n",total_num_checks2);
+        else {
+          printf("\n%d me, %d opponent, %d total\n",
+            total_num_checks1,total_num_checks2,total_num_checks1 + total_num_checks2);
+        }
+      }
     }
   }
 
