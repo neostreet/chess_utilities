@@ -181,7 +181,7 @@ int main(int argc,char **argv)
       retval = populate_board_from_bin_board_file(match_board1,&argv[curr_arg][12]);
 
       if (retval) {
-        printf("populate_board_from_board_file() failed on %s: %d\n",
+        printf("populate_board_from_bin_board_file() failed on %s: %d\n",
           &argv[curr_arg][12],retval);
         return 4;
       }
