@@ -9,9 +9,6 @@
 
 static char usage[] = "usage: print_bd0 filename orientation\n";
 
-char couldnt_get_status[] = "couldn't get status of %s\n";
-char couldnt_open[] = "couldn't open %s\n";
-
 int main(int argc,char **argv)
 {
   int retval;
