@@ -13,8 +13,6 @@ static char usage[] =
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
 
-void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
-
 int main(int argc,char **argv)
 {
   int curr_arg;
