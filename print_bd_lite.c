@@ -7,29 +7,58 @@
 #include "chess.fun"
 #include "chess.mac"
 
-static char usage[] = "usage: print_bd0 filename orientation\n";
+static char usage[] =
+"usage: print_bd_lite (-binary_format) filename\n";
+
+char couldnt_get_status[] = "couldn't get status of %s\n";
+char couldnt_open[] = "couldn't open %s\n";
 
 int main(int argc,char **argv)
 {
+  int curr_arg;
+  bool bBinaryFormat;
   int retval;
-  unsigned char board[CHARS_IN_BOARD];
-  int orientation;
+  struct game curr_game;
 
-  if (argc != 3) {
+  if ((argc < 2) || (argc > 3)) {
     printf(usage);
     return 1;
   }
 
-  sscanf(argv[2],"%d",&orientation);
+  bBinaryFormat = false;
 
-  retval = populate_board_from_bin_board_file(board,argv[1]);
+  for (curr_arg = 1; curr_arg < argc; curr_arg++) {
+    if (!strcmp(argv[curr_arg],"-binary_format"))
+      bBinaryFormat = true;
+    else
+      break;
+  }
 
-  if (retval) {
-    printf("populate_board_from_bin_board_file() failed on %s: %d\n",argv[1],retval);
+  if (argc - curr_arg != 1) {
+    printf(usage);
     return 2;
   }
 
-  print_bd0(board,orientation);
+  if (!bBinaryFormat) {
+    retval = read_game(argv[curr_arg],&curr_game,err_msg);
+
+    if (retval) {
+      printf("read_game of %s failed: %d\n",argv[curr_arg],retval);
+      printf("curr_move = %d\n",curr_game.curr_move);
+      return 3;
+    }
+  }
+  else {
+    retval = read_binary_game(argv[curr_arg],&curr_game);
+
+    if (retval) {
+      printf("read_binary_game of %s failed: %d\n",argv[curr_arg],retval);
+      printf("curr_move = %d\n",curr_game.curr_move);
+      return 4;
+    }
+  }
+
+  print_bd0(curr_game.board,curr_game.orientation);
 
   return 0;
 }
