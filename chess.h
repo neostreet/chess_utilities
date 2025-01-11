@@ -123,7 +123,7 @@ struct game {
 };
 
 struct game_position {
-  int orientation;
+  char orientation;
   unsigned char board[CHARS_IN_BOARD];  /* 8 columns * 8 rows / 2 (nibbles per char) */
 };
 
