@@ -950,13 +950,13 @@ void print_piece_info2(struct piece_info *info_pt,bool bWhite,bool bAbbrev,bool 
         }
         else if (bWhite) {
           printf("  %c %d %d\n",
-            piece_names[piece_id - 1][0] + ('a' - 'A'),
+            piece_ids2[piece_id - 1] + ('a' - 'A'),
             info_pt[n].current_board_position,
             info_pt[n].move_count);
         }
         else {
           printf("  %c %d %d\n",
-            piece_names[piece_id - 1][0],
+            piece_ids2[piece_id - 1],
             info_pt[n].current_board_position,
             info_pt[n].move_count);
         }
@@ -972,14 +972,14 @@ void print_piece_info2(struct piece_info *info_pt,bool bWhite,bool bAbbrev,bool 
       }
       else if (bWhite) {
         printf("  %c %c%c %d\n",
-          piece_names[piece_id - 1][0] + ('a' - 'A'),
+          piece_ids2[piece_id - 1] + ('a' - 'A'),
           'a' + FILE_OF(info_pt[n].current_board_position),
           '1' + RANK_OF(info_pt[n].current_board_position),
           info_pt[n].move_count);
       }
       else {
         printf("  %c %c%c %d\n",
-          piece_names[piece_id - 1][0],
+          piece_ids2[piece_id - 1],
           'a' + FILE_OF(info_pt[n].current_board_position),
           '1' + RANK_OF(info_pt[n].current_board_position),
           info_pt[n].move_count);
