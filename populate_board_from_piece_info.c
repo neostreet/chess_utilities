@@ -58,7 +58,7 @@ int main(int argc,char **argv)
 
   printf("%s\n",argv[curr_arg]);
 
-  populate_board_from_piece_info(&curr_game,board);
+  populate_board_from_piece_info(curr_game.white_pieces,curr_game.black_pieces,board);
   print_bd0(board,curr_game.orientation);
 
   return 0;
