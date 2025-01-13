@@ -55,7 +55,7 @@ int main(int argc,char **argv)
     }
   }
 
-  print_bd0(curr_game.board,curr_game.orientation);
+  print_bd(&curr_game);
 
   return 0;
 }
