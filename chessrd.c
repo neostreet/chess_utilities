@@ -842,7 +842,7 @@ void update_piece_info(struct game *gamept)
   if (debug_fptr && (debug_level == 4)) {
     fprintf(debug_fptr,"update_piece_info: curr_move = %d, num_moves = %d\n",gamept->curr_move,gamept->num_moves);
     fprint_piece_info(gamept,debug_fptr);
-    populate_board_from_piece_info(gamept,board);
+    populate_board_from_piece_info(gamept->white_pieces,gamept->black_pieces,board);
     fprint_bd3(board,gamept->orientation,debug_fptr);
   }
 }
@@ -988,7 +988,7 @@ void print_piece_info2(struct piece_info *info_pt,bool bWhite,bool bAbbrev,bool 
   }
 }
 
-void populate_board_from_piece_info(struct game *gamept,unsigned char *board)
+void populate_board_from_piece_info(struct piece_info *white_pt,struct piece_info *black_pt,unsigned char *board)
 {
   int n;
   unsigned int bit_offset;
@@ -997,14 +997,14 @@ void populate_board_from_piece_info(struct game *gamept,unsigned char *board)
     board[n] = 0;
 
   for (n = 0; n < NUM_PIECES_PER_PLAYER; n++) {
-    if (gamept->white_pieces[n].current_board_position != -1) {
-      bit_offset = gamept->white_pieces[n].current_board_position * BITS_PER_BOARD_SQUARE;
-      set_bits(BITS_PER_BOARD_SQUARE,board,bit_offset,gamept->white_pieces[n].piece_id);
+    if (white_pt[n].current_board_position != -1) {
+      bit_offset = white_pt[n].current_board_position * BITS_PER_BOARD_SQUARE;
+      set_bits(BITS_PER_BOARD_SQUARE,board,bit_offset,white_pt[n].piece_id);
     }
 
-    if (gamept->black_pieces[n].current_board_position != -1) {
-      bit_offset = gamept->black_pieces[n].current_board_position * BITS_PER_BOARD_SQUARE;
-      set_bits(BITS_PER_BOARD_SQUARE,board,bit_offset,gamept->black_pieces[n].piece_id);
+    if (black_pt[n].current_board_position != -1) {
+      bit_offset = black_pt[n].current_board_position * BITS_PER_BOARD_SQUARE;
+      set_bits(BITS_PER_BOARD_SQUARE,board,bit_offset,black_pt[n].piece_id);
     }
   }
 }
