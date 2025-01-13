@@ -1009,6 +1009,49 @@ void populate_board_from_piece_info(struct piece_info *white_pt,struct piece_inf
   }
 }
 
+int populate_piece_info_from_board(unsigned char *board,struct piece_info *white_pt,struct piece_info *black_pt)
+{
+  int m;
+  int n;
+  int piece;
+  struct piece_info *info_pt;
+
+  for (n = 0; n < NUM_PIECES_PER_PLAYER; n++) {
+    white_pt[n].piece_id = EMPTY_ID;
+    white_pt[n].current_board_position = -1;
+    white_pt[n].move_count = 0;
+    black_pt[n].piece_id = EMPTY_ID;
+    black_pt[n].current_board_position = -1;
+    black_pt[n].move_count = 0;
+  }
+
+  for (n = 0; n < NUM_BOARD_SQUARES; n++) {
+    piece = get_piece1(board,n);
+
+    if (!piece)
+      continue;
+
+    if (piece < 0)
+      info_pt = black_pt;
+    else
+      info_pt = white_pt;
+
+    for (m = 0; m < NUM_PIECES_PER_PLAYER; m++) {
+      if (info_pt[m].piece_id != EMPTY_ID)
+        continue;
+
+      info_pt[m].piece_id = piece;
+      info_pt[m].current_board_position = n;
+      break;
+    }
+
+    if (m == NUM_PIECES_PER_PLAYER)
+      return 1;
+  }
+
+  return 0;
+}
+
 int compare_boards(unsigned char *board1,unsigned char *board2)
 {
   int n;
