@@ -110,7 +110,7 @@ int main(int argc,char **argv)
     for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
       update_board(&curr_game,NULL,NULL,false);
       update_piece_info(&curr_game);
-      populate_board_from_piece_info(&curr_game,board);
+      populate_board_from_piece_info(curr_game.white_pieces,curr_game.black_pieces,board);
 
       retval = compare_boards(curr_game.board,board);
 
