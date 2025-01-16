@@ -54,11 +54,11 @@ void legal_queen_moves(struct game *gamept,char current_board_position,struct mo
 void legal_king_moves(struct game *gamept,char current_board_position,struct move *legal_moves,int *legal_moves_count);
 int make_a_move(struct game *gamept);
 bool mate_in_one_exists(struct game *gamept);
+bool white_to_move(struct game *gamept);
 
 int get_to_position(char *word,int wordlen,int *to_filept,int *to_rankpt);
 
 void set_initial_board(struct game *gamept);
-void initialize_piece_info(struct game *gamept);
 void position_game(struct game *gamept,int move);
 void print_special_moves(struct game *gamept);
 void update_board(struct game *gamept,int *invalid_squares,int *num_invalid_squares,bool bScratch);
