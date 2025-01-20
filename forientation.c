@@ -79,7 +79,7 @@ int main(int argc,char **argv)
       }
     }
 
-    printf("%d %d num_moves %s\n",curr_game.orientation,curr_game.num_moves,filename);
+    printf("%d %d %s\n",curr_game.orientation,curr_game.num_moves,filename);
   }
 
   fclose(fptr);
