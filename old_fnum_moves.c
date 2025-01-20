@@ -8,7 +8,7 @@ static char filename[MAX_FILENAME_LEN];
 static char line[MAX_LINE_LEN];
 static char prev_line[MAX_LINE_LEN];
 
-static char usage[] = "usage: fnum_moves (-num_moves_first) filename\n";
+static char usage[] = "usage: old_fnum_moves (-num_moves_first) filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
