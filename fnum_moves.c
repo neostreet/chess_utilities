@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: num_moves (-binary_format) (-gt_num_movesnum_moves) (-eq_num_movesnum_moves)\n"
+"usage: fnum_moves (-binary_format) (-gt_num_movesnum_moves) (-eq_num_movesnum_moves)\n"
 "  (-lt_num_movesnum_moves) (-terse) (-even) (-odd) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
