@@ -1,10 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#define MAX_FILENAME_LEN 1024
-
-static char bin_filename[MAX_FILENAME_LEN];
-
 #include "chess.h"
 #define MAKE_GLOBALS_HERE
 #include "chess.glb"
@@ -12,36 +8,40 @@ static char bin_filename[MAX_FILENAME_LEN];
 #include "chess.mac"
 
 static char usage[] =
-"usage: ch2bin (-debug) filename\n";
-
-static struct game curr_game;
+"usage: legal_moves (-debug) (-binary_format) (-hex) (-move_numbers) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
-
-static int build_bin_filename(
-  char *ch_filename,
-  int ch_filename_len,
-  char *bin_filename,
-  int max_filename_len);
 
 int main(int argc,char **argv)
 {
   int curr_arg;
   bool bDebug;
-  int ch_filename_len;
+  bool bBinaryFormat;
+  bool bHex;
+  bool bMoveNumbers;
   int retval;
+  struct game curr_game;
 
-  if ((argc < 2) || (argc > 3)) {
+  if ((argc < 2) || (argc > 6)) {
     printf(usage);
     return 1;
   }
 
   bDebug = false;
+  bBinaryFormat = false;
+  bHex = false;
+  bMoveNumbers = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
       bDebug = true;
+    else if (!strcmp(argv[curr_arg],"-binary_format"))
+      bBinaryFormat = true;
+    else if (!strcmp(argv[curr_arg],"-hex"))
+      bHex = true;
+    else if (!strcmp(argv[curr_arg],"-move_numbers"))
+      bMoveNumbers = true;
     else
       break;
   }
@@ -51,54 +51,50 @@ int main(int argc,char **argv)
     return 2;
   }
 
-  ch_filename_len = strlen(argv[curr_arg]);
+  if (!bBinaryFormat) {
+    retval = read_game(argv[curr_arg],&curr_game,err_msg);
 
-  retval = build_bin_filename(argv[curr_arg],ch_filename_len,bin_filename,MAX_FILENAME_LEN);
+    if (retval) {
+      printf("read_game of %s failed: %d\n",argv[curr_arg],retval);
+      printf("curr_move = %d\n",curr_game.curr_move);
 
-  if (retval) {
-    printf("build_bin_filename failed on %s: %d\n",argv[curr_arg],retval);
-    return 3;
+      return 3;
+    }
+  }
+  else {
+    retval = read_binary_game(argv[curr_arg],&curr_game);
+
+    if (retval) {
+      printf("read_binary_game of %s failed: %d\n",argv[curr_arg],retval);
+      printf("curr_move = %d\n",curr_game.curr_move);
+
+      return 4;
+    }
   }
 
-  retval = read_game(argv[curr_arg],&curr_game,err_msg);
+  printf("%s, num_moves = %d\n",argv[curr_arg],curr_game.num_moves);
+  putchar(0x0a);
+  print_bd(&curr_game);
+  putchar(0x0a);
 
-  if (retval) {
-    printf("read_game of %s failed: %d\n",argv[curr_arg],retval);
-    printf("curr_move = %d\n",curr_game.curr_move);
-    return 4;
+  if (!(curr_game.num_moves % 2)) {
+    printf("White to move\n");
+    print_piece_info2(curr_game.white_pieces);
+  }
+  else {
+    printf("Black to move\n");
+    print_piece_info2(curr_game.black_pieces);
   }
 
-  retval = write_binary_game(bin_filename,&curr_game);
+  putchar(0x0a);
 
-  if (retval) {
-    printf("write_binary_game of %s failed: %d\n",bin_filename,retval);
-    return 5;
-  }
+  legal_moves_count =  0;
 
-  return 0;
-}
+  get_legal_moves(&curr_game,legal_moves,&legal_moves_count);
 
-static int build_bin_filename(
-  char *ch_filename,
-  int ch_filename_len,
-  char *bin_filename,
-  int max_filename_len)
-{
-  int n;
+  printf("%d legal_moves:\n\n",legal_moves_count);
 
-  for (n = 0; n < ch_filename_len; n++) {
-    if (ch_filename[n] == '.')
-      break;
-  }
-
-  if (n == ch_filename_len)
-    return 1;
-
-  if (n + 4 > max_filename_len - 1)
-    return 2;
-
-  strncpy(bin_filename,ch_filename,n);
-  strcpy(&bin_filename[n],".bin");
+  print_moves(legal_moves,legal_moves_count,bHex,bMoveNumbers);
 
   return 0;
 }
