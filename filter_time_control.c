@@ -9,7 +9,7 @@ static char filename2[MAX_FILENAME_LEN];
 #define MAX_LINE_LEN 1024
 static char line[MAX_LINE_LEN];
 
-static char usage[] = "usage: filter_time_control (-verbose) time_control filename\n";
+static char usage[] = "usage: filter_time_control (-verbose) (-rename) time_control filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
@@ -18,22 +18,29 @@ int main(int argc,char **argv)
 {
   int curr_arg;
   bool bVerbose;
+  bool bRename;
   int n;
   FILE *fptr0;
   int filename_len;
   FILE *fptr;
   int linelen;
+  int line_no;
+  int num_time_control_files;
+  bool bIsTimeControl;
 
-  if ((argc < 3) || (argc > 4)) {
+  if ((argc < 2) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
   bVerbose = false;
+  bRename = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
       bVerbose = true;
+    else if (!strcmp(argv[curr_arg],"-rename"))
+      bRename = true;
     else
       break;
   }
@@ -48,6 +55,9 @@ int main(int argc,char **argv)
     return 3;
   }
 
+  if (bRename)
+    num_time_control_files = 0;
+
   for ( ; ; ) {
     GetLine(fptr0,filename,&filename_len,MAX_FILENAME_LEN);
 
@@ -59,11 +69,16 @@ int main(int argc,char **argv)
       continue;
     }
 
+    bIsTimeControl = false;
+    line_no = 0;
+
     for ( ; ; ) {
       GetLine(fptr,line,&linelen,MAX_LINE_LEN);
 
       if (feof(fptr))
         break;
+
+      line_no++;
 
       if (!strncmp(line,"[TimeControl ",13)) {
         for (n = 14; n < linelen; n++) {
@@ -74,8 +89,14 @@ int main(int argc,char **argv)
         }
 
         if (n < linelen) {
-          if (!strcmp(&line[14],argv[curr_arg]))
-            printf("%s\n",filename);
+          if (!strcmp(&line[14],argv[curr_arg])) {
+            if (!bRename)
+              printf("%s\n",filename);
+            else {
+              num_time_control_files++;
+              bIsTimeControl = true;
+            }
+          }
         }
 
         break;
@@ -83,6 +104,18 @@ int main(int argc,char **argv)
     }
 
     fclose(fptr);
+
+    if (bRename) {
+      if (bIsTimeControl) {
+        sprintf(filename2,"%s_game%05d.txt",argv[curr_arg],num_time_control_files);
+        remove(filename2);
+        rename(filename,filename2);
+        printf("%s\n",filename2);
+      }
+      else {
+        printf("%s\n",filename);
+      }
+    }
   }
 
   fclose(fptr0);
