@@ -18,13 +18,16 @@ static char usage[] =
 "  (-mine) (-not_mine) (-search_all_moves) (-exact_match) (-only_no_promotions) (-only_underpromotions)\n"
 "  (-print_piece_counts) (-print_move_counts) (-only_no_checks) (-only_no_mates) (-opposite_colored_bishops)\n"
 "  (-same_colored_bishops (-two_bishops) (-opposite_side_castling) (-same_side_castling) (-less_than_2_castles)\n"
-"  (-truncate_filename) (-only_stalemates) (-no_queens) (-mate_in_one) (-qnn) [white | black]\n"
+"  (-truncate_filename) (-only_stalemates) (-no_queens) (-mate_in_one) (-qnn)\n"
+"  (-only_wins) (-only_draws) (-only_losses) [white | black]\n"
 "  filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
 
 static int afl_dbg;
+
+static int get_result_from_title(char *title);
 
 int main(int argc,char **argv)
 {
@@ -70,6 +73,9 @@ int main(int argc,char **argv)
   bool bTruncateFilename;
   bool bOnlyStalemates;
   bool bMateInOne;
+  bool bOnlyWins;
+  bool bOnlyDraws;
+  bool bOnlyLosses;
   bool bPrintedFilename;
   bool bPrintedBoard;
   bool bSkip;
@@ -87,8 +93,9 @@ int main(int argc,char **argv)
   FILE *fptr;
   int filename_len;
   int num_pieces;
+  int result;
 
-  if ((argc < 2) || (argc > 45)) {
+  if ((argc < 2) || (argc > 48)) {
     printf(usage);
     return 1;
   }
@@ -134,6 +141,9 @@ int main(int argc,char **argv)
   bTruncateFilename = false;
   bOnlyStalemates = false;
   bMateInOne = false;
+  bOnlyWins = false;
+  bOnlyDraws = false;
+  bOnlyLosses = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -264,6 +274,12 @@ int main(int argc,char **argv)
       bOnlyStalemates = true;
     else if (!strcmp(argv[curr_arg],"-mate_in_one"))
       bMateInOne = true;
+    else if (!strcmp(argv[curr_arg],"-only_wins"))
+      bOnlyWins = true;
+    else if (!strcmp(argv[curr_arg],"-only_draws"))
+      bOnlyDraws = true;
+    else if (!strcmp(argv[curr_arg],"-only_losses"))
+      bOnlyLosses = true;
     else
       break;
   }
@@ -308,10 +324,25 @@ int main(int argc,char **argv)
     return 14;
   }
 
+  if (bOnlyWins and bOnlyDraws) {
+    printf("can't specify both -only_wins and -only_draws\n");
+    return 15;
+  }
+
+  if (bOnlyWins and bOnlyLosses) {
+    printf("can't specify both -only_wins and -only_losses\n");
+    return 16;
+  }
+
+  if (bOnlyDraws and bOnlyLosses) {
+    printf("can't specify both -only_draws and -only_losses\n");
+    return 17;
+  }
+
   if (quiz_number != -1) {
     if (argc - curr_arg != 2) {
       printf(usage);
-      return 15;
+      return 18;
     }
 
     if (!strcmp(argv[curr_arg],"white"))
@@ -320,19 +351,19 @@ int main(int argc,char **argv)
       bBlack = true;
     else {
       printf(usage);
-      return 16;
+      return 19;
     }
   }
   else {
     if (argc - curr_arg != 1) {
       printf(usage);
-      return 17;
+      return 20;
     }
   }
 
   if ((fptr = fopen(argv[argc-1],"r")) == NULL) {
     printf(couldnt_open,argv[argc-1]);
-    return 18;
+    return 21;
   }
 
   for ( ; ; ) {
@@ -372,6 +403,23 @@ int main(int argc,char **argv)
         filename[n] = 0;
         break;
       }
+    }
+  }
+
+  if (bOnlyWins || bOnlyDraws || bOnlyLosses) {
+    result = get_result_from_title(curr_game.title);
+
+    if (bOnlyWins) {
+      if (result != 0)
+        continue;
+    }
+    else if (bOnlyDraws) {
+      if (result != 1)
+        continue;
+    }
+    else if (bOnlyLosses) {
+      if (result != 2)
+        continue;
     }
   }
 
@@ -787,4 +835,34 @@ int main(int argc,char **argv)
   fclose(fptr);
 
   return 0;
+}
+
+static int get_result_from_title(char *title)
+{
+  int title_len;
+
+  title_len = strlen(title);
+
+  switch (title[title_len - 1]) {
+    case '0':
+      if (!strncmp(title,"neostreet",9))
+        return 0;
+      else
+        return 2;
+
+      break;
+    case '1':
+      if (!strncmp(title,"neostreet",9))
+        return 2;
+      else
+        return 0;
+
+      break;
+    case '2':
+      return 1;
+
+      break;
+  }
+
+  return -1;
 }
