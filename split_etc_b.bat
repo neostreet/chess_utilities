@@ -1,7 +1,6 @@
 @echo off
 
-dir /b /on %1_game*.txt > %1_games.txt.lst
-unfixtxt %1_games.txt.lst
+copy txt.ls0.filter_%1_games %1_games.txt.lst
 
 build_ch_file .ch.lst .ch %1_games.txt.lst
 build_ch_file .bin.lst .bin %1_games.txt.lst
