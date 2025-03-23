@@ -105,27 +105,19 @@ int main(int argc,char **argv)
     }
 
     if (bMyWins) {
-      if ((!curr_game.orientation && (curr_game.result == WHITE_WIN)) ||
-          (curr_game.orientation && (curr_game.result == BLACK_WIN))) {
-
+      if (curr_game.result == RESULT_WIN)
         printf("%s\n",filename);
-      }
     }
     else if (bMyDraws) {
-      if (curr_game.result == DRAW) {
+      if (curr_game.result == RESULT_DRAW)
         printf("%s\n",filename);
-      }
     }
     else if (bMyLosses) {
-      if ((!curr_game.orientation && (curr_game.result == BLACK_WIN)) ||
-          (curr_game.orientation && (curr_game.result == WHITE_WIN))) {
-
+      if (curr_game.result == RESULT_LOSS)
         printf("%s\n",filename);
-      }
     }
-    else {
+    else
       printf("%d %s\n",curr_game.result,filename);
-    }
   }
 
   fclose(fptr);
