@@ -29,6 +29,7 @@ int main(int argc,char **argv)
   struct game curr_game;
   int result;
   int tabulation[3];
+  int total_games;
 
   if ((argc < 2) || (argc > 3)) {
     printf(usage);
@@ -100,9 +101,15 @@ int main(int argc,char **argv)
 
   fclose(fptr);
 
+  total_games = 0;
+
+  for (n = 0; n < 3; n++)
+    total_games += tabulation[n];
+
   printf("%5d wins\n",tabulation[0]);
   printf("%5d draws\n",tabulation[1]);
   printf("%5d losses\n",tabulation[2]);
+  printf("\n%5d games\n",total_games);
 
   return 0;
 }
