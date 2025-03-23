@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: fstats (-debug) (-binary_format) (-white) (-black) filename\n";
+"usage: fstats (-binary_format) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -20,10 +20,7 @@ int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
-  bool bDebug;
   bool bBinaryFormat;
-  bool bWhite;
-  bool bBlack;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -32,25 +29,16 @@ int main(int argc,char **argv)
   int losses;
   int draws;
 
-  if ((argc < 2) || (argc > 6)) {
+  if ((argc < 2) || (argc > 3)) {
     printf(usage);
     return 1;
   }
 
-  bDebug = false;
   bBinaryFormat = false;
-  bWhite = false;
-  bBlack = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-debug"))
-      bDebug = true;
-    else if (!strcmp(argv[curr_arg],"-binary_format"))
+    if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
-    else if (!strcmp(argv[curr_arg],"-white"))
-      bWhite = true;
-    else if (!strcmp(argv[curr_arg],"-black"))
-      bBlack = true;
     else
       break;
   }
@@ -60,14 +48,9 @@ int main(int argc,char **argv)
     return 2;
   }
 
-  if (bWhite && bBlack) {
-    printf("can't specify both -white and -black\n");
-    return 3;
-  }
-
   if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 4;
+    return 3;
   }
 
   wins = 0;
@@ -103,39 +86,12 @@ int main(int argc,char **argv)
       }
     }
 
-    if (bWhite) {
-      if (!curr_game.orientation) {
-        if (curr_game.result == WHITE_WIN)
-          wins++;
-        else if (curr_game.result == DRAW)
-          draws++;
-        else if (curr_game.result == BLACK_WIN)
-          losses++;
-      }
-    }
-    else if (bBlack) {
-      if (curr_game.orientation) {
-        if (curr_game.result == BLACK_WIN)
-          wins++;
-        else if (curr_game.result == DRAW)
-          draws++;
-        else if (curr_game.result == WHITE_WIN)
-          losses++;
-      }
-    }
-    else if ((!curr_game.orientation && (curr_game.result == WHITE_WIN)) ||
-        (curr_game.orientation && (curr_game.result == BLACK_WIN))) {
-
+    if (curr_game.result == RESULT_WIN)
       wins++;
-    }
-    else if (curr_game.result == DRAW) {
+    else if (curr_game.result == RESULT_DRAW)
       draws++;
-    }
-    else if ((!curr_game.orientation && (curr_game.result == BLACK_WIN)) ||
-        (curr_game.orientation && (curr_game.result == WHITE_WIN))) {
-
+    else if (curr_game.result == RESULT_LOSS)
       losses++;
-    }
   }
 
   fclose(fptr);
