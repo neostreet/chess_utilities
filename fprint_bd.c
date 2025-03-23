@@ -27,8 +27,6 @@ char couldnt_open[] = "couldn't open %s\n";
 
 static int afl_dbg;
 
-static int get_result_from_title(char *title);
-
 int main(int argc,char **argv)
 {
   int n;
@@ -93,7 +91,6 @@ int main(int argc,char **argv)
   FILE *fptr;
   int filename_len;
   int num_pieces;
-  int result;
 
   if ((argc < 2) || (argc > 48)) {
     printf(usage);
@@ -407,18 +404,16 @@ int main(int argc,char **argv)
   }
 
   if (bOnlyWins || bOnlyDraws || bOnlyLosses) {
-    result = get_result_from_title(curr_game.title);
-
     if (bOnlyWins) {
-      if (result != 0)
+      if (curr_game.result != RESULT_WIN)
         continue;
     }
     else if (bOnlyDraws) {
-      if (result != 1)
+      if (curr_game.result != RESULT_DRAW)
         continue;
     }
     else if (bOnlyLosses) {
-      if (result != 2)
+      if (curr_game.result != RESULT_LOSS)
         continue;
     }
   }
@@ -835,34 +830,4 @@ int main(int argc,char **argv)
   fclose(fptr);
 
   return 0;
-}
-
-static int get_result_from_title(char *title)
-{
-  int title_len;
-
-  title_len = strlen(title);
-
-  switch (title[title_len - 1]) {
-    case '0':
-      if (!strncmp(title,"neostreet",9))
-        return 0;
-      else
-        return 2;
-
-      break;
-    case '1':
-      if (!strncmp(title,"neostreet",9))
-        return 2;
-      else
-        return 0;
-
-      break;
-    case '2':
-      return 1;
-
-      break;
-  }
-
-  return -1;
 }
