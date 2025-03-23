@@ -79,7 +79,7 @@ int main(int argc,char **argv)
       }
     }
 
-    printf("%s\n",curr_game.title);
+    printf("%s %d\n",curr_game.title,curr_game.result);
   }
 
   fclose(fptr);
