@@ -79,7 +79,20 @@ int main(int argc,char **argv)
       }
     }
 
-    printf("%s %d\n",curr_game.title,curr_game.result);
+    switch(curr_game.result) {
+      case RESULT_WIN:
+        printf("%s win\n",curr_game.title);
+
+        break;
+      case RESULT_DRAW:
+        printf("%s draw\n",curr_game.title);
+
+        break;
+      case RESULT_LOSS:
+        printf("%s loss\n",curr_game.title);
+
+        break;
+    }
   }
 
   fclose(fptr);
