@@ -16,19 +16,17 @@ static char usage[] =
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
 
-static int get_result_from_title(char *title);
-
 int main(int argc,char **argv)
 {
-  int n;
   int curr_arg;
   bool bBinaryFormat;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
-  int result;
-  int tabulation[3];
+  int wins;
+  int draws;
+  int losses;
   int total_games;
 
   if ((argc < 2) || (argc > 3)) {
@@ -55,8 +53,9 @@ int main(int argc,char **argv)
     return 3;
   }
 
-  for (n = 0; n < 3; n++)
-    tabulation[n] = 0;
+  wins = 0;
+  draws = 0;
+  losses = 0;
 
   for ( ; ; ) {
     GetLine(fptr,filename,&filename_len,MAX_FILENAME_LEN);
@@ -87,57 +86,30 @@ int main(int argc,char **argv)
       }
     }
 
-    result = get_result_from_title(curr_game.title);
+    switch(curr_game.result) {
+      case RESULT_WIN:
+        wins++;
 
-    if ((result < 0) || (result > 2)) {
-      printf("can't determine result of %s\n",filename);
-      return 4;
+        break;
+      case RESULT_DRAW:
+        draws++;
+
+        break;
+      case RESULT_LOSS:
+        losses++;
+
+        break;
     }
-
-    tabulation[result]++;
   }
 
   fclose(fptr);
 
-  total_games = 0;
+  total_games = wins + draws + losses;
 
-  for (n = 0; n < 3; n++)
-    total_games += tabulation[n];
-
-  printf("%5d wins\n",tabulation[0]);
-  printf("%5d draws\n",tabulation[1]);
-  printf("%5d losses\n",tabulation[2]);
+  printf("%5d wins\n",wins);
+  printf("%5d draws\n",draws);
+  printf("%5d losses\n",losses);
   printf("\n%5d games\n",total_games);
 
   return 0;
-}
-
-static int get_result_from_title(char *title)
-{
-  int title_len;
-
-  title_len = strlen(title);
-
-  switch (title[title_len - 1]) {
-    case '0':
-      if (!strncmp(title,"neostreet",9))
-        return 0;
-      else
-        return 2;
-
-      break;
-    case '1':
-      if (!strncmp(title,"neostreet",9))
-        return 2;
-      else
-        return 0;
-
-      break;
-    case '2':
-      return 1;
-
-      break;
-  }
-
-  return -1;
 }
