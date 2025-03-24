@@ -44,7 +44,6 @@ int main(int argc,char **argv)
   bool bBinaryFormat;
   bool bIgnoreReadErrors;
   char *ext;
-  bool bLoss;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -282,18 +281,7 @@ int main(int argc,char **argv)
                 break;
               }
               else {
-                bLoss = false;
-
-                if (!curr_game.orientation) {
-                  if (curr_game.result == BLACK_WIN)
-                    bLoss = true;
-                }
-                else {
-                  if (curr_game.result == WHITE_WIN)
-                    bLoss = true;
-                }
-
-                if (bLoss) {
+                if (curr_game.result == RESULT_LOSS) {
                   if (bCount) {
                     count++;
                   }
