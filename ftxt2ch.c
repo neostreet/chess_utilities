@@ -9,6 +9,9 @@ static char ch_filename[MAX_FILENAME_LEN];
 #define MAX_LINE_LEN 8192
 static char line[MAX_LINE_LEN];
 
+#define MAX_DATE_LEN 10
+static char date[MAX_DATE_LEN+1];
+
 #define MAX_OPPONENT_NAME_LEN 50
 static char opponent_name[MAX_OPPONENT_NAME_LEN+1];
 
@@ -29,6 +32,7 @@ static bool Contains(int bCaseSens,char *line,int line_len,
   char *string,int string_len,int *index);
 int split_line(char *line,int line_len,FILE *ch_fptr,bool bDontDoRemoves,bool bSkipMate);
 void remove_checks_and_promotions(char *line);
+void get_date(char *line,int line_len,char *date,int max_date_len);
 void get_opponent_name(char *line,int line_len,char *opponent_name,int max_opponent_name_len);
 void get_result(char *line,int line_len,char *result,int max_result_len);
 
@@ -116,6 +120,13 @@ int main(int argc,char **argv)
 
       if (Contains(true,
         line,line_len,
+        (char *)"Date",4,
+        &ix)) {
+
+        get_date(line,line_len,date,MAX_DATE_LEN);
+      }
+      else if (Contains(true,
+        line,line_len,
         (char *)"[White",6,
         &ix)) {
 
@@ -162,11 +173,11 @@ int main(int argc,char **argv)
 
     if (!color) {
       fprintf(ch_fptr,"0\n\n");
-      fprintf(ch_fptr,"title%s\\vs\\%s\\\\\\\\%s\n\n",argv[player_name_ix],opponent_name,result);
+      fprintf(ch_fptr,"title%s\\vs\\%s\\\\\\\\%s\\\\\\\\%s\n\n",argv[player_name_ix],opponent_name,result,date);
     }
     else {
       fprintf(ch_fptr,"1\n\n");
-      fprintf(ch_fptr,"title%s\\vs\\%s\\\\\\\\%s\n\n",opponent_name,argv[player_name_ix],result);
+      fprintf(ch_fptr,"title%s\\vs\\%s\\\\\\\\%s\\\\\\\\%s\n\n",opponent_name,argv[player_name_ix],result,date);
     }
 
     fseek(fptr,0L,SEEK_SET);
@@ -382,6 +393,20 @@ void remove_checks_and_promotions(char *line)
 
   if (removed)
     line[m] = 0;
+}
+
+void get_date(char *line,int line_len,char *date,int max_date_len)
+{
+  int n;
+
+  for (n = 0; (7 + n < line_len) && (n < max_date_len); n++) {
+    if (line[7 + n] == '"')
+      break;
+
+    date[n] = line[7 + n];
+  }
+
+  date[n] = 0;
 }
 
 void get_opponent_name(char *line,int line_len,char *opponent_name,int max_opponent_name_len)
