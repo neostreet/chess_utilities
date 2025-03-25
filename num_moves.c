@@ -39,7 +39,7 @@ int main(int argc,char **argv)
 
   for ( ; curr_arg < argc; curr_arg++) {
     if (!bBinaryFormat) {
-      retval = read_game(argv[curr_arg],&curr_game,err_msg);
+      retval = read_game(argv[curr_arg],&curr_game);
 
       if (retval) {
         printf("read_game of %s failed: %d\n",argv[curr_arg],retval);
