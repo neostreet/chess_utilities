@@ -52,7 +52,7 @@ int main(int argc,char **argv)
   }
 
   if (!bBinaryFormat) {
-    retval = read_game(argv[curr_arg],&curr_game,err_msg);
+    retval = read_game(argv[curr_arg],&curr_game);
 
     if (retval) {
       printf("read_game of %s failed: %d\n",argv[curr_arg],retval);
@@ -79,11 +79,11 @@ int main(int argc,char **argv)
 
   if (!(curr_game.num_moves % 2)) {
     printf("White to move\n");
-    print_piece_info2(curr_game.white_pieces);
+    print_piece_info2(curr_game.white_pieces,true,true,true);
   }
   else {
     printf("Black to move\n");
-    print_piece_info2(curr_game.black_pieces);
+    print_piece_info2(curr_game.black_pieces,false,true,true);
   }
 
   putchar(0x0a);
