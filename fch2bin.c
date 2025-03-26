@@ -99,7 +99,7 @@ int main(int argc,char **argv)
 
     bzero(&curr_game,sizeof (struct game));
 
-    retval = read_game(filename,&curr_game,err_msg);
+    retval = read_game(filename,&curr_game);
 
     if (!bIgnoreReadErrors) {
       if (retval) {
