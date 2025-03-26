@@ -72,7 +72,7 @@ int main(int argc,char **argv)
     bzero(&curr_game,sizeof (struct game));
 
     if (!bBinaryFormat) {
-      retval = read_game(filename,&curr_game,err_msg);
+      retval = read_game(filename,&curr_game);
 
       if (retval) {
         printf("read_game of %s failed: %d\n",filename,retval);
