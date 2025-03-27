@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "chess.h"
@@ -56,6 +57,7 @@ int main(int argc,char **argv)
   int count;
   int white_count;
   int black_count;
+  char *cpt;
 
   if ((argc < 2) || (argc > 15)) {
     printf(usage);
@@ -130,6 +132,17 @@ int main(int argc,char **argv)
   if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
     return 6;
+  }
+
+  cpt = getenv("DEBUG_FIND_MISSED_MATES");
+
+  if (cpt != NULL) {
+    debug_level = atoi(cpt);
+    debug_fptr = fopen("find_missed_mates.dbg","w");
+  }
+  else {
+    debug_level = 0;
+    debug_fptr = NULL;
   }
 
   for ( ; ; ) {
@@ -212,10 +225,13 @@ int main(int argc,char **argv)
           continue;
         }
 
+        if (n == dbg_move)
+          dbg = 1;
+
         copy_game(&work_game,&curr_game);
         work_game.moves[work_game.curr_move].from = legal_moves[n].from;
         work_game.moves[work_game.curr_move].to = legal_moves[n].to;
-        work_game.moves[work_game.curr_move].special_move_info = 0;
+        work_game.moves[work_game.curr_move].special_move_info = legal_moves[n].special_move_info;
         update_board(&work_game,NULL,NULL,true);
         work_game.curr_move++;
 
@@ -329,6 +345,9 @@ int main(int argc,char **argv)
   }
 
   fclose(fptr);
+
+  if (debug_fptr)
+    fclose(debug_fptr);
 
   return 0;
 }
