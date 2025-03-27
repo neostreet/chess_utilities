@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_missed_mates_lite (-verbose) (-binary_format) (-multiple) (-mine) (-opponent) filename\n";
+"usage: find_missed_mates_lite (-verbose) (-binary_format) (-multiple) (in_a_loss) (-mine) (-opponent) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -23,6 +23,7 @@ int main(int argc,char **argv)
   bool bVerbose;
   bool bBinaryFormat;
   bool bMultiple;
+  bool bInALoss;
   bool bMine;
   bool bOpponent;
   int retval;
@@ -32,7 +33,7 @@ int main(int argc,char **argv)
   int num_missed_mates;
   int total_missed_mates;
 
-  if ((argc < 2) || (argc > 7)) {
+  if ((argc < 2) || (argc > 8)) {
     printf(usage);
     return 1;
   }
@@ -40,6 +41,7 @@ int main(int argc,char **argv)
   bVerbose = false;
   bBinaryFormat = false;
   bMultiple = false;
+  bInALoss = false;
   bMine = false;
   bOpponent = false;
 
@@ -50,6 +52,8 @@ int main(int argc,char **argv)
       bBinaryFormat = true;
     else if (!strcmp(argv[curr_arg],"-multiple"))
       bMultiple = true;
+    else if (!strcmp(argv[curr_arg],"-in_a_loss"))
+      bInALoss = true;
     else if (!strcmp(argv[curr_arg],"-mine"))
       bMine = true;
     else if (!strcmp(argv[curr_arg],"-opponent"))
@@ -99,9 +103,14 @@ int main(int argc,char **argv)
       }
     }
 
+    if (bInALoss) {
+      if (curr_game.result != RESULT_LOSS)
+        continue;
+    }
+
     num_missed_mates = 0;
 
-    for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves - 1; curr_game.curr_move++) {
+    for (curr_game.curr_move = 1; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
       if (bMine) {
         if (!curr_game.orientation) {
           if (curr_game.curr_move % 2)
@@ -123,8 +132,8 @@ int main(int argc,char **argv)
         }
       }
 
-      if ((curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_MATE_IN_ONE) &&
-        !(curr_game.moves[curr_game.curr_move + 1].special_move_info & SPECIAL_MOVE_MATE)) {
+      if ((curr_game.moves[curr_game.curr_move-1].special_move_info & SPECIAL_MOVE_MATE_IN_ONE) &&
+        !(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_MATE)) {
 
         num_missed_mates++;
       }
