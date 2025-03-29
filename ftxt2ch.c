@@ -18,6 +18,9 @@ static char opponent_name[MAX_OPPONENT_NAME_LEN+1];
 #define MAX_RESULT_LEN 7
 static char result[MAX_RESULT_LEN+1];
 
+#define MAX_ECO_LEN 3
+static char eco[MAX_ECO_LEN+1];
+
 static char usage[] = "usage: ftxt2ch (-dont_do_removes) (-skip_mate) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 static char couldnt_determine_color[] = "%s: couldn't determine color\n";
@@ -35,6 +38,7 @@ void remove_checks_and_promotions(char *line);
 void get_date(char *line,int line_len,char *date,int max_date_len);
 void get_opponent_name(char *line,int line_len,char *opponent_name,int max_opponent_name_len);
 void get_result(char *line,int line_len,char *result,int max_result_len);
+void get_eco(char *line,int line_len,char *eco,int max_eco_len);
 
 int main(int argc,char **argv)
 {
@@ -120,14 +124,14 @@ int main(int argc,char **argv)
 
       if (Contains(true,
         line,line_len,
-        (char *)"Date",4,
+        (char *)"[Date ",6,
         &ix)) {
 
         get_date(line,line_len,date,MAX_DATE_LEN);
       }
       else if (Contains(true,
         line,line_len,
-        (char *)"[White",6,
+        (char *)"[White ",7,
         &ix)) {
 
         if (Contains(true,
@@ -144,7 +148,7 @@ int main(int argc,char **argv)
       }
       else if (Contains(true,
         line,line_len,
-        (char *)"[Black",6,
+        (char *)"[Black ",7,
         &ix)) {
 
         if (!color)
@@ -152,10 +156,17 @@ int main(int argc,char **argv)
       }
       else if (Contains(true,
         line,line_len,
-        (char *)"Result",6,
+        (char *)"[Result ",8,
         &ix)) {
 
         get_result(line,line_len,result,MAX_RESULT_LEN);
+      }
+      else if (Contains(true,
+        line,line_len,
+        (char *)"[ECO ",5,
+        &ix)) {
+
+        get_eco(line,line_len,eco,MAX_ECO_LEN);
         break;
       }
     }
@@ -173,11 +184,11 @@ int main(int argc,char **argv)
 
     if (!color) {
       fprintf(ch_fptr,"0\n\n");
-      fprintf(ch_fptr,"title%s\\vs\\%s\\\\\\\\%s\\\\\\\\%s\n\n",argv[player_name_ix],opponent_name,date,result);
+      fprintf(ch_fptr,"title%s\\vs\\%s\\\\\\\\%s\\\\\\\\%s\\\\\\\\%s\n\n",argv[player_name_ix],opponent_name,date,eco,result);;
     }
     else {
       fprintf(ch_fptr,"1\n\n");
-      fprintf(ch_fptr,"title%s\\vs\\%s\\\\\\\\%s\\\\\\\\%s\n\n",opponent_name,argv[player_name_ix],date,result);
+      fprintf(ch_fptr,"title%s\\vs\\%s\\\\\\\\%s\\\\\\\\%s\\\\\\\\%s\n\n",opponent_name,argv[player_name_ix],date,eco,result);;
     }
 
     fseek(fptr,0L,SEEK_SET);
@@ -435,4 +446,18 @@ void get_result(char *line,int line_len,char *result,int max_result_len)
   }
 
   result[n] = 0;
+}
+
+void get_eco(char *line,int line_len,char *eco,int max_eco_len)
+{
+  int n;
+
+  for (n = 0; (6 + n < line_len) && (n < max_eco_len); n++) {
+    if (line[6 + n] == '"')
+      break;
+
+    eco[n] = line[6 + n];
+  }
+
+  eco[n] = 0;
 }
