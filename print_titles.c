@@ -98,20 +98,7 @@ int main(int argc,char **argv)
     if (bIAmBlack && !curr_game.orientation)
       continue;
 
-    switch(curr_game.result) {
-      case RESULT_WIN:
-        printf("%s win\n",curr_game.title);
-
-        break;
-      case RESULT_DRAW:
-        printf("%s draw\n",curr_game.title);
-
-        break;
-      case RESULT_LOSS:
-        printf("%s loss\n",curr_game.title);
-
-        break;
-    }
+    printf("%s\n",curr_game.title);
   }
 
   fclose(fptr);
