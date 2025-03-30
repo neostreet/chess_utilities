@@ -19,7 +19,7 @@ static char usage[] =
 "  (-print_piece_counts) (-print_move_counts) (-only_no_checks) (-only_no_mates) (-opposite_colored_bishops)\n"
 "  (-same_colored_bishops (-two_bishops) (-opposite_side_castling) (-same_side_castling) (-less_than_2_castles)\n"
 "  (-truncate_filename) (-only_stalemates) (-no_queens) (-mate_in_one) (-qnn)\n"
-"  (-only_wins) (-only_draws) (-only_losses) [white | black]\n"
+"  (-only_wins) (-only_draws) (-only_losses) (-ecoeco) [white | black]\n"
 "  filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
@@ -91,8 +91,9 @@ int main(int argc,char **argv)
   FILE *fptr;
   int filename_len;
   int num_pieces;
+  char *eco_pt;
 
-  if ((argc < 2) || (argc > 48)) {
+  if ((argc < 2) || (argc > 49)) {
     printf(usage);
     return 1;
   }
@@ -141,6 +142,7 @@ int main(int argc,char **argv)
   bOnlyWins = false;
   bOnlyDraws = false;
   bOnlyLosses = false;
+  eco_pt = NULL;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -277,6 +279,8 @@ int main(int argc,char **argv)
       bOnlyDraws = true;
     else if (!strcmp(argv[curr_arg],"-only_losses"))
       bOnlyLosses = true;
+    else if (!strncmp(argv[curr_arg],"-eco",4))
+      eco_pt = &argv[curr_arg][4];
     else
       break;
   }
@@ -401,6 +405,11 @@ int main(int argc,char **argv)
         break;
       }
     }
+  }
+
+  if (eco_pt) {
+    if (strcmp(curr_game.eco,eco_pt))
+      continue;
   }
 
   if (bOnlyWins || bOnlyDraws || bOnlyLosses) {
