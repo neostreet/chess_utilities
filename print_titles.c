@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: print_titles (-binary_format) (-i_am_white) (-i_am_black) filename\n";
+"usage: print_titles (-binary_format) (-i_am_white) (-i_am_black) (-verbose) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -23,12 +23,13 @@ int main(int argc,char **argv)
   bool bBinaryFormat;
   bool bIAmWhite;
   bool bIAmBlack;
+  bool bVerbose;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 5)) {
+  if ((argc < 2) || (argc > 6)) {
     printf(usage);
     return 1;
   }
@@ -36,6 +37,7 @@ int main(int argc,char **argv)
   bBinaryFormat = false;
   bIAmWhite = false;
   bIAmBlack = false;
+  bVerbose = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-binary_format"))
@@ -44,6 +46,8 @@ int main(int argc,char **argv)
       bIAmWhite = true;
     else if (!strcmp(argv[curr_arg],"-i_am_black"))
       bIAmBlack = true;
+    else if (!strcmp(argv[curr_arg],"-verbose"))
+      bVerbose = true;
     else
       break;
   }
@@ -98,7 +102,10 @@ int main(int argc,char **argv)
     if (bIAmBlack && !curr_game.orientation)
       continue;
 
-    printf("%s\n",curr_game.title);
+    if (!bVerbose)
+      printf("%s\n",curr_game.title);
+    else
+      printf("%s %s\n",curr_game.title,filename);
   }
 
   fclose(fptr);
