@@ -130,7 +130,7 @@ int main(int argc,char **argv)
         if (!bTerse)
           printf("%d %s\n",num_moves,filename);
         else
-          printf("%s\n",filename);
+          printf("%d\n",num_moves);
       }
     }
     else if (eq_num_moves != -1) {
@@ -138,7 +138,7 @@ int main(int argc,char **argv)
         if (!bTerse)
           printf("%d %s\n",num_moves,filename);
         else
-          printf("%s\n",filename);
+          printf("%d\n",num_moves);
       }
     }
     else if (lt_num_moves != -1) {
@@ -146,7 +146,7 @@ int main(int argc,char **argv)
         if (!bTerse)
           printf("%d %s\n",num_moves,filename);
         else
-          printf("%s\n",filename);
+          printf("%d\n",num_moves);
       }
     }
     else {
@@ -165,14 +165,14 @@ int main(int argc,char **argv)
       else {
         if (bEven) {
           if (!(num_moves % 2))
-            printf("%s\n",filename);
+            printf("%d\n",num_moves);
         }
         else if (bOdd) {
           if (num_moves % 2)
-            printf("%s\n",filename);
+            printf("%d\n",num_moves);
         }
         else
-          printf("%s\n",filename);
+          printf("%d\n",num_moves);
       }
     }
   }
