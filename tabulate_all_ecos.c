@@ -90,6 +90,8 @@ int main(int argc,char **argv)
       bTerse = true;
     else if (!strcmp(argv[curr_arg],"-no_sort"))
       bNoSort = true;
+    else if (!strcmp(argv[curr_arg],"-debug"))
+      bDebug = true;
     else if (!strncmp(argv[curr_arg],"-min_games",10))
       sscanf(&argv[curr_arg][10],"%d",&min_games);
     else
