@@ -19,13 +19,16 @@ struct stats {
   int wins;
   int draws;
   int losses;
+  int total_games;
+  double win_pct;
 };
 
 #define MAX_ECOS 500
 static struct stats eco_stats[MAX_ECOS];
+static int ixs[MAX_ECOS];
 
 static char usage[] =
-"usage: tabulate_all_ecos (-binary_format) (-i_am_white) (-i_am_black) ecos filename\n";
+"usage: tabulate_all_ecos (-binary_format) (-i_am_white) (-i_am_black) (-terse) (-no_sort) (-debug) ecos filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -34,6 +37,10 @@ double chess_win_pct(int wins,int draws,int losses);
 
 int read_ecos(char *ecos_file,char **ecos_pt,int *num_ecos_pt);
 int find_eco(char *eco,char *ecos,int num_ecos);
+
+int elem_compare(const void *elem1,const void *elem2);
+
+static int elem_compare_calls;
 
 static char work_eco[4];
 
@@ -45,6 +52,9 @@ int main(int argc,char **argv)
   bool bBinaryFormat;
   bool bIAmWhite;
   bool bIAmBlack;
+  bool bTerse;
+  bool bNoSort;
+  bool bDebug;
   char *ecos;
   int num_ecos;
   int eco_ix;
@@ -52,10 +62,9 @@ int main(int argc,char **argv)
   FILE *fptr;
   int filename_len;
   struct game curr_game;
-  int total_games;
   char *cpt;
 
-  if ((argc < 3) || (argc > 6)) {
+  if ((argc < 3) || (argc > 9)) {
     printf(usage);
     return 1;
   }
@@ -63,6 +72,9 @@ int main(int argc,char **argv)
   bBinaryFormat = false;
   bIAmWhite = false;
   bIAmBlack = false;
+  bTerse = false;
+  bNoSort = false;
+  bDebug = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-binary_format"))
@@ -71,6 +83,12 @@ int main(int argc,char **argv)
       bIAmWhite = true;
     else if (!strcmp(argv[curr_arg],"-i_am_black"))
       bIAmBlack = true;
+    else if (!strcmp(argv[curr_arg],"-terse"))
+      bTerse = true;
+    else if (!strcmp(argv[curr_arg],"-no_sort"))
+      bNoSort = true;
+    else if (!strcmp(argv[curr_arg],"-debug"))
+      bDebug = true;
     else
       break;
   }
@@ -171,20 +189,37 @@ int main(int argc,char **argv)
   fclose(fptr);
 
   for (n = 0; n < num_ecos; n++) {
-    cpt = &ecos[n * 3];
+    eco_stats[n].total_games = eco_stats[n].wins + eco_stats[n].draws + eco_stats[n].losses;
+    eco_stats[n].win_pct = chess_win_pct(eco_stats[n].wins,eco_stats[n].draws,eco_stats[n].losses);
+    ixs[n] = n;
+  }
+
+  if (!bNoSort)
+    qsort(ixs,num_ecos,sizeof (int),elem_compare);
+
+  if (bDebug)
+    printf("elem_compare() called %d times\n",elem_compare_calls);
+
+  for (n = 0; n < num_ecos; n++) {
+    cpt = &ecos[ixs[n] * 3];
 
     for (m = 0; m < 3; m++)
       work_eco[m] = cpt[m];
 
-    printf("%s\n",work_eco);
+    if (!bTerse) {
+      printf("%s\n",work_eco);
 
-    total_games = eco_stats[n].wins + eco_stats[n].draws + eco_stats[n].losses;
-
-    printf("  %5d wins\n",eco_stats[n].wins);
-    printf("  %5d draws\n",eco_stats[n].draws);
-    printf("  %5d losses\n",eco_stats[n].losses);
-    printf("  %5d games\n",total_games);
-    printf(" %6.2lf%%\n",chess_win_pct(eco_stats[n].wins,eco_stats[n].draws,eco_stats[n].losses));
+      printf("  %5d wins\n",eco_stats[ixs[n]].wins);
+      printf("  %5d draws\n",eco_stats[ixs[n]].draws);
+      printf("  %5d losses\n",eco_stats[ixs[n]].losses);
+      printf("  %5d games\n",eco_stats[ixs[n]].total_games);
+      printf(" %6.2lf%%\n",eco_stats[ixs[n]].win_pct);
+    }
+    else {
+      printf("%lf%% %s %d wins %d draws %d losses %d games\n",
+        eco_stats[ixs[n]].win_pct,work_eco,eco_stats[ixs[n]].wins,eco_stats[ixs[n]].draws,
+        eco_stats[ixs[n]].losses,eco_stats[ixs[n]].total_games);
+    }
   }
 
   return 0;
@@ -261,4 +296,22 @@ int find_eco(char *eco,char *ecos,int num_ecos)
   }
 
   return -1;
+}
+
+int elem_compare(const void *elem1,const void *elem2)
+{
+  int ix1;
+  int ix2;
+
+  elem_compare_calls++;
+
+  ix1 = *(int *)elem1;
+  ix2 = *(int *)elem2;
+
+  if (eco_stats[ix2].win_pct > eco_stats[ix1].win_pct)
+    return 1;
+  else if (eco_stats[ix2].win_pct < eco_stats[ix1].win_pct)
+    return -1;
+  else
+    return 0;
 }
