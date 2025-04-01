@@ -28,7 +28,8 @@ static struct stats eco_stats[MAX_ECOS];
 static int ixs[MAX_ECOS];
 
 static char usage[] =
-"usage: tabulate_all_ecos (-binary_format) (-i_am_white) (-i_am_black) (-terse) (-no_sort) (-debug) ecos filename\n";
+"usage: tabulate_all_ecos (-binary_format) (-i_am_white) (-i_am_black) (-terse) (-no_sort) (-debug)\n"
+"  (-min_gamesmin_games) ecos filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -55,6 +56,7 @@ int main(int argc,char **argv)
   bool bTerse;
   bool bNoSort;
   bool bDebug;
+  int min_games;
   char *ecos;
   int num_ecos;
   int eco_ix;
@@ -64,7 +66,7 @@ int main(int argc,char **argv)
   struct game curr_game;
   char *cpt;
 
-  if ((argc < 3) || (argc > 9)) {
+  if ((argc < 3) || (argc > 10)) {
     printf(usage);
     return 1;
   }
@@ -75,6 +77,7 @@ int main(int argc,char **argv)
   bTerse = false;
   bNoSort = false;
   bDebug = false;
+  min_games = 0;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-binary_format"))
@@ -87,8 +90,8 @@ int main(int argc,char **argv)
       bTerse = true;
     else if (!strcmp(argv[curr_arg],"-no_sort"))
       bNoSort = true;
-    else if (!strcmp(argv[curr_arg],"-debug"))
-      bDebug = true;
+    else if (!strncmp(argv[curr_arg],"-min_games",10))
+      sscanf(&argv[curr_arg][10],"%d",&min_games);
     else
       break;
   }
@@ -201,6 +204,9 @@ int main(int argc,char **argv)
     printf("elem_compare() called %d times\n",elem_compare_calls);
 
   for (n = 0; n < num_ecos; n++) {
+    if (eco_stats[ixs[n]].total_games < min_games)
+      continue;
+
     cpt = &ecos[ixs[n] * 3];
 
     for (m = 0; m < 3; m++)
