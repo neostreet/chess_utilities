@@ -64,7 +64,7 @@ int main(int argc,char **argv)
     return 4;
   }
 
-  printf("the indesx of eco %s is %d\n",argv[curr_arg],retval);
+  printf("the index of eco %s is %d\n",argv[curr_arg],retval);
 
   free(ecos);
 
