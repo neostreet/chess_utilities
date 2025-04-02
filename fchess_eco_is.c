@@ -8,16 +8,19 @@ static char filename[MAX_FILENAME_LEN];
 static char line[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fchess_eco_is eco filename\n";
+"usage: fchess_eco_is (-opening) eco filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char eco_str[] = "[ECO \"";
 #define ECO_STR_LEN (sizeof (eco_str) - 1)
+static char opening_str[] = "[Opening \"";
+#define OPENING_STR_LEN (sizeof (opening_str) - 1)
 
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
   char *string,int string_len,int *index);
 static char *get_eco(char *line,int line_len,int ix);
+static char *get_opening(char *line,int line_len,int ix);
 
 static int dbg_line_no;
 static int afl_dbg;
@@ -26,6 +29,8 @@ int main(int argc,char **argv)
 {
   int m;
   int n;
+  int curr_arg;
+  bool bOpening;
   char *eco_to_match;
   FILE *fptr0;
   int filename_len;
@@ -34,17 +39,32 @@ int main(int argc,char **argv)
   int line_no;
   int ix;
   char *eco;
+  char *opening;
 
-  if (argc != 3) {
+  if ((argc < 3) || (argc > 4)) {
     printf(usage);
     return 1;
   }
 
-  eco_to_match = argv[1];
+  bOpening = false;
 
-  if ((fptr0 = fopen(argv[2],"r")) == NULL) {
-    printf(couldnt_open,argv[2]);
+  for (curr_arg = 1; curr_arg < argc; curr_arg++) {
+    if (!strcmp(argv[curr_arg],"-opening"))
+      bOpening = true;
+    else
+      break;
+  }
+
+  if (argc - curr_arg != 2) {
+    printf(usage);
     return 2;
+  }
+
+  eco_to_match = argv[curr_arg];
+
+  if ((fptr0 = fopen(argv[curr_arg+1],"r")) == NULL) {
+    printf(couldnt_open,argv[curr_arg+1]);
+    return 3;
   }
 
   for ( ; ; ) {
@@ -77,8 +97,26 @@ int main(int argc,char **argv)
         &ix)) {
           eco = get_eco(line,line_len,ix + ECO_STR_LEN);
 
-        if (!strcmp(eco,eco_to_match))
-          printf("%s\n",filename);
+        if (!strcmp(eco,eco_to_match)) {
+          if (!bOpening)
+            printf("%s\n",filename);
+          else {
+            GetLine(fptr,line,&line_len,MAX_LINE_LEN);
+
+            if (feof(fptr))
+              break;
+
+            if (Contains(true,
+              line,line_len,
+              opening_str,OPENING_STR_LEN,
+              &ix)) {
+
+              opening = get_opening(line,line_len,ix + OPENING_STR_LEN);
+
+              printf("%s\n",opening);
+            }
+          }
+        }
 
         break;
       }
@@ -152,6 +190,21 @@ static int Contains(bool bCaseSens,char *line,int line_len,
 }
 
 static char *get_eco(char *line,int line_len,int ix)
+{
+  int n;
+
+  for (n = ix; n < line_len; n++) {
+    if (line[n] == '"')
+      break;
+  }
+
+  if (n < line_len)
+    line[n] = 0;
+
+  return &line[ix];
+}
+
+static char *get_opening(char *line,int line_len,int ix)
 {
   int n;
 
