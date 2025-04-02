@@ -9,7 +9,7 @@ static char line[MAX_LINE_LEN];
 static char date[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fchess_opening (-date) (-name) filename\n";
+"usage: fchess_opening (-date) (-name) (-truncate) filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char opening_str[] = "[Opening \"";
@@ -21,7 +21,7 @@ static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
   char *string,int string_len,int *index);
 static void get_date(char *date,char *line);
-static char *get_opening(char *line,int line_len,int ix);
+static char *get_opening(char *line,int line_len,int ix,bool bTruncate);
 
 static int dbg_line_no;
 static int afl_dbg;
@@ -33,6 +33,7 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bDate;
   bool bName;
+  bool bTruncate;
   FILE *fptr0;
   int filename_len;
   FILE *fptr;
@@ -41,19 +42,22 @@ int main(int argc,char **argv)
   int ix;
   char *opening;
 
-  if ((argc < 2) || (argc > 4)) {
+  if ((argc < 2) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
   bDate = false;
   bName = false;
+  bTruncate = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-date"))
       bDate = true;
     else if (!strcmp(argv[curr_arg],"-name"))
       bName = true;
+    else if (!strcmp(argv[curr_arg],"-truncate"))
+      bTruncate = true;
     else
       break;
   }
@@ -105,7 +109,7 @@ int main(int argc,char **argv)
         opening_str,OPENING_STR_LEN,
         &ix)) {
 
-        opening = get_opening(line,line_len,ix + OPENING_STR_LEN);
+        opening = get_opening(line,line_len,ix + OPENING_STR_LEN,bTruncate);
 
         printf("%s",opening);
 
@@ -195,11 +199,14 @@ static void get_date(char *date,char *line)
   date[7] = '-';
 }
 
-static char *get_opening(char *line,int line_len,int ix)
+static char *get_opening(char *line,int line_len,int ix,bool bTruncate)
 {
   int n;
 
   for (n = ix; n < line_len; n++) {
+    if (bTruncate && (line[n] == ':'))
+      break;
+
     if (line[n] == '"')
       break;
   }
