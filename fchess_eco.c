@@ -9,7 +9,7 @@ static char line[MAX_LINE_LEN];
 static char date[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fchess_eco (-date) filename\n";
+"usage: fchess_eco (-date) (-name) filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char eco_str[] = "[ECO \"";
@@ -32,6 +32,7 @@ int main(int argc,char **argv)
   int n;
   int curr_arg;
   bool bDate;
+  bool bName;
   FILE *fptr0;
   int filename_len;
   FILE *fptr;
@@ -40,16 +41,19 @@ int main(int argc,char **argv)
   int ix;
   char *eco;
 
-  if ((argc < 2) || (argc > 3)) {
+  if ((argc < 2) || (argc > 4)) {
     printf(usage);
     return 1;
   }
 
   bDate = false;
+  bName = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-date"))
       bDate = true;
+    else if (!strcmp(argv[curr_arg],"-name"))
+      bName = true;
     else
       break;
   }
@@ -100,11 +104,18 @@ int main(int argc,char **argv)
         line,line_len,
         eco_str,ECO_STR_LEN,
         &ix)) {
-          eco = get_eco(line,line_len,ix + ECO_STR_LEN);
-          if (!bDate)
-            printf("%s\n",eco);
-          else
-            printf("%s %s\n",eco,date);
+
+        eco = get_eco(line,line_len,ix + ECO_STR_LEN);
+
+        printf("%s",eco);
+
+        if (bDate)
+          printf(" %s",date);
+
+        if (bName)
+          printf(" %s",filename);
+
+        putchar(0x0a);
 
         break;
       }
