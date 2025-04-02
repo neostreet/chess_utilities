@@ -206,6 +206,9 @@ int main(int argc,char **argv)
     printf("elem_compare() called %d times\n",elem_compare_calls);
 
   for (n = 0; n < num_ecos; n++) {
+    if (!eco_stats[ixs[n]].total_games)
+      continue;
+
     if (eco_stats[ixs[n]].total_games < min_games)
       continue;
 
@@ -240,7 +243,10 @@ double chess_win_pct(int wins,int draws,int losses)
 
   games = wins + draws + losses;
 
-  win_pct = ((double)wins + ((double)draws / (double) 2)) / (double)games * (double)100;
+  if (!games)
+    win_pct = (double)0;
+  else
+    win_pct = ((double)wins + ((double)draws / (double) 2)) / (double)games * (double)100;
 
   return win_pct;
 }
