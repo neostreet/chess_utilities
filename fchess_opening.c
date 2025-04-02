@@ -8,10 +8,15 @@ static char filename[MAX_FILENAME_LEN];
 static char line[MAX_LINE_LEN];
 static char date[MAX_LINE_LEN];
 
+#define MAX_ECO_LEN 3
+static char eco[MAX_ECO_LEN+1];
+
 static char usage[] =
-"usage: fchess_opening (-date) (-name) (-truncate) filename\n";
+"usage: fchess_opening (-date) (-name) (-truncate) (-eco) filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
+static char eco_str[] = "[ECO \"";
+#define ECO_STR_LEN (sizeof (eco_str) - 1)
 static char opening_str[] = "[Opening \"";
 #define OPENING_STR_LEN (sizeof (opening_str) - 1)
 static char utcdate[] = "UTCDate";
@@ -22,6 +27,7 @@ static int Contains(bool bCaseSens,char *line,int line_len,
   char *string,int string_len,int *index);
 static void get_date(char *date,char *line);
 static char *get_opening(char *line,int line_len,int ix,bool bTruncate);
+void get_eco(char *line,int line_len,char *eco,int max_eco_len);
 
 static int dbg_line_no;
 static int afl_dbg;
@@ -34,6 +40,7 @@ int main(int argc,char **argv)
   bool bDate;
   bool bName;
   bool bTruncate;
+  bool bEco;
   FILE *fptr0;
   int filename_len;
   FILE *fptr;
@@ -42,7 +49,7 @@ int main(int argc,char **argv)
   int ix;
   char *opening;
 
-  if ((argc < 2) || (argc > 5)) {
+  if ((argc < 2) || (argc > 6)) {
     printf(usage);
     return 1;
   }
@@ -50,6 +57,7 @@ int main(int argc,char **argv)
   bDate = false;
   bName = false;
   bTruncate = false;
+  bEco = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-date"))
@@ -58,6 +66,8 @@ int main(int argc,char **argv)
       bName = true;
     else if (!strcmp(argv[curr_arg],"-truncate"))
       bTruncate = true;
+    else if (!strcmp(argv[curr_arg],"-eco"))
+      bEco = true;
     else
       break;
   }
@@ -96,13 +106,19 @@ int main(int argc,char **argv)
       if (line_no == dbg_line_no)
         afl_dbg = 1;
 
-      if (Contains(true,
+      if (bDate && Contains(true,
         line,line_len,
         utcdate,UTCDATE_LEN,
         &ix)) {
 
-        if (bDate)
-          get_date(date,line);
+        get_date(date,line);
+      }
+      else if (bEco && Contains(true,
+        line,line_len,
+        eco_str,ECO_STR_LEN,
+        &ix)) {
+
+        get_eco(line,line_len,eco,MAX_ECO_LEN);
       }
       else if (Contains(true,
         line,line_len,
@@ -111,7 +127,10 @@ int main(int argc,char **argv)
 
         opening = get_opening(line,line_len,ix + OPENING_STR_LEN,bTruncate);
 
-        printf("%s",opening);
+        if (bEco)
+          printf("%s %s",eco,opening);
+        else
+          printf("%s",opening);
 
         if (bDate)
           printf(" %s",date);
@@ -215,4 +234,18 @@ static char *get_opening(char *line,int line_len,int ix,bool bTruncate)
     line[n] = 0;
 
   return &line[ix];
+}
+
+void get_eco(char *line,int line_len,char *eco,int max_eco_len)
+{
+  int n;
+
+  for (n = 0; (6 + n < line_len) && (n < max_eco_len); n++) {
+    if (line[6 + n] == '"')
+      break;
+
+    eco[n] = line[6 + n];
+  }
+
+  eco[n] = 0;
 }
