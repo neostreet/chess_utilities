@@ -12,7 +12,7 @@ static char date[MAX_LINE_LEN];
 static char eco[MAX_ECO_LEN+1];
 
 static char usage[] =
-"usage: fchess_opening (-date) (-name) (-truncate) (-eco) filename\n";
+"usage: fchess_opening (-date) (-name) (-truncate) (-eco) (-underlines) filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char eco_str[] = "[ECO \"";
@@ -26,7 +26,7 @@ static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
   char *string,int string_len,int *index);
 static void get_date(char *date,char *line);
-static char *get_opening(char *line,int line_len,int ix,bool bTruncate);
+static char *get_opening(char *line,int line_len,int ix,bool bTruncate,bool bUnderlines);
 void get_eco(char *line,int line_len,char *eco,int max_eco_len);
 
 static int dbg_line_no;
@@ -41,6 +41,7 @@ int main(int argc,char **argv)
   bool bName;
   bool bTruncate;
   bool bEco;
+  bool bUnderlines;
   FILE *fptr0;
   int filename_len;
   FILE *fptr;
@@ -49,7 +50,7 @@ int main(int argc,char **argv)
   int ix;
   char *opening;
 
-  if ((argc < 2) || (argc > 6)) {
+  if ((argc < 2) || (argc > 7)) {
     printf(usage);
     return 1;
   }
@@ -58,6 +59,7 @@ int main(int argc,char **argv)
   bName = false;
   bTruncate = false;
   bEco = false;
+  bUnderlines = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-date"))
@@ -68,6 +70,8 @@ int main(int argc,char **argv)
       bTruncate = true;
     else if (!strcmp(argv[curr_arg],"-eco"))
       bEco = true;
+    else if (!strcmp(argv[curr_arg],"-underlines"))
+      bUnderlines = true;
     else
       break;
   }
@@ -125,7 +129,7 @@ int main(int argc,char **argv)
         opening_str,OPENING_STR_LEN,
         &ix)) {
 
-        opening = get_opening(line,line_len,ix + OPENING_STR_LEN,bTruncate);
+        opening = get_opening(line,line_len,ix + OPENING_STR_LEN,bTruncate,bUnderlines);
 
         if (bEco)
           printf("%s %s",eco,opening);
@@ -218,7 +222,7 @@ static void get_date(char *date,char *line)
   date[7] = '-';
 }
 
-static char *get_opening(char *line,int line_len,int ix,bool bTruncate)
+static char *get_opening(char *line,int line_len,int ix,bool bTruncate,bool bUnderlines)
 {
   int n;
 
@@ -228,6 +232,9 @@ static char *get_opening(char *line,int line_len,int ix,bool bTruncate)
 
     if (line[n] == '"')
       break;
+
+    if (bUnderlines && (line[n] == ' '))
+      line[n] = '_';
   }
 
   if (n < line_len)
