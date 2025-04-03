@@ -138,7 +138,7 @@ int main(int argc,char **argv)
         if (!bTerse)
           printf("%d %s\n",num_moves,filename);
         else
-          printf("%d\n",num_moves);
+          printf("%s\n",filename);
       }
     }
     else if (lt_num_moves != -1) {
