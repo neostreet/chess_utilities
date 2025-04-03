@@ -1,135 +1,142 @@
-#include <stdio.h>
-#include <string.h>
+#define WHITE 0
+#define BLACK 1
+#define NUM_PLAYERS 2
 
-#include "chess.h"
-#define MAKE_GLOBALS_HERE
-#include "chess.glb"
-#include "chess.fun"
-#include "chess.mac"
+#define NUM_RANKS 8
+#define NUM_FILES 8
 
-#define MAX_GAMES 100
-struct game games[MAX_GAMES];
+#define NUM_BOARD_SQUARES (NUM_RANKS * NUM_FILES)
 
-#define MAX_FILENAME_LEN 256
-static char filenames[MAX_GAMES][MAX_FILENAME_LEN];
+#define CHARS_IN_BOARD \
+(NUM_BOARD_SQUARES / 2)  // 64 squares / 2 (nibbles per char)
 
-static char usage[] =
-"usage: find_doppelgames (-binary_format) (-verbose) filename\n";
+#define PAWN_ID           1
+#define ROOK_ID           2
+#define KNIGHT_ID         3
+#define BISHOP_ID         4
+#define QUEEN_ID          5
+#define KING_ID           6
+#define NUM_PIECE_TYPES_0 6
+#define EMPTY_ID          7
 
-char couldnt_get_status[] = "couldn't get status of %s\n";
-char couldnt_open[] = "couldn't open %s\n";
+#define NUM_PIECES_PER_PLAYER 16
 
-bool doppelgames(struct game *gamept1,struct game *gamept2);
+#define FORCE_VALUE_QUEEN  9
+#define FORCE_VALUE_ROOK   5
+#define FORCE_VALUE_KNIGHT 3
+#define FORCE_VALUE_BISHOP 3
+#define FORCE_VALUE_PAWN   1
+#define FORCE_VALUE_KING   0
 
-int main(int argc,char **argv)
-{
-  int m;
-  int n;
-  int curr_arg;
-  bool bBinaryFormat;
-  bool bVerbose;
-  int retval;
-  FILE *fptr;
-  int filename_len;
-  int game_ix;
+#define SPECIAL_MOVE_NONE                      0x0000
+#define SPECIAL_MOVE_TWO_SQUARE_PAWN_ADVANCE   0x0001
+#define SPECIAL_MOVE_KINGSIDE_CASTLE           0x0002
+#define SPECIAL_MOVE_QUEENSIDE_CASTLE          0x0004
+#define SPECIAL_MOVE_CHECK                     0x0008
+#define SPECIAL_MOVE_CAPTURE                   0x0010
+#define SPECIAL_MOVE_EN_PASSANT_CAPTURE        0x0020
+#define SPECIAL_MOVE_PROMOTION_QUEEN           0x0040
+#define SPECIAL_MOVE_PROMOTION_ROOK            0x0080
+#define SPECIAL_MOVE_PROMOTION_KNIGHT          0x0100
+#define SPECIAL_MOVE_PROMOTION_BISHOP          0x0200
+#define SPECIAL_MOVE_MATE                      0x0400
+#define SPECIAL_MOVE_STALEMATE                 0x0800
+#define SPECIAL_MOVE_QUEEN_IS_ATTACKED         0x1000
+#define SPECIAL_MOVE_MATE_IN_ONE               0x2000
 
-  if ((argc < 2) || (argc > 4)) {
-    printf(usage);
-    return 1;
-  }
+#define RESULT_EMPTY 0
+#define RESULT_WIN   1
+#define RESULT_DRAW  2
+#define RESULT_LOSS  3
 
-  bBinaryFormat = false;
-  bVerbose = false;
+#define ORIG_FORCE_VALUE (FORCE_VALUE_QUEEN + 2 * FORCE_VALUE_ROOK + \
+2 * FORCE_VALUE_KNIGHT + 2 * FORCE_VALUE_BISHOP + 8 * FORCE_VALUE_PAWN)
 
-  for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-binary_format"))
-      bBinaryFormat = true;
-    else if (!strcmp(argv[curr_arg],"-verbose"))
-      bVerbose = true;
-    else
-      break;
-  }
+#define WORDLEN 256
+#define MAX_MOVES 400
+#define MAX_LEGAL_MOVES 500
 
-  if (argc - curr_arg != 1) {
-    printf(usage);
-    return 2;
-  }
+#define WIDTH_IN_PIXELS 50
+#define XLEN WIDTH_IN_PIXELS
+#define PIXELS_PER_BYTE 8
+#define WIDTH_IN_BYTES ((WIDTH_IN_PIXELS + PIXELS_PER_BYTE - 1) / PIXELS_PER_BYTE)
 
-  if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
-    printf(couldnt_open,argv[curr_arg]);
-    return 3;
-  }
+#define HEIGHT_IN_PIXELS 50
+#define YLEN HEIGHT_IN_PIXELS
 
-  for (game_ix = 0; game_ix < MAX_GAMES; game_ix++) {
-    GetLine(fptr,filenames[game_ix],&filename_len,MAX_FILENAME_LEN);
+#define IMAGEBUF_LEN (WIDTH_IN_BYTES * HEIGHT_IN_PIXELS)
+#define PIECE_WIDTH IMAGEBUF_LEN
 
-    if (feof(fptr))
-      break;
+#define BITS_PER_BYTE 8
 
-    bzero(&games[game_ix],sizeof (struct game));
+#define SHRUNK_WIDTH_IN_PIXELS (WIDTH_IN_PIXELS / 2)
+#define SHRUNK_BITS_PER_PIXEL 2
+#define SHRUNK_WIDTH_IN_BITS (SHRUNK_WIDTH_IN_PIXELS * SHRUNK_BITS_PER_PIXEL)
+#define SHRUNK_WIDTH_IN_BYTES ((SHRUNK_WIDTH_IN_BITS + \
+BITS_PER_BYTE - 1) / BITS_PER_BYTE)
 
-    if (!bBinaryFormat) {
-      retval = read_game(filenames[game_ix],&games[game_ix]);
+#define SHRUNK_HEIGHT_IN_PIXELS (HEIGHT_IN_PIXELS / 2)
 
-      if (retval) {
-        printf("read_game of %s failed: %d\n",filenames[game_ix],retval);
+#define SHRUNK_IMAGEBUF_LEN (SHRUNK_WIDTH_IN_BYTES * SHRUNK_HEIGHT_IN_PIXELS)
 
-        continue;
-      }
-    }
-    else {
-      retval = read_binary_game(filenames[game_ix],&games[game_ix]);
+#define BOARD_WIDTH (NUM_FILES * width_in_pixels)
+#define BOARD_HEIGHT (NUM_RANKS * height_in_pixels)
 
-      if (retval) {
-        printf("read_binary_game of %s failed: %d\n",filenames[game_ix],retval);
+#define NUM_PIECE_TYPES 5
 
-        continue;
-      }
-    }
-  }
+struct move {
+  char from;
+  char to;
+  int special_move_info;
+};
 
-  fclose(fptr);
+struct piece_info {
+  char piece_id;
+  char current_board_position;
+  char move_count;
+};
 
-  for (n = 0; n < game_ix - 1; n++) {
-    for (m = n + 1; m < game_ix; m++) {
-      if (doppelgames(&games[n],&games[m])) {
-        if (!bVerbose)
-          printf("%s %s\n",filenames[n],filenames[m]);
-        else
-          printf("%s and %s are doppelgames\n",filenames[n],filenames[m]);
-      }
-      else if (bVerbose)
-        printf("%s and %s are not doppelgames\n",filenames[n],filenames[m]);
-    }
-  }
+#define BITS_PER_BOARD_SQUARE 4
 
-  return 0;
-}
+#define FONT_HEIGHT 12
+#define FONT_WIDTH 9
 
-bool doppelgames(struct game *gamept1,struct game *gamept2)
-{
-  int n;
+#define Y_PIXELS 200
 
-  if (gamept1->orientation != gamept2->orientation)
-    return false;
+#define MAX_ANNOTATION_LINE_LEN 25
+#define MAX_ANNOTATION_LINES (Y_PIXELS / FONT_HEIGHT)
 
-  if (gamept1->result != gamept2->result)
-    return false;
+#define ANNOTATION_X (8 * XLEN + 2 + FONT_WIDTH)
+#define ANNOTATION_Y 5
 
-  if (gamept1->num_moves != gamept2->num_moves)
-    return false;
+#define MAX_TITLE_LEN 128
+#define MAX_ECO_LEN 3
 
-  for (n = 0; n < gamept1->num_moves; n++) {
-    if (gamept1->moves[n].from != gamept2->moves[n].from)
-      return false;
+struct game {
+  char title[MAX_TITLE_LEN];
+  char eco[MAX_ECO_LEN+1];
+  int orientation;
+  int has_custom_initial_board;
+  int black_moves_first;
+  int num_moves;
+  int curr_move;
+  int result;
+  struct move moves[MAX_MOVES];
+  unsigned char board[CHARS_IN_BOARD];  /* 8 columns * 8 rows / 2 (nibbles per char) */
+  struct piece_info white_pieces[NUM_PIECES_PER_PLAYER];
+  struct piece_info black_pieces[NUM_PIECES_PER_PLAYER];
+};
 
-    if (gamept1->moves[n].to != gamept2->moves[n].to)
-      return false;
+struct game_position {
+  char orientation;
+  unsigned char board[CHARS_IN_BOARD];  /* 8 columns * 8 rows / 2 (nibbles per char) */
+};
 
-    if (gamept1->moves[n].special_move_info != gamept2->moves[n].special_move_info)
-      return false;
-  }
+struct move_offset {
+  char rank_offset;
+  char file_offset;
+};
 
-  return true;
-}
-a
+#define LINEFEED 0x0a
+
+typedef char **CPPT;
