@@ -20,6 +20,7 @@ char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
 
 static int doppelgames_calls;
+static int doppelgames_found;
 
 bool doppelgames(struct game *gamept1,struct game *gamept2);
 
@@ -110,7 +111,7 @@ int main(int argc,char **argv)
   }
 
   if (bDebug)
-    printf("doppelgames() called %d times\n",doppelgames_calls);
+    printf("doppelgames() called %d times; found %d doppelgames\n",doppelgames_calls,doppelgames_found);
 
   return 0;
 }
@@ -140,6 +141,8 @@ bool doppelgames(struct game *gamept1,struct game *gamept2)
     if (gamept1->moves[n].special_move_info != gamept2->moves[n].special_move_info)
       return false;
   }
+
+  doppelgames_found++;
 
   return true;
 }
