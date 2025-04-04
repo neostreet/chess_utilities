@@ -98,6 +98,9 @@ int main(int argc,char **argv)
   fclose(fptr);
 
   for (n = 0; n < game_ix - 1; n++) {
+    if (doppelgames_found)
+        break;
+
     for (m = n + 1; m < game_ix; m++) {
       if (doppelgames(&games[n],&games[m])) {
         if (!bVerbose)
