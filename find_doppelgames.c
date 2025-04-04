@@ -14,10 +14,12 @@ struct game games[MAX_GAMES];
 static char filenames[MAX_GAMES][MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_doppelgames (-binary_format) (-verbose) filename\n";
+"usage: find_doppelgames (-binary_format) (-verbose) (-debug) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
+
+static int doppelgames_calls;
 
 bool doppelgames(struct game *gamept1,struct game *gamept2);
 
@@ -28,24 +30,28 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bBinaryFormat;
   bool bVerbose;
+  bool bDebug;
   int retval;
   FILE *fptr;
   int filename_len;
   int game_ix;
 
-  if ((argc < 2) || (argc > 4)) {
+  if ((argc < 2) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
   bBinaryFormat = false;
   bVerbose = false;
+  bDebug = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
     else if (!strcmp(argv[curr_arg],"-verbose"))
       bVerbose = true;
+    else if (!strcmp(argv[curr_arg],"-debug"))
+      bDebug = true;
     else
       break;
   }
@@ -103,12 +109,17 @@ int main(int argc,char **argv)
     }
   }
 
+  if (bDebug)
+    printf("doppelgames() called %d times\n",doppelgames_calls);
+
   return 0;
 }
 
 bool doppelgames(struct game *gamept1,struct game *gamept2)
 {
   int n;
+
+  doppelgames_calls++;
 
   if (gamept1->orientation != gamept2->orientation)
     return false;
