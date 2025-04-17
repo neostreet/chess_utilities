@@ -108,10 +108,21 @@ static int build_pos_filename(
   char *pos_filename,
   int max_filename_len)
 {
-  if (bin_filename_len + 4 >= max_filename_len)
+  int n;
+
+  for (n = 0; n < bin_filename_len; n++) {
+    if (bin_filename[n] == '.')
+      break;
+  }
+
+  if (n == bin_filename_len)
     return 1;
 
-  sprintf(pos_filename,"%s.pos",bin_filename);
+  if (n + 4 > max_filename_len - 1)
+    return 2;
+
+  strcpy(pos_filename,bin_filename);
+  strcpy(&pos_filename[n+1],"pos");
 
   return 0;
 }
