@@ -11,8 +11,8 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: fnum_moves (-binary_format) (-gt_num_movesnum_moves) (-eq_num_movesnum_moves)\n"
-"  (-lt_num_movesnum_moves) (-terse) (-even) (-odd)\n"
+"usage: fnum_moves (-binary_format) (-ge_num_movesnum_moves) (-eq_num_movesnum_moves)\n"
+"  (-lt_num_movesnum_moves) (-terse_modemode) (-even) (-odd)\n"
 "  (-only_wins) (-only_draws) (-only_losses) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
@@ -24,10 +24,10 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bBinaryFormat;
   int num_moves;
-  int gt_num_moves;
+  int ge_num_moves;
   int eq_num_moves;
   int lt_num_moves;
-  bool bTerse;
+  int terse_mode;
   bool bEven;
   bool bOdd;
   bool bOnlyWins;
@@ -43,11 +43,11 @@ int main(int argc,char **argv)
     return 1;
   }
 
+  terse_mode = 0;
   bBinaryFormat = false;
-  gt_num_moves = -1;
+  ge_num_moves = -1;
   eq_num_moves = -1;
   lt_num_moves = -1;
-  bTerse = false;
   bEven = false;
   bOdd = false;
   bOnlyWins = false;
@@ -57,14 +57,14 @@ int main(int argc,char **argv)
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
-    else if (!strncmp(argv[curr_arg],"-gt_num_moves",13))
-      sscanf(&argv[curr_arg][13],"%d",&gt_num_moves);
+    else if (!strncmp(argv[curr_arg],"-ge_num_moves",13))
+      sscanf(&argv[curr_arg][13],"%d",&ge_num_moves);
     else if (!strncmp(argv[curr_arg],"-eq_num_moves",13))
       sscanf(&argv[curr_arg][13],"%d",&eq_num_moves);
     else if (!strncmp(argv[curr_arg],"-lt_num_moves",13))
       sscanf(&argv[curr_arg][13],"%d",&lt_num_moves);
-    else if (!strcmp(argv[curr_arg],"-terse"))
-      bTerse = true;
+    else if (!strncmp(argv[curr_arg],"-terse_mode",11))
+      sscanf(&argv[curr_arg][11],"%d",&terse_mode);
     else if (!strcmp(argv[curr_arg],"-even"))
       bEven = true;
     else if (!strcmp(argv[curr_arg],"-odd"))
@@ -99,13 +99,13 @@ int main(int argc,char **argv)
     return 5;
   }
 
-  if ((gt_num_moves != -1) && (eq_num_moves != -1)) {
-    printf("can't specify both -gt_num_moves and -eq_num_moves\n");
+  if ((ge_num_moves != -1) && (eq_num_moves != -1)) {
+    printf("can't specify both -ge_num_moves and -eq_num_moves\n");
     return 6;
   }
 
-  if ((gt_num_moves != -1) && (lt_num_moves != -1)) {
-    printf("can't specify both -gt_num_moves and -lt_num_moves\n");
+  if ((ge_num_moves != -1) && (lt_num_moves != -1)) {
+    printf("can't specify both -ge_num_moves and -lt_num_moves\n");
     return 7;
   }
 
@@ -168,32 +168,38 @@ int main(int argc,char **argv)
 
     num_moves = curr_game.num_moves;
 
-    if (gt_num_moves != -1) {
-      if (num_moves > gt_num_moves) {
-        if (!bTerse)
+    if (ge_num_moves != -1) {
+      if (num_moves >= ge_num_moves) {
+        if (!terse_mode)
           printf("%d %s\n",num_moves,filename);
-        else
+        else if (terse_mode == 1)
           printf("%d\n",num_moves);
+        else
+          printf("%s\n",filename);
       }
     }
     else if (eq_num_moves != -1) {
       if (num_moves == eq_num_moves) {
-        if (!bTerse)
+        if (!terse_mode)
           printf("%d %s\n",num_moves,filename);
+        else if (terse_mode == 1)
+          printf("%d\n",num_moves);
         else
           printf("%s\n",filename);
       }
     }
     else if (lt_num_moves != -1) {
       if (num_moves < lt_num_moves) {
-        if (!bTerse)
+        if (!terse_mode)
           printf("%d %s\n",num_moves,filename);
-        else
+        else if (terse_mode == 1)
           printf("%d\n",num_moves);
+        else
+          printf("%s\n",filename);
       }
     }
     else {
-      if (!bTerse) {
+      if (!terse_mode) {
         if (bEven) {
           if (!(num_moves % 2))
             printf("%d %s\n",num_moves,filename);
@@ -204,18 +210,30 @@ int main(int argc,char **argv)
         }
         else
           printf("%d %s\n",num_moves,filename);
+      }
+      else if (terse_mode == 1) {
+        if (bEven) {
+          if (!(num_moves % 2))
+            printf("%d\n",num_moves);
+        }
+        else if (bOdd) {
+          if (num_moves % 2)
+            printf("%d\n",num_moves);
+        }
+        else
+          printf("%d\n",num_moves);
       }
       else {
         if (bEven) {
           if (!(num_moves % 2))
-            printf("%d\n",num_moves);
+            printf("%s\n",filename);
         }
         else if (bOdd) {
           if (num_moves % 2)
-            printf("%d\n",num_moves);
+            printf("%s\n",filename);
         }
         else
-          printf("%d\n",num_moves);
+          printf("%s\n",filename);
       }
     }
   }
