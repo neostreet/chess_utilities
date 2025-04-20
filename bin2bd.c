@@ -15,7 +15,7 @@ static char line[MAX_LINE_LEN];
 #include "chess.mac"
 
 static char usage[] =
-"usage: fbin2bd (-debug) filename\n";
+"usage: bin2bd (-debug) filename\n";
 
 static struct game curr_game;
 
@@ -89,10 +89,21 @@ static int build_bd_filename(
   char *bd_filename,
   int max_filename_len)
 {
-  if (bin_filename_len + 3 >= max_filename_len)
+  int n;
+
+  for (n = 0; n < bin_filename_len; n++) {
+    if (bin_filename[n] == '.')
+      break;
+  }
+
+  if (n == bin_filename_len)
     return 1;
 
-  sprintf(bd_filename,"%s.bd",bin_filename);
+  if (n + 3 > max_filename_len - 1)
+    return 2;
+
+  strcpy(bd_filename,bin_filename);
+  strcpy(&bd_filename[n+1],"bd");
 
   return 0;
 }
