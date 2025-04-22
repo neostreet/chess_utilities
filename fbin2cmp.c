@@ -10,7 +10,7 @@ static char cmp_filename[MAX_FILENAME_LEN];
 #define MAX_LINE_LEN 8192
 static char line[MAX_LINE_LEN];
 
-#define MAX_CANDIDATES 24
+#define MAX_CANDIDATES 32
 
 #include "chess.h"
 #define MAKE_GLOBALS_HERE
@@ -109,21 +109,11 @@ int main(int argc,char **argv)
 
     for (n = 0; n < NUM_PIECES_PER_PLAYER; n++) {
       if (curr_game.white_pieces[n].current_board_position != -1) {
-        if ((curr_game.white_pieces[n].piece_id == PAWN_ID) ||
-          (curr_game.white_pieces[n].piece_id == KNIGHT_ID) ||
-          (curr_game.white_pieces[n].piece_id == BISHOP_ID)) {
-
-          candidates[num_candidates++] = curr_game.white_pieces[n].current_board_position;
-        }
+        candidates[num_candidates++] = curr_game.white_pieces[n].current_board_position;
       }
 
       if (curr_game.black_pieces[n].current_board_position != -1) {
-        if ((curr_game.black_pieces[n].piece_id == PAWN_ID * -1) ||
-          (curr_game.black_pieces[n].piece_id == KNIGHT_ID * -1) ||
-          (curr_game.black_pieces[n].piece_id == BISHOP_ID * -1)) {
-
-          candidates[num_candidates++] = curr_game.black_pieces[n].current_board_position;
-        }
+        candidates[num_candidates++] = curr_game.black_pieces[n].current_board_position;
       }
     }
 
