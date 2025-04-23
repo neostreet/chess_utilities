@@ -189,8 +189,16 @@ int main(int argc,char **argv)
           else
             bHaveCheck = curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_MATE;
 
-          if (bHaveCheck)
+          if (bHaveCheck) {
             num_checks++;
+
+            if (bVerbose) {
+              if (num_checks == 1)
+                printf("%s\n",filename);
+
+              printf("  %d\n",curr_game.curr_move);
+            }
+          }
         }
       }
       else {
@@ -215,11 +223,13 @@ int main(int argc,char **argv)
           num_checks = max_consecutive_checks;
       }
 
-      if ((!bNone && (num_checks)) || (bNone && !num_checks)) {
-        if (!bMate)
-          printf("%d %s\n",num_checks,filename);
-        else
-          printf("%s\n",filename);
+      if (!bVerbose) {
+        if ((!bNone && (num_checks)) || (bNone && !num_checks)) {
+          if (!bMate)
+            printf("%d %s\n",num_checks,filename);
+          else
+            printf("%s\n",filename);
+        }
       }
     }
   }
