@@ -49,6 +49,7 @@ int main(int argc,char **argv)
   bDebug = false;
   bSkipChecks = false;
   bIgnoreReadErrors = false;
+  bSetMateInOne = true;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
