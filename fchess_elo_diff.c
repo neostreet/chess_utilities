@@ -188,9 +188,9 @@ int main(int argc,char **argv)
                 elo_diff,elo,opponent_elo,filename);
             }
             else {
-              printf("%s%d %d %d %s\n",
+              printf("%s%d (%d %d) %s\n",
                 (bAnchor ? "# " : ""),
-                opponent_elo,elo,elo_diff,filename);
+                elo_diff,opponent_elo,elo,filename);
             }
           }
           else {
@@ -200,9 +200,9 @@ int main(int argc,char **argv)
                  elo_diff,elo,opponent_elo,filename,date);
             }
             else {
-              printf("%s%d %d %d %s %s\n",
-                (bAnchor ? "# " : ""),
-                opponent_elo,elo,elo_diff,filename,date);
+               printf("%s%d (%d %d) %s %s\n",
+                 (bAnchor ? "# " : ""),
+                 elo_diff,opponent_elo,elo,filename,date);
             }
           }
         }
