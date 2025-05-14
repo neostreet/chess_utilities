@@ -53,7 +53,9 @@ int main(int argc,char **argv)
   int opponent_elo;
   int elo_diff;
   int opponent_elo_geval;
+  bool bHaveLEVal;
   int elo_diff_leval;
+  bool bHaveGEVal;
   int elo_diff_geval;
 
   if ((argc < 3) || (argc > 13)) {
@@ -69,8 +71,8 @@ int main(int argc,char **argv)
   bAnchor = false;
   bOpponentEloFirst = false;
   opponent_elo_geval = -1;
-  elo_diff_leval = 1;
-  elo_diff_geval = -1;
+  bHaveLEVal = false;
+  bHaveGEVal = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
@@ -89,10 +91,14 @@ int main(int argc,char **argv)
       bOpponentEloFirst = true;
     else if (!strncmp(argv[curr_arg],"-opponent_elo_ge",16))
       sscanf(&argv[curr_arg][16],"%d",&opponent_elo_geval);
-    else if (!strncmp(argv[curr_arg],"-elo_diff_le",12))
+    else if (!strncmp(argv[curr_arg],"-elo_diff_le",12)) {
       sscanf(&argv[curr_arg][12],"%d",&elo_diff_leval);
-    else if (!strncmp(argv[curr_arg],"-elo_diff_ge",12))
+      bHaveLEVal = true;
+    }
+    else if (!strncmp(argv[curr_arg],"-elo_diff_ge",12)) {
       sscanf(&argv[curr_arg][12],"%d",&elo_diff_geval);
+      bHaveGEVal = true;
+    }
     else
       break;
   }
@@ -174,10 +180,10 @@ int main(int argc,char **argv)
         if (bPosOnly && (elo_diff <= 0))
           break;
 
-        if ((elo_diff_leval != 1) && (elo_diff > elo_diff_leval))
+        if (bHaveLEVal && (elo_diff > elo_diff_leval))
           break;
 
-        if ((elo_diff_geval != -1) && (elo_diff < elo_diff_geval))
+        if (bHaveGEVal && (elo_diff < elo_diff_geval))
           break;
 
         if (!bTerse) {
