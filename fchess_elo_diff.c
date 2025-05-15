@@ -10,7 +10,8 @@ static char date[MAX_LINE_LEN];
 
 static char usage[] =
 "usage: fchess_elo_diff (-terse) (-neg_only) (-pos_only) (-zero_only) (-date) (-anchor)\n"
-"  (-opponent_elo_first) (-opponent_elo_geval) (-elo_diff_leval) (-elo_diff_geval) player_name filename\n";
+"  (-opponent_elo_first) (-opponent_elo_geval) (-elo_diff_leval) (-elo_diff_geval)\n"
+"  (-is_neg) (-is_pos) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -57,8 +58,10 @@ int main(int argc,char **argv)
   int elo_diff_leval;
   bool bHaveGEVal;
   int elo_diff_geval;
+  bool bIsNeg;
+  bool bIsPos;
 
-  if ((argc < 3) || (argc > 13)) {
+  if ((argc < 3) || (argc > 15)) {
     printf(usage);
     return 1;
   }
@@ -73,6 +76,8 @@ int main(int argc,char **argv)
   opponent_elo_geval = -1;
   bHaveLEVal = false;
   bHaveGEVal = false;
+  bIsNeg = false;
+  bIsPos = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
@@ -99,6 +104,10 @@ int main(int argc,char **argv)
       sscanf(&argv[curr_arg][12],"%d",&elo_diff_geval);
       bHaveGEVal = true;
     }
+    else if (!strcmp(argv[curr_arg],"-is_neg"))
+      bIsNeg = true;
+    else if (!strcmp(argv[curr_arg],"-is_pos"))
+      bIsPos = true;
     else
       break;
   }
@@ -113,12 +122,17 @@ int main(int argc,char **argv)
     return 3;
   }
 
+  if (bIsPos && bIsNeg) {
+    printf("can't specify both -is_pos and -is_neg\n");
+    return 4;
+  }
+
   player_name_ix = curr_arg;
   player_name_len = strlen(argv[player_name_ix]);
 
   if ((fptr0 = fopen(argv[curr_arg + 1],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg + 1]);
-    return 4;
+    return 5;
   }
 
   for ( ; ; ) {
@@ -189,26 +203,82 @@ int main(int argc,char **argv)
         if (!bTerse) {
           if (!bDate) {
             if (!bOpponentEloFirst) {
-              printf("%s%d (%d %d) %s\n",
-                (bAnchor ? "# " : ""),
-                elo_diff,elo,opponent_elo,filename);
+              if (bIsNeg) {
+                printf("%d %s%d (%d %d) %s\n",
+                  (elo_diff < 0 ? 1 : 0),
+                  (bAnchor ? "# " : ""),
+                  elo_diff,elo,opponent_elo,filename);
+              }
+              else if (bIsPos) {
+                printf("%d %s%d (%d %d) %s\n",
+                  (elo_diff > 0 ? 1 : 0),
+                  (bAnchor ? "# " : ""),
+                  elo_diff,elo,opponent_elo,filename);
+              }
+              else {
+                printf("%s%d (%d %d) %s\n",
+                  (bAnchor ? "# " : ""),
+                  elo_diff,elo,opponent_elo,filename);
+              }
             }
             else {
-              printf("%s%d (%d %d) %s\n",
-                (bAnchor ? "# " : ""),
-                elo_diff,opponent_elo,elo,filename);
+              if (bIsNeg) {
+                printf("%d %s%d (%d %d) %s\n",
+                  (elo_diff < 0 ? 1 : 0),
+                  (bAnchor ? "# " : ""),
+                  elo_diff,opponent_elo,elo,filename);
+              }
+              else if (bIsPos) {
+                printf("%d %s%d (%d %d) %s\n",
+                  (elo_diff > 0 ? 1 : 0),
+                  (bAnchor ? "# " : ""),
+                  elo_diff,opponent_elo,elo,filename);
+              }
+              else {
+                printf("%s%d (%d %d) %s\n",
+                  (bAnchor ? "# " : ""),
+                  elo_diff,opponent_elo,elo,filename);
+              }
             }
           }
           else {
             if (!bOpponentEloFirst) {
-               printf("%s%d (%d %d) %s %s\n",
-                 (bAnchor ? "# " : ""),
-                 elo_diff,elo,opponent_elo,filename,date);
+              if (bIsNeg) {
+                printf("%d %s%d (%d %d) %s %s\n",
+                  (elo_diff < 0 ? 1 : 0),
+                  (bAnchor ? "# " : ""),
+                  elo_diff,elo,opponent_elo,filename,date);
+              }
+              else if (bIsPos) {
+                printf("%d %s%d (%d %d) %s %s\n",
+                  (elo_diff > 0 ? 1 : 0),
+                  (bAnchor ? "# " : ""),
+                  elo_diff,elo,opponent_elo,filename,date);
+              }
+              else {
+                printf("%s%d (%d %d) %s %s\n",
+                  (bAnchor ? "# " : ""),
+                  elo_diff,elo,opponent_elo,filename,date);
+              }
             }
             else {
-               printf("%s%d (%d %d) %s %s\n",
-                 (bAnchor ? "# " : ""),
-                 elo_diff,opponent_elo,elo,filename,date);
+              if (bIsNeg) {
+                printf("%d %s%d (%d %d) %s %s\n",
+                  (elo_diff < 0 ? 1 : 0),
+                  (bAnchor ? "# " : ""),
+                  elo_diff,opponent_elo,elo,filename,date);
+              }
+              else if (bIsPos) {
+                printf("%d %s%d (%d %d) %s %s\n",
+                  (elo_diff > 0 ? 1 : 0),
+                  (bAnchor ? "# " : ""),
+                  elo_diff,opponent_elo,elo,filename,date);
+              }
+              else {
+                printf("%s%d (%d %d) %s %s\n",
+                  (bAnchor ? "# " : ""),
+                  elo_diff,opponent_elo,elo,filename,date);
+              }
             }
           }
         }
@@ -239,7 +309,7 @@ int main(int argc,char **argv)
         else {
           printf("%s: couldn't determine whether %s is white or black\n",
             filename,argv[player_name_ix]);
-          return 5;
+          return 6;
         }
       }
     }
