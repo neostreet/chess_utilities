@@ -11,7 +11,7 @@ static char date[MAX_LINE_LEN];
 static char usage[] =
 "usage: fchess_elo_diff (-terse) (-neg_only) (-pos_only) (-zero_only) (-date) (-anchor)\n"
 "  (-opponent_elo_first) (-opponent_elo_geval) (-elo_diff_leval) (-elo_diff_geval)\n"
-"  (-is_neg) (-is_pos) (-filename_only) player_name filename\n";
+"  (-is_neg) (-is_pos) (-filename_only) (-i_am_white) (-i_am_black) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char white[] = "White";
@@ -61,8 +61,10 @@ int main(int argc,char **argv)
   bool bIsNeg;
   bool bIsPos;
   bool bFilenameOnly;
+  bool bIAmWhite;
+  bool bIAmBlack;
 
-  if ((argc < 3) || (argc > 16)) {
+  if ((argc < 3) || (argc > 18)) {
     printf(usage);
     return 1;
   }
@@ -80,6 +82,8 @@ int main(int argc,char **argv)
   bIsNeg = false;
   bIsPos = false;
   bFilenameOnly = false;
+  bIAmWhite = false;
+  bIAmBlack = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
@@ -112,6 +116,10 @@ int main(int argc,char **argv)
       bIsPos = true;
     else if (!strcmp(argv[curr_arg],"-filename_only"))
       bFilenameOnly = true;
+    else if (!strcmp(argv[curr_arg],"-i_am_white"))
+      bIAmWhite = true;
+    else if (!strcmp(argv[curr_arg],"-i_am_black"))
+      bIAmBlack = true;
     else
       break;
   }
@@ -131,12 +139,17 @@ int main(int argc,char **argv)
     return 4;
   }
 
+  if (bIAmWhite and bIAmBlack) {
+    printf("can't specify both -i_am_white and -i_am_black\n");
+    return 5;
+  }
+
   player_name_ix = curr_arg;
   player_name_len = strlen(argv[player_name_ix]);
 
   if ((fptr0 = fopen(argv[curr_arg + 1],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg + 1]);
-    return 5;
+    return 6;
   }
 
   for ( ; ; ) {
@@ -202,6 +215,12 @@ int main(int argc,char **argv)
           break;
 
         if (bHaveGEVal && (elo_diff < elo_diff_geval))
+          break;
+
+        if (bIAmWhite && !bPlayerIsWhite)
+          break;
+
+        if (bIAmBlack && bPlayerIsWhite)
           break;
 
         if (bFilenameOnly) {
@@ -316,7 +335,7 @@ int main(int argc,char **argv)
         else {
           printf("%s: couldn't determine whether %s is white or black\n",
             filename,argv[player_name_ix]);
-          return 6;
+          return 7;
         }
       }
     }
