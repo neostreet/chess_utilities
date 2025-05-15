@@ -11,13 +11,25 @@ static char date[MAX_LINE_LEN];
 static char usage[] =
 "usage: fchess_elo_diff (-terse) (-neg_only) (-pos_only) (-zero_only) (-date) (-anchor)\n"
 "  (-opponent_elo_first) (-opponent_elo_geval) (-elo_diff_leval) (-elo_diff_geval)\n"
-"  (-is_neg) (-is_pos) (-filename_only) (-i_am_white) (-i_am_black) player_name filename\n";
+"  (-is_neg) (-is_pos) (-filename_only) (-i_am_white) (-i_am_black)\n"
+"  (-is_win) (-is_draw) (-is_loss) player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
+
+#define RESULT_EMPTY 0
+#define RESULT_WIN   1
+#define RESULT_DRAW  2
+#define RESULT_LOSS  3
 
 static char white[] = "White";
 #define WHITE_LEN (sizeof (white) - 1)
 static char black[] = "Black";
 #define BLACK_LEN (sizeof (black) - 1)
+static char result_str[] = "Result \"";
+#define RESULT_STR_LEN (sizeof (result_str) - 1)
+static char white_wins[] = "1-0";
+#define WHITE_WINS_LEN (sizeof (white_wins) - 1)
+static char black_wins[] = "0-1";
+#define BLACK_WINS_LEN (sizeof (black_wins) - 1)
 static char white_elo[] = "WhiteElo \"";
 #define WHITE_ELO_LEN (sizeof (white_elo) - 1)
 static char black_elo[] = "BlackElo \"";
@@ -63,8 +75,12 @@ int main(int argc,char **argv)
   bool bFilenameOnly;
   bool bIAmWhite;
   bool bIAmBlack;
+  bool bIsWin;
+  bool bIsDraw;
+  bool bIsLoss;
+  int result;
 
-  if ((argc < 3) || (argc > 18)) {
+  if ((argc < 3) || (argc > 21)) {
     printf(usage);
     return 1;
   }
@@ -84,6 +100,9 @@ int main(int argc,char **argv)
   bFilenameOnly = false;
   bIAmWhite = false;
   bIAmBlack = false;
+  bIsWin = false;
+  bIsDraw = false;
+  bIsLoss = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
@@ -120,6 +139,12 @@ int main(int argc,char **argv)
       bIAmWhite = true;
     else if (!strcmp(argv[curr_arg],"-i_am_black"))
       bIAmBlack = true;
+    else if (!strcmp(argv[curr_arg],"-is_win"))
+      bIsWin = true;
+    else if (!strcmp(argv[curr_arg],"-is_draw"))
+      bIsDraw = true;
+    else if (!strcmp(argv[curr_arg],"-is_loss"))
+      bIsLoss = true;
     else
       break;
   }
@@ -139,9 +164,14 @@ int main(int argc,char **argv)
     return 4;
   }
 
-  if (bIAmWhite and bIAmBlack) {
+  if (bIAmWhite && bIAmBlack) {
     printf("can't specify both -i_am_white and -i_am_black\n");
     return 5;
+  }
+
+  if ((bIsWin && bIsDraw) || (bIsWin && bIsLoss) || (bIsDraw && bIsLoss)) {
+    printf("can only specify one of -is_win, -is_draw, and -is_loss\n");
+    return 6;
   }
 
   player_name_ix = curr_arg;
@@ -149,7 +179,7 @@ int main(int argc,char **argv)
 
   if ((fptr0 = fopen(argv[curr_arg + 1],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg + 1]);
-    return 6;
+    return 7;
   }
 
   for ( ; ; ) {
@@ -221,6 +251,15 @@ int main(int argc,char **argv)
           break;
 
         if (bIAmBlack && bPlayerIsWhite)
+          break;
+
+        if (bIsWin && (result != RESULT_WIN))
+          break;
+
+        if (bIsDraw && (result != RESULT_DRAW))
+          break;
+
+        if (bIsLoss && (result != RESULT_LOSS))
           break;
 
         if (bFilenameOnly) {
@@ -335,8 +374,36 @@ int main(int argc,char **argv)
         else {
           printf("%s: couldn't determine whether %s is white or black\n",
             filename,argv[player_name_ix]);
-          return 7;
+          return 8;
         }
+      }
+      else if (Contains(true,
+        line,line_len,
+        result_str,RESULT_STR_LEN,
+        &ix)) {
+
+        if (Contains(true,
+          line,line_len,
+          white_wins,WHITE_WINS_LEN,
+          &ix)) {
+
+          if (bPlayerIsWhite)
+            result = RESULT_WIN;
+          else
+            result = RESULT_LOSS;
+        }
+        else if (Contains(true,
+          line,line_len,
+          black_wins,BLACK_WINS_LEN,
+          &ix)) {
+
+          if (!bPlayerIsWhite)
+            result = RESULT_WIN;
+          else
+            result = RESULT_LOSS;
+        }
+        else
+            result = RESULT_DRAW;
       }
     }
 
