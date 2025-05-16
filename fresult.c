@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: fresult (-debug) (-binary_format) (-my_wins) (-my_draws) (-my_losses) filename\n";
+"usage: fresult (-decode) (-binary_format) (-my_wins) (-my_draws) (-my_losses) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -20,7 +20,7 @@ int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
-  bool bDebug;
+  bool bDecode;
   bool bMyWins;
   bool bMyDraws;
   bool bMyLosses;
@@ -36,15 +36,15 @@ int main(int argc,char **argv)
     return 1;
   }
 
-  bDebug = false;
+  bDecode = false;
   bBinaryFormat = false;
   bMyWins = false;
   bMyDraws = false;
   bMyLosses = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-debug"))
-      bDebug = true;
+    if (!strcmp(argv[curr_arg],"-decode"))
+      bDecode = true;
     else if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
     else if (!strcmp(argv[curr_arg],"-my_wins"))
@@ -116,8 +116,26 @@ int main(int argc,char **argv)
       if (curr_game.result == RESULT_LOSS)
         printf("%s\n",filename);
     }
-    else
+    else if (!bDecode)
       printf("%d %s\n",curr_game.result,filename);
+    else {
+      switch (curr_game.result) {
+        case RESULT_WIN:
+          printf("win  %s\n",filename);
+
+          break;
+
+        case RESULT_DRAW:
+          printf("draw %s\n",filename);
+
+          break;
+
+        case RESULT_LOSS:
+          printf("loss %s\n",filename);
+
+          break;
+      }
+    }
   }
 
   fclose(fptr);
