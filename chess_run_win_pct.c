@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: chess_run_win_pct (-binary_format) (-i_am_white) (-i_am_black) (-terse) filename\n";
+"usage: chess_run_win_pct (-binary_format) (-i_am_white) (-i_am_black) (-terse) (-verbose) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -23,6 +23,7 @@ int main(int argc,char **argv)
   bool bIAmWhite;
   bool bIAmBlack;
   bool bTerse;
+  bool bVerbose;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -31,7 +32,7 @@ int main(int argc,char **argv)
   double total;
   double win_pct;
 
-  if ((argc < 2) || (argc > 6)) {
+  if ((argc < 2) || (argc > 7)) {
     printf(usage);
     return 1;
   }
@@ -40,6 +41,7 @@ int main(int argc,char **argv)
   bIAmWhite = false;
   bIAmBlack = false;
   bTerse = false;
+  bVerbose = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-binary_format"))
@@ -50,23 +52,30 @@ int main(int argc,char **argv)
       bIAmBlack = true;
     else if (!strcmp(argv[curr_arg],"-terse"))
       bTerse = true;
+    else if (!strcmp(argv[curr_arg],"-verbose"))
+      bVerbose = true;
     else
       break;
   }
 
-  if (bIAmWhite and bIAmBlack) {
+  if (bIAmWhite && bIAmBlack) {
     printf("can't specify both -i_am_white and -i_am_black\n");
     return 2;
   }
 
+  if (bTerse && bVerbose) {
+    printf("can't specify both -terse and -verbose");
+    return 3;
+  }
+
   if (argc - curr_arg != 1) {
     printf(usage);
-    return 3;
+    return 4;
   }
 
   if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 4;
+    return 5;
   }
 
   nobs = 0;
@@ -123,10 +132,12 @@ int main(int argc,char **argv)
 
     win_pct = total / (double)nobs * (double)100;
 
-    if (!bTerse)
-      printf("%6.2lf %s\n",win_pct,filename);
-    else
+    if (bTerse)
       printf("%6.2lf\n",win_pct);
+    else if (bVerbose)
+      printf("%lf (%7.1lf %d) %s\n",win_pct,total,nobs,filename);
+    else
+      printf("%6.2lf %s\n",win_pct,filename);
   }
 
   fclose(fptr);
