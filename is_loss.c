@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: is_loss (-binary_format) (-i_am_white) (-i_am_black) filename\n";
+"usage: is_loss (-binary_format) (-i_am_white) (-i_am_black) (-terse) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -22,12 +22,13 @@ int main(int argc,char **argv)
   bool bBinaryFormat;
   bool bIAmWhite;
   bool bIAmBlack;
+  bool bTerse;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 5)) {
+  if ((argc < 2) || (argc > 6)) {
     printf(usage);
     return 1;
   }
@@ -35,6 +36,7 @@ int main(int argc,char **argv)
   bBinaryFormat = false;
   bIAmWhite = false;
   bIAmBlack = false;
+  bTerse = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-binary_format"))
@@ -43,6 +45,8 @@ int main(int argc,char **argv)
       bIAmWhite = true;
     else if (!strcmp(argv[curr_arg],"-i_am_black"))
       bIAmBlack = true;
+    else if (!strcmp(argv[curr_arg],"-terse"))
+      bTerse = true;
     else
       break;
   }
@@ -97,10 +101,18 @@ int main(int argc,char **argv)
     if (bIAmBlack && !curr_game.orientation)
       continue;
 
-    if (curr_game.result == RESULT_LOSS)
-      printf("1 %s\n",filename);
-    else
-      printf("0 %s\n",filename);
+    if (curr_game.result == RESULT_LOSS) {
+      if (!bTerse)
+        printf("1 %s\n",filename);
+      else
+        printf("1\n");
+    }
+    else {
+      if (!bTerse)
+        printf("0 %s\n",filename);
+      else
+        printf("0\n");
+    }
   }
 
   fclose(fptr);
