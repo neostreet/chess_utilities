@@ -19,7 +19,7 @@ static char usage[] =
 "  (-print_piece_counts) (-print_move_counts) (-only_no_checks) (-only_no_mates) (-opposite_colored_bishops)\n"
 "  (-same_colored_bishops (-two_bishops) (-opposite_side_castling) (-same_side_castling) (-less_than_2_castles)\n"
 "  (-truncate_filename) (-only_stalemates) (-no_queens) (-mate_in_one) (-qnn)\n"
-"  (-only_wins) (-only_draws) (-only_losses) (-ecoeco) [white | black]\n"
+"  (-only_wins) (-only_draws) (-only_losses) (-ecoeco) (-search_specific_movemove) [white | black]\n"
 "  filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
@@ -92,8 +92,9 @@ int main(int argc,char **argv)
   int filename_len;
   int num_pieces;
   char *eco_pt;
+  int specific_move;
 
-  if ((argc < 2) || (argc > 49)) {
+  if ((argc < 2) || (argc > 50)) {
     printf(usage);
     return 1;
   }
@@ -143,6 +144,7 @@ int main(int argc,char **argv)
   bOnlyDraws = false;
   bOnlyLosses = false;
   eco_pt = NULL;
+  specific_move = -1;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -281,6 +283,8 @@ int main(int argc,char **argv)
       bOnlyLosses = true;
     else if (!strncmp(argv[curr_arg],"-eco",4))
       eco_pt = &argv[curr_arg][4];
+    else if (!strncmp(argv[curr_arg],"-search_specific_move",21))
+      sscanf(&argv[curr_arg][21],"%d",&specific_move);
     else
       break;
   }
@@ -320,30 +324,35 @@ int main(int argc,char **argv)
     return 13;
   }
 
-  if (bIAmWhite and bIAmBlack) {
+  if (bIAmWhite && bIAmBlack) {
     printf("can't specify both -i_am_white and -i_am_black\n");
     return 14;
   }
 
-  if (bOnlyWins and bOnlyDraws) {
+  if (bOnlyWins && bOnlyDraws) {
     printf("can't specify both -only_wins and -only_draws\n");
     return 15;
   }
 
-  if (bOnlyWins and bOnlyLosses) {
+  if (bOnlyWins && bOnlyLosses) {
     printf("can't specify both -only_wins and -only_losses\n");
     return 16;
   }
 
-  if (bOnlyDraws and bOnlyLosses) {
+  if (bOnlyDraws && bOnlyLosses) {
     printf("can't specify both -only_draws and -only_losses\n");
     return 17;
+  }
+
+  if (bSearchAllMoves && (specific_move != -1)) {
+    printf("can't specify both -only_draws and -only_losses\n");
+    return 18;
   }
 
   if (quiz_number != -1) {
     if (argc - curr_arg != 2) {
       printf(usage);
-      return 18;
+      return 19;
     }
 
     if (!strcmp(argv[curr_arg],"white"))
@@ -352,19 +361,19 @@ int main(int argc,char **argv)
       bBlack = true;
     else {
       printf(usage);
-      return 19;
+      return 20;
     }
   }
   else {
     if (argc - curr_arg != 1) {
       printf(usage);
-      return 20;
+      return 21;
     }
   }
 
   if ((fptr = fopen(argv[argc-1],"r")) == NULL) {
     printf(couldnt_open,argv[argc-1]);
-    return 21;
+    return 22;
   }
 
   for ( ; ; ) {
