@@ -82,7 +82,6 @@ int main(int argc,char **argv)
   int match_piece_counts[NUM_PIECE_TYPES_0 * 2];
   int curr_piece_counts[NUM_PIECE_TYPES_0 * 2];
   int board_bin_arg;
-  int quiz_number;
   bool bBlack;
   int initial_move;
   int retval;
@@ -94,7 +93,7 @@ int main(int argc,char **argv)
   char *eco_pt;
   int specific_move;
 
-  if ((argc < 2) || (argc > 50)) {
+  if ((argc < 2) || (argc > 49)) {
     printf(usage);
     return 1;
   }
@@ -107,7 +106,6 @@ int main(int argc,char **argv)
   bToggle = false;
   bIAmWhite = false;
   bIAmBlack = false;
-  quiz_number = -1;
   bBoardBin = false;
   num_white_pieces = -1;
   num_black_pieces = -1;
@@ -185,8 +183,6 @@ int main(int argc,char **argv)
       bBoardBin = true;
       board_bin_arg = curr_arg;
     }
-    else if (!strncmp(argv[curr_arg],"-qn",3))
-      sscanf(&argv[curr_arg][3],"%d",&quiz_number);
     else if (!strncmp(argv[curr_arg],"-match_board",12)) {
       bHaveMatchBoard = true;
       retval = populate_board_from_bin_board_file(match_board1,&argv[curr_arg][12]);
@@ -349,26 +345,9 @@ int main(int argc,char **argv)
     return 18;
   }
 
-  if (quiz_number != -1) {
-    if (argc - curr_arg != 2) {
-      printf(usage);
-      return 19;
-    }
-
-    if (!strcmp(argv[curr_arg],"white"))
-      bBlack = false;
-    else if (!strcmp(argv[curr_arg],"black"))
-      bBlack = true;
-    else {
-      printf(usage);
-      return 20;
-    }
-  }
-  else {
-    if (argc - curr_arg != 1) {
-      printf(usage);
-      return 21;
-    }
+  if (argc - curr_arg != 1) {
+    printf(usage);
+    return 21;
   }
 
   if ((fptr = fopen(argv[argc-1],"r")) == NULL) {
@@ -643,28 +622,6 @@ int main(int argc,char **argv)
   }
   else {
     bPrintedBoard = false;
-
-    if (quiz_number != -1) {
-      initial_move = (quiz_number - 1) * 2;
-
-      if (bBlack)
-        initial_move++;
-
-      if (initial_move >= curr_game.num_moves) {
-        printf("initial_move must be < %d\n",curr_game.num_moves);
-        continue;
-      }
-
-      set_initial_board(&curr_game);
-      curr_game.curr_move = 0;
-
-      for (n = 0; n <= initial_move; n++) {
-        update_board(&curr_game,NULL,NULL,false);
-
-        if (n < initial_move)
-          curr_game.curr_move++;
-      }
-    }
 
     bSkip = false;
 
