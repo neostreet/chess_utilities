@@ -621,6 +621,9 @@ int main(int argc,char **argv)
     }
   }
   else {
+    if (specific_move != -1)
+      position_game(&curr_game,specific_move);
+
     bPrintedBoard = false;
 
     bSkip = false;
