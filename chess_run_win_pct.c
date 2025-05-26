@@ -135,9 +135,9 @@ int main(int argc,char **argv)
     if (bTerse)
       printf("%6.2lf\n",win_pct);
     else if (bVerbose)
-      printf("%lf (%7.1lf %d) %s\n",win_pct,total,nobs,filename);
+      printf("%lf (%7.1lf %d) %s %s\n",win_pct,total,nobs,filename,curr_game.date);
     else
-      printf("%6.2lf %s\n",win_pct,filename);
+      printf("%6.2lf %s %s\n",win_pct,filename,curr_game.date);
   }
 
   fclose(fptr);
