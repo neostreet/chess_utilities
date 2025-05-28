@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_mates_lite (-debug) (-no_preceding_mate_in_one) (-with_preceding_check) filename\n";
+"usage: find_mates_lite (-debug) (-no_preceding_mate_in_one) (-with_preceding_check) (-mine) (-not_mine) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -23,12 +23,14 @@ int main(int argc,char **argv)
   bool bDebug;
   bool bNoPrecedingMateInOne;
   bool bWithPrecedingCheck;
+  bool bMine;
+  bool bNotMine;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 5)) {
+  if ((argc < 2) || (argc > 7)) {
     printf(usage);
     return 1;
   }
@@ -36,6 +38,8 @@ int main(int argc,char **argv)
   bDebug = false;
   bNoPrecedingMateInOne = false;
   bWithPrecedingCheck = false;
+  bMine = false;
+  bNotMine = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -44,6 +48,10 @@ int main(int argc,char **argv)
       bNoPrecedingMateInOne = true;
     else if (!strcmp(argv[curr_arg],"-with_preceding_check"))
       bWithPrecedingCheck = true;
+    else if (!strcmp(argv[curr_arg],"-mine"))
+      bMine = true;
+    else if (!strcmp(argv[curr_arg],"-not_mine"))
+      bNotMine = true;
     else
       break;
   }
@@ -53,9 +61,14 @@ int main(int argc,char **argv)
     return 2;
   }
 
+  if (bMine && bNotMine) {
+    printf("can't specify both -mine and -not_mine\n");
+    return 3;
+  }
+
   if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 3;
+    return 4;
   }
 
   for ( ; ; ) {
@@ -76,6 +89,35 @@ int main(int argc,char **argv)
     }
 
     if (curr_game.moves[curr_game.num_moves-1].special_move_info & SPECIAL_MOVE_MATE) {
+      if (bMine) {
+        if (curr_game.num_moves % 2) {
+          if (!curr_game.orientation)
+            ;
+          else
+            continue;
+        }
+        else {
+          if (curr_game.orientation)
+            ;
+          else
+            continue;
+        }
+      }
+      else if (bNotMine) {
+        if (curr_game.num_moves % 2) {
+          if (curr_game.orientation)
+            ;
+          else
+            continue;
+        }
+        else {
+          if (!curr_game.orientation)
+            ;
+          else
+            continue;
+        }
+      }
+
       if (bWithPrecedingCheck) {
         if (curr_game.num_moves >= 3) {
           if (curr_game.moves[curr_game.num_moves-3].special_move_info & SPECIAL_MOVE_CHECK) {
