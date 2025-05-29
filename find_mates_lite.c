@@ -11,7 +11,8 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_mates_lite (-debug) (-no_preceding_mate_in_one) (-with_preceding_check) (-mine) (-not_mine) filename\n";
+"usage: find_mates_lite (-debug) (-no_preceding_mate_in_one) (-with_preceding_check) (-mine) (-not_mine)\n"
+"  (-i_am_white) (-i_am_black) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -25,12 +26,14 @@ int main(int argc,char **argv)
   bool bWithPrecedingCheck;
   bool bMine;
   bool bNotMine;
+  bool bIAmWhite;
+  bool bIAmBlack;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 7)) {
+  if ((argc < 2) || (argc > 9)) {
     printf(usage);
     return 1;
   }
@@ -40,6 +43,8 @@ int main(int argc,char **argv)
   bWithPrecedingCheck = false;
   bMine = false;
   bNotMine = false;
+  bIAmWhite = false;
+  bIAmBlack = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -52,6 +57,10 @@ int main(int argc,char **argv)
       bMine = true;
     else if (!strcmp(argv[curr_arg],"-not_mine"))
       bNotMine = true;
+    else if (!strcmp(argv[curr_arg],"-i_am_white"))
+      bIAmWhite = true;
+    else if (!strcmp(argv[curr_arg],"-i_am_black"))
+      bIAmBlack = true;
     else
       break;
   }
@@ -87,6 +96,12 @@ int main(int argc,char **argv)
 
       continue;
     }
+
+    if (bIAmWhite && curr_game.orientation)
+      continue;
+
+    if (bIAmBlack && !curr_game.orientation)
+      continue;
 
     if (curr_game.moves[curr_game.num_moves-1].special_move_info & SPECIAL_MOVE_MATE) {
       if (bMine) {
