@@ -13,7 +13,7 @@ static char filename[MAX_FILENAME_LEN];
 static char usage[] =
 "usage: fnum_moves (-binary_format) (-ge_num_movesnum_moves) (-eq_num_movesnum_moves)\n"
 "  (-lt_num_movesnum_moves) (-terse_modemode) (-even) (-odd)\n"
-"  (-only_wins) (-only_draws) (-only_losses) (-i_am_white) (-i_am_black) filename\n";
+"  (-only_wins) (-only_draws) (-only_losses) (-i_am_white) (-i_am_black) (-date) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -35,12 +35,13 @@ int main(int argc,char **argv)
   bool bOnlyLosses;
   bool bIAmWhite;
   bool bIAmBlack;
+  bool bDate;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 14)) {
+  if ((argc < 2) || (argc > 15)) {
     printf(usage);
     return 1;
   }
@@ -57,6 +58,7 @@ int main(int argc,char **argv)
   bOnlyLosses = false;
   bIAmWhite = false;
   bIAmBlack = false;
+  bDate = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-binary_format"))
@@ -83,6 +85,8 @@ int main(int argc,char **argv)
       bIAmWhite = true;
     else if (!strcmp(argv[curr_arg],"-i_am_black"))
       bIAmBlack = true;
+    else if (!strcmp(argv[curr_arg],"-date"))
+      bDate = true;
     else
       break;
   }
@@ -189,70 +193,130 @@ int main(int argc,char **argv)
 
     if (ge_num_moves != -1) {
       if (num_moves >= ge_num_moves) {
-        if (!terse_mode)
-          printf("%d %s\n",num_moves,filename);
+        if (!terse_mode) {
+          if (!bDate)
+            printf("%d %s\n",num_moves,filename);
+          else
+            printf("%d %s %s\n",num_moves,filename,curr_game.date);
+        }
         else if (terse_mode == 1)
           printf("%d\n",num_moves);
-        else
-          printf("%s\n",filename);
+        else {
+          if (!bDate)
+            printf("%s\n",filename);
+          else
+            printf("%s %s\n",filename,curr_game.date);
+        }
       }
     }
     else if (eq_num_moves != -1) {
       if (num_moves == eq_num_moves) {
-        if (!terse_mode)
-          printf("%d %s\n",num_moves,filename);
+        if (!terse_mode) {
+          if (!bDate)
+            printf("%d %s\n",num_moves,filename);
+          else
+            printf("%d %s %s\n",num_moves,filename,curr_game.date);
+        }
         else if (terse_mode == 1)
           printf("%d\n",num_moves);
-        else
-          printf("%s\n",filename);
+        else {
+          if (!bDate)
+            printf("%s\n",filename);
+          else
+            printf("%s %s\n",filename,curr_game.date);
+        }
       }
     }
     else if (lt_num_moves != -1) {
       if (num_moves < lt_num_moves) {
-        if (!terse_mode)
-          printf("%d %s\n",num_moves,filename);
+        if (!terse_mode) {
+          if (!bDate)
+            printf("%d %s\n",num_moves,filename);
+          else
+            printf("%d %s %s\n",num_moves,filename,curr_game.date);
+        }
         else if (terse_mode == 1)
           printf("%d\n",num_moves);
-        else
-          printf("%s\n",filename);
+        else {
+          if (!bDate)
+            printf("%s\n",filename);
+          else
+            printf("%s %s\n",filename,curr_game.date);
+        }
       }
     }
     else {
       if (!terse_mode) {
         if (bEven) {
-          if (!(num_moves % 2))
-            printf("%d %s\n",num_moves,filename);
+          if (!(num_moves % 2)) {
+            if (!bDate)
+              printf("%d %s\n",num_moves,filename);
+            else
+              printf("%d %s %s\n",num_moves,filename,curr_game.date);
+          }
         }
         else if (bOdd) {
-          if (num_moves % 2)
-            printf("%d %s\n",num_moves,filename);
+          if (num_moves % 2) {
+            if (!bDate)
+              printf("%d %s\n",num_moves,filename);
+            else
+              printf("%d %s %s\n",num_moves,filename,curr_game.date);
+          }
         }
-        else
-          printf("%d %s\n",num_moves,filename);
+        else {
+          if (!bDate)
+            printf("%d %s\n",num_moves,filename);
+          else
+            printf("%d %s %s\n",num_moves,filename,curr_game.date);
+        }
       }
       else if (terse_mode == 1) {
         if (bEven) {
-          if (!(num_moves % 2))
-            printf("%d\n",num_moves);
+          if (!(num_moves % 2)) {
+            if (!bDate)
+              printf("%d\n",num_moves);
+            else
+              printf("%d %s\n",num_moves,curr_game.date);
+          }
         }
         else if (bOdd) {
-          if (num_moves % 2)
-            printf("%d\n",num_moves);
+          if (num_moves % 2) {
+            if (!bDate)
+              printf("%d\n",num_moves);
+            else
+              printf("%d %s\n",num_moves,curr_game.date);
+          }
         }
-        else
-          printf("%d\n",num_moves);
+        else {
+          if (!bDate)
+            printf("%d\n",num_moves);
+          else
+            printf("%d %s\n",num_moves,curr_game.date);
+        }
       }
       else {
         if (bEven) {
-          if (!(num_moves % 2))
-            printf("%s\n",filename);
+          if (!(num_moves % 2)) {
+            if (!bDate)
+              printf("%d\n",num_moves);
+            else
+              printf("%d %s\n",num_moves,curr_game.date);
+          }
         }
         else if (bOdd) {
-          if (num_moves % 2)
-            printf("%s\n",filename);
+          if (num_moves % 2) {
+            if (!bDate)
+              printf("%d\n",num_moves);
+            else
+              printf("%d %s\n",num_moves,curr_game.date);
+          }
         }
-        else
-          printf("%s\n",filename);
+        else {
+          if (!bDate)
+            printf("%d\n",num_moves);
+          else
+            printf("%d %s\n",num_moves,curr_game.date);
+        }
       }
     }
   }
