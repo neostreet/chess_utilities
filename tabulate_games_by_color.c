@@ -25,6 +25,9 @@ int main(int argc,char **argv)
   int by_white;
   int retval;
   FILE *fptr;
+  int file_no;
+  int dbg_file_no;
+  int dbg;
   int filename_len;
   struct game curr_game;
   int wins;
@@ -68,6 +71,7 @@ int main(int argc,char **argv)
     return 4;
   }
 
+  file_no = 0;
   wins = 0;
   draws = 0;
   losses = 0;
@@ -77,6 +81,11 @@ int main(int argc,char **argv)
 
     if (feof(fptr))
       break;
+
+    file_no++;
+
+    if (file_no == dbg_file_no)
+      dbg = 1;
 
     bzero(&curr_game,sizeof (struct game));
 
@@ -105,13 +114,13 @@ int main(int argc,char **argv)
       draws++;
     else if (!curr_game.orientation) {
       if (by_white) {
-        if (curr_game.result = RESULT_WIN)
+        if (curr_game.result == RESULT_WIN)
           wins++;
         else
           losses++;
       }
       else {
-        if (curr_game.result = RESULT_WIN)
+        if (curr_game.result == RESULT_WIN)
           losses++;
         else
           wins++;
@@ -119,13 +128,13 @@ int main(int argc,char **argv)
     }
     else {
       if (by_white) {
-        if (curr_game.result = RESULT_WIN)
+        if (curr_game.result == RESULT_WIN)
           losses++;
         else
           wins++;
       }
       else {
-        if (curr_game.result = RESULT_WIN)
+        if (curr_game.result == RESULT_WIN)
           wins++;
         else
           losses++;
