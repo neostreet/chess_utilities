@@ -79,9 +79,14 @@ int main(int argc,char **argv)
     return 3;
   }
 
+  if (bIAmWhite && bIAmBlack) {
+    printf("can't specify both -i_am_white and -i_am_black\n");
+    return 4;
+  }
+
   if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 4;
+    return 5;
   }
 
   for ( ; ; ) {
