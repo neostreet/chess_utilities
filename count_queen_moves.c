@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: count_queen_moves (-binary_format) (-mine) (-opponent) filename\n";
+"usage: count_queen_moves (-binary_format) (-i_am_white) (-i_am_black) [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -21,46 +21,59 @@ int main(int argc,char **argv)
   int n;
   int curr_arg;
   bool bBinaryFormat;
-  bool bMine;
-  bool bOpponent;
+  bool bIAmWhite;
+  bool bIAmBlack;
+  int by_white;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 5)) {
+  if ((argc < 3) || (argc > 6)) {
     printf(usage);
     return 1;
   }
 
   bBinaryFormat = false;
-  bMine = false;
-  bOpponent = false;
+  bIAmWhite = false;
+  bIAmBlack = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
-    else if (!strcmp(argv[curr_arg],"-mine"))
-      bMine = true;
-    else if (!strcmp(argv[curr_arg],"-opponent"))
-      bOpponent = true;
+    else if (!strcmp(argv[curr_arg],"-i_am_white"))
+      bIAmWhite = true;
+    else if (!strcmp(argv[curr_arg],"-i_am_black"))
+      bIAmBlack = true;
     else
       break;
   }
 
-  if (argc - curr_arg != 1) {
+  if (argc - curr_arg != 2) {
     printf(usage);
     return 2;
   }
 
-  if (bMine && bOpponent) {
-    printf("can't specify both -mine and -opponent\n");
+  if (bIAmWhite && bIAmBlack) {
+    printf("can't specify both -i_am_white and -i_am_black\n");
     return 3;
   }
 
-  if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
-    printf(couldnt_open,argv[curr_arg]);
+  by_white = -1;
+
+  if (!strcmp(argv[curr_arg],"white"))
+    by_white = 1;
+  else if (!strcmp(argv[curr_arg],"black"))
+    by_white = 0;
+
+  if (by_white == -1) {
+    printf(usage);
     return 4;
+  }
+
+  if ((fptr = fopen(argv[curr_arg+1],"r")) == NULL) {
+    printf(couldnt_open,argv[curr_arg+1]);
+    return 5;
   }
 
   for ( ; ; ) {
@@ -92,28 +105,16 @@ int main(int argc,char **argv)
       }
     }
 
-    if (bMine) {
-      if (!curr_game.orientation) {
-        printf("%d %s\n",curr_game.white_pieces[3].move_count,filename);
-      }
-      else {
-        printf("%d %s\n",curr_game.black_pieces[11].move_count,filename);
-      }
-    }
-    else if (bOpponent) {
-      if (!curr_game.orientation) {
-        printf("%d %s\n",curr_game.black_pieces[11].move_count,filename);
-      }
-      else {
-        printf("%d %s\n",curr_game.white_pieces[3].move_count,filename);
-      }
-    }
-    else {
-      printf("white queen: %d, black queen: %d %s\n",
-        curr_game.white_pieces[3].move_count,
-        curr_game.black_pieces[11].move_count,
-        filename);
-    }
+    if (bIAmWhite && curr_game.orientation)
+      continue;
+
+    if (bIAmBlack && !curr_game.orientation)
+      continue;
+
+    if (by_white)
+      printf("%d %s\n",curr_game.white_pieces[3].move_count,filename);
+    else
+      printf("%d %s\n",curr_game.black_pieces[11].move_count,filename);
   }
 
   fclose(fptr);
