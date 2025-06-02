@@ -54,6 +54,11 @@ int main(int argc,char **argv)
     return 2;
   }
 
+  if (bIAmWhite && bIAmBlack) {
+    printf("can't specify both -i_am_white and -i_am_black\n");
+    return 3;
+  }
+
   by_white = -1;
 
   if (!strcmp(argv[curr_arg],"white"))
@@ -63,12 +68,12 @@ int main(int argc,char **argv)
 
   if (by_white == -1) {
     printf(usage);
-    return 3;
+    return 4;
   }
 
   if ((fptr = fopen(argv[curr_arg+1],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg+1]);
-    return 4;
+    return 5;
   }
 
   for ( ; ; ) {
