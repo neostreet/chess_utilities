@@ -12,7 +12,7 @@ static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
 "usage: count_checks (-debug) (-verbose) (-consecutive) (-mine) (-opponent) (-game_ending)\n"
-"  (-game_ending_countcount) (-mate) (-none) (-binary_format) filename\n";
+"  (-game_ending_countcount) (-mate) (-none) (-binary_format) (-ge_valval) (-terse) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -31,6 +31,8 @@ int main(int argc,char **argv)
   bool bMate;
   bool bNone;
   bool bBinaryFormat;
+  int ge_val;
+  bool bTerse;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -42,7 +44,7 @@ int main(int argc,char **argv)
   int starting_move;
   int increment;
 
-  if ((argc < 2) || (argc > 12)) {
+  if ((argc < 2) || (argc > 14)) {
     printf(usage);
     return 1;
   }
@@ -57,6 +59,8 @@ int main(int argc,char **argv)
   bMate = false;
   bNone = false;
   bBinaryFormat = false;
+  ge_val = -1;
+  bTerse = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -79,6 +83,10 @@ int main(int argc,char **argv)
       bNone = true;
     else if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
+    else if (!strncmp(argv[curr_arg],"-ge_val",7))
+      sscanf(&argv[curr_arg][7],"%d",&ge_val);
+    else if (!strcmp(argv[curr_arg],"-terse"))
+      bTerse = true;
     else
       break;
   }
@@ -225,10 +233,24 @@ int main(int argc,char **argv)
 
       if (!bVerbose) {
         if ((!bNone && (num_checks)) || (bNone && !num_checks)) {
-          if (!bMate)
-            printf("%d %s\n",num_checks,filename);
-          else
-            printf("%s\n",filename);
+          if (!bMate) {
+            if (ge_val == -1) {
+              if (!bTerse)
+                printf("%d %s\n",num_checks,filename);
+              else
+                printf("%d\n",num_checks);
+            }
+            else if (num_checks >= ge_val) {
+              if (!bTerse)
+                printf("%d %s\n",num_checks,filename);
+              else
+                printf("%s\n",filename);
+            }
+          }
+          else {
+            if (num_checks >= ge_val)
+              printf("%s\n",filename);
+          }
         }
       }
     }
