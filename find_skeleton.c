@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_skeleton (-binary_format) filename\n";
+"usage: find_skeleton (-binary_format) (-i_am_white) (-i_am_black) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -21,21 +21,29 @@ int main(int argc,char **argv)
   int n;
   int curr_arg;
   bool bBinaryFormat;
+  bool bIAmWhite;
+  bool bIAmBlack;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 3)) {
+  if ((argc < 2) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
   bBinaryFormat = false;
+  bIAmWhite = false;
+  bIAmBlack = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
+    else if (!strcmp(argv[curr_arg],"-i_am_white"))
+      bIAmWhite = true;
+    else if (!strcmp(argv[curr_arg],"-i_am_black"))
+      bIAmBlack = true;
     else
       break;
   }
@@ -45,9 +53,14 @@ int main(int argc,char **argv)
     return 2;
   }
 
+  if (bIAmWhite and bIAmBlack) {
+    printf("can't specify both -i_am_white and -i_am_black\n");
+    return 3;
+  }
+
   if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 3;
+    return 4;
   }
 
   for ( ; ; ) {
@@ -78,6 +91,12 @@ int main(int argc,char **argv)
         continue;
       }
     }
+
+    if (bIAmWhite && curr_game.orientation)
+      continue;
+
+    if (bIAmBlack && !curr_game.orientation)
+      continue;
 
 #ifdef UNDEF
     set_initial_board(&curr_game);
