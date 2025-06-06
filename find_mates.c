@@ -11,8 +11,8 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_mates (-debug) (-binary_format) (-mine) (-not_mine) (-white) (-black) (-mating_squaresquare)\n"
-"   (-mated_squaresquare) (-mate_distancedistance) filename\n";
+"usage: find_mates (-debug) (-binary_format) (-mine) (-not_mine) (-mating_squaresquare)\n"
+"   (-mated_squaresquare) (-mate_distancedistance) (-mating_piecepiece) [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -27,8 +27,6 @@ int main(int argc,char **argv)
   bool bBinaryFormat;
   bool bMine;
   bool bNotMine;
-  bool bWhite;
-  bool bBlack;
   int file;
   int rank;
   int mating_square;
@@ -37,14 +35,17 @@ int main(int argc,char **argv)
   int curr_mated_square;
   int mate_distance;
   int curr_mate_distance;
+  int mating_piece;
+  int by_white;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
   int read_count;
   int match_count;
+  int last_piece;
 
-  if ((argc < 2) || (argc > 11)) {
+  if ((argc < 3) || (argc > 11)) {
     printf(usage);
     return 1;
   }
@@ -53,11 +54,10 @@ int main(int argc,char **argv)
   bBinaryFormat = false;
   bMine = false;
   bNotMine = false;
-  bWhite = false;
-  bBlack = false;
   mating_square = -1;
   mated_square = -1;
   mate_distance = -1;
+  mating_piece = 0;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -68,10 +68,6 @@ int main(int argc,char **argv)
       bMine = true;
     else if (!strcmp(argv[curr_arg],"-not_mine"))
       bNotMine = true;
-    else if (!strcmp(argv[curr_arg],"-white"))
-      bWhite = true;
-    else if (!strcmp(argv[curr_arg],"-black"))
-      bBlack = true;
     else if ((strlen(argv[curr_arg]) == 16) &&
       !strncmp(argv[curr_arg],"-mating_square",14) &&
       (argv[curr_arg][14] >= 'a') && (argv[curr_arg][14] <= 'h') &&
@@ -94,22 +90,31 @@ int main(int argc,char **argv)
       sscanf(&argv[curr_arg][14],"%d",&mate_distance);
       mate_distance--;
     }
+    else if (!strncmp(argv[curr_arg],"-mating_piece",13))
+      sscanf(&argv[curr_arg][13],"%d",&mating_piece);
     else
       break;
   }
 
-  if (argc - curr_arg != 1) {
+  if (argc - curr_arg != 2) {
     printf(usage);
     return 2;
   }
 
-  if (bMine && bNotMine) {
-    printf("can't specify both -mine and -not_mine\n");
+  by_white = -1;
+
+  if (!strcmp(argv[curr_arg],"white"))
+    by_white = 1;
+  else if (!strcmp(argv[curr_arg],"black"))
+    by_white = 0;
+
+  if (by_white == -1) {
+    printf(usage);
     return 3;
   }
 
-  if (bWhite && bBlack) {
-    printf("can't specify both -white and -black\n");
+  if (bMine && bNotMine) {
+    printf("can't specify both -mine and -not_mine\n");
     return 4;
   }
 
@@ -128,8 +133,8 @@ int main(int argc,char **argv)
     return 7;
   }
 
-  if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
-    printf(couldnt_open,argv[curr_arg]);
+  if ((fptr = fopen(argv[curr_arg+1],"r")) == NULL) {
+    printf(couldnt_open,argv[curr_arg+1]);
     return 8;
   }
 
@@ -173,6 +178,22 @@ int main(int argc,char **argv)
     }
 
     if (curr_game.moves[curr_game.num_moves-1].special_move_info & SPECIAL_MOVE_MATE) {
+      if (by_white) {
+        if (!(curr_game.num_moves % 2))
+          continue;
+      }
+      else {
+        if (curr_game.num_moves % 2)
+          continue;
+      }
+
+      if (mating_piece) {
+        last_piece = get_piece1(curr_game.board,curr_game.moves[curr_game.num_moves-1].to);
+
+        if (last_piece != mating_piece)
+          continue;
+      }
+
       if (mating_square != -1 ) {
         if (curr_game.moves[curr_game.num_moves-1].to != mating_square)
           continue;
@@ -199,15 +220,6 @@ int main(int argc,char **argv)
         curr_mate_distance = get_mate_distance(curr_mating_square,curr_mated_square);
 
         if (curr_mate_distance != mate_distance)
-          continue;
-      }
-
-      if (bWhite) {
-        if (!(curr_game.num_moves % 2))
-          continue;
-      }
-      else if (bBlack) {
-        if (curr_game.num_moves % 2)
           continue;
       }
 
