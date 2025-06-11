@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 static char out_filename[MAX_FILENAME_LEN];
 
-static char usage[] = "usage: fprint_force_diff (-debug) filename\n";
+static char usage[] = "usage: fprint_force_diff (-only_nonzero) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -22,7 +22,7 @@ int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
-  bool bDebug;
+  bool bOnlyNonzero;
   FILE *fptr;
   FILE *out_fptr;
   int filename_len;
@@ -34,11 +34,11 @@ int main(int argc,char **argv)
     return 1;
   }
 
-  bDebug = false;
+  bOnlyNonzero = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-debug"))
-      bDebug = true;
+    if (!strcmp(argv[curr_arg],"-only_nonzero"))
+      bOnlyNonzero = true;
     else
       break;
   }
@@ -55,7 +55,7 @@ int main(int argc,char **argv)
   if (feof(fptr))
     break;
 
-  retval = read_game(filename,&curr_game,err_msg);
+  retval = read_game(filename,&curr_game);
 
   if (retval) {
     printf("read_game of %s failed: %d\n",filename,retval);
@@ -72,13 +72,24 @@ int main(int argc,char **argv)
 
   set_initial_board(&curr_game);
 
-  fprintf(out_fptr,"%d %d 0\n",curr_game.force_count[WHITE],curr_game.force_count[WHITE] - curr_game.force_count[BLACK]);
+  if (!bOnlyNonzero) {
+    fprintf(out_fptr,"%d %d %d 0\n",
+      force_count[WHITE],
+      force_count[BLACK],
+      force_count[WHITE] - force_count[BLACK]);
+  }
 
   for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
-    update_board(&curr_game,false);
-    refresh_force_count(&curr_game);
-    fprintf(out_fptr,"%d %d %d\n",curr_game.force_count[WHITE],curr_game.force_count[WHITE] - curr_game.force_count[BLACK],
-      curr_game.curr_move + 1);
+    update_board(&curr_game,NULL,NULL,false);
+    calculate_force_counts(&curr_game);
+
+    if (!bOnlyNonzero || (force_count[WHITE] - force_count[BLACK] != 0)) {
+      fprintf(out_fptr,"%d %d %d %d\n",
+        force_count[WHITE],
+        force_count[BLACK],
+        force_count[WHITE] - force_count[BLACK],
+        curr_game.curr_move + 1);
+    }
   }
 
   fclose(out_fptr);
