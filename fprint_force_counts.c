@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: fprint_force_counts (-binary_format) (-i_am_white) (-i_am_black) (-my_count_first) filename\n";
+"usage: fprint_force_counts (-binary_format) (-i_am_white) (-i_am_black) (-my_count_first) (-diff_first) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -24,6 +24,7 @@ int main(int argc,char **argv)
   bool bIAmWhite;
   bool bIAmBlack;
   bool bMyCountFirst;
+  bool bDiffFirst;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -31,7 +32,7 @@ int main(int argc,char **argv)
   int first_ix;
   int second_ix;
 
-  if ((argc < 2) || (argc > 6)) {
+  if ((argc < 2) || (argc > 7)) {
     printf(usage);
     return 1;
   }
@@ -40,6 +41,7 @@ int main(int argc,char **argv)
   bIAmWhite = false;
   bIAmBlack = false;
   bMyCountFirst = false;
+  bDiffFirst = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-binary_format"))
@@ -50,6 +52,8 @@ int main(int argc,char **argv)
       bIAmBlack = true;
     else if (!strcmp(argv[curr_arg],"-my_count_first"))
       bMyCountFirst = true;
+    else if (!strcmp(argv[curr_arg],"-diff_first"))
+      bDiffFirst = true;
     else
       break;
   }
@@ -119,11 +123,20 @@ int main(int argc,char **argv)
       }
     }
 
-    printf("%d %d (%d) %s\n",
-      force_count[first_ix],
-      force_count[second_ix],
-      force_count[first_ix] - force_count[second_ix],
-      filename);
+    if (!bDiffFirst) {
+      printf("%d %d (%d) %s\n",
+        force_count[first_ix],
+        force_count[second_ix],
+        force_count[first_ix] - force_count[second_ix],
+        filename);
+    }
+    else {
+      printf("%d %d %d %s\n",
+        force_count[first_ix] - force_count[second_ix],
+        force_count[first_ix],
+        force_count[second_ix],
+        filename);
+    }
   }
 
   fclose(fptr);
