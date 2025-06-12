@@ -124,18 +124,20 @@ int main(int argc,char **argv)
     }
 
     if (!bDiffFirst) {
-      printf("%d %d (%d) %s\n",
+      printf("%d %d (%d) %s %s\n",
         force_count[first_ix],
         force_count[second_ix],
         force_count[first_ix] - force_count[second_ix],
-        filename);
+        filename,
+        curr_game.date);
     }
     else {
-      printf("%d %d %d %s\n",
+      printf("%d %d %d %s %s\n",
         force_count[first_ix] - force_count[second_ix],
         force_count[first_ix],
         force_count[second_ix],
-        filename);
+        filename,
+        curr_game.date);
     }
   }
 
