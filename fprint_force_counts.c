@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: fprint_force_counts (-binary_format) (-i_am_white) (-i_am_black) filename\n";
+"usage: fprint_force_counts (-binary_format) (-i_am_white) (-i_am_black) (-my_count_first) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -23,12 +23,15 @@ int main(int argc,char **argv)
   bool bBinaryFormat;
   bool bIAmWhite;
   bool bIAmBlack;
+  bool bMyCountFirst;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
+  int first_ix;
+  int second_ix;
 
-  if ((argc < 2) || (argc > 5)) {
+  if ((argc < 2) || (argc > 6)) {
     printf(usage);
     return 1;
   }
@@ -36,6 +39,7 @@ int main(int argc,char **argv)
   bBinaryFormat = false;
   bIAmWhite = false;
   bIAmBlack = false;
+  bMyCountFirst = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-binary_format"))
@@ -44,6 +48,8 @@ int main(int argc,char **argv)
       bIAmWhite = true;
     else if (!strcmp(argv[curr_arg],"-i_am_black"))
       bIAmBlack = true;
+    else if (!strcmp(argv[curr_arg],"-my_count_first"))
+      bMyCountFirst = true;
     else
       break;
   }
@@ -98,7 +104,26 @@ int main(int argc,char **argv)
     if (bIAmBlack && !curr_game.orientation)
       continue;
 
-    printf("%d %d (%d) %s\n",force_count[0],force_count[1],force_count[0] - force_count[1],filename);
+    if (!bMyCountFirst) {
+      first_ix = WHITE;
+      second_ix = BLACK;
+    }
+    else {
+      if (!curr_game.orientation) {
+        first_ix = WHITE;
+        second_ix = BLACK;
+      }
+      else {
+        first_ix = BLACK;
+        second_ix = WHITE;
+      }
+    }
+
+    printf("%d %d (%d) %s\n",
+      force_count[first_ix],
+      force_count[second_ix],
+      force_count[first_ix] - force_count[second_ix],
+      filename);
   }
 
   fclose(fptr);
