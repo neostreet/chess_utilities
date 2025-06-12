@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 static char out_filename[MAX_FILENAME_LEN];
 
-static char usage[] = "usage: fprint_force_diff (-only_nonzero) filename\n";
+static char usage[] = "usage: fprint_force_diff (-only_nonzero) (-my_count_first) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -23,22 +23,28 @@ int main(int argc,char **argv)
   int n;
   int curr_arg;
   bool bOnlyNonzero;
+  bool bMyCountFirst;
   FILE *fptr;
   FILE *out_fptr;
   int filename_len;
   int retval;
   struct game curr_game;
+  int first_count;
+  int second_count;
 
-  if ((argc < 2) || (argc > 3)) {
+  if ((argc < 2) || (argc > 4)) {
     printf(usage);
     return 1;
   }
 
   bOnlyNonzero = false;
+  bMyCountFirst = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-only_nonzero"))
       bOnlyNonzero = true;
+    else if (!strcmp(argv[curr_arg],"-my_count_first"))
+      bMyCountFirst = true;
     else
       break;
   }
@@ -83,11 +89,26 @@ int main(int argc,char **argv)
     update_board(&curr_game,NULL,NULL,false);
     calculate_force_counts(&curr_game);
 
+    if (!bMyCountFirst) {
+      first_count = force_count[WHITE];
+      second_count = force_count[BLACK];
+    }
+    else {
+      if (!curr_game.orientation) {
+        first_count = force_count[WHITE];
+        second_count = force_count[BLACK];
+      }
+      else {
+        first_count = force_count[BLACK];
+        second_count = force_count[WHITE];
+      }
+    }
+
     if (!bOnlyNonzero || (force_count[WHITE] - force_count[BLACK] != 0)) {
       fprintf(out_fptr,"%d %d %d %d\n",
-        force_count[WHITE],
-        force_count[BLACK],
-        force_count[WHITE] - force_count[BLACK],
+        first_count,
+        second_count,
+        first_count - second_count,
         curr_game.curr_move + 1);
     }
   }
