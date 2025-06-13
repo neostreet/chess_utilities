@@ -158,6 +158,8 @@ int main(int argc,char **argv)
     else {
       max_diff = -1;
 
+      position_game(&curr_game,0);
+
       for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
         update_board(&curr_game,NULL,NULL,false);
         calculate_force_counts(&curr_game);
@@ -183,7 +185,7 @@ int main(int argc,char **argv)
           max_diff = curr_diff;
           max_first_count = first_count;
           max_second_count = second_count;
-          move_number = curr_game.curr_move;
+          move_number = curr_game.curr_move + 1;
         }
       }
 
