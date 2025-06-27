@@ -12,7 +12,7 @@ static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
 "usage: count_checks (-debug) (-verbose) (-consecutive) (-mine) (-opponent) (-game_ending)\n"
-"  (-game_ending_countcount) (-mate) (-none) (-binary_format) (-ge_valval) (-terse) filename\n";
+"  (-game_ending_countcount) (-mate) (-none) (-binary_format) (-ge_valval) (-terse_modemode) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -32,7 +32,7 @@ int main(int argc,char **argv)
   bool bNone;
   bool bBinaryFormat;
   int ge_val;
-  bool bTerse;
+  int terse_mode;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -60,7 +60,7 @@ int main(int argc,char **argv)
   bNone = false;
   bBinaryFormat = false;
   ge_val = -1;
-  bTerse = false;
+  terse_mode = 0;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -85,8 +85,8 @@ int main(int argc,char **argv)
       bBinaryFormat = true;
     else if (!strncmp(argv[curr_arg],"-ge_val",7))
       sscanf(&argv[curr_arg][7],"%d",&ge_val);
-    else if (!strcmp(argv[curr_arg],"-terse"))
-      bTerse = true;
+    else if (!strncmp(argv[curr_arg],"-terse_mode",11))
+      sscanf(&argv[curr_arg][11],"%d",&terse_mode);
     else
       break;
   }
@@ -235,16 +235,20 @@ int main(int argc,char **argv)
         if ((!bNone && (num_checks)) || (bNone && !num_checks)) {
           if (!bMate) {
             if (ge_val == -1) {
-              if (!bTerse)
-                printf("%d %s\n",num_checks,filename);
-              else
+              if (terse_mode == 1)
                 printf("%d\n",num_checks);
+              else if (terse_mode == 2)
+                printf("%s\n",filename);
+              else
+                printf("%d %s\n",num_checks,filename);
             }
             else if (num_checks >= ge_val) {
-              if (!bTerse)
-                printf("%d %s\n",num_checks,filename);
-              else
+              if (terse_mode == 1)
+                printf("%d\n",num_checks);
+              else if (terse_mode == 2)
                 printf("%s\n",filename);
+              else
+                printf("%d %s\n",num_checks,filename);
             }
           }
           else {
