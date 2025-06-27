@@ -148,6 +148,35 @@ int main(int argc,char **argv)
     if (bGameEnding) {
       num_checks = 0;
 
+      if (bMine) {
+        if (!curr_game.orientation) {
+          if (curr_game.num_moves % 2)
+            ;
+          else
+            continue;
+        }
+        else {
+          if (curr_game.num_moves % 2)
+            continue;
+          else
+            ;
+        }
+      }
+      else if (bOpponent) {
+        if (!curr_game.orientation) {
+          if (curr_game.num_moves % 2)
+            continue;
+          else
+            ;
+        }
+        else {
+          if (curr_game.num_moves % 2)
+            ;
+          else
+            continue;
+        }
+      }
+
       for (curr_game.curr_move = curr_game.num_moves - 1; curr_game.curr_move >= 0; curr_game.curr_move -= 2) {
         check = curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK;
 
