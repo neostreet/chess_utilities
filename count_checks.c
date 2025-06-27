@@ -12,7 +12,8 @@ static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
 "usage: count_checks (-debug) (-verbose) (-consecutive) (-mine) (-opponent) (-game_ending)\n"
-"  (-game_ending_countcount) (-mate) (-none) (-binary_format) (-ge_valval) (-terse_modemode) filename\n";
+"  (-game_ending_countcount) (-mate) (-none) (-binary_format) (-ge_valval) (-terse_modemode)\n"
+"  (-game_ending_in_mate) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -33,6 +34,7 @@ int main(int argc,char **argv)
   bool bBinaryFormat;
   int ge_val;
   int terse_mode;
+  bool bGameEndingInMate;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -44,7 +46,7 @@ int main(int argc,char **argv)
   int starting_move;
   int increment;
 
-  if ((argc < 2) || (argc > 14)) {
+  if ((argc < 2) || (argc > 15)) {
     printf(usage);
     return 1;
   }
@@ -61,6 +63,7 @@ int main(int argc,char **argv)
   bBinaryFormat = false;
   ge_val = -1;
   terse_mode = 0;
+  bGameEndingInMate = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -87,6 +90,10 @@ int main(int argc,char **argv)
       sscanf(&argv[curr_arg][7],"%d",&ge_val);
     else if (!strncmp(argv[curr_arg],"-terse_mode",11))
       sscanf(&argv[curr_arg][11],"%d",&terse_mode);
+    else if (!strcmp(argv[curr_arg],"-game_ending_in_mate")) {
+      bGameEnding = true;
+      bGameEndingInMate = true;
+    }
     else
       break;
   }
@@ -146,6 +153,13 @@ int main(int argc,char **argv)
     }
 
     if (bGameEnding) {
+      if (bGameEndingInMate) {
+        if (curr_game.moves[curr_game.num_moves - 1].special_move_info & SPECIAL_MOVE_MATE)
+          ;
+        else
+          continue;
+      }
+
       num_checks = 0;
 
       if (bMine) {
