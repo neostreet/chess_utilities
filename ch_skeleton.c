@@ -8,12 +8,12 @@
 #include "chess.mac"
 
 static char usage[] =
-"usage: ch_skeleton (-binary_format) filename\n";
+"usage: ch_skeleton (-debug) filename\n";
 
 int main(int argc,char **argv)
 {
   int curr_arg;
-  bool bBinaryFormat;
+  bool bDebug;
   int retval;
   struct game curr_game;
 
@@ -22,11 +22,11 @@ int main(int argc,char **argv)
     return 1;
   }
 
-  bBinaryFormat = false;
+  bDebug = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-binary_format"))
-      bBinaryFormat = true;
+    if (!strcmp(argv[curr_arg],"-debug"))
+      bDebug = true;
     else
       break;
   }
@@ -36,23 +36,12 @@ int main(int argc,char **argv)
     return 2;
   }
 
-  if (!bBinaryFormat) {
-    retval = read_game(argv[curr_arg],&curr_game);
+  retval = read_game(argv[curr_arg],&curr_game);
 
-    if (retval) {
-      printf("read_game of %s failed: %d\n",argv[curr_arg],retval);
-      printf("curr_move = %d\n",curr_game.curr_move);
-      return 3;
-    }
-  }
-  else {
-    retval = read_binary_game(argv[curr_arg],&curr_game);
-
-    if (retval) {
-      printf("read_binary_game of %s failed: %d\n",argv[curr_arg],retval);
-      printf("curr_move = %d\n",curr_game.curr_move);
-      return 4;
-    }
+  if (retval) {
+    printf("read_game of %s failed: %d\n",argv[curr_arg],retval);
+    printf("curr_move = %d\n",curr_game.curr_move);
+    return 3;
   }
 
   return 0;
