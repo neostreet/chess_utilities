@@ -13,7 +13,7 @@ static char filename[MAX_FILENAME_LEN];
 static char usage[] =
 "usage: count_checks (-debug) (-verbose) (-consecutive) (-mine) (-opponent) (-game_ending)\n"
 "  (-game_ending_countcount) (-mate) (-none) (-binary_format) (-ge_valval) (-terse_modemode)\n"
-"  (-game_ending_in_mate) filename\n";
+"  (-game_ending_in_mate) (-only_wins) (-only_draws) (-only_losses) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -35,6 +35,9 @@ int main(int argc,char **argv)
   int ge_val;
   int terse_mode;
   bool bGameEndingInMate;
+  bool bOnlyWins;
+  bool bOnlyDraws;
+  bool bOnlyLosses;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -46,7 +49,7 @@ int main(int argc,char **argv)
   int starting_move;
   int increment;
 
-  if ((argc < 2) || (argc > 15)) {
+  if ((argc < 2) || (argc > 18)) {
     printf(usage);
     return 1;
   }
@@ -64,6 +67,9 @@ int main(int argc,char **argv)
   ge_val = -1;
   terse_mode = 0;
   bGameEndingInMate = false;
+  bOnlyWins = false;
+  bOnlyDraws = false;
+  bOnlyLosses = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -94,6 +100,12 @@ int main(int argc,char **argv)
       bGameEnding = true;
       bGameEndingInMate = true;
     }
+    else if (!strcmp(argv[curr_arg],"-only_wins"))
+      bOnlyWins = true;
+    else if (!strcmp(argv[curr_arg],"-only_draws"))
+      bOnlyDraws = true;
+    else if (!strcmp(argv[curr_arg],"-only_losses"))
+      bOnlyLosses = true;
     else
       break;
   }
@@ -120,9 +132,24 @@ int main(int argc,char **argv)
     }
   }
 
+  if (bOnlyWins && bOnlyDraws) {
+    printf("can't specify both -only_wins and -only_draws\n");
+    return 6;
+  }
+
+  if (bOnlyWins && bOnlyLosses) {
+    printf("can't specify both -only_wins and -only_losses\n");
+    return 7;
+  }
+
+  if (bOnlyDraws && bOnlyLosses) {
+    printf("can't specify both -only_draws and -only_losses\n");
+    return 8;
+  }
+
   if ((fptr = fopen(argv[argc-1],"r")) == NULL) {
     printf(couldnt_open,argv[argc-1]);
-    return 6;
+    return 9;
   }
 
   for ( ; ; ) {
@@ -149,6 +176,21 @@ int main(int argc,char **argv)
         printf("curr_move = %d\n",curr_game.curr_move);
 
         continue;
+      }
+    }
+
+    if (bOnlyWins || bOnlyDraws || bOnlyLosses) {
+      if (bOnlyWins) {
+        if (curr_game.result != RESULT_WIN)
+          continue;
+      }
+      else if (bOnlyDraws) {
+        if (curr_game.result != RESULT_DRAW)
+          continue;
+      }
+      else if (bOnlyLosses) {
+        if (curr_game.result != RESULT_LOSS)
+          continue;
       }
     }
 
