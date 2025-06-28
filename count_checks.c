@@ -13,7 +13,7 @@ static char filename[MAX_FILENAME_LEN];
 static char usage[] =
 "usage: count_checks (-debug) (-verbose) (-consecutive) (-mine) (-opponent) (-game_ending)\n"
 "  (-game_ending_countcount) (-mate) (-none) (-binary_format) (-ge_valval) (-terse_modemode)\n"
-"  (-game_ending_in_mate) (-only_wins) (-only_draws) (-only_losses) filename\n";
+"  (-game_ending_in_mate) (-only_wins) (-only_draws) (-only_losses) (-i_am_white) (-i_am_black) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -38,6 +38,8 @@ int main(int argc,char **argv)
   bool bOnlyWins;
   bool bOnlyDraws;
   bool bOnlyLosses;
+  bool bIAmWhite;
+  bool bIAmBlack;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -49,7 +51,7 @@ int main(int argc,char **argv)
   int starting_move;
   int increment;
 
-  if ((argc < 2) || (argc > 18)) {
+  if ((argc < 2) || (argc > 20)) {
     printf(usage);
     return 1;
   }
@@ -70,6 +72,8 @@ int main(int argc,char **argv)
   bOnlyWins = false;
   bOnlyDraws = false;
   bOnlyLosses = false;
+  bIAmWhite = false;
+  bIAmBlack = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -106,6 +110,10 @@ int main(int argc,char **argv)
       bOnlyDraws = true;
     else if (!strcmp(argv[curr_arg],"-only_losses"))
       bOnlyLosses = true;
+    else if (!strcmp(argv[curr_arg],"-i_am_white"))
+      bIAmWhite = true;
+    else if (!strcmp(argv[curr_arg],"-i_am_black"))
+      bIAmBlack = true;
     else
       break;
   }
@@ -147,9 +155,14 @@ int main(int argc,char **argv)
     return 8;
   }
 
+  if (bIAmWhite and bIAmBlack) {
+    printf("can't specify both -i_am_white and -i_am_black\n");
+    return 9;
+  }
+
   if ((fptr = fopen(argv[argc-1],"r")) == NULL) {
     printf(couldnt_open,argv[argc-1]);
-    return 9;
+    return 10;
   }
 
   for ( ; ; ) {
@@ -178,6 +191,12 @@ int main(int argc,char **argv)
         continue;
       }
     }
+
+    if (bIAmWhite && curr_game.orientation)
+      continue;
+
+    if (bIAmBlack && !curr_game.orientation)
+      continue;
 
     if (bOnlyWins || bOnlyDraws || bOnlyLosses) {
       if (bOnlyWins) {
