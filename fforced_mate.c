@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: fforced_mate (-i_am_white) (-i_am_black) filename\n";
+"usage: fforced_mate (-i_am_white) (-i_am_black) (-mine) (-opponent) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -21,24 +21,32 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bIAmWhite;
   bool bIAmBlack;
+  bool bMine;
+  bool bOpponent;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 4)) {
+  if ((argc < 2) || (argc > 6)) {
     printf(usage);
     return 1;
   }
 
   bIAmWhite = false;
   bIAmBlack = false;
+  bMine = false;
+  bOpponent = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-i_am_white"))
       bIAmWhite = true;
     else if (!strcmp(argv[curr_arg],"-i_am_black"))
       bIAmBlack = true;
+    else if (!strcmp(argv[curr_arg],"-mine"))
+      bMine = true;
+    else if (!strcmp(argv[curr_arg],"-opponent"))
+      bOpponent = true;
     else
       break;
   }
@@ -53,9 +61,14 @@ int main(int argc,char **argv)
     return 3;
   }
 
+  if (bMine && bOpponent) {
+    printf("can't specify both -mine and -opponent\n");
+    return 4;
+  }
+
   if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 4;
+    return 5;
   }
 
   for ( ; ; ) {
@@ -80,6 +93,35 @@ int main(int argc,char **argv)
 
     if (bIAmBlack && !curr_game.orientation)
       continue;
+
+    if (bMine) {
+      if (!curr_game.orientation) {
+        if (curr_game.num_moves % 2)
+          ;
+        else
+          continue;
+      }
+      else {
+        if (curr_game.num_moves % 2)
+          continue;
+        else
+          ;
+      }
+    }
+    else if (bOpponent) {
+      if (!curr_game.orientation) {
+        if (curr_game.num_moves % 2)
+          continue;
+        else
+          ;
+      }
+      else {
+        if (curr_game.num_moves % 2)
+          ;
+        else
+          continue;
+      }
+    }
 
     if (!(curr_game.moves[curr_game.num_moves-1].special_move_info & SPECIAL_MOVE_MATE))
       continue;
