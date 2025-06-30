@@ -79,14 +79,25 @@ int main(int argc,char **argv)
 
   for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
     fprintf(out_fptr,"move %d\n\n",curr_game.curr_move);
-    fprint_bd2(curr_game.board,out_fptr);
+    fprint_bd3(curr_game.board,curr_game.orientation,out_fptr);
+    fprintf(out_fptr,"\n");
+
+    if (!(curr_game.curr_move % 2)) {
+      fprintf(out_fptr,"White to move\n");
+      fprint_piece_info2(out_fptr,curr_game.white_pieces,true,true,true);
+    }
+    else {
+      fprintf(out_fptr,"Black to move\n");
+      fprint_piece_info2(out_fptr,curr_game.black_pieces,false,true,true);
+    }
+
     fprintf(out_fptr,"\n");
 
     update_board(&curr_game,NULL,NULL,false);
   }
 
   fprintf(out_fptr,"move %d\n\n",curr_game.curr_move);
-  fprint_bd2(curr_game.board,out_fptr);
+  fprint_bd3(curr_game.board,curr_game.orientation,out_fptr);
 
   fclose(out_fptr);
 
