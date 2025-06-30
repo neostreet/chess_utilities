@@ -28,7 +28,9 @@ int main(int argc,char **argv)
   int filename_len;
   int retval;
   struct game curr_game;
-  int found;
+  bool bWhite;
+  int found_white;
+  int found_black;
 
   if ((argc < 2) || (argc > 3)) {
     printf(usage);
@@ -54,7 +56,8 @@ int main(int argc,char **argv)
     return 3;
   }
 
-  found = 0;
+  found_white = 0;
+  found_black = 0;
 
   for ( ; ; ) {
 
@@ -88,14 +91,21 @@ int main(int argc,char **argv)
     get_legal_moves(&curr_game,legal_moves,&legal_moves_count);
 
     if (legal_moves_count == 1) {
-      found++;
+      if (!(curr_game.curr_move % 2)) {
+        bWhite = true;
+        found_white++;
+      }
+      else {
+        bWhite = false;
+        found_black++;
+      }
 
       if (bVerbose) {
         fprintf(out_fptr,"move %d\n\n",curr_game.curr_move);
         fprint_bd3(curr_game.board,curr_game.orientation,out_fptr);
         fprintf(out_fptr,"\n");
 
-        if (!(curr_game.curr_move % 2)) {
+        if (bWhite) {
           fprintf(out_fptr,"White to move\n");
           fprint_piece_info2(out_fptr,curr_game.white_pieces,true,true,true);
         }
@@ -120,7 +130,8 @@ int main(int argc,char **argv)
     fclose(out_fptr);
   }
 
-  printf("%d %s\n",found,filename);
+  printf("white: %d, black: %d, total: %d %s\n",
+    found_white,found_black,found_white + found_black,filename);
 
   }
 
