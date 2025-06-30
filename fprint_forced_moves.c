@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 static char out_filename[MAX_FILENAME_LEN];
 
-static char usage[] = "usage: fprint_forced_moves (-debug) filename\n";
+static char usage[] = "usage: fprint_forced_moves (-verbose) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -22,23 +22,24 @@ int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
-  bool bDebug;
+  bool bVerbose;
   FILE *fptr;
   FILE *out_fptr;
   int filename_len;
   int retval;
   struct game curr_game;
+  int found;
 
   if ((argc < 2) || (argc > 3)) {
     printf(usage);
     return 1;
   }
 
-  bDebug = false;
+  bVerbose = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-debug"))
-      bDebug = true;
+    if (!strcmp(argv[curr_arg],"-verbose"))
+      bVerbose = true;
     else
       break;
   }
@@ -52,6 +53,8 @@ int main(int argc,char **argv)
     printf(couldnt_open,argv[curr_arg]);
     return 3;
   }
+
+  found = 0;
 
   for ( ; ; ) {
 
@@ -68,11 +71,13 @@ int main(int argc,char **argv)
     continue;
   }
 
-  sprintf(out_filename,"%s.forced_moves",filename);
+  if (bVerbose) {
+    sprintf(out_filename,"%s.forced_moves",filename);
 
-  if ((out_fptr = fopen(out_filename,"w")) == NULL) {
-    printf(couldnt_open,out_filename);
-    return 4;
+    if ((out_fptr = fopen(out_filename,"w")) == NULL) {
+      printf(couldnt_open,out_filename);
+      return 4;
+    }
   }
 
   set_initial_board(&curr_game);
@@ -83,31 +88,39 @@ int main(int argc,char **argv)
     get_legal_moves(&curr_game,legal_moves,&legal_moves_count);
 
     if (legal_moves_count == 1) {
-      fprintf(out_fptr,"move %d\n\n",curr_game.curr_move);
-      fprint_bd3(curr_game.board,curr_game.orientation,out_fptr);
-      fprintf(out_fptr,"\n");
+      found++;
 
-      if (!(curr_game.curr_move % 2)) {
-        fprintf(out_fptr,"White to move\n");
-        fprint_piece_info2(out_fptr,curr_game.white_pieces,true,true,true);
-      }
-      else {
-        fprintf(out_fptr,"Black to move\n");
-        fprint_piece_info2(out_fptr,curr_game.black_pieces,false,true,true);
-      }
+      if (bVerbose) {
+        fprintf(out_fptr,"move %d\n\n",curr_game.curr_move);
+        fprint_bd3(curr_game.board,curr_game.orientation,out_fptr);
+        fprintf(out_fptr,"\n");
 
-      fprintf(out_fptr,"\n");
-      fprint_moves3(out_fptr,legal_moves,legal_moves_count,false,false);
-      fprintf(out_fptr,"\n");
+        if (!(curr_game.curr_move % 2)) {
+          fprintf(out_fptr,"White to move\n");
+          fprint_piece_info2(out_fptr,curr_game.white_pieces,true,true,true);
+        }
+        else {
+          fprintf(out_fptr,"Black to move\n");
+          fprint_piece_info2(out_fptr,curr_game.black_pieces,false,true,true);
+        }
+
+        fprintf(out_fptr,"\n");
+        fprint_moves3(out_fptr,legal_moves,legal_moves_count,false,false);
+        fprintf(out_fptr,"\n");
+      }
     }
 
     update_board(&curr_game,NULL,NULL,false);
   }
 
-  fprintf(out_fptr,"move %d\n\n",curr_game.curr_move);
-  fprint_bd3(curr_game.board,curr_game.orientation,out_fptr);
+  if (bVerbose) {
+    fprintf(out_fptr,"move %d\n\n",curr_game.curr_move);
+    fprint_bd3(curr_game.board,curr_game.orientation,out_fptr);
 
-  fclose(out_fptr);
+    fclose(out_fptr);
+  }
+
+  printf("%d %s\n",found,filename);
 
   }
 
