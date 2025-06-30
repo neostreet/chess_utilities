@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 static char out_filename[MAX_FILENAME_LEN];
 
-static char usage[] = "usage: fprint_forced_moves (-verbose) filename\n";
+static char usage[] = "usage: fprint_forced_moves (-verbose) (-both) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -23,6 +23,7 @@ int main(int argc,char **argv)
   int n;
   int curr_arg;
   bool bVerbose;
+  bool bBoth;
   FILE *fptr;
   FILE *out_fptr;
   int filename_len;
@@ -32,16 +33,19 @@ int main(int argc,char **argv)
   int found_white;
   int found_black;
 
-  if ((argc < 2) || (argc > 3)) {
+  if ((argc < 2) || (argc > 4)) {
     printf(usage);
     return 1;
   }
 
   bVerbose = false;
+  bBoth = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
       bVerbose = true;
+    else if (!strcmp(argv[curr_arg],"-both"))
+      bBoth = true;
     else
       break;
   }
@@ -55,9 +59,6 @@ int main(int argc,char **argv)
     printf(couldnt_open,argv[curr_arg]);
     return 3;
   }
-
-  found_white = 0;
-  found_black = 0;
 
   for ( ; ; ) {
 
@@ -82,6 +83,9 @@ int main(int argc,char **argv)
       return 4;
     }
   }
+
+  found_white = 0;
+  found_black = 0;
 
   set_initial_board(&curr_game);
 
@@ -130,8 +134,10 @@ int main(int argc,char **argv)
     fclose(out_fptr);
   }
 
-  printf("white: %d, black: %d, total: %d %s\n",
-    found_white,found_black,found_white + found_black,filename);
+  if (!bBoth || ((found_white > 0) && (found_black > 0))) {
+    printf("white: %d, black: %d, total: %d %s\n",
+      found_white,found_black,found_white + found_black,filename);
+  }
 
   }
 
