@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 static char out_filename[MAX_FILENAME_LEN];
 
-static char usage[] = "usage: fprint_forced_moves (-verbose) (-both) filename\n";
+static char usage[] = "usage: fprint_forced_moves (-verbose) (-both) (-total_first) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -24,6 +24,7 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bVerbose;
   bool bBoth;
+  bool bTotalFirst;
   FILE *fptr;
   FILE *out_fptr;
   int filename_len;
@@ -33,19 +34,22 @@ int main(int argc,char **argv)
   int found_white;
   int found_black;
 
-  if ((argc < 2) || (argc > 4)) {
+  if ((argc < 2) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
   bVerbose = false;
   bBoth = false;
+  bTotalFirst = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
       bVerbose = true;
     else if (!strcmp(argv[curr_arg],"-both"))
       bBoth = true;
+    else if (!strcmp(argv[curr_arg],"-total_first"))
+      bTotalFirst = true;
     else
       break;
   }
@@ -135,8 +139,14 @@ int main(int argc,char **argv)
   }
 
   if (!bBoth || ((found_white > 0) && (found_black > 0))) {
-    printf("white: %d, black: %d, total: %d %s\n",
-      found_white,found_black,found_white + found_black,filename);
+    if (!bTotalFirst) {
+      printf("white: %d, black: %d, total: %d %s\n",
+        found_white,found_black,found_white + found_black,filename);
+    }
+    else {
+      printf("%d total, white: %d, black: %d, %s\n",
+        found_white + found_black,found_white,found_black,filename);
+    }
   }
 
   }
