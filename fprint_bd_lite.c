@@ -78,12 +78,15 @@ int main(int argc,char **argv)
   set_initial_board(&curr_game);
 
   for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
-    update_board(&curr_game,NULL,NULL,false);
+    fprintf(out_fptr,"move %d\n\n",curr_game.curr_move);
     fprint_bd2(curr_game.board,out_fptr);
+    fprintf(out_fptr,"\n");
 
-    if (curr_game.curr_move < curr_game.num_moves - 1)
-      fprintf(out_fptr,"\n");
+    update_board(&curr_game,NULL,NULL,false);
   }
+
+  fprintf(out_fptr,"move %d\n\n",curr_game.curr_move);
+  fprint_bd2(curr_game.board,out_fptr);
 
   fclose(out_fptr);
 
