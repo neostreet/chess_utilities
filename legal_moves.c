@@ -92,9 +92,14 @@ int main(int argc,char **argv)
 
   get_legal_moves(&curr_game,legal_moves,&legal_moves_count);
 
-  printf("%d legal_moves:\n\n",legal_moves_count);
+  if (legal_moves_count) {
+    if (legal_moves_count == 1)
+      printf("1 legal_move:\n\n");
+    else
+      printf("%d legal_moves:\n\n",legal_moves_count);
 
-  print_moves(legal_moves,legal_moves_count,bHex,bMoveNumbers);
+    print_moves(legal_moves,legal_moves_count,bHex,bMoveNumbers);
+  }
 
   return 0;
 }
