@@ -13,7 +13,8 @@ static char filename[MAX_FILENAME_LEN];
 static char usage[] =
 "usage: count_checks (-debug) (-verbose) (-consecutive) (-mine) (-opponent) (-game_ending)\n"
 "  (-game_ending_countcount) (-mate) (-none) (-ge_valval) (-terse_modemode)\n"
-"  (-game_ending_in_mate) (-only_wins) (-only_draws) (-only_losses) (-i_am_white) (-i_am_black) filename\n";
+"  (-game_ending_in_mate) (-only_wins) (-only_draws) (-only_losses) (-i_am_white) (-i_am_black)\n"
+"  (-exact_countcount) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -39,6 +40,7 @@ int main(int argc,char **argv)
   bool bOnlyLosses;
   bool bIAmWhite;
   bool bIAmBlack;
+  int exact_count;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -50,7 +52,7 @@ int main(int argc,char **argv)
   int starting_move;
   int increment;
 
-  if ((argc < 2) || (argc > 19)) {
+  if ((argc < 2) || (argc > 20)) {
     printf(usage);
     return 1;
   }
@@ -72,6 +74,7 @@ int main(int argc,char **argv)
   bOnlyLosses = false;
   bIAmWhite = false;
   bIAmBlack = false;
+  exact_count = -1;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -110,6 +113,8 @@ int main(int argc,char **argv)
       bIAmWhite = true;
     else if (!strcmp(argv[curr_arg],"-i_am_black"))
       bIAmBlack = true;
+    else if (!strncmp(argv[curr_arg],"-exact_count",12))
+      sscanf(&argv[curr_arg][12],"%d",&exact_count);
     else
       break;
   }
@@ -320,7 +325,9 @@ int main(int argc,char **argv)
       }
 
       if (!bVerbose) {
-        if ((!bNone && (num_checks)) || (bNone && !num_checks)) {
+        if ((exact_count != -1) && (num_checks != exact_count))
+          ;
+        else if ((!bNone && (num_checks)) || (bNone && !num_checks)) {
           if (!bMate) {
             if (ge_val == -1) {
               if (terse_mode == 1)
