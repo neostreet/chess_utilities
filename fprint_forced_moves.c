@@ -11,7 +11,9 @@
 static char filename[MAX_FILENAME_LEN];
 static char out_filename[MAX_FILENAME_LEN];
 
-static char usage[] = "usage: fprint_forced_moves (-verbose) (-both) (-total_first) (-debug) filename\n";
+static char usage[] =
+"usage: fprint_forced_moves (-verbose) (-both) (-total_first) (-debug)\n"
+"  (-only_wins) (-only_draws) (-only_losses) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -26,6 +28,9 @@ int main(int argc,char **argv)
   bool bBoth;
   bool bTotalFirst;
   bool bDebug;
+  bool bOnlyWins;
+  bool bOnlyDraws;
+  bool bOnlyLosses;
   FILE *fptr;
   FILE *out_fptr;
   int filename_len;
@@ -35,7 +40,7 @@ int main(int argc,char **argv)
   int found_white;
   int found_black;
 
-  if ((argc < 2) || (argc > 6)) {
+  if ((argc < 2) || (argc > 9)) {
     printf(usage);
     return 1;
   }
@@ -44,6 +49,9 @@ int main(int argc,char **argv)
   bBoth = false;
   bTotalFirst = false;
   bDebug = false;
+  bOnlyWins = false;
+  bOnlyDraws = false;
+  bOnlyLosses = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
@@ -54,6 +62,12 @@ int main(int argc,char **argv)
       bTotalFirst = true;
     else if (!strcmp(argv[curr_arg],"-debug"))
       bDebug = true;
+    else if (!strcmp(argv[curr_arg],"-only_wins"))
+      bOnlyWins = true;
+    else if (!strcmp(argv[curr_arg],"-only_draws"))
+      bOnlyDraws = true;
+    else if (!strcmp(argv[curr_arg],"-only_losses"))
+      bOnlyLosses = true;
     else
       break;
   }
@@ -63,9 +77,24 @@ int main(int argc,char **argv)
     return 2;
   }
 
+  if (bOnlyWins && bOnlyDraws) {
+    printf("can't specify both -only_wins and -only_draws\n");
+    return 3;
+  }
+
+  if (bOnlyWins && bOnlyLosses) {
+    printf("can't specify both -only_wins and -only_losses\n");
+    return 4;
+  }
+
+  if (bOnlyDraws && bOnlyLosses) {
+    printf("can't specify both -only_draws and -only_losses\n");
+    return 5;
+  }
+
   if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 3;
+    return 6;
   }
 
   for ( ; ; ) {
@@ -83,12 +112,33 @@ int main(int argc,char **argv)
     continue;
   }
 
+  if (bOnlyWins || bOnlyDraws || bOnlyLosses) {
+    if (bOnlyWins) {
+      if (curr_game.result != RESULT_WIN)
+        continue;
+    }
+    else if (bOnlyDraws) {
+      if (curr_game.result != RESULT_DRAW)
+        continue;
+    }
+    else if (bOnlyLosses) {
+      if (curr_game.result != RESULT_LOSS)
+        continue;
+    }
+  }
+
   if (bVerbose) {
-    sprintf(out_filename,"%s.forced_moves",filename);
+    sprintf(out_filename,"%s.%s%s%s%s%sforced_moves",
+      filename,
+      (bBoth ? "both." : ""),
+      (bTotalFirst ? "total_first." : ""),
+      (bOnlyWins ? "only_wins." : ""),
+      (bOnlyDraws ? "only_draws." : ""),
+      (bOnlyLosses ? "only_losses." : ""));
 
     if ((out_fptr = fopen(out_filename,"w")) == NULL) {
       printf(couldnt_open,out_filename);
-      return 4;
+      return 7;
     }
   }
 
