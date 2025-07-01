@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 static char out_filename[MAX_FILENAME_LEN];
 
-static char usage[] = "usage: fprint_forced_moves (-verbose) (-both) (-total_first) filename\n";
+static char usage[] = "usage: fprint_forced_moves (-verbose) (-both) (-total_first) (-debug) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -25,6 +25,7 @@ int main(int argc,char **argv)
   bool bVerbose;
   bool bBoth;
   bool bTotalFirst;
+  bool bDebug;
   FILE *fptr;
   FILE *out_fptr;
   int filename_len;
@@ -34,7 +35,7 @@ int main(int argc,char **argv)
   int found_white;
   int found_black;
 
-  if ((argc < 2) || (argc > 5)) {
+  if ((argc < 2) || (argc > 6)) {
     printf(usage);
     return 1;
   }
@@ -42,6 +43,7 @@ int main(int argc,char **argv)
   bVerbose = false;
   bBoth = false;
   bTotalFirst = false;
+  bDebug = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
@@ -50,6 +52,8 @@ int main(int argc,char **argv)
       bBoth = true;
     else if (!strcmp(argv[curr_arg],"-total_first"))
       bTotalFirst = true;
+    else if (!strcmp(argv[curr_arg],"-debug"))
+      bDebug = true;
     else
       break;
   }
@@ -97,6 +101,9 @@ int main(int argc,char **argv)
     legal_moves_count =  0;
 
     get_legal_moves(&curr_game,legal_moves,&legal_moves_count);
+
+    if (bDebug)
+      printf("move %d: %d legal moves\n",curr_game.curr_move,legal_moves_count);
 
     if (legal_moves_count == 1) {
       if (!(curr_game.curr_move % 2)) {
