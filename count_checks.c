@@ -327,7 +327,7 @@ int main(int argc,char **argv)
       if (!bVerbose) {
         if ((exact_count != -1) && (num_checks != exact_count))
           ;
-        else if ((!bNone && (num_checks)) || (bNone && !num_checks)) {
+        else if ((!bNone && (num_checks)) || ((bNone || !exact_count) && !num_checks)) {
           if (!bMate) {
             if (ge_val == -1) {
               if (terse_mode == 1)
