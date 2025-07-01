@@ -12,7 +12,7 @@ static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
 "usage: count_checks (-debug) (-verbose) (-consecutive) (-mine) (-opponent) (-game_ending)\n"
-"  (-game_ending_countcount) (-mate) (-none) (-ge_valval) (-terse_modemode)\n"
+"  (-game_ending_countcount) (-mate) (-ge_valval) (-terse_modemode)\n"
 "  (-game_ending_in_mate) (-only_wins) (-only_draws) (-only_losses) (-i_am_white) (-i_am_black)\n"
 "  (-exact_countcount) filename\n";
 
@@ -31,7 +31,6 @@ int main(int argc,char **argv)
   bool bGameEnding;
   int game_ending_count;
   bool bMate;
-  bool bNone;
   int ge_val;
   int terse_mode;
   bool bGameEndingInMate;
@@ -52,7 +51,7 @@ int main(int argc,char **argv)
   int starting_move;
   int increment;
 
-  if ((argc < 2) || (argc > 20)) {
+  if ((argc < 2) || (argc > 19)) {
     printf(usage);
     return 1;
   }
@@ -65,7 +64,6 @@ int main(int argc,char **argv)
   bGameEnding = false;
   game_ending_count = 0;
   bMate = false;
-  bNone = false;
   ge_val = -1;
   terse_mode = 0;
   bGameEndingInMate = false;
@@ -93,8 +91,6 @@ int main(int argc,char **argv)
       sscanf(&argv[curr_arg][18],"%d",&game_ending_count);
     else if (!strcmp(argv[curr_arg],"-mate"))
       bMate = true;
-    else if (!strcmp(argv[curr_arg],"-none"))
-      bNone = true;
     else if (!strncmp(argv[curr_arg],"-ge_val",7))
       sscanf(&argv[curr_arg][7],"%d",&ge_val);
     else if (!strncmp(argv[curr_arg],"-terse_mode",11))
@@ -124,46 +120,41 @@ int main(int argc,char **argv)
     return 2;
   }
 
-  if (bMate && bNone) {
-    printf("can't specify both -mate and -none\n");
-    return 3;
-  }
-
   if (bMine && bOpponent) {
     printf("can't specify both -mine and -opponent\n");
-    return 4;
+    return 3;
   }
 
   if (bConsecutive) {
     if (!bMine && !bOpponent) {
       printf("if -consecutive is specified, either -mine or -opponent must be specified\n");
-      return 5;
+      return 4;
     }
   }
 
   if (bOnlyWins && bOnlyDraws) {
     printf("can't specify both -only_wins and -only_draws\n");
-    return 6;
+    return 5;
   }
 
   if (bOnlyWins && bOnlyLosses) {
     printf("can't specify both -only_wins and -only_losses\n");
-    return 7;
+    return 6;
   }
 
   if (bOnlyDraws && bOnlyLosses) {
     printf("can't specify both -only_draws and -only_losses\n");
-    return 8;
+    return 7;
   }
 
   if (bIAmWhite and bIAmBlack) {
     printf("can't specify both -i_am_white and -i_am_black\n");
-    return 9;
+    return 8;
   }
 
   if ((fptr = fopen(argv[argc-1],"r")) == NULL) {
     printf(couldnt_open,argv[argc-1]);
-    return 10;
+    return 9;
   }
 
   for ( ; ; ) {
@@ -327,7 +318,7 @@ int main(int argc,char **argv)
       if (!bVerbose) {
         if ((exact_count != -1) && (num_checks != exact_count))
           ;
-        else if ((!bNone && (num_checks)) || ((bNone || !exact_count) && !num_checks)) {
+        else {
           if (!bMate) {
             if (ge_val == -1) {
               if (terse_mode == 1)
