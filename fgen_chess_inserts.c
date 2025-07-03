@@ -5,6 +5,7 @@
 #define BLACK 1
 
 enum {
+  CHESS_GAME_SITE,
   CHESS_GAME_DATE,
   CHESS_GAME_TIME_CONTROL,
   CHESS_GAME_ECO,
@@ -36,6 +37,9 @@ static char couldnt_open[] = "couldn't open %s\n";
 
 static char chess_game_event_str[] = "[Event \"";
 #define CHESS_GAME_EVENT_STR_LEN (sizeof (chess_game_event_str) - 1)
+
+static char game_site_str[] = "[Site \"";
+#define CHESS_GAME_SITE_STR_LEN (sizeof (game_site_str) - 1)
 
 static char game_date_str[] = "[Date \"";
 #define CHESS_GAME_DATE_STR_LEN (sizeof (game_date_str) - 1)
@@ -91,6 +95,9 @@ static char drawn_hyphen_str[] = " drawn - ";
 static char first_move_str[] = "1.";
 #define FIRST_MOVE_STR_LEN (sizeof (first_move_str) - 1)
 
+#define CHESS_GAME_SITE_LEN 28
+static char game_site[CHESS_GAME_SITE_LEN+1];
+
 #define CHESS_GAME_DATE_LEN 10
 static char game_date[CHESS_GAME_DATE_LEN+1];
 
@@ -130,6 +137,8 @@ static char termination[TERMINATION_MAX_LEN+1];
 static void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 static int Contains(bool bCaseSens,char *line,int line_len,
   char *string,int string_len,int *index);
+static int get_game_site(char *line,int line_len,int ix,
+  char *game_site);
 static int get_game_date(char *line,int line_len,int ix,
   char *game_date);
 static int process_color_str(
@@ -158,6 +167,7 @@ static void output_game_insert_statement(
   char *filename,
   char *table_name,
   bool *bHaveItem,
+  char *game_site,
   char *game_date,
   char *time_control,
   char *eco,
@@ -268,12 +278,13 @@ int main(int argc,char **argv)
         chess_game_event_str,CHESS_GAME_EVENT_STR_LEN,
         &ix)) {
 
-        if (bHaveItem[CHESS_GAME_DATE]) {
+        if (bHaveItem[CHESS_GAME_SITE]) {
           if (!bDebug) {
             output_game_insert_statement(
               filename,
               table_name,
               bHaveItem,
+              game_site,
               game_date,
               time_control,
               eco,
@@ -295,6 +306,19 @@ int main(int argc,char **argv)
       }
       else if (Contains(true,
         line,line_len,
+        game_site_str,CHESS_GAME_SITE_STR_LEN,
+        &ix)) {
+
+        retval = get_game_site(line,line_len,ix+CHESS_GAME_SITE_STR_LEN,
+          game_site);
+
+        if (retval)
+          printf("get_game_site() failed on line %d: %d\n",line_no,retval);
+        else
+          bHaveItem[CHESS_GAME_SITE] = true;
+      }
+      else if (Contains(true,
+        line,line_len,
         game_date_str,CHESS_GAME_DATE_STR_LEN,
         &ix)) {
 
@@ -302,7 +326,7 @@ int main(int argc,char **argv)
           game_date);
 
         if (retval)
-          printf("get_date() failed on line %d: %d\n",line_no,retval);
+          printf("get_game_date() failed on line %d: %d\n",line_no,retval);
         else
           bHaveItem[CHESS_GAME_DATE] = true;
       }
@@ -503,6 +527,7 @@ int main(int argc,char **argv)
         filename,
         table_name,
         bHaveItem,
+        game_site,
         game_date,
         time_control,
         eco,
@@ -584,6 +609,23 @@ static int Contains(bool bCaseSens,char *line,int line_len,
   }
 
   return false;
+}
+
+static int get_game_site(char *line,int line_len,int ix,
+  char *game_site)
+{
+  int n;
+
+  if (line_len - ix < CHESS_GAME_SITE_LEN + 1)
+    return 1;
+
+  for (n = 0; n < CHESS_GAME_SITE_LEN; n++) {
+    game_site[n] = line[ix + n];
+  }
+
+  game_site[n] = 0;
+
+  return 0;
 }
 
 static int get_game_date(char *line,int line_len,int ix,
@@ -867,6 +909,7 @@ static void output_game_insert_statement(
   char *filename,
   char *table_name,
   bool *bHaveItem,
+  char *game_site,
   char *game_date,
   char *time_control,
   char *eco,
@@ -898,6 +941,7 @@ static void output_game_insert_statement(
   else {
     printf("insert into %s(\n",table_name);
     printf("  game_filename,\n");
+    printf("  game_site,\n");
     printf("  game_date,\n");
     printf("  time_control,\n");
     printf("  eco,\n");
@@ -916,6 +960,7 @@ static void output_game_insert_statement(
     printf("  opponent_elo_delta\n");
     printf(") values (\n");
     printf("  '%s',\n",filename);
+    printf("  '%s',\n",game_site);
     printf("  '%s',\n",game_date);
     printf("  '%s',\n",time_control);
     printf("  '%s',\n",eco);
