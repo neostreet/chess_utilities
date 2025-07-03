@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: feco (-binary_format) (-terse) (-i_am_white) (-i_am_black) filename\n";
+"usage: feco (-terse) (-i_am_white) (-i_am_black) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -20,7 +20,6 @@ int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
-  bool bBinaryFormat;
   bool bTerse;
   bool bIAmWhite;
   bool bIAmBlack;
@@ -30,20 +29,17 @@ int main(int argc,char **argv)
   struct game curr_game;
   bool bPrintedFilename;
 
-  if ((argc < 2) || (argc > 6)) {
+  if ((argc < 2) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
-  bBinaryFormat = false;
   bTerse = false;
   bIAmWhite = false;
   bIAmBlack = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-binary_format"))
-      bBinaryFormat = true;
-    else if (!strcmp(argv[curr_arg],"-terse"))
+    if (!strcmp(argv[curr_arg],"-terse"))
       bTerse = true;
     else if (!strcmp(argv[curr_arg],"-i_am_white"))
       bIAmWhite = true;
@@ -76,25 +72,13 @@ int main(int argc,char **argv)
 
     bzero(&curr_game,sizeof (struct game));
 
-    if (!bBinaryFormat) {
-      retval = read_game(filename,&curr_game);
+    retval = read_game(filename,&curr_game);
 
-      if (retval) {
-        printf("read_game of %s failed: %d\n",filename,retval);
-        printf("curr_move = %d\n",curr_game.curr_move);
+    if (retval) {
+      printf("read_game of %s failed: %d\n",filename,retval);
+      printf("curr_move = %d\n",curr_game.curr_move);
 
-        continue;
-      }
-    }
-    else {
-      retval = read_binary_game(filename,&curr_game);
-
-      if (retval) {
-        printf("read_binary_game of %s failed: %d\n",filename,retval);
-        printf("curr_move = %d\n",curr_game.curr_move);
-
-        continue;
-      }
+      continue;
     }
 
     if (bIAmWhite && curr_game.orientation)
