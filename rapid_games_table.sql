@@ -5,6 +5,7 @@ drop table if exists rapid_games;
 create table rapid_games (
   id mediumint auto_increment primary key,
   game_filename varchar(30) not null,
+  game_site varchar(28) not null,
   game_date date not null,
   time_control varchar(10) not null,
   opponent_name varchar(25) not null,
