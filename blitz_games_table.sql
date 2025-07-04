@@ -17,10 +17,10 @@ create table blitz_games (
   result_value double null,
   mate varchar(1) not null,
   result_detail varchar(25) not null,
-  my_elo_before int not null,
-  my_elo_delta smallint not null,
-  opponent_elo_before int not null,
-  opponent_elo_delta smallint not null,
+  my_elo_before int null,
+  my_elo_delta smallint null,
+  opponent_elo_before int null,
+  opponent_elo_delta smallint null,
   eco varchar(4) not null,
   opening varchar(150) not null
 );
