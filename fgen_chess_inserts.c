@@ -32,7 +32,7 @@ static char filename[MAX_FILENAME_LEN];
 static char line[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fgen_chess_inserts (-debug) player_name table_name filename\n";
+"usage: fgen_chess_inserts (-debug) (-no_elo) player_name table_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 static char chess_game_event_str[] = "[Event \"";
@@ -179,7 +179,8 @@ static void output_game_insert_statement(
   int opponent_checks,
   char *my_result,
   char *my_mate,
-  char *termination
+  char *termination,
+  bool bNoElo
 );
 static void count_checks(char *line,int line_len,int *white_checks_pt,int *black_checks_pt);
 
@@ -188,6 +189,7 @@ int main(int argc,char **argv)
   int n;
   int curr_arg;
   bool bDebug;
+  bool bNoElo;
   char *player_name;
   int player_name_len;
   char *table_name;
@@ -208,16 +210,19 @@ int main(int argc,char **argv)
   int opponent_checks;
   bool bHaveItem[NUM_CHESS_GAME_ITEMS];
 
-  if ((argc < 4) || (argc > 5)) {
+  if ((argc < 4) || (argc > 6)) {
     printf(usage);
     return 1;
   }
 
   bDebug = false;
+  bNoElo = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
       bDebug = true;
+    else if (!strcmp(argv[curr_arg],"-no_elo"))
+      bNoElo = true;
     else
       break;
   }
@@ -296,7 +301,8 @@ int main(int argc,char **argv)
               opponent_checks,
               my_result,
               my_mate,
-              termination
+              termination,
+              bNoElo
             );
           }
         }
@@ -539,7 +545,8 @@ int main(int argc,char **argv)
         opponent_checks,
         my_result,
         my_mate,
-        termination
+        termination,
+        bNoElo
       );
     }
   }
@@ -921,17 +928,26 @@ static void output_game_insert_statement(
   int opponent_checks,
   char *my_result,
   char *my_mate,
-  char *termination
+  char *termination,
+  bool bNoElo
 )
 {
   int n;
 
-  for (n = 0; n < NUM_CHESS_GAME_ITEMS; n++) {
-    if (!bHaveItem[n])
-      break;
+  if (!bNoElo) {
+    for (n = 0; n < NUM_CHESS_GAME_ITEMS; n++) {
+      if (!bHaveItem[n])
+        break;
+    }
+  }
+  else {
+    for (n = 0; n < NUM_CHESS_GAME_ITEMS - 4; n++) {
+      if (!bHaveItem[n])
+        break;
+    }
   }
 
-  if (n < NUM_CHESS_GAME_ITEMS) {
+  if ((!bNoElo && (n < NUM_CHESS_GAME_ITEMS)) || (bNoElo && (n < NUM_CHESS_GAME_ITEMS - 4))) {
     printf("%s: missing information: %d\n",
       filename,n);
 
@@ -939,49 +955,84 @@ static void output_game_insert_statement(
       printf("  %s\n",opponent_name);
   }
   else {
-    printf("insert into %s(\n",table_name);
-    printf("  game_filename,\n");
-    printf("  game_site,\n");
-    printf("  game_date,\n");
-    printf("  time_control,\n");
-    printf("  eco,\n");
-    printf("  opening,\n");
-    printf("  opponent_name,\n");
-    printf("  color,\n");
-    printf("  num_moves,\n");
-    printf("  my_checks,\n");
-    printf("  opponent_checks,\n");
-    printf("  result,\n");
-    printf("  mate,\n");
-    printf("  result_detail,\n");
-    printf("  my_elo_before,\n");
-    printf("  my_elo_delta,\n");
-    printf("  opponent_elo_before,\n");
-    printf("  opponent_elo_delta\n");
-    printf(") values (\n");
-    printf("  '%s',\n",filename);
-    printf("  '%s',\n",game_site);
-    printf("  '%s',\n",game_date);
-    printf("  '%s',\n",time_control);
-    printf("  '%s',\n",eco);
-    printf("  \"%s\",\n",opening);
-    printf("  '%s',\n",opponent_name);
-    printf("  '%s',\n",color);
-    printf("  %d,\n",num_moves);
-    printf("  %d,\n",my_checks);
-    printf("  %d,\n",opponent_checks);
-    printf("  '%s',\n",my_result);
-    printf("  '%s',\n",my_mate);
-    printf("  '%s',\n",termination);
-    printf("  %s,\n",
-      ((color[0] == 'W') ? elo[WHITE] : elo[BLACK]));
-    printf("  %s,\n",
-      ((color[0] == 'W') ? rating_diff[WHITE] : rating_diff[BLACK]));
-    printf("  %s,\n",
-      ((color[0] == 'W') ? elo[BLACK] : elo[WHITE]));
-    printf("  %s\n",
-      ((color[0] == 'W') ? rating_diff[BLACK] : rating_diff[WHITE]));
-    printf(");\n");
+    if (!bNoElo) {
+      printf("insert into %s(\n",table_name);
+      printf("  game_filename,\n");
+      printf("  game_site,\n");
+      printf("  game_date,\n");
+      printf("  time_control,\n");
+      printf("  eco,\n");
+      printf("  opening,\n");
+      printf("  opponent_name,\n");
+      printf("  color,\n");
+      printf("  num_moves,\n");
+      printf("  my_checks,\n");
+      printf("  opponent_checks,\n");
+      printf("  result,\n");
+      printf("  mate,\n");
+      printf("  result_detail,\n");
+      printf("  my_elo_before,\n");
+      printf("  my_elo_delta,\n");
+      printf("  opponent_elo_before,\n");
+      printf("  opponent_elo_delta\n");
+      printf(") values (\n");
+      printf("  '%s',\n",filename);
+      printf("  '%s',\n",game_site);
+      printf("  '%s',\n",game_date);
+      printf("  '%s',\n",time_control);
+      printf("  '%s',\n",eco);
+      printf("  \"%s\",\n",opening);
+      printf("  '%s',\n",opponent_name);
+      printf("  '%s',\n",color);
+      printf("  %d,\n",num_moves);
+      printf("  %d,\n",my_checks);
+      printf("  %d,\n",opponent_checks);
+      printf("  '%s',\n",my_result);
+      printf("  '%s',\n",my_mate);
+      printf("  '%s',\n",termination);
+      printf("  %s,\n",
+        ((color[0] == 'W') ? elo[WHITE] : elo[BLACK]));
+      printf("  %s,\n",
+        ((color[0] == 'W') ? rating_diff[WHITE] : rating_diff[BLACK]));
+      printf("  %s,\n",
+        ((color[0] == 'W') ? elo[BLACK] : elo[WHITE]));
+      printf("  %s\n",
+        ((color[0] == 'W') ? rating_diff[BLACK] : rating_diff[WHITE]));
+      printf(");\n");
+    }
+    else {
+      printf("insert into %s(\n",table_name);
+      printf("  game_filename,\n");
+      printf("  game_site,\n");
+      printf("  game_date,\n");
+      printf("  time_control,\n");
+      printf("  eco,\n");
+      printf("  opening,\n");
+      printf("  opponent_name,\n");
+      printf("  color,\n");
+      printf("  num_moves,\n");
+      printf("  my_checks,\n");
+      printf("  opponent_checks,\n");
+      printf("  result,\n");
+      printf("  mate,\n");
+      printf("  result_detail\n");
+      printf(") values (\n");
+      printf("  '%s',\n",filename);
+      printf("  '%s',\n",game_site);
+      printf("  '%s',\n",game_date);
+      printf("  '%s',\n",time_control);
+      printf("  '%s',\n",eco);
+      printf("  \"%s\",\n",opening);
+      printf("  '%s',\n",opponent_name);
+      printf("  '%s',\n",color);
+      printf("  %d,\n",num_moves);
+      printf("  %d,\n",my_checks);
+      printf("  %d,\n",opponent_checks);
+      printf("  '%s',\n",my_result);
+      printf("  '%s',\n",my_mate);
+      printf("  '%s'\n",termination);
+      printf(");\n");
+    }
   }
 }
 
