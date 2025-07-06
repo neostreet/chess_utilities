@@ -12,7 +12,8 @@ static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
 "usage: find_mates (-debug) (-binary_format) (-mine) (-not_mine) (-mating_squaresquare)\n"
-"   (-mated_squaresquare) (-mate_distancedistance) (-mating_piecepiece) [white | black] filename\n";
+"  (-mated_squaresquare) (-mate_distancedistance) (-mating_piecepiece) (-discovered)\n"
+"  [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -36,6 +37,7 @@ int main(int argc,char **argv)
   int mate_distance;
   int curr_mate_distance;
   int mating_piece;
+  bool bDiscovered;
   int by_white;
   int retval;
   FILE *fptr;
@@ -45,7 +47,7 @@ int main(int argc,char **argv)
   int match_count;
   int last_piece;
 
-  if ((argc < 3) || (argc > 11)) {
+  if ((argc < 3) || (argc > 12)) {
     printf(usage);
     return 1;
   }
@@ -58,6 +60,7 @@ int main(int argc,char **argv)
   mated_square = -1;
   mate_distance = -1;
   mating_piece = 0;
+  bDiscovered = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -92,6 +95,8 @@ int main(int argc,char **argv)
     }
     else if (!strncmp(argv[curr_arg],"-mating_piece",13))
       sscanf(&argv[curr_arg][13],"%d",&mating_piece);
+    else if (!strcmp(argv[curr_arg],"-discovered"))
+      bDiscovered = true;
     else
       break;
   }
@@ -220,6 +225,18 @@ int main(int argc,char **argv)
         curr_mate_distance = get_mate_distance(curr_mating_square,curr_mated_square);
 
         if (curr_mate_distance != mate_distance)
+          continue;
+      }
+
+      if (bDiscovered) {
+        curr_mating_square = curr_game.moves[curr_game.num_moves-1].to;
+
+        if (curr_game.num_moves % 2)
+          curr_mated_square = curr_game.black_pieces[12].current_board_position;
+        else
+          curr_mated_square = curr_game.white_pieces[4].current_board_position;
+
+        if (square_attacks_square(curr_game.board,curr_mating_square,curr_mated_square))
           continue;
       }
 
