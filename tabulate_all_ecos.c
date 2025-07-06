@@ -211,7 +211,7 @@ int main(int argc,char **argv)
       printf(" %6.2lf%%\n",eco_stats[ixs[n]].win_pct);
     }
     else {
-      printf("%lf%% %s %d wins %d draws %d losses %d games\n",
+      printf("%5.2lf%% %s %d wins %d draws %d losses %d games\n",
         eco_stats[ixs[n]].win_pct,work_eco,eco_stats[ixs[n]].wins,eco_stats[ixs[n]].draws,
         eco_stats[ixs[n]].losses,eco_stats[ixs[n]].total_games);
     }
