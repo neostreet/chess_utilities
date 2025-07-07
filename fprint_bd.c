@@ -18,9 +18,8 @@ static char usage[] =
 "  (-mine) (-not_mine) (-search_all_moves) (-exact_match) (-only_no_promotions) (-only_underpromotions)\n"
 "  (-print_piece_counts) (-print_move_counts) (-only_no_checks) (-only_no_mates) (-opposite_colored_bishops)\n"
 "  (-same_colored_bishops (-two_bishops) (-opposite_side_castling) (-same_side_castling) (-less_than_2_castles)\n"
-"  (-truncate_filename) (-only_stalemates) (-no_queens) (-mate_in_one) (-qnn)\n"
-"  (-only_wins) (-only_draws) (-only_losses) (-ecoeco) (-search_specific_movemove) [white | black]\n"
-"  filename\n";
+"  (-truncate_filename) (-only_stalemates) (-no_queens) (-mate_in_one) (-only_wins) (-only_draws) (-only_losses)\n"
+"  (-ecoeco) (-search_specific_movemove) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
