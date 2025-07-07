@@ -19,7 +19,7 @@ static char usage[] =
 "  (-print_piece_counts) (-print_move_counts) (-only_no_checks) (-only_no_mates) (-opposite_colored_bishops)\n"
 "  (-same_colored_bishops (-two_bishops) (-opposite_side_castling) (-same_side_castling) (-less_than_2_castles)\n"
 "  (-truncate_filename) (-only_stalemates) (-no_queens) (-mate_in_one) (-only_wins) (-only_draws) (-only_losses)\n"
-"  (-ecoeco) (-search_specific_movemove) filename\n";
+"  (-ecoeco) (-search_specific_movemove) (-site) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -91,8 +91,9 @@ int main(int argc,char **argv)
   int num_pieces;
   char *eco_pt;
   int specific_move;
+  bool bSite;
 
-  if ((argc < 2) || (argc > 49)) {
+  if ((argc < 2) || (argc > 50)) {
     printf(usage);
     return 1;
   }
@@ -142,6 +143,7 @@ int main(int argc,char **argv)
   bOnlyLosses = false;
   eco_pt = NULL;
   specific_move = -1;
+  bSite = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -280,6 +282,8 @@ int main(int argc,char **argv)
       eco_pt = &argv[curr_arg][4];
     else if (!strncmp(argv[curr_arg],"-search_specific_move",21))
       sscanf(&argv[curr_arg][21],"%d",&specific_move);
+    else if (!strcmp(argv[curr_arg],"-site"))
+      bSite = true;
     else
       break;
   }
@@ -424,8 +428,13 @@ int main(int argc,char **argv)
     !bOnlyEnPassants && !bMultipleQueens && !bNoQueens && !bOnlyPromotions && !bOnlyUnderpromotions && !bOnlyNoPromotions &&
     !bMine && !bNotMine && !bHaveMatchBoard && !bHaveMatchForce && (num_white_pieces == -1) &&
     (num_black_pieces == -1) && !bOppositeColoredBishops && !bSameColoredBishops && !bTwoBishops &&
-    !bOppositeSideCastling && !bSameSideCastling && !bLessThan2Castles && !bOnlyStalemates && !bMateInOne)
-    printf("%s\n",filename);
+    !bOppositeSideCastling && !bSameSideCastling && !bLessThan2Castles && !bOnlyStalemates && !bMateInOne) {
+
+    if (!bSite)
+      printf("%s\n",filename);
+    else
+      printf("%s %s\n",filename,curr_game.site);
+  }
 
   curr_game.curr_move--;
   orientation = curr_game.orientation;
@@ -589,7 +598,10 @@ int main(int argc,char **argv)
         bTwoBishops || bOppositeSideCastling || bSameSideCastling || bLessThan2Castles || bOnlyStalemates || bMateInOne) {
 
         if (!bPrintedFilename) {
-          printf("%s\n",filename);
+          if (!bSite)
+            printf("%s\n",filename);
+          else
+            printf("%s %s\n",filename,curr_game.site);
 
           if (bTerse)
             break;
@@ -775,7 +787,11 @@ int main(int argc,char **argv)
         bMine || bNotMine || (num_white_pieces != -1) || (num_black_pieces != -1) ||
         bOppositeColoredBishops || bSameColoredBishops || bTwoBishops || bOppositeSideCastling ||
         bSameSideCastling || bLessThan2Castles || bOnlyStalemates || bMateInOne) {
-        printf("%s\n",filename);
+
+        if (!bSite)
+          printf("%s\n",filename);
+        else
+          printf("%s %s\n",filename,curr_game.site);
       }
 
       if (!bTerse) {
