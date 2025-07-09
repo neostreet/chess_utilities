@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: felos (-verbose) filename\n";
+"usage: felos (-terse) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -20,7 +20,7 @@ int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
-  bool bVerbose;
+  bool bTerse;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -31,11 +31,11 @@ int main(int argc,char **argv)
     return 1;
   }
 
-  bVerbose = false;
+  bTerse = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-verbose"))
-      bVerbose = true;
+    if (!strcmp(argv[curr_arg],"-terse"))
+      bTerse = true;
     else
       break;
   }
@@ -58,19 +58,24 @@ int main(int argc,char **argv)
 
     bzero(&curr_game,sizeof (struct game));
 
-    retval = read_game(filename,&curr_game);
+    retval = read_binary_game(filename,&curr_game);
 
     if (retval) {
-      printf("read_game of %s failed: %d\n",filename,retval);
+      printf("read_binary_game of %s failed: %d\n",filename,retval);
       printf("curr_move = %d\n",curr_game.curr_move);
 
       continue;
     }
 
-    printf("%d %d %d %d %s\n",
-      curr_game.white_elo,curr_game.black_elo,
-      curr_game.white_rating_diff,curr_game.black_rating_diff,
-      filename);
+    if (!bTerse) {
+      printf("%d %d %d %d %s\n",
+        curr_game.my_elo_before,curr_game.my_elo_delta,
+        curr_game.opponent_elo_before,curr_game.opponent_elo_delta,
+        filename);
+    }
+    else {
+      printf("%d\n",curr_game.my_elo_before);
+    }
   }
 
   fclose(fptr);
