@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_miniatures (-binary_format) (-i_am_white) (-i_am_black) (-resultval) filename\n";
+"usage: find_miniatures (-i_am_white) (-i_am_black) (-only_wins) (-only_draws) (-only_losses) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -19,51 +19,60 @@ char couldnt_open[] = "couldn't open %s\n";
 int main(int argc,char **argv)
 {
   int curr_arg;
-  bool bBinaryFormat;
   bool bIAmWhite;
   bool bIAmBlack;
-  int result;
+  bool bOnlyWins;
+  bool bOnlyDraws;
+  bool bOnlyLosses;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 6)) {
+  if ((argc < 2) || (argc > 7)) {
     printf(usage);
     return 1;
   }
 
-  bBinaryFormat = false;
   bIAmWhite = false;
   bIAmBlack = false;
-  result = -1;
+  bOnlyWins = false;
+  bOnlyDraws = false;
+  bOnlyLosses = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-binary_format"))
-      bBinaryFormat = true;
-    else if (!strcmp(argv[curr_arg],"-i_am_white"))
+    if (!strcmp(argv[curr_arg],"-i_am_white"))
       bIAmWhite = true;
     else if (!strcmp(argv[curr_arg],"-i_am_black"))
       bIAmBlack = true;
-    else if (!strncmp(argv[curr_arg],"-result",7))
-      sscanf(&argv[curr_arg][7],"%d",&result);
+    else if (!strcmp(argv[curr_arg],"-only_wins"))
+      bOnlyWins = true;
+    else if (!strcmp(argv[curr_arg],"-only_draws"))
+      bOnlyDraws = true;
+    else if (!strcmp(argv[curr_arg],"-only_losses"))
+      bOnlyLosses = true;
     else
       break;
   }
 
-  if (bIAmWhite and bIAmBlack) {
-    printf("can't specify both -i_am_white and -i_am_black\n");
+  if (argc - curr_arg != 1) {
+    printf(usage);
     return 2;
   }
 
-  if (argc - curr_arg != 1) {
-    printf(usage);
+  if (bIAmWhite and bIAmBlack) {
+    printf("can't specify both -i_am_white and -i_am_black\n");
     return 3;
+  }
+
+  if ((bOnlyWins && bOnlyDraws) || (bOnlyWins && bOnlyLosses) || (bOnlyDraws && bOnlyLosses)) {
+    printf("can only specify one of -only_wins, -only_draws, and -only_losses\n");
+    return 4;
   }
 
   if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 4;
+    return 5;
   }
 
   for ( ; ; ) {
@@ -74,25 +83,13 @@ int main(int argc,char **argv)
 
     bzero(&curr_game,sizeof (struct game));
 
-    if (!bBinaryFormat) {
-      retval = read_game(filename,&curr_game);
+    retval = read_game(filename,&curr_game);
 
-      if (retval) {
-        printf("read_game of %s failed: %d\n",filename,retval);
-        printf("curr_move = %d\n",curr_game.curr_move);
+    if (retval) {
+      printf("read_game of %s failed: %d\n",filename,retval);
+      printf("curr_move = %d\n",curr_game.curr_move);
 
-        continue;
-      }
-    }
-    else {
-      retval = read_binary_game(filename,&curr_game);
-
-      if (retval) {
-        printf("read_binary_game of %s failed: %d\n",filename,retval);
-        printf("curr_move = %d\n",curr_game.curr_move);
-
-        continue;
-      }
+      continue;
     }
 
     if (bIAmWhite && curr_game.orientation)
@@ -101,8 +98,18 @@ int main(int argc,char **argv)
     if (bIAmBlack && !curr_game.orientation)
       continue;
 
-    if ((result != -1) && (curr_game.result != result))
-      continue;
+    if (bOnlyWins) {
+      if (curr_game.result != RESULT_WIN)
+        continue;
+    }
+    else if (bOnlyDraws) {
+      if (curr_game.result != RESULT_DRAW)
+        continue;
+    }
+    else if (bOnlyLosses) {
+      if (curr_game.result != RESULT_LOSS)
+        continue;
+    }
 
     if (curr_game.num_moves <= 40)
       printf("%s\n",filename);
