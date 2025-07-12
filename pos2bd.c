@@ -15,7 +15,7 @@ static char line[MAX_LINE_LEN];
 #include "chess.mac"
 
 static char usage[] =
-"usage: fbin2bd (-debug) filename\n";
+"usage: pos2bd (-debug) filename\n";
 
 static struct game_position position;
 
@@ -23,8 +23,8 @@ char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
 
 static int build_bd_filename(
-  char *bin_filename,
-  int bin_filename_len,
+  char *pos_filename,
+  int pos_filename_len,
   char *bd_filename,
   int max_filename_len);
 
@@ -32,7 +32,7 @@ int main(int argc,char **argv)
 {
   int curr_arg;
   bool bDebug;
-  int bin_filename_len;
+  int pos_filename_len;
   int retval;
 
   if ((argc < 2) || (argc > 3)) {
@@ -54,9 +54,9 @@ int main(int argc,char **argv)
     return 2;
   }
 
-  bin_filename_len = strlen(argv[curr_arg]);
+  pos_filename_len = strlen(argv[curr_arg]);
 
-  retval = build_bd_filename(argv[curr_arg],bin_filename_len,bd_filename,MAX_FILENAME_LEN);
+  retval = build_bd_filename(argv[curr_arg],pos_filename_len,bd_filename,MAX_FILENAME_LEN);
 
   if (retval) {
     printf("build_bd_filename failed on %s: %d\n",argv[curr_arg],retval);
@@ -81,15 +81,26 @@ int main(int argc,char **argv)
 }
 
 static int build_bd_filename(
-  char *bin_filename,
-  int bin_filename_len,
+  char *pos_filename,
+  int pos_filename_len,
   char *bd_filename,
   int max_filename_len)
 {
-  if (bin_filename_len + 3 >= max_filename_len)
+  int n;
+
+  for (n = 0; n < pos_filename_len; n++) {
+    if (pos_filename[n] == '.')
+      break;
+  }
+
+  if (n == pos_filename_len)
     return 1;
 
-  sprintf(bd_filename,"%s.bd",bin_filename);
+  if (n + 3 > max_filename_len - 1)
+    return 2;
+
+  strcpy(bd_filename,pos_filename);
+  strcpy(&bd_filename[n+1],"bd");
 
   return 0;
 }
