@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: fnum_moves (-binary_format) (-ge_num_movesnum_moves) (-eq_num_movesnum_moves)\n"
+"usage: fnum_moves (-normalize) (-ge_num_movesnum_moves) (-eq_num_movesnum_moves)\n"
 "  (-lt_num_movesnum_moves) (-terse_modemode) (-even) (-odd)\n"
 "  (-only_wins) (-only_draws) (-only_losses) (-i_am_white) (-i_am_black) (-date) filename\n";
 
@@ -22,7 +22,7 @@ int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
-  bool bBinaryFormat;
+  bool bNormalize;
   int num_moves;
   int ge_num_moves;
   int eq_num_moves;
@@ -47,7 +47,7 @@ int main(int argc,char **argv)
   }
 
   terse_mode = 0;
-  bBinaryFormat = false;
+  bNormalize = false;
   ge_num_moves = -1;
   eq_num_moves = -1;
   lt_num_moves = -1;
@@ -61,8 +61,8 @@ int main(int argc,char **argv)
   bDate = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-binary_format"))
-      bBinaryFormat = true;
+    if (!strcmp(argv[curr_arg],"-normalize"))
+      bNormalize = true;
     else if (!strncmp(argv[curr_arg],"-ge_num_moves",13))
       sscanf(&argv[curr_arg][13],"%d",&ge_num_moves);
     else if (!strncmp(argv[curr_arg],"-eq_num_moves",13))
@@ -147,25 +147,13 @@ int main(int argc,char **argv)
     if (feof(fptr))
       break;
 
-    if (!bBinaryFormat) {
-      retval = read_game(filename,&curr_game);
+    retval = read_game(filename,&curr_game);
 
-      if (retval) {
-        printf("read_game of %s failed: %d\n",filename,retval);
-        printf("curr_move = %d\n",curr_game.curr_move);
+    if (retval) {
+      printf("read_game of %s failed: %d\n",filename,retval);
+      printf("curr_move = %d\n",curr_game.curr_move);
 
-        continue;
-      }
-    }
-    else {
-      retval = read_binary_game(filename,&curr_game);
-
-      if (retval) {
-        printf("read_binary_game of %s failed: %d\n",filename,retval);
-        printf("curr_move = %d\n",curr_game.curr_move);
-
-        continue;
-      }
+      continue;
     }
 
     if (bIAmWhite && curr_game.orientation)
@@ -189,7 +177,10 @@ int main(int argc,char **argv)
       }
     }
 
-    num_moves = curr_game.num_moves;
+    if (!bNormalize)
+      num_moves = curr_game.num_moves;
+    else
+      num_moves = (curr_game.num_moves + 1) / 2;
 
     if (ge_num_moves != -1) {
       if (num_moves >= ge_num_moves) {
