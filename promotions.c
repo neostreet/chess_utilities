@@ -63,6 +63,11 @@ int main(int argc,char **argv)
     return 3;
   }
 
+  if (!mask) {
+    mask = SPECIAL_MOVE_PROMOTION_QUEEN | SPECIAL_MOVE_PROMOTION_ROOK |
+      SPECIAL_MOVE_PROMOTION_KNIGHT | SPECIAL_MOVE_PROMOTION_BISHOP;
+  }
+
   total_num_promotions1 = 0;
   total_num_promotions2 = 0;
 
@@ -85,11 +90,6 @@ int main(int argc,char **argv)
 
     for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
       bBlack = curr_game.curr_move & 0x1;
-
-      if (!mask) {
-        mask = SPECIAL_MOVE_PROMOTION_QUEEN | SPECIAL_MOVE_PROMOTION_ROOK |
-          SPECIAL_MOVE_PROMOTION_KNIGHT | SPECIAL_MOVE_PROMOTION_BISHOP;
-      }
 
       if (curr_game.moves[curr_game.curr_move].special_move_info & mask) {
         if (!bByPlayer) {
