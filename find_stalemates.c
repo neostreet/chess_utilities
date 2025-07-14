@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_stalemates (-binary_format) (-mine) (-not_mine) filename\n";
+"usage: find_stalemates (-mine) (-not_mine) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -20,7 +20,6 @@ int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
-  bool bBinaryFormat;
   bool bMine;
   bool bNotMine;
   int retval;
@@ -29,19 +28,16 @@ int main(int argc,char **argv)
   struct game curr_game;
   unsigned char board[CHARS_IN_BOARD];
 
-  if ((argc < 2) || (argc > 5)) {
+  if ((argc < 2) || (argc > 4)) {
     printf(usage);
     return 1;
   }
 
-  bBinaryFormat = false;
   bMine = false;
   bNotMine = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-binary_format"))
-      bBinaryFormat = true;
-    else if (!strcmp(argv[curr_arg],"-mine"))
+    if (!strcmp(argv[curr_arg],"-mine"))
       bMine = true;
     else if (!strcmp(argv[curr_arg],"-not_mine"))
       bNotMine = true;
@@ -72,25 +68,13 @@ int main(int argc,char **argv)
 
     bzero(&curr_game,sizeof (struct game));
 
-    if (!bBinaryFormat) {
-      retval = read_game(filename,&curr_game);
+    retval = read_game(filename,&curr_game);
 
-      if (retval) {
-        printf("read_game of %s failed: %d\n",filename,retval);
-        printf("curr_move = %d\n",curr_game.curr_move);
+    if (retval) {
+      printf("read_game of %s failed: %d\n",filename,retval);
+      printf("curr_move = %d\n",curr_game.curr_move);
 
-        continue;
-      }
-    }
-    else {
-      retval = read_binary_game(filename,&curr_game);
-
-      if (retval) {
-        printf("read_binary_game of %s failed: %d\n",filename,retval);
-        printf("curr_move = %d\n",curr_game.curr_move);
-
-        continue;
-      }
+      continue;
     }
 
     if (bMine) {
