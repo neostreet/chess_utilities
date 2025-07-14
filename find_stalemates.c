@@ -101,5 +101,7 @@ int main(int argc,char **argv)
       printf("%s\n",filename);
   }
 
+  fclose(fptr);
+
   return 0;
 }
