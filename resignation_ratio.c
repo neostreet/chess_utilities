@@ -18,6 +18,7 @@ char couldnt_open[] = "couldn't open %s\n";
 
 int main(int argc,char **argv)
 {
+  int n;
   int curr_arg;
   bool bIAmWhite;
   bool bIAmBlack;
@@ -25,9 +26,9 @@ int main(int argc,char **argv)
   FILE *fptr;
   int filename_len;
   struct game curr_game;
-  int num_losses;
-  int num_resignations;
-  double resignation_ratio;
+  int num_losses[2];
+  int num_resignations[2];
+  double resignation_ratio[2];
 
   if ((argc < 2) || (argc > 4)) {
     printf(usage);
@@ -61,8 +62,10 @@ int main(int argc,char **argv)
     return 4;
   }
 
-  num_losses = 0;
-  num_resignations = 0;
+  for (n = 0; n < 2; n++) {
+    num_losses[n] = 0;
+    num_resignations[n] = 0;
+  }
 
   for ( ; ; ) {
     GetLine(fptr,filename,&filename_len,MAX_FILENAME_LEN);
@@ -81,31 +84,48 @@ int main(int argc,char **argv)
       continue;
     }
 
-    if (curr_game.result != RESULT_LOSS)
-      continue;
-
     if (bIAmWhite && curr_game.orientation)
       continue;
 
     if (bIAmBlack && !curr_game.orientation)
       continue;
 
-    num_losses++;
-
-    if (curr_game.moves[curr_game.num_moves-1].special_move_info & SPECIAL_MOVE_MATE)
+    if (curr_game.result == RESULT_DRAW)
       continue;
 
-    if (curr_game.time_forfeit)
-      continue;
+    if (curr_game.result == RESULT_LOSS) {
+      num_losses[0]++;
 
-    num_resignations++;
+      if (curr_game.moves[curr_game.num_moves-1].special_move_info & SPECIAL_MOVE_MATE)
+        continue;
+
+      if (curr_game.time_forfeit)
+        continue;
+
+      num_resignations[0]++;
+    }
+    else if (curr_game.result == RESULT_WIN) {
+      num_losses[1]++;
+
+      if (curr_game.moves[curr_game.num_moves-1].special_move_info & SPECIAL_MOVE_MATE)
+        continue;
+
+      if (curr_game.time_forfeit)
+        continue;
+
+      num_resignations[1]++;
+    }
   }
 
   fclose(fptr);
 
-  if (num_losses) {
-    resignation_ratio = (double)num_resignations / (double)num_losses;
-    printf("%lf (%d %d)\n",resignation_ratio,num_resignations,num_losses);
+  for (n = 0; n < 2; n++) {
+    if (num_losses[n]) {
+      resignation_ratio[n] = (double)num_resignations[n] / (double)num_losses[n];
+
+      printf("%s: %lf (%d %d)\n",(n ? "opponent" : "me"),
+        resignation_ratio[n],num_resignations[n],num_losses[n]);
+    }
   }
 
   return 0;
