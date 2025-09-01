@@ -1,7 +1,8 @@
 use chess
 
-select result,time_control,my_elo_after,opponent_name,blitz_game_date
-from blitz_games
-order by id;
+select count(*),result_detail
+from rapid_games
+group by 2
+order by 1 desc,2;
 
 quit
