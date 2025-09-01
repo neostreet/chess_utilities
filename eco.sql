@@ -1,8 +1,11 @@
 use chess
 
-select eco,count(*)
-from blitz_games
-group by 1
-order by 2 desc,1;
+select count(*),eco
+from rapid_games
+group by 2
+order by count(*) desc,2 desc;
+
+select count(*)
+from rapid_games;
 
 quit
