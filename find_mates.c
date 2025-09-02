@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_mates (-debug) (-binary_format) (-mine) (-not_mine) (-mating_squaresquare)\n"
+"usage: find_mates (-debug) (-verbose) (-binary_format) (-mine) (-not_mine) (-mating_squaresquare)\n"
 "  (-mated_squaresquare) (-mate_distancedistance) (-mating_piecepiece) (-discovered) (-back_rank)\n"
 "  [white | black] filename\n";
 
@@ -25,6 +25,7 @@ int main(int argc,char **argv)
   int n;
   int curr_arg;
   bool bDebug;
+  bool bVerbose;
   bool bBinaryFormat;
   bool bMine;
   bool bNotMine;
@@ -48,12 +49,13 @@ int main(int argc,char **argv)
   int match_count;
   int last_piece;
 
-  if ((argc < 3) || (argc > 13)) {
+  if ((argc < 3) || (argc > 14)) {
     printf(usage);
     return 1;
   }
 
   bDebug = false;
+  bVerbose = false;
   bBinaryFormat = false;
   bMine = false;
   bNotMine = false;
@@ -67,6 +69,8 @@ int main(int argc,char **argv)
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
       bDebug = true;
+    else if (!strcmp(argv[curr_arg],"-verbose"))
+      bVerbose = true;
     else if (!strcmp(argv[curr_arg],"-binary_format"))
       bBinaryFormat = true;
     else if (!strcmp(argv[curr_arg],"-mine"))
@@ -267,6 +271,9 @@ int main(int argc,char **argv)
 
       printf("%s\n",filename);
       match_count++;
+
+      if (bVerbose)
+        print_bd(&curr_game);
     }
   }
 
