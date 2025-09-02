@@ -12,7 +12,7 @@ static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
 "usage: find_mates (-debug) (-binary_format) (-mine) (-not_mine) (-mating_squaresquare)\n"
-"  (-mated_squaresquare) (-mate_distancedistance) (-mating_piecepiece) (-discovered)\n"
+"  (-mated_squaresquare) (-mate_distancedistance) (-mating_piecepiece) (-discovered) (-back_rank)\n"
 "  [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
@@ -38,6 +38,7 @@ int main(int argc,char **argv)
   int curr_mate_distance;
   int mating_piece;
   bool bDiscovered;
+  bool bBackRank;
   int by_white;
   int retval;
   FILE *fptr;
@@ -47,7 +48,7 @@ int main(int argc,char **argv)
   int match_count;
   int last_piece;
 
-  if ((argc < 3) || (argc > 12)) {
+  if ((argc < 3) || (argc > 13)) {
     printf(usage);
     return 1;
   }
@@ -61,6 +62,7 @@ int main(int argc,char **argv)
   mate_distance = -1;
   mating_piece = 0;
   bDiscovered = false;
+  bBackRank = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -97,6 +99,8 @@ int main(int argc,char **argv)
       sscanf(&argv[curr_arg][13],"%d",&mating_piece);
     else if (!strcmp(argv[curr_arg],"-discovered"))
       bDiscovered = true;
+    else if (!strcmp(argv[curr_arg],"-back_rank"))
+      bBackRank = true;
     else
       break;
   }
@@ -192,6 +196,27 @@ int main(int argc,char **argv)
           continue;
       }
 
+      if (bMine) {
+        if (curr_game.num_moves % 2) {
+          if (curr_game.orientation)
+            continue;
+        }
+        else {
+          if (!curr_game.orientation)
+            continue;
+        }
+      }
+      else if (bNotMine) {
+        if (curr_game.num_moves % 2) {
+          if (!curr_game.orientation)
+            continue;
+        }
+        else {
+          if (curr_game.orientation)
+            continue;
+        }
+      }
+
       if (mating_piece) {
         last_piece = get_piece1(curr_game.board,curr_game.moves[curr_game.num_moves-1].to);
 
@@ -240,38 +265,8 @@ int main(int argc,char **argv)
           continue;
       }
 
-      if (!bMine && !bNotMine) {
-        printf("%s\n",filename);
-        match_count++;
-      }
-      else if (bMine) {
-        if (curr_game.num_moves % 2) {
-          if (!curr_game.orientation) {
-            printf("%s\n",filename);
-            match_count++;
-          }
-        }
-        else {
-          if (curr_game.orientation) {
-            printf("%s\n",filename);
-            match_count++;
-          }
-        }
-      }
-      else {
-        if (curr_game.num_moves % 2) {
-          if (curr_game.orientation) {
-            printf("%s\n",filename);
-            match_count++;
-          }
-        }
-        else {
-          if (!curr_game.orientation) {
-            printf("%s\n",filename);
-            match_count++;
-          }
-        }
-      }
+      printf("%s\n",filename);
+      match_count++;
     }
   }
 
