@@ -221,6 +221,11 @@ int main(int argc,char **argv)
         }
       }
 
+      if (bBackRank) {
+        if (!back_rank_mate(&curr_game))
+          continue;
+      }
+
       if (mating_piece) {
         last_piece = get_piece1(curr_game.board,curr_game.moves[curr_game.num_moves-1].to);
 
