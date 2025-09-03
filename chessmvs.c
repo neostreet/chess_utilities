@@ -2013,6 +2013,7 @@ bool back_rank_mate(struct game *gamept)
   int file_distance;
   bool bWhiteIsMated;
   int impeding_rank;
+  int impeding_file_start;
   int impeding_file;
   int impeding_piece;
 
@@ -2062,10 +2063,10 @@ bool back_rank_mate(struct game *gamept)
   // now make sure the king is impeded by his own pawns
   if (bWhiteIsMated) {
     impeding_rank = mated_square_rank + 1;
-    impeding_file = mated_square_file - 1;
+    impeding_file_start = mated_square_file - 1;
 
     for (n = 0; n < 3; n++) {
-      impeding_file += n;
+      impeding_file = impeding_file_start + n;
 
       if ((impeding_file >= 0) && (impeding_file <= 7)) {
         impeding_piece = get_piece2(gamept->board,impeding_rank,impeding_file);
@@ -2077,10 +2078,10 @@ bool back_rank_mate(struct game *gamept)
   }
   else {
     impeding_rank = mated_square_rank - 1;
-    impeding_file = mated_square_file - 1;
+    impeding_file_start = mated_square_file - 1;
 
     for (n = 0; n < 3; n++) {
-      impeding_file += n;
+      impeding_file = impeding_file_start + n;
 
       if ((impeding_file >= 0) && (impeding_file <= 7)) {
         impeding_piece = get_piece2(gamept->board,impeding_rank,impeding_file);
