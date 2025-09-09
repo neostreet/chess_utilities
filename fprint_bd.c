@@ -19,7 +19,7 @@ static char usage[] =
 "  (-print_piece_counts) (-print_move_counts) (-only_no_checks) (-only_no_mates) (-opposite_colored_bishops)\n"
 "  (-same_colored_bishops (-two_bishops) (-opposite_side_castling) (-same_side_castling) (-less_than_2_castles)\n"
 "  (-truncate_filename) (-only_stalemates) (-no_queens) (-mate_in_one) (-only_wins) (-only_draws) (-only_losses)\n"
-"  (-ecoeco) (-search_specific_movemove) (-site) filename\n";
+"  (-ecoeco) (-search_specific_movemove) (-site) (-mirrored_board) (-mirrored_min_num_movesval) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -92,8 +92,10 @@ int main(int argc,char **argv)
   char *eco_pt;
   int specific_move;
   bool bSite;
+  bool bMirroredBoard;
+  int mirrored_min_num_moves;
 
-  if ((argc < 2) || (argc > 50)) {
+  if ((argc < 2) || (argc > 52)) {
     printf(usage);
     return 1;
   }
@@ -144,6 +146,8 @@ int main(int argc,char **argv)
   eco_pt = NULL;
   specific_move = -1;
   bSite = false;
+  bMirroredBoard = false;
+  mirrored_min_num_moves = -1;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -284,6 +288,10 @@ int main(int argc,char **argv)
       sscanf(&argv[curr_arg][21],"%d",&specific_move);
     else if (!strcmp(argv[curr_arg],"-site"))
       bSite = true;
+    else if (!strcmp(argv[curr_arg],"-mirrored_board"))
+      bMirroredBoard = true;
+    else if (!strncmp(argv[curr_arg],"-mirrored_min_num_moves",23))
+      sscanf(&argv[curr_arg][23],"%d",&mirrored_min_num_moves);
     else
       break;
   }
@@ -428,7 +436,8 @@ int main(int argc,char **argv)
     !bOnlyEnPassants && !bMultipleQueens && !bNoQueens && !bOnlyPromotions && !bOnlyUnderpromotions && !bOnlyNoPromotions &&
     !bMine && !bNotMine && !bHaveMatchBoard && !bHaveMatchForce && (num_white_pieces == -1) &&
     (num_black_pieces == -1) && !bOppositeColoredBishops && !bSameColoredBishops && !bTwoBishops &&
-    !bOppositeSideCastling && !bSameSideCastling && !bLessThan2Castles && !bOnlyStalemates && !bMateInOne) {
+    !bOppositeSideCastling && !bSameSideCastling && !bLessThan2Castles && !bOnlyStalemates && !bMateInOne &&
+    !bMirroredBoard) {
 
     if (!bSite)
       printf("%s\n",filename);
@@ -592,10 +601,19 @@ int main(int argc,char **argv)
           continue;
       }
 
+      if (bMirroredBoard) {
+        if ((mirrored_min_num_moves != -1) && (curr_game.curr_move < mirrored_min_num_moves))
+           continue;
+
+        if (!board_is_mirrored(&curr_game))
+          continue;
+      }
+
       if (bOnlyChecks || bOnlyNoChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles || bOnlyPromotions ||
         bOnlyUnderpromotions || bOnlyNoPromotions || bOnlyCaptures || bOnlyEnPassants || bMultipleQueens || bNoQueens ||
         bHaveMatchBoard || bHaveMatchForce || bMine || bNotMine || bOppositeColoredBishops || bSameColoredBishops ||
-        bTwoBishops || bOppositeSideCastling || bSameSideCastling || bLessThan2Castles || bOnlyStalemates || bMateInOne) {
+        bTwoBishops || bOppositeSideCastling || bSameSideCastling || bLessThan2Castles || bOnlyStalemates || bMateInOne ||
+        bMirroredBoard) {
 
         if (!bPrintedFilename) {
           if (!bSite)
@@ -780,13 +798,21 @@ int main(int argc,char **argv)
         bSkip = true;
     }
 
+    if (!bSkip && bMirroredBoard) {
+      if ((mirrored_min_num_moves != -1) && (curr_game.curr_move < mirrored_min_num_moves))
+        bSkip = true;
+
+      if (!bSkip && !board_is_mirrored(&curr_game))
+        bSkip = true;
+    }
+
     if (!bSkip) {
       if (bOnlyChecks || bOnlyNoChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles ||
         bOnlyPromotions || bOnlyUnderpromotions || bOnlyNoPromotions ||
         bOnlyCaptures || bMultipleQueens || bNoQueens || bHaveMatchBoard || bHaveMatchForce ||
         bMine || bNotMine || (num_white_pieces != -1) || (num_black_pieces != -1) ||
         bOppositeColoredBishops || bSameColoredBishops || bTwoBishops || bOppositeSideCastling ||
-        bSameSideCastling || bLessThan2Castles || bOnlyStalemates || bMateInOne) {
+        bSameSideCastling || bLessThan2Castles || bOnlyStalemates || bMateInOne || bMirroredBoard) {
 
         if (!bSite)
           printf("%s\n",filename);
