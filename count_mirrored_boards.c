@@ -182,10 +182,10 @@ int main(int argc,char **argv)
       if (curr_game.curr_move >= 3) {
         if (board_is_mirrored(&curr_game)) {
           num_mirrored_boards++;
-          max_move = curr_game.curr_move;
+          max_move = curr_game.curr_move+1;
 
           if (bVerbose) {
-            printf("curr_move = %d\n",curr_game.curr_move);
+            printf("curr_move = %d\n",curr_game.curr_move+1);
             putchar(0x0a);
             print_bd(&curr_game);
           }
