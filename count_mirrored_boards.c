@@ -14,7 +14,7 @@ static char usage[] =
 "usage: count_mirrored_boards (-debug) (-verbose)\n"
 "  (-ge_valval) (-terse_modemode)\n"
 "  (-only_wins) (-only_draws) (-only_losses) (-i_am_white) (-i_am_black)\n"
-"  (-exact_countcount) filename\n";
+"  (-exact_countcount) (-max_move_first) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -33,13 +33,15 @@ int main(int argc,char **argv)
   bool bIAmWhite;
   bool bIAmBlack;
   int exact_count;
+  bool bMaxMoveFirst;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
   int num_mirrored_boards;
+  int max_move;
 
-  if ((argc < 2) || (argc > 12)) {
+  if ((argc < 2) || (argc > 13)) {
     printf(usage);
     return 1;
   }
@@ -54,6 +56,7 @@ int main(int argc,char **argv)
   bIAmWhite = false;
   bIAmBlack = false;
   exact_count = -1;
+  bMaxMoveFirst = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -76,6 +79,8 @@ int main(int argc,char **argv)
       bIAmBlack = true;
     else if (!strncmp(argv[curr_arg],"-exact_count",12))
       sscanf(&argv[curr_arg][12],"%d",&exact_count);
+    else if (!strcmp(argv[curr_arg],"-max_move_first"))
+      bMaxMoveFirst = true;
     else
       break;
   }
@@ -152,9 +157,10 @@ int main(int argc,char **argv)
     for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
       update_board(&curr_game,NULL,NULL,false);
 
-      if ((curr_game.curr_move >= 3) && (curr_game.curr_move % 2)) {
+      if (curr_game.curr_move >= 3) {
         if (board_is_mirrored(&curr_game)) {
           num_mirrored_boards++;
+          max_move = curr_game.curr_move;
 
           if (bVerbose) {
             printf("curr_move = %d\n",curr_game.curr_move);
@@ -171,21 +177,17 @@ int main(int argc,char **argv)
     if ((exact_count != -1) && (num_mirrored_boards != exact_count))
       ;
     else {
-      if (ge_val == -1) {
+      if (num_mirrored_boards >= ge_val) {
         if (terse_mode == 1)
           printf("%d\n",num_mirrored_boards);
         else if (terse_mode == 2)
           printf("%s\n",filename);
-        else
-          printf("%d %s\n",num_mirrored_boards,filename);
-      }
-      else if (num_mirrored_boards >= ge_val) {
-        if (terse_mode == 1)
-          printf("%d\n",num_mirrored_boards);
-        else if (terse_mode == 2)
-          printf("%s\n",filename);
-        else
-          printf("%d %s\n",num_mirrored_boards,filename);
+        else {
+          if (!bMaxMoveFirst)
+            printf("%d %d %s\n",num_mirrored_boards,max_move,filename);
+          else
+            printf("%d %d %s\n",max_move,num_mirrored_boards,filename);
+        }
       }
     }
   }
