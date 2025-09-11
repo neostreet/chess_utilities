@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: count_mirrored_boards (-debug) (-verbose)\n"
+"usage: count_mirrored_boards (-debug) (-verbose) (-mine) (-opponent)\n"
 "  (-ge_valval) (-terse_modemode)\n"
 "  (-only_wins) (-only_draws) (-only_losses) (-i_am_white) (-i_am_black)\n"
 "  (-exact_countcount) (-max_move_first) filename\n";
@@ -25,6 +25,8 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bDebug;
   bool bVerbose;
+  bool bMine;
+  bool bOpponent;
   int ge_val;
   int terse_mode;
   bool bOnlyWins;
@@ -41,13 +43,15 @@ int main(int argc,char **argv)
   int num_mirrored_boards;
   int max_move;
 
-  if ((argc < 2) || (argc > 13)) {
+  if ((argc < 2) || (argc > 15)) {
     printf(usage);
     return 1;
   }
 
   bDebug = false;
   bVerbose = false;
+  bMine = false;
+  bOpponent = false;
   ge_val = -1;
   terse_mode = 0;
   bOnlyWins = false;
@@ -63,6 +67,10 @@ int main(int argc,char **argv)
       bDebug = true;
     else if (!strcmp(argv[curr_arg],"-verbose"))
       bVerbose = true;
+    else if (!strcmp(argv[curr_arg],"-mine"))
+      bMine = true;
+    else if (!strcmp(argv[curr_arg],"-opponent"))
+      bOpponent = true;
     else if (!strncmp(argv[curr_arg],"-ge_val",7))
       sscanf(&argv[curr_arg][7],"%d",&ge_val);
     else if (!strncmp(argv[curr_arg],"-terse_mode",11))
@@ -90,29 +98,34 @@ int main(int argc,char **argv)
     return 2;
   }
 
+  if (bMine && bOpponent) {
+    printf("can't specify both -mine and -opponent\n");
+    return 3;
+  }
+
   if (bOnlyWins && bOnlyDraws) {
     printf("can't specify both -only_wins and -only_draws\n");
-    return 3;
+    return 4;
   }
 
   if (bOnlyWins && bOnlyLosses) {
     printf("can't specify both -only_wins and -only_losses\n");
-    return 4;
+    return 5;
   }
 
   if (bOnlyDraws && bOnlyLosses) {
     printf("can't specify both -only_draws and -only_losses\n");
-    return 5;
+    return 6;
   }
 
   if (bIAmWhite and bIAmBlack) {
     printf("can't specify both -i_am_white and -i_am_black\n");
-    return 6;
+    return 7;
   }
 
   if ((fptr = fopen(argv[argc-1],"r")) == NULL) {
     printf(couldnt_open,argv[argc-1]);
-    return 7;
+    return 8;
   }
 
   for ( ; ; ) {
@@ -156,6 +169,15 @@ int main(int argc,char **argv)
 
     for (curr_game.curr_move = 0; curr_game.curr_move < curr_game.num_moves; curr_game.curr_move++) {
       update_board(&curr_game,NULL,NULL,false);
+
+      if (bMine) {
+        if ((curr_game.curr_move % 2) != curr_game.orientation)
+          continue;
+      }
+      else if (bOpponent) {
+        if ((curr_game.curr_move % 2) == curr_game.orientation)
+          continue;
+      }
 
       if (curr_game.curr_move >= 3) {
         if (board_is_mirrored(&curr_game)) {
