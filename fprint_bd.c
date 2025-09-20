@@ -19,7 +19,8 @@ static char usage[] =
 "  (-print_piece_counts) (-print_move_counts) (-only_no_checks) (-only_no_mates) (-opposite_colored_bishops)\n"
 "  (-same_colored_bishops (-two_bishops) (-opposite_side_castling) (-same_side_castling) (-less_than_2_castles)\n"
 "  (-truncate_filename) (-only_stalemates) (-no_queens) (-mate_in_one) (-only_wins) (-only_draws) (-only_losses)\n"
-"  (-ecoeco) (-search_specific_movemove) (-site) (-mirrored_board) (-mirrored_min_num_movesval) filename\n";
+"  (-ecoeco) (-search_specific_movemove) (-site) (-mirrored_board) (-mirrored_min_num_movesval)\n"
+"  (-century_wins) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -94,8 +95,9 @@ int main(int argc,char **argv)
   bool bSite;
   bool bMirroredBoard;
   int mirrored_min_num_moves;
+  bool bCenturyWins;
 
-  if ((argc < 2) || (argc > 52)) {
+  if ((argc < 2) || (argc > 53)) {
     printf(usage);
     return 1;
   }
@@ -148,6 +150,7 @@ int main(int argc,char **argv)
   bSite = false;
   bMirroredBoard = false;
   mirrored_min_num_moves = -1;
+  bCenturyWins = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -292,6 +295,10 @@ int main(int argc,char **argv)
       bMirroredBoard = true;
     else if (!strncmp(argv[curr_arg],"-mirrored_min_num_moves",23))
       sscanf(&argv[curr_arg][23],"%d",&mirrored_min_num_moves);
+    else if (!strcmp(argv[curr_arg],"-century_wins")) {
+      bOnlyWins = true;
+      bCenturyWins = true;
+    }
     else
       break;
   }
@@ -415,6 +422,9 @@ int main(int argc,char **argv)
     if (bOnlyWins) {
       if (curr_game.result != RESULT_WIN)
         continue;
+
+      if (bCenturyWins)
+        ;
     }
     else if (bOnlyDraws) {
       if (curr_game.result != RESULT_DRAW)
