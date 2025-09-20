@@ -423,8 +423,10 @@ int main(int argc,char **argv)
       if (curr_game.result != RESULT_WIN)
         continue;
 
-      if (bCenturyWins)
-        ;
+      if (bCenturyWins) {
+        if (curr_game.opponent_elo_before - curr_game.my_elo_before < 100)
+          continue;
+      }
     }
     else if (bOnlyDraws) {
       if (curr_game.result != RESULT_DRAW)
