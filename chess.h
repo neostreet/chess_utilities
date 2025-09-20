@@ -133,10 +133,6 @@ struct game {
   int num_moves;
   int curr_move;
   int result;
-  int white_elo;
-  int black_elo;
-  int white_rating_diff;
-  int black_rating_diff;
   struct move moves[MAX_MOVES];
   unsigned char board[CHARS_IN_BOARD];  /* 8 columns * 8 rows / 2 (nibbles per char) */
   struct piece_info white_pieces[NUM_PIECES_PER_PLAYER];
