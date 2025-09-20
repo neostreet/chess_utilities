@@ -20,7 +20,7 @@ static char usage[] =
 "  (-same_colored_bishops (-two_bishops) (-opposite_side_castling) (-same_side_castling) (-less_than_2_castles)\n"
 "  (-truncate_filename) (-only_stalemates) (-no_queens) (-mate_in_one) (-only_wins) (-only_draws) (-only_losses)\n"
 "  (-ecoeco) (-search_specific_movemove) (-site) (-mirrored_board) (-mirrored_min_num_movesval)\n"
-"  (-century_wins) filename\n";
+"  (-century_wins) (-century_draws) (-century_losses) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -96,8 +96,10 @@ int main(int argc,char **argv)
   bool bMirroredBoard;
   int mirrored_min_num_moves;
   bool bCenturyWins;
+  bool bCenturyDraws;
+  bool bCenturyLosses;
 
-  if ((argc < 2) || (argc > 53)) {
+  if ((argc < 2) || (argc > 55)) {
     printf(usage);
     return 1;
   }
@@ -151,6 +153,8 @@ int main(int argc,char **argv)
   bMirroredBoard = false;
   mirrored_min_num_moves = -1;
   bCenturyWins = false;
+  bCenturyDraws = false;
+  bCenturyLosses = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -299,6 +303,14 @@ int main(int argc,char **argv)
       bOnlyWins = true;
       bCenturyWins = true;
     }
+    else if (!strcmp(argv[curr_arg],"-century_draws")) {
+      bOnlyDraws = true;
+      bCenturyDraws = true;
+    }
+    else if (!strcmp(argv[curr_arg],"-century_losses")) {
+      bOnlyLosses = true;
+      bCenturyLosses = true;
+    }
     else
       break;
   }
@@ -431,10 +443,26 @@ int main(int argc,char **argv)
     else if (bOnlyDraws) {
       if (curr_game.result != RESULT_DRAW)
         continue;
+
+      if (bCenturyDraws) {
+        if (curr_game.opponent_elo_before > curr_game.my_elo_before) {
+          if (curr_game.opponent_elo_before - curr_game.my_elo_before < 100)
+            continue;
+        }
+        else {
+          if (curr_game.my_elo_before - curr_game.opponent_elo_before < 100)
+            continue;
+        }
+      }
     }
     else if (bOnlyLosses) {
       if (curr_game.result != RESULT_LOSS)
         continue;
+
+      if (bCenturyLosses) {
+        if (curr_game.my_elo_before - curr_game.opponent_elo_before < 100)
+          continue;
+      }
     }
   }
 
