@@ -214,6 +214,9 @@ int main(int argc,char **argv)
         }
 
         if (bSplitting) {
+          if (!line_len)
+            break;
+
           retval = split_line(line,line_len,line_no,ch_fptr,bDontDoRemoves,bSkipMate);
 
           if (retval) {
