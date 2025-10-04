@@ -33,7 +33,7 @@ static int build_ch_filename(
   int max_filename_len);
 static bool Contains(int bCaseSens,char *line,int line_len,
   char *string,int string_len,int *index);
-int split_line(char *line,int line_len,FILE *ch_fptr,bool bDontDoRemoves,bool bSkipMate);
+int split_line(char *line,int line_len,int line_no,FILE *ch_fptr,bool bDontDoRemoves,bool bSkipMate);
 void remove_checks_and_promotions(char *line);
 void get_date(char *line,int line_len,char *date,int max_date_len);
 void get_opponent_name(char *line,int line_len,char *opponent_name,int max_opponent_name_len);
@@ -58,6 +58,7 @@ int main(int argc,char **argv)
   int line_len;
   int line_no;
   int ix;
+  bool bSplitting;
 
   if ((argc < 3) || (argc > 5)) {
     printf(usage);
@@ -194,6 +195,7 @@ int main(int argc,char **argv)
     fseek(fptr,0L,SEEK_SET);
 
     line_no = 0;
+    bSplitting = false;
 
     for ( ; ; ) {
       GetLine(fptr,line,&line_len,MAX_LINE_LEN);
@@ -205,15 +207,20 @@ int main(int argc,char **argv)
 
       if ((line_len >= 1) && (line[0] == '['))
         fprintf(ch_fptr,"/ %s\n",line);
-      else if (!strncmp(line,"1. ",3)) {
-        retval = split_line(line,line_len,ch_fptr,bDontDoRemoves,bSkipMate);
-
-        if (retval) {
-          printf("split_line failed on line %d\n",line_no);
-          continue;
+      else {
+        if (!bSplitting) {
+          if (!strncmp(line,"1. ",3))
+            bSplitting = true;
         }
 
-        break;
+        if (bSplitting) {
+          retval = split_line(line,line_len,line_no,ch_fptr,bDontDoRemoves,bSkipMate);
+
+          if (retval) {
+            printf("%s: split_line failed on line %d\n",filename,line_no);
+            break;
+          }
+        }
       }
     }
 
@@ -310,7 +317,7 @@ static bool Contains(int bCaseSens,char *line,int line_len,
   return false;
 }
 
-int split_line(char *line,int line_len,FILE *ch_fptr,bool bDontDoRemoves,bool bSkipMate)
+int split_line(char *line,int line_len,int line_no,FILE *ch_fptr,bool bDontDoRemoves,bool bSkipMate)
 {
   int m;
   int n;
@@ -331,20 +338,20 @@ int split_line(char *line,int line_len,FILE *ch_fptr,bool bDontDoRemoves,bool bS
       }
     }
 
-    if (m != 2) {
-      if (m != 1)
-        return 1;
+    if (!m)
+      return 1;
+
+    if (m == 2) {
+      for (n = ix + n - 1; (n > ix); n--) {
+        if (line[n] == ' ')
+          break;
+      }
+
+      if (n == ix)
+        return 2;
+
+      line[n] = 0;
     }
-
-    for (n = ix + n - 1; (n > ix); n--) {
-      if (line[n] == ' ')
-        break;
-    }
-
-    if (n == ix)
-      return 2;
-
-    line[n] = 0;
 
     if (bSkipMate) {
       o = n - 1;
