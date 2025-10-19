@@ -9,7 +9,8 @@ static char line[MAX_LINE_LEN];
 static char date[MAX_LINE_LEN];
 
 static char usage[] =
-"usage: fchess_score (-terse) (-verbose) (-runtots) (-colorcolor) (-plus_minus) player_name filename\n";
+"usage: fchess_score (-terse) (-verbose) (-runtots) (-colorcolor) (-plus_minus) (-geval)\n"
+"  player_name filename\n";
 static char couldnt_open[] = "couldn't open %s\n";
 
 enum {
@@ -46,6 +47,7 @@ int main(int argc,char **argv)
   bool bRuntots;
   int color;
   bool bPlusMinus;
+  int geval;
   int player_name_ix;
   int player_name_len;
   FILE *fptr0;
@@ -62,7 +64,7 @@ int main(int argc,char **argv)
   double points;
   double pct;
 
-  if ((argc < 3) || (argc > 8)) {
+  if ((argc < 3) || (argc > 9)) {
     printf(usage);
     return 1;
   }
@@ -72,6 +74,7 @@ int main(int argc,char **argv)
   bRuntots = false;
   color = -1;
   bPlusMinus = false;
+  geval = -1;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
@@ -92,6 +95,8 @@ int main(int argc,char **argv)
     }
     else if (!strcmp(argv[curr_arg],"-plus_minus"))
       bPlusMinus = true;
+    else if (!strncmp(argv[curr_arg],"-ge",3))
+      sscanf(&argv[curr_arg][3],"%d",&geval);
     else
       break;
   }
@@ -152,14 +157,22 @@ int main(int argc,char **argv)
               if (bVerbose) {
                 if (!bPlusMinus)
                   printf("1.0 %s ",filename);
-                else
-                  printf("%d %s ",wins - losses,filename);
+                else {
+                  if (geval == -1)
+                    printf("%d %s ",wins - losses,filename);
+                  else if (wins - losses >= geval)
+                    printf("%d %s ",wins - losses,filename);
+                }
               }
               else if (!bTerse) {
                 if (!bPlusMinus)
                   printf("1.0\n");
-                else
-                  printf("%d\n",wins - losses);
+                else {
+                  if (geval == -1)
+                    printf("%d\n",wins - losses);
+                  else if (wins - losses >= geval)
+                    printf("%d\n",wins - losses);
+                }
               }
             }
           }
@@ -170,14 +183,22 @@ int main(int argc,char **argv)
               if (bVerbose) {
                 if (!bPlusMinus)
                   printf("0.0 %s ",filename);
-                else
-                  printf("%d %s ",wins - losses,filename);
+                else {
+                  if (geval == -1)
+                    printf("%d %s ",wins - losses,filename);
+                  else if (wins - losses >= geval)
+                    printf("%d %s ",wins - losses,filename);
+                }
               }
               else if (!bTerse) {
                 if (!bPlusMinus)
                   printf("0.0\n");
-                else
-                  printf("%d\n",wins - losses);
+                else {
+                  if (geval == -1)
+                    printf("%d\n",wins - losses);
+                  else if (wins - losses >= geval)
+                    printf("%d\n",wins - losses);
+                }
               }
             }
           }
@@ -194,14 +215,22 @@ int main(int argc,char **argv)
               if (bVerbose) {
                 if (!bPlusMinus)
                   printf("1.0 %s ",filename);
-                else
-                  printf("%d %s ",wins - losses,filename);
+                else {
+                  if (geval == -1)
+                    printf("%d %s ",wins - losses,filename);
+                  else if (wins - losses >= geval)
+                    printf("%d %s ",wins - losses,filename);
+                }
               }
               else if (!bTerse) {
                 if (!bPlusMinus)
                   printf("1.0\n");
-                else
-                  printf("%d\n",wins - losses);
+                else {
+                  if (geval == -1)
+                    printf("%d\n",wins - losses);
+                  else if (wins - losses >= geval)
+                    printf("%d\n",wins - losses);
+                }
               }
             }
           }
@@ -212,14 +241,22 @@ int main(int argc,char **argv)
               if (bVerbose) {
                 if (!bPlusMinus)
                   printf("0.0 %s ",filename);
-                else
-                  printf("%d %s ",wins - losses,filename);
+                else {
+                  if (geval == -1)
+                    printf("%d %s ",wins - losses,filename);
+                  else if (wins - losses >= geval)
+                    printf("%d %s ",wins - losses,filename);
+                }
               }
               else if (!bTerse) {
                 if (!bPlusMinus)
                   printf("0.0\n");
-                else
-                  printf("%d\n",wins - losses);
+                else {
+                  if (geval == -1)
+                    printf("%d\n",wins - losses);
+                  else if (wins - losses >= geval)
+                    printf("%d\n",wins - losses);
+                }
               }
             }
           }
@@ -235,14 +272,22 @@ int main(int argc,char **argv)
             if (bVerbose) {
               if (!bPlusMinus)
                 printf("0.5 %s ",filename);
-              else
-                printf("%d %s ",wins - losses,filename);
+              else {
+                if (geval == -1)
+                  printf("%d %s ",wins - losses,filename);
+                else if (wins - losses >= geval)
+                  printf("%d %s ",wins - losses,filename);
+              }
             }
             else if (!bTerse) {
               if (!bPlusMinus)
                 printf("0.5\n");
-              else
-                printf("%d\n",wins - losses);
+              else {
+                if (geval == -1)
+                  printf("%d\n",wins - losses);
+                else if (wins - losses >= geval)
+                  printf("%d\n",wins - losses);
+              }
             }
           }
         }
@@ -259,10 +304,18 @@ int main(int argc,char **argv)
         if (bVerbose || bRuntots) {
           get_date(date,line);
 
-          if (bRuntots)
-            printf("# %d %d %d %d %s %s\n",wins - losses,wins,draws,losses,filename,date);
-          else
-            printf("%s\n",date);
+          if (bRuntots) {
+            if (geval == -1)
+              printf("# %d %d %d %d %s %s\n",wins - losses,wins,draws,losses,filename,date);
+            else if (wins - losses >= geval)
+              printf("# %d %d %d %d %s %s\n",wins - losses,wins,draws,losses,filename,date);
+          }
+          else {
+            if (geval == -1)
+              printf("%s\n",date);
+            else if (wins - losses >= geval)
+              printf("%s\n",date);
+          }
         }
 
         break;
