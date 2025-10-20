@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_draws (-binary_format) (-i_am_white) (-i_am_black) filename\n";
+"usage: find_draws (-i_am_white) (-i_am_black) (-century) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -19,30 +19,31 @@ char couldnt_open[] = "couldn't open %s\n";
 int main(int argc,char **argv)
 {
   int curr_arg;
-  bool bBinaryFormat;
   bool bIAmWhite;
   bool bIAmBlack;
+  bool bCentury;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
+  int elo_diff;
 
   if ((argc < 2) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
-  bBinaryFormat = false;
   bIAmWhite = false;
   bIAmBlack = false;
+  bCentury = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-binary_format"))
-      bBinaryFormat = true;
-    else if (!strcmp(argv[curr_arg],"-i_am_white"))
+    if (!strcmp(argv[curr_arg],"-i_am_white"))
       bIAmWhite = true;
     else if (!strcmp(argv[curr_arg],"-i_am_black"))
       bIAmBlack = true;
+    else if (!strcmp(argv[curr_arg],"-century"))
+      bCentury = true;
     else
       break;
   }
@@ -70,26 +71,17 @@ int main(int argc,char **argv)
 
     bzero(&curr_game,sizeof (struct game));
 
-    if (!bBinaryFormat) {
-      retval = read_game(filename,&curr_game);
+    retval = read_game(filename,&curr_game);
 
-      if (retval) {
-        printf("read_game of %s failed: %d\n",filename,retval);
-        printf("curr_move = %d\n",curr_game.curr_move);
+    if (retval) {
+      printf("read_game of %s failed: %d\n",filename,retval);
+      printf("curr_move = %d\n",curr_game.curr_move);
 
-        continue;
-      }
+      continue;
     }
-    else {
-      retval = read_binary_game(filename,&curr_game);
 
-      if (retval) {
-        printf("read_binary_game of %s failed: %d\n",filename,retval);
-        printf("curr_move = %d\n",curr_game.curr_move);
-
-        continue;
-      }
-    }
+    if (curr_game.result != RESULT_DRAW)
+      continue;
 
     if (bIAmWhite && curr_game.orientation)
       continue;
@@ -97,8 +89,15 @@ int main(int argc,char **argv)
     if (bIAmBlack && !curr_game.orientation)
       continue;
 
-    if (curr_game.result == RESULT_DRAW)
-      printf("%s\n",filename);
+    if (bCentury) {
+      elo_diff = curr_game.opponent_elo_before - curr_game.my_elo_before;
+
+      if (elo_diff < 0)
+        elo_diff *= -1;
+
+      if (elo_diff < 100)
+        continue;
+    }
   }
 
   fclose(fptr);
