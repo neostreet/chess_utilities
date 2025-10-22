@@ -20,7 +20,7 @@ static char usage[] =
 "  (-same_colored_bishops (-two_bishops) (-opposite_side_castling) (-same_side_castling) (-less_than_2_castles)\n"
 "  (-truncate_filename) (-only_stalemates) (-no_queens) (-mate_in_one) (-only_wins) (-only_draws) (-only_losses)\n"
 "  (-ecoeco) (-search_specific_movemove) (-site) (-mirrored_board) (-mirrored_min_num_movesval)\n"
-"  (-century_wins) (-century_draws) (-century_losses) filename\n";
+"  (-century_wins) (-century_draws) (-century_losses) (-my_total_forceval) (-opponent_total_forceval) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -98,8 +98,10 @@ int main(int argc,char **argv)
   bool bCenturyWins;
   bool bCenturyDraws;
   bool bCenturyLosses;
+  int my_total_force;
+  int opponent_total_force;
 
-  if ((argc < 2) || (argc > 55)) {
+  if ((argc < 2) || (argc > 57)) {
     printf(usage);
     return 1;
   }
@@ -155,6 +157,8 @@ int main(int argc,char **argv)
   bCenturyWins = false;
   bCenturyDraws = false;
   bCenturyLosses = false;
+  my_total_force = -1;
+  opponent_total_force = -1;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -311,6 +315,10 @@ int main(int argc,char **argv)
       bOnlyLosses = true;
       bCenturyLosses = true;
     }
+    else if (!strncmp(argv[curr_arg],"-my_total_force",15))
+      sscanf(&argv[curr_arg][15],"%d",&my_total_force);
+    else if (!strncmp(argv[curr_arg],"-opponent_total_force",21))
+      sscanf(&argv[curr_arg][21],"%d",&opponent_total_force);
     else
       break;
   }
@@ -477,7 +485,7 @@ int main(int argc,char **argv)
     !bMine && !bNotMine && !bHaveMatchBoard && !bHaveMatchForce && (num_white_pieces == -1) &&
     (num_black_pieces == -1) && !bOppositeColoredBishops && !bSameColoredBishops && !bTwoBishops &&
     !bOppositeSideCastling && !bSameSideCastling && !bLessThan2Castles && !bOnlyStalemates && !bMateInOne &&
-    !bMirroredBoard) {
+    !bMirroredBoard && (my_total_force == -1) && (opponent_total_force == -1)) {
 
     if (!bSite)
       printf("%s\n",filename);
@@ -649,11 +657,33 @@ int main(int argc,char **argv)
           continue;
       }
 
+      if (my_total_force != -1) {
+        if (!curr_game.orientation) {
+          if (force_count[WHITE] != my_total_force)
+            continue;
+        }
+        else {
+          if (force_count[BLACK] != my_total_force)
+            continue;
+        }
+      }
+
+      if (opponent_total_force != -1) {
+        if (!curr_game.orientation) {
+          if (force_count[BLACK] != opponent_total_force)
+            continue;
+        }
+        else {
+          if (force_count[WHITE] != opponent_total_force)
+            continue;
+        }
+      }
+
       if (bOnlyChecks || bOnlyNoChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles || bOnlyPromotions ||
         bOnlyUnderpromotions || bOnlyNoPromotions || bOnlyCaptures || bOnlyEnPassants || bMultipleQueens || bNoQueens ||
         bHaveMatchBoard || bHaveMatchForce || bMine || bNotMine || bOppositeColoredBishops || bSameColoredBishops ||
         bTwoBishops || bOppositeSideCastling || bSameSideCastling || bLessThan2Castles || bOnlyStalemates || bMateInOne ||
-        bMirroredBoard) {
+        bMirroredBoard || (my_total_force != -1) || (opponent_total_force != -1)) {
 
         if (!bPrintedFilename) {
           if (!bSite)
@@ -846,13 +876,36 @@ int main(int argc,char **argv)
         bSkip = true;
     }
 
+    if (!bSkip && (my_total_force != -1)) {
+      if (!curr_game.orientation) {
+        if (force_count[WHITE] != my_total_force)
+          bSkip = true;
+      }
+      else {
+        if (force_count[BLACK] != my_total_force)
+          bSkip = true;
+      }
+    }
+
+    if (!bSkip && (opponent_total_force != -1)) {
+      if (!curr_game.orientation) {
+        if (force_count[BLACK] != opponent_total_force)
+          bSkip = true;
+      }
+      else {
+        if (force_count[WHITE] != opponent_total_force)
+          bSkip = true;
+      }
+    }
+
     if (!bSkip) {
       if (bOnlyChecks || bOnlyNoChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles ||
         bOnlyPromotions || bOnlyUnderpromotions || bOnlyNoPromotions ||
         bOnlyCaptures || bMultipleQueens || bNoQueens || bHaveMatchBoard || bHaveMatchForce ||
         bMine || bNotMine || (num_white_pieces != -1) || (num_black_pieces != -1) ||
         bOppositeColoredBishops || bSameColoredBishops || bTwoBishops || bOppositeSideCastling ||
-        bSameSideCastling || bLessThan2Castles || bOnlyStalemates || bMateInOne || bMirroredBoard) {
+        bSameSideCastling || bLessThan2Castles || bOnlyStalemates || bMateInOne ||
+        bMirroredBoard || (my_total_force != -1) || (opponent_total_force != -1)) {
 
         if (!bSite)
           printf("%s\n",filename);
