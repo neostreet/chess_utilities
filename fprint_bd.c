@@ -12,7 +12,7 @@ static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
 "usage: fprint_bd (-debug) (-terse) (-toggle) (-initial_boardfilename) (-i_am_white) (-i_am_black)\n"
-"  (-init_bin_boardfilename) (-board_binfilename) (-num_white_piecesnum) (-num_black_piecesnum) (-binary_format)\n"
+"  (-init_bin_boardfilename) (-board_binfilename) (-num_white_piecesnum) (-num_black_piecesnum)\n"
 "  (-match_boardfilename) (-match_forcefilename) (-match_force2filename) (-only_checks) (-only_mates) (-only_castles)\n"
 "  (-only_promotions) (-only_captures) (-only_en_passants) (-multiple_queens) (-move_number_only)\n"
 "  (-mine) (-not_mine) (-search_all_moves) (-exact_match) (-only_no_promotions) (-only_underpromotions)\n"
@@ -61,7 +61,6 @@ int main(int argc,char **argv)
   bool bHaveMatchForce;
   bool bPrintPieceCounts;
   bool bPrintMoveCounts;
-  bool bBinaryFormat;
   bool bOppositeColoredBishops;
   bool bSameColoredBishops;
   bool bTwoBishops;
@@ -101,7 +100,7 @@ int main(int argc,char **argv)
   int my_total_force;
   int opponent_total_force;
 
-  if ((argc < 2) || (argc > 57)) {
+  if ((argc < 2) || (argc > 56)) {
     printf(usage);
     return 1;
   }
@@ -136,7 +135,6 @@ int main(int argc,char **argv)
   bHaveMatchForce = false;
   bPrintPieceCounts = false;
   bPrintMoveCounts = false;
-  bBinaryFormat = false;
   bOppositeColoredBishops = false;
   bSameColoredBishops = false;
   bTwoBishops = false;
@@ -281,8 +279,6 @@ int main(int argc,char **argv)
       bLessThan2Castles = true;
     else if (!strcmp(argv[curr_arg],"-truncate_filename"))
       bTruncateFilename = true;
-    else if (!strcmp(argv[curr_arg],"-binary_format"))
-      bBinaryFormat = true;
     else if (!strcmp(argv[curr_arg],"-only_stalemates"))
       bOnlyStalemates = true;
     else if (!strcmp(argv[curr_arg],"-mate_in_one"))
@@ -400,25 +396,13 @@ int main(int argc,char **argv)
   if (feof(fptr))
     break;
 
-  if (!bBinaryFormat) {
-    retval = read_game(filename,&curr_game);
+  retval = read_game(filename,&curr_game);
 
-    if (retval) {
-      printf("read_game of %s failed: %d\n",filename,retval);
-      printf("curr_move = %d\n",curr_game.curr_move);
+  if (retval) {
+    printf("read_game of %s failed: %d\n",filename,retval);
+    printf("curr_move = %d\n",curr_game.curr_move);
 
-      continue;
-    }
-  }
-  else {
-    retval = read_binary_game(filename,&curr_game);
-
-    if (retval) {
-      printf("read_binary_game of %s failed: %d\n",filename,retval);
-      printf("curr_move = %d\n",curr_game.curr_move);
-
-      continue;
-    }
+    continue;
   }
 
   if (bTruncateFilename) {
