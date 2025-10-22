@@ -98,6 +98,8 @@ int main(int argc,char **argv)
       if (elo_diff < 100)
         continue;
     }
+
+    printf("%s\n",filename);
   }
 
   fclose(fptr);
