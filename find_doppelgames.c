@@ -14,7 +14,7 @@ struct game games[MAX_GAMES];
 static char filenames[MAX_GAMES][MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_doppelgames (-binary_format) (-verbose) (-debug) filename\n";
+"usage: find_doppelgames (-verbose) (-debug) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -29,7 +29,6 @@ int main(int argc,char **argv)
   int m;
   int n;
   int curr_arg;
-  bool bBinaryFormat;
   bool bVerbose;
   bool bDebug;
   int retval;
@@ -37,19 +36,16 @@ int main(int argc,char **argv)
   int filename_len;
   int game_ix;
 
-  if ((argc < 2) || (argc > 5)) {
+  if ((argc < 2) || (argc > 4)) {
     printf(usage);
     return 1;
   }
 
-  bBinaryFormat = false;
   bVerbose = false;
   bDebug = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-binary_format"))
-      bBinaryFormat = true;
-    else if (!strcmp(argv[curr_arg],"-verbose"))
+    if (!strcmp(argv[curr_arg],"-verbose"))
       bVerbose = true;
     else if (!strcmp(argv[curr_arg],"-debug"))
       bDebug = true;
@@ -75,23 +71,12 @@ int main(int argc,char **argv)
 
     bzero(&games[game_ix],sizeof (struct game));
 
-    if (!bBinaryFormat) {
-      retval = read_game(filenames[game_ix],&games[game_ix]);
+    retval = read_game(filenames[game_ix],&games[game_ix]);
 
-      if (retval) {
-        printf("read_game of %s failed: %d\n",filenames[game_ix],retval);
+    if (retval) {
+      printf("read_game of %s failed: %d\n",filenames[game_ix],retval);
 
-        continue;
-      }
-    }
-    else {
-      retval = read_binary_game(filenames[game_ix],&games[game_ix]);
-
-      if (retval) {
-        printf("read_binary_game of %s failed: %d\n",filenames[game_ix],retval);
-
-        continue;
-      }
+      continue;
     }
   }
 
