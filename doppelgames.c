@@ -8,7 +8,7 @@
 #include "chess.mac"
 
 static char usage[] =
-"usage: doppelgames (-binary_format) game1 game2\n";
+"usage: doppelgames game1 game2\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -18,73 +18,38 @@ bool doppelgames(struct game *gamept1,struct game *gamept2);
 int main(int argc,char **argv)
 {
   int n;
-  int curr_arg;
-  bool bBinaryFormat;
   struct game game1;
   struct game game2;
   int retval;
 
-  if ((argc < 2) || (argc > 4)) {
+  if (argc != 3) {
     printf(usage);
     return 1;
-  }
-
-  bBinaryFormat = false;
-
-  for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-binary_format"))
-      bBinaryFormat = true;
-    else
-      break;
-  }
-
-  if (argc - curr_arg != 2) {
-    printf(usage);
-    return 2;
   }
 
   bzero(&game1,sizeof (struct game));
   bzero(&game2,sizeof (struct game));
 
-  if (!bBinaryFormat) {
-    retval = read_game(argv[curr_arg],&game1);
+  retval = read_game(argv[1],&game1);
 
-    if (retval) {
-      printf("read_game of %s failed: %d\n",argv[curr_arg],retval);
+  if (retval) {
+    printf("read_game of %s failed: %d\n",argv[1],retval);
 
-      return 3;
-    }
-
-    retval = read_game(argv[curr_arg+1],&game2);
-
-    if (retval) {
-      printf("read_game of %s failed: %d\n",argv[curr_arg+1],retval);
-
-      return 4;
-    }
+    return 2;
   }
-  else {
-    retval = read_binary_game(argv[curr_arg],&game1);
 
-    if (retval) {
-      printf("read_binary_game of %s failed: %d\n",argv[curr_arg],retval);
+  retval = read_game(argv[2],&game2);
 
-      return 5;
-    }
+  if (retval) {
+    printf("read_game of %s failed: %d\n",argv[2],retval);
 
-    retval = read_binary_game(argv[curr_arg+1],&game2);
-
-    if (retval) {
-      printf("read_binary_game of %s failed: %d\n",argv[curr_arg+1],retval);
-
-      return 6;
-    }
+    return 3;
   }
 
   if (doppelgames(&game1,&game2))
-    printf("%s and %s are doppelgames\n",argv[curr_arg],argv[curr_arg+1]);
+    printf("%s and %s are doppelgames\n",argv[1],argv[2]);
   else
-    printf("%s and %s are not doppelgames\n",argv[curr_arg],argv[curr_arg+1]);
+    printf("%s and %s are not doppelgames\n",argv[1],argv[2]);
 
   return 0;
 }
