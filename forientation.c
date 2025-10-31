@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: forientation filename\n";
+"usage: forientation (-filename_first) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -19,19 +19,35 @@ char couldnt_open[] = "couldn't open %s\n";
 int main(int argc,char **argv)
 {
   int n;
+  int curr_arg;
+  bool bFilenameFirst;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if (argc != 2) {
+  if ((argc < 2) || (argc > 3)) {
     printf(usage);
     return 1;
   }
 
-  if ((fptr = fopen(argv[1],"r")) == NULL) {
-    printf(couldnt_open,argv[1]);
+  bFilenameFirst = false;
+
+  for (curr_arg = 1; curr_arg < argc; curr_arg++) {
+    if (!strcmp(argv[curr_arg],"-filename_first"))
+      bFilenameFirst = true;
+    else
+      break;
+  }
+
+  if (argc - curr_arg != 1) {
+    printf(usage);
     return 2;
+  }
+
+  if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
+    printf(couldnt_open,argv[curr_arg]);
+    return 3;
   }
 
   for ( ; ; ) {
@@ -51,7 +67,10 @@ int main(int argc,char **argv)
       continue;
     }
 
-    printf("%d %d %d %s\n",curr_game.orientation,curr_game.result,curr_game.num_moves,filename);
+    if (!bFilenameFirst)
+      printf("%d %d %d %s\n",curr_game.orientation,curr_game.result,curr_game.num_moves,filename);
+    else
+      printf("%s %d %d\n",filename,curr_game.num_moves,curr_game.orientation);
   }
 
   fclose(fptr);
