@@ -1,5 +1,17 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#ifdef WIN32
+#include <io.h>
+#else
+#include <unistd.h>
+#ifdef FREEBSD
+#define O_BINARY 0
+#endif
+#endif
 
 #include "chess.h"
 #define MAKE_GLOBALS_HERE
@@ -7,11 +19,13 @@
 #include "chess.fun"
 #include "chess.mac"
 
-#define MAX_GAMES 100
-struct game games[MAX_GAMES];
-
-#define MAX_FILENAME_LEN 256
-static char filenames[MAX_GAMES][MAX_FILENAME_LEN];
+struct game_info {
+  char eco[MAX_ECO_LEN+1];
+  int num_moves;
+  int orientation;
+  int result;
+  int processed;
+};
 
 static char usage[] =
 "usage: find_doppelgames (-verbose) (-debug) filename\n";
@@ -19,9 +33,7 @@ static char usage[] =
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
 
-static int doppelgames_calls;
-static int doppelgames_found;
-
+int read_list_file(char *filename,char **buf_ptr,int *num_lines_ptr,int **offsets_ptr);
 bool doppelgames(struct game *gamept1,struct game *gamept2);
 
 int main(int argc,char **argv)
@@ -31,10 +43,16 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bVerbose;
   bool bDebug;
+  char *buf;
+  int num_lines;
+  int *offsets;
   int retval;
-  FILE *fptr;
-  int filename_len;
-  int game_ix;
+  int malloc_size;
+  struct game_info *info;
+  struct game game1;
+  struct game game2;
+  bool bReadGame1;
+  bool bPrinted;
 
   if ((argc < 2) || (argc > 4)) {
     printf(usage);
@@ -58,48 +76,179 @@ int main(int argc,char **argv)
     return 2;
   }
 
-  if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
-    printf(couldnt_open,argv[curr_arg]);
+  retval = read_list_file(argv[curr_arg],&buf,&num_lines,&offsets);
+
+  if (retval) {
+    printf("read_list_file() failed: %d\n",retval);
     return 3;
   }
 
-  for (game_ix = 0; game_ix < MAX_GAMES; game_ix++) {
-    GetLine(fptr,filenames[game_ix],&filename_len,MAX_FILENAME_LEN);
+  malloc_size = sizeof (struct game_info) * num_lines;
 
-    if (feof(fptr))
-      break;
+  if ((info = (struct game_info *)malloc(malloc_size)) == NULL) {
+    printf("malloc of %d bytes failed\n",malloc_size);
+    return 4;
+  }
 
-    bzero(&games[game_ix],sizeof (struct game));
+  for (n = 0; n < num_lines; n++) {
+    bzero(&game1,sizeof (struct game));
 
-    retval = read_game(filenames[game_ix],&games[game_ix]);
+    retval = read_game(&buf[offsets[n]],&game1);
 
     if (retval) {
-      printf("read_game of %s failed: %d\n",filenames[game_ix],retval);
+      printf("read_game of %s failed: %d\n",&buf[offsets[n]],retval);
 
-      continue;
+      return 5;
     }
+
+    strcpy(info[n].eco,game1.eco);
+    info[n].num_moves = game1.num_moves;
+    info[n].orientation = game1.orientation;
+    info[n].result = game1.result;
+    info[n].processed = 0;
   }
 
-  fclose(fptr);
+  for (n = 0; n < num_lines - 1; n++) {
+    if (!info[n].processed) {
+      bReadGame1 = false;
+      bPrinted = false;
 
-  for (n = 0; n < game_ix - 1; n++) {
-    if (doppelgames_found)
-        break;
+      for (m = n + 1; m < num_lines; m++) {
+        if (!info[m].processed) {
+          if (strcmp(info[n].eco,info[m].eco))
+            continue;
 
-    for (m = n + 1; m < game_ix; m++) {
-      if (doppelgames(&games[n],&games[m])) {
-        if (!bVerbose)
-          printf("%s %s\n",filenames[n],filenames[m]);
-        else
-          printf("%s and %s are doppelgames\n",filenames[n],filenames[m]);
+          if (info[n].num_moves != info[m].num_moves)
+            continue;
+
+          if (info[n].orientation != info[m].orientation)
+            continue;
+
+          if (info[n].result != info[m].result)
+            continue;
+
+          if (!bReadGame1) {
+            bzero(&game1,sizeof (struct game));
+
+            retval = read_game(&buf[offsets[n]],&game1);
+
+            if (retval) {
+              printf("read_game of %s failed: %d\n",&buf[offsets[n]],retval);
+
+              return 6;
+            }
+
+            bReadGame1 = true;
+          }
+
+          bzero(&game2,sizeof (struct game));
+
+          retval = read_game(&buf[offsets[m]],&game2);
+
+          if (retval) {
+            printf("read_game of %s failed: %d\n",&buf[offsets[m]],retval);
+
+            return 7;
+          }
+
+          if (!doppelgames(&game1,&game2))
+            continue;
+
+          info[m].processed = true;
+
+          if (!bPrinted) {
+            printf("%s %s %d %d %d\n",&buf[offsets[n]],info[n].eco,info[n].num_moves,info[n].orientation,info[n].result);
+            bPrinted = true;
+          }
+
+          printf("  %s %s %d %d %d\n",&buf[offsets[m]],info[m].eco,info[m].num_moves,info[m].orientation,info[m].result);
+        }
       }
-      else if (bVerbose)
-        printf("%s and %s are not doppelgames\n",filenames[n],filenames[m]);
     }
   }
 
-  if (bDebug)
-    printf("doppelgames() called %d times; found %d doppelgames\n",doppelgames_calls,doppelgames_found);
+  free(info);
+  free(offsets);
+  free(buf);
+
+  return 0;
+}
+
+int read_list_file(char *filename,char **buf_ptr,int *num_lines_ptr,int **offsets_ptr)
+{
+  int m;
+  int n;
+  struct stat statbuf;
+  int fhndl;
+  int bytes_to_io;
+  char *buf;
+  int bytes_read;
+  int num_lines;
+  int malloc_size;
+  int *offsets;
+
+  if (stat(filename,&statbuf) == -1) {
+    printf(couldnt_get_status,filename);
+    return 1;
+  }
+
+  bytes_to_io = (int)statbuf.st_size;
+
+  if ((buf = (char *)malloc(bytes_to_io)) == NULL) {
+    printf("malloc of %d bytes failed\n",bytes_to_io);
+    return 2;
+  }
+
+  if ((fhndl = open(filename,O_BINARY | O_RDONLY,0)) == -1) {
+    printf(couldnt_open,filename);
+    free(buf);
+    return 3;
+  }
+
+  bytes_read = read(fhndl,buf,bytes_to_io);
+
+  if (bytes_read != bytes_to_io) {
+    printf("read of %d bytes failed\n",bytes_to_io);
+    free(buf);
+    close(fhndl);
+    return 4;
+  }
+
+  num_lines = 0;
+
+  for (n = 0; n < bytes_to_io; n++) {
+    if (buf[n] == 0x0a) {
+      num_lines++;
+      buf[n] = 0;
+    }
+  }
+
+  malloc_size = sizeof (int) * num_lines;
+
+  if ((offsets = (int *)malloc(malloc_size)) == NULL) {
+    printf("malloc of %d bytes failed\n",malloc_size);
+    return 5;
+  }
+
+  m = 0;
+  offsets[0] = 0;
+
+  for (n = 1; n < num_lines; n++) {
+    for ( ; m < bytes_to_io; m++) {
+      if (!buf[m]) {
+        m++;
+        break;
+      }
+    }
+
+    offsets[n] = m;
+  }
+
+  close(fhndl);
+
+  *buf_ptr = buf;
+  *num_lines_ptr = num_lines;
+  *offsets_ptr = offsets;
 
   return 0;
 }
@@ -107,17 +256,6 @@ int main(int argc,char **argv)
 bool doppelgames(struct game *gamept1,struct game *gamept2)
 {
   int n;
-
-  doppelgames_calls++;
-
-  if (gamept1->orientation != gamept2->orientation)
-    return false;
-
-  if (gamept1->result != gamept2->result)
-    return false;
-
-  if (gamept1->num_moves != gamept2->num_moves)
-    return false;
 
   for (n = 0; n < gamept1->num_moves; n++) {
     if (gamept1->moves[n].from != gamept2->moves[n].from)
@@ -129,8 +267,6 @@ bool doppelgames(struct game *gamept1,struct game *gamept2)
     if (gamept1->moves[n].special_move_info != gamept2->moves[n].special_move_info)
       return false;
   }
-
-  doppelgames_found++;
 
   return true;
 }
