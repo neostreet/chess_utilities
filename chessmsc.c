@@ -658,6 +658,16 @@ bool less_than_2_castles(struct game *gamept)
   return (castles < 2);
 }
 
+bool white_pigs(struct game *gamept)
+{
+  return false; // for now
+}
+
+bool black_pigs(struct game *gamept)
+{
+  return false; // for now
+}
+
 int get_enemy_king_file_and_rank(struct game *gamept,int *file_pt,int *rank_pt)
 {
   int m;
