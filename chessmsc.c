@@ -658,14 +658,48 @@ bool less_than_2_castles(struct game *gamept)
   return (castles < 2);
 }
 
-bool white_pigs(struct game *gamept)
+bool white_pigs(unsigned char *board)
 {
-  return false; // for now
+  int n;
+  int piece;
+  int num_white_pigs = 0;
+
+  for (n = 48; n < 56; n++) {
+    piece = get_piece1(board,n);
+
+    if (piece == ROOK_ID) {
+      num_white_pigs++;
+
+      if (num_white_pigs == 2)
+        return true;
+    }
+    else if ((num_white_pigs == 1) && (piece))
+      return false;
+  }
+
+  return false;
 }
 
-bool black_pigs(struct game *gamept)
+bool black_pigs(unsigned char *board)
 {
-  return false; // for now
+  int n;
+  int piece;
+  int num_black_pigs = 0;
+
+  for (n = 8; n < 16; n++) {
+    piece = get_piece1(board,n);
+
+    if (piece == ROOK_ID * -1) {
+      num_black_pigs++;
+
+      if (num_black_pigs == 2)
+        return true;
+    }
+    else if ((num_black_pigs == 1) && (piece))
+      return false;
+  }
+
+  return false;
 }
 
 int get_enemy_king_file_and_rank(struct game *gamept,int *file_pt,int *rank_pt)
