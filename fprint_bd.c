@@ -678,6 +678,16 @@ int main(int argc,char **argv)
         }
       }
 
+      if (bWhitePigs) {
+        if (!white_pigs(&curr_game))
+          continue;
+      }
+
+      if (bBlackPigs) {
+        if (!black_pigs(&curr_game))
+          continue;
+      }
+
       if (bOnlyChecks || bOnlyNoChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles || bOnlyPromotions ||
         bOnlyUnderpromotions || bOnlyNoPromotions || bOnlyCaptures || bOnlyEnPassants || bMultipleQueens || bNoQueens ||
         bHaveMatchBoard || bHaveMatchForce || bMine || bNotMine || bOppositeColoredBishops || bSameColoredBishops ||
@@ -896,6 +906,16 @@ int main(int argc,char **argv)
         if (force_count[WHITE] != opponent_total_force)
           bSkip = true;
       }
+    }
+
+    if (!bSkip && bWhitePigs) {
+      if (!white_pigs(&curr_game))
+        bSkip = true;
+    }
+
+    if (!bSkip && bBlackPigs) {
+      if (!black_pigs(&curr_game))
+        bSkip = true;
     }
 
     if (!bSkip) {
