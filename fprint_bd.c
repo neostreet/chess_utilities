@@ -679,12 +679,12 @@ int main(int argc,char **argv)
       }
 
       if (bWhitePigs) {
-        if (!white_pigs(&curr_game))
+        if (!white_pigs(curr_game.board))
           continue;
       }
 
       if (bBlackPigs) {
-        if (!black_pigs(&curr_game))
+        if (!black_pigs(curr_game.board))
           continue;
       }
 
@@ -909,12 +909,12 @@ int main(int argc,char **argv)
     }
 
     if (!bSkip && bWhitePigs) {
-      if (!white_pigs(&curr_game))
+      if (!white_pigs(curr_game.board))
         bSkip = true;
     }
 
     if (!bSkip && bBlackPigs) {
-      if (!black_pigs(&curr_game))
+      if (!black_pigs(curr_game.board))
         bSkip = true;
     }
 
