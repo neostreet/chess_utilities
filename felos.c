@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: felos (-terse) (-after) filename\n";
+"usage: felos (-terse) (-after) (-ge_eloval) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -22,24 +22,28 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bTerse;
   bool bAfter;
+  int ge_elo_val;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 4)) {
+  if ((argc < 2) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
   bTerse = false;
   bAfter = false;
+  ge_elo_val = -1;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
       bTerse = true;
     else if (!strcmp(argv[curr_arg],"-after"))
       bAfter = true;
+    else if (!strncmp(argv[curr_arg],"-ge_elo",7))
+      sscanf(&argv[curr_arg][7],"%d",&ge_elo_val);
     else
       break;
   }
@@ -72,16 +76,32 @@ int main(int argc,char **argv)
     }
 
     if (!bTerse) {
-      printf("%d %d %d %d %s\n",
-        curr_game.my_elo_before,curr_game.my_elo_delta,
-        curr_game.opponent_elo_before,curr_game.opponent_elo_delta,
-        filename);
+      if (!bAfter) {
+        if (curr_game.my_elo_before >= ge_elo_val) {
+          printf("%d %d %d %d %s\n",
+            curr_game.my_elo_before,curr_game.my_elo_delta,
+            curr_game.opponent_elo_before,curr_game.opponent_elo_delta,
+            filename);
+        }
+      }
+      else {
+        if (curr_game.my_elo_before + curr_game.my_elo_delta >= ge_elo_val) {
+          printf("%d %d %d %d %s\n",
+            curr_game.my_elo_before,curr_game.my_elo_delta,
+            curr_game.opponent_elo_before,curr_game.opponent_elo_delta,
+            filename);
+        }
+      }
     }
     else {
-      if (!bAfter)
-        printf("%d\n",curr_game.my_elo_before);
-      else
-        printf("%d\n",curr_game.my_elo_before + curr_game.my_elo_delta);
+      if (!bAfter) {
+        if (curr_game.my_elo_before >= ge_elo_val)
+          printf("%d %s\n",curr_game.my_elo_before,filename);
+      }
+      else {
+        if (curr_game.my_elo_before + curr_game.my_elo_delta >= ge_elo_val)
+          printf("%d %s\n",curr_game.my_elo_before + curr_game.my_elo_delta,filename);
+      }
     }
   }
 
