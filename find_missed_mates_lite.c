@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_missed_mates_lite (-verbose) (-binary_format) (-multiple) (in_a_loss) (-mine) (-opponent)\n"
+"usage: find_missed_mates_lite (-verbose) (-multiple) (in_a_loss) (-mine) (-opponent)\n"
 "  (-both) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
@@ -22,7 +22,6 @@ int main(int argc,char **argv)
   int n;
   int curr_arg;
   bool bVerbose;
-  bool bBinaryFormat;
   bool bMultiple;
   bool bInALoss;
   bool bMine;
@@ -39,13 +38,12 @@ int main(int argc,char **argv)
   int total_my_missed_mates;
   int total_opponent_missed_mates;
 
-  if ((argc < 2) || (argc > 9)) {
+  if ((argc < 2) || (argc > 8)) {
     printf(usage);
     return 1;
   }
 
   bVerbose = false;
-  bBinaryFormat = false;
   bMultiple = false;
   bInALoss = false;
   bMine = false;
@@ -55,8 +53,6 @@ int main(int argc,char **argv)
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
       bVerbose = true;
-    else if (!strcmp(argv[curr_arg],"-binary_format"))
-      bBinaryFormat = true;
     else if (!strcmp(argv[curr_arg],"-multiple"))
       bMultiple = true;
     else if (!strcmp(argv[curr_arg],"-in_a_loss"))
@@ -116,25 +112,13 @@ int main(int argc,char **argv)
 
     bzero(&curr_game,sizeof (struct game));
 
-    if (!bBinaryFormat) {
-      retval = read_game(filename,&curr_game);
+    retval = read_game(filename,&curr_game);
 
-      if (retval) {
-        printf("read_game of %s failed: %d\n",filename,retval);
-        printf("curr_move = %d\n",curr_game.curr_move);
+    if (retval) {
+      printf("read_game of %s failed: %d\n",filename,retval);
+      printf("curr_move = %d\n",curr_game.curr_move);
 
-        continue;
-      }
-    }
-    else {
-      retval = read_binary_game(filename,&curr_game);
-
-      if (retval) {
-        printf("read_binary_game of %s failed: %d\n",filename,retval);
-        printf("curr_move = %d\n",curr_game.curr_move);
-
-        continue;
-      }
+      continue;
     }
 
     if (bInALoss) {
