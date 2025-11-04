@@ -13,7 +13,8 @@ static char out_filename[MAX_FILENAME_LEN];
 
 static char usage[] =
 "usage: fprint_forced_moves (-verbose) (-both) (-total_first) (-debug)\n"
-"  (-only_wins) (-only_draws) (-only_losses) (-i_am_white) (-i_am_black) filename\n";
+"  (-only_wins) (-only_draws) (-only_losses) (-i_am_white) (-i_am_black)\n"
+"  (-only_nonzero) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -33,6 +34,7 @@ int main(int argc,char **argv)
   bool bOnlyLosses;
   bool bIAmWhite;
   bool bIAmBlack;
+  bool bOnlyNonzero;
   FILE *fptr;
   FILE *out_fptr;
   int filename_len;
@@ -42,7 +44,7 @@ int main(int argc,char **argv)
   int found_white;
   int found_black;
 
-  if ((argc < 2) || (argc > 11)) {
+  if ((argc < 2) || (argc > 12)) {
     printf(usage);
     return 1;
   }
@@ -56,6 +58,7 @@ int main(int argc,char **argv)
   bOnlyLosses = false;
   bIAmWhite = false;
   bIAmBlack = false;
+  bOnlyNonzero = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-verbose"))
@@ -76,6 +79,8 @@ int main(int argc,char **argv)
       bIAmWhite = true;
     else if (!strcmp(argv[curr_arg],"-i_am_black"))
       bIAmBlack = true;
+    else if (!strcmp(argv[curr_arg],"-only_nonzero"))
+      bOnlyNonzero = true;
     else
       break;
   }
@@ -147,7 +152,7 @@ int main(int argc,char **argv)
   }
 
   if (bVerbose) {
-    sprintf(out_filename,"%s.%s%s%s%s%s%s%sforced_moves",
+    sprintf(out_filename,"%s.%s%s%s%s%s%s%s%sforced_moves",
       filename,
       (bBoth ? "both." : ""),
       (bTotalFirst ? "total_first." : ""),
@@ -155,7 +160,8 @@ int main(int argc,char **argv)
       (bOnlyDraws ? "only_draws." : ""),
       (bOnlyLosses ? "only_losses." : ""),
       (bIAmWhite ? "i_am_white." : ""),
-      (bIAmBlack ? "i_am_black." : ""));
+      (bIAmBlack ? "i_am_black." : ""),
+      (bOnlyNonzero ? "only_nonzero." : ""));
 
     if ((out_fptr = fopen(out_filename,"w")) == NULL) {
       printf(couldnt_open,out_filename);
@@ -218,12 +224,16 @@ int main(int argc,char **argv)
 
   if (!bBoth || ((found_white > 0) && (found_black > 0))) {
     if (!bTotalFirst) {
-      printf("white: %d, black: %d, total: %d %s\n",
-        found_white,found_black,found_white + found_black,filename);
+      if (!bOnlyNonzero || (found_white + found_black)) {
+        printf("white: %d, black: %d, total: %d %s\n",
+          found_white,found_black,found_white + found_black,filename);
+      }
     }
     else {
-      printf("%d total, white: %d, black: %d, %s\n",
-        found_white + found_black,found_white,found_black,filename);
+      if (!bOnlyNonzero || (found_white + found_black)) {
+        printf("%d total, white: %d, black: %d, %s\n",
+          found_white + found_black,found_white,found_black,filename);
+      }
     }
   }
 
