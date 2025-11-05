@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_mates (-debug) (-verbose) (-binary_format) (-mine) (-not_mine) (-mating_squaresquare)\n"
+"usage: find_mates (-debug) (-verbose) (-mine) (-not_mine) (-mating_squaresquare)\n"
 "  (-mated_squaresquare) (-mate_distancedistance) (-mating_piecepiece) (-discovered) (-back_rank)\n"
 "  [white | black] filename\n";
 
@@ -26,7 +26,6 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bDebug;
   bool bVerbose;
-  bool bBinaryFormat;
   bool bMine;
   bool bNotMine;
   int file;
@@ -49,14 +48,13 @@ int main(int argc,char **argv)
   int match_count;
   int last_piece;
 
-  if ((argc < 3) || (argc > 14)) {
+  if ((argc < 3) || (argc > 13)) {
     printf(usage);
     return 1;
   }
 
   bDebug = false;
   bVerbose = false;
-  bBinaryFormat = false;
   bMine = false;
   bNotMine = false;
   mating_square = -1;
@@ -71,8 +69,6 @@ int main(int argc,char **argv)
       bDebug = true;
     else if (!strcmp(argv[curr_arg],"-verbose"))
       bVerbose = true;
-    else if (!strcmp(argv[curr_arg],"-binary_format"))
-      bBinaryFormat = true;
     else if (!strcmp(argv[curr_arg],"-mine"))
       bMine = true;
     else if (!strcmp(argv[curr_arg],"-not_mine"))
@@ -169,25 +165,13 @@ int main(int argc,char **argv)
 
     bzero(&curr_game,sizeof (struct game));
 
-    if (!bBinaryFormat) {
-      retval = read_game(filename,&curr_game);
+    retval = read_game(filename,&curr_game);
 
-      if (retval) {
-        printf("read_game of %s failed: %d\n",filename,retval);
-        printf("curr_move = %d\n",curr_game.curr_move);
+    if (retval) {
+      printf("read_game of %s failed: %d\n",filename,retval);
+      printf("curr_move = %d\n",curr_game.curr_move);
 
-        continue;
-      }
-    }
-    else {
-      retval = read_binary_game(filename,&curr_game);
-
-      if (retval) {
-        printf("read_binary_game of %s failed: %d\n",filename,retval);
-        printf("curr_move = %d\n",curr_game.curr_move);
-
-        continue;
-      }
+      continue;
     }
 
     if (curr_game.moves[curr_game.num_moves-1].special_move_info & SPECIAL_MOVE_MATE) {
