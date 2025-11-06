@@ -21,7 +21,7 @@ static char usage[] =
 "  (-truncate_filename) (-only_stalemates) (-no_queens) (-mate_in_one) (-only_wins) (-only_draws) (-only_losses)\n"
 "  (-ecoeco) (-search_specific_movemove) (-site) (-mirrored_board) (-mirrored_min_num_movesval)\n"
 "  (-century_wins) (-century_draws) (-century_losses) (-my_total_forceval) (-opponent_total_forceval)\n"
-"  (-white_pigs) (-black_pigs) filename\n";
+"  (-white_pigs) (-black_pigs) (-exchange_sac) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -102,8 +102,9 @@ int main(int argc,char **argv)
   int opponent_total_force;
   bool bWhitePigs;
   bool bBlackPigs;
+  bool bExchangeSac;
 
-  if ((argc < 2) || (argc > 58)) {
+  if ((argc < 2) || (argc > 59)) {
     printf(usage);
     return 1;
   }
@@ -162,6 +163,7 @@ int main(int argc,char **argv)
   opponent_total_force = -1;
   bWhitePigs = false;
   bBlackPigs = false;
+  bExchangeSac = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -324,6 +326,8 @@ int main(int argc,char **argv)
       bWhitePigs = true;
     else if (!strcmp(argv[curr_arg],"-black_pigs"))
       bBlackPigs = true;
+    else if (!strcmp(argv[curr_arg],"-exchange_sac"))
+      bExchangeSac = true;
     else
       break;
   }
@@ -484,7 +488,7 @@ int main(int argc,char **argv)
     (num_black_pieces == -1) && !bOppositeColoredBishops && !bSameColoredBishops && !bTwoBishops &&
     !bOppositeSideCastling && !bSameSideCastling && !bLessThan2Castles && !bOnlyStalemates && !bMateInOne &&
     !bMirroredBoard && (my_total_force == -1) && (opponent_total_force == -1) &&
-    !bWhitePigs && !bBlackPigs) {
+    !bWhitePigs && !bBlackPigs && !bExchangeSac) {
 
     if (!bSite)
       printf("%s\n",filename);
@@ -688,12 +692,17 @@ int main(int argc,char **argv)
           continue;
       }
 
+      if (bExchangeSac) {
+        if (!exchange_sac(&curr_game))
+          continue;
+      }
+
       if (bOnlyChecks || bOnlyNoChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles || bOnlyPromotions ||
         bOnlyUnderpromotions || bOnlyNoPromotions || bOnlyCaptures || bOnlyEnPassants || bMultipleQueens || bNoQueens ||
         bHaveMatchBoard || bHaveMatchForce || bMine || bNotMine || bOppositeColoredBishops || bSameColoredBishops ||
         bTwoBishops || bOppositeSideCastling || bSameSideCastling || bLessThan2Castles || bOnlyStalemates || bMateInOne ||
         bMirroredBoard || (my_total_force != -1) || (opponent_total_force != -1) ||
-        bWhitePigs || bBlackPigs) {
+        bWhitePigs || bBlackPigs || bExchangeSac) {
 
         if (!bPrintedFilename) {
           if (!bSite)
@@ -918,6 +927,11 @@ int main(int argc,char **argv)
         bSkip = true;
     }
 
+    if (!bSkip && bExchangeSac) {
+      if (!exchange_sac(&curr_game))
+        bSkip = true;
+    }
+
     if (!bSkip) {
       if (bOnlyChecks || bOnlyNoChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles ||
         bOnlyPromotions || bOnlyUnderpromotions || bOnlyNoPromotions ||
@@ -926,7 +940,7 @@ int main(int argc,char **argv)
         bOppositeColoredBishops || bSameColoredBishops || bTwoBishops || bOppositeSideCastling ||
         bSameSideCastling || bLessThan2Castles || bOnlyStalemates || bMateInOne ||
         bMirroredBoard || (my_total_force != -1) || (opponent_total_force != -1) ||
-        bWhitePigs || bBlackPigs) {
+        bWhitePigs || bBlackPigs || bExchangeSac) {
 
         if (!bSite)
           printf("%s\n",filename);
