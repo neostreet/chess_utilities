@@ -702,6 +702,11 @@ bool black_pigs(unsigned char *board)
   return false;
 }
 
+bool exchange_sac(struct game *gamept)
+{
+  return false; // for now
+}
+
 int get_enemy_king_file_and_rank(struct game *gamept,int *file_pt,int *rank_pt)
 {
   int m;
