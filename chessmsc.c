@@ -704,7 +704,29 @@ bool black_pigs(unsigned char *board)
 
 bool exchange_sac(struct game *gamept)
 {
-  return false; // for now
+  int captured_piece;
+
+  if (!(gamept->moves[gamept->curr_move].special_move_info & SPECIAL_MOVE_CAPTURE))
+    return false;
+  else
+    captured_piece = gamept->moves[gamept->curr_move].captured_piece;
+
+  if (!(gamept->curr_move % 2)) {
+    if (get_piece1(gamept->board,gamept->moves[gamept->curr_move].to) != ROOK_ID)
+      return false;
+
+    if ((captured_piece != KNIGHT_ID * -1) && (captured_piece != BISHOP_ID * -1))
+      return false;
+  }
+  else {
+    if (get_piece1(gamept->board,gamept->moves[gamept->curr_move].to) != ROOK_ID * -1)
+      return false;
+
+    if ((captured_piece != KNIGHT_ID) && (captured_piece != BISHOP_ID))
+      return false;
+  }
+
+  return true;
 }
 
 int get_enemy_king_file_and_rank(struct game *gamept,int *file_pt,int *rank_pt)
