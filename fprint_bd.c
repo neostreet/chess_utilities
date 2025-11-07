@@ -21,7 +21,7 @@ static char usage[] =
 "  (-truncate_filename) (-only_stalemates) (-no_queens) (-mate_in_one) (-only_wins) (-only_draws) (-only_losses)\n"
 "  (-ecoeco) (-search_specific_movemove) (-site) (-mirrored_board) (-mirrored_min_num_movesval)\n"
 "  (-century_wins) (-century_draws) (-century_losses) (-my_total_forceval) (-opponent_total_forceval)\n"
-"  (-white_pigs) (-black_pigs) (-exchange_sac) filename\n";
+"  (-white_pigs) (-black_pigs) (-exchange_sac) (-curr_move) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -103,8 +103,9 @@ int main(int argc,char **argv)
   bool bWhitePigs;
   bool bBlackPigs;
   bool bExchangeSac;
+  bool bCurrMove;
 
-  if ((argc < 2) || (argc > 59)) {
+  if ((argc < 2) || (argc > 60)) {
     printf(usage);
     return 1;
   }
@@ -164,6 +165,7 @@ int main(int argc,char **argv)
   bWhitePigs = false;
   bBlackPigs = false;
   bExchangeSac = false;
+  bCurrMove = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -328,6 +330,8 @@ int main(int argc,char **argv)
       bBlackPigs = true;
     else if (!strcmp(argv[curr_arg],"-exchange_sac"))
       bExchangeSac = true;
+    else if (!strcmp(argv[curr_arg],"-curr_move"))
+      bCurrMove = true;
     else
       break;
   }
@@ -490,10 +494,12 @@ int main(int argc,char **argv)
     !bMirroredBoard && (my_total_force == -1) && (opponent_total_force == -1) &&
     !bWhitePigs && !bBlackPigs && !bExchangeSac) {
 
-    if (!bSite)
-      printf("%s\n",filename);
-    else
+    if (bSite)
       printf("%s\n",curr_game.site);
+    else if (bCurrMove)
+      printf("%d %s\n",curr_game.curr_move+1,filename);
+    else
+      printf("%s\n",filename);
   }
 
   curr_game.curr_move--;
@@ -705,10 +711,12 @@ int main(int argc,char **argv)
         bWhitePigs || bBlackPigs || bExchangeSac) {
 
         if (!bPrintedFilename) {
-          if (!bSite)
-            printf("%s\n",filename);
-          else
+          if (bSite)
             printf("%s\n",curr_game.site);
+          else if (bCurrMove)
+            printf("%d %s\n",curr_game.curr_move+1,filename);
+          else
+            printf("%s\n",filename);
 
           if (bTerse)
             break;
@@ -942,10 +950,12 @@ int main(int argc,char **argv)
         bMirroredBoard || (my_total_force != -1) || (opponent_total_force != -1) ||
         bWhitePigs || bBlackPigs || bExchangeSac) {
 
-        if (!bSite)
-          printf("%s\n",filename);
-        else
+        if (bSite)
           printf("%s\n",curr_game.site);
+        else if (bCurrMove)
+          printf("%d %s\n",curr_game.curr_move+1,filename);
+        else
+          printf("%s\n",filename);
       }
 
       if (!bTerse) {
