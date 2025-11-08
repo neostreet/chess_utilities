@@ -47,7 +47,7 @@ int main(int argc,char **argv)
 
      line_no++;
 
-    sscanf("%d",line,&curr_move);
+    sscanf(line,"%d",&curr_move);
 
     for (filename_offset = 0; filename_offset < line_len; filename_offset++) {
       if (line[filename_offset] == ' ') {
