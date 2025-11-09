@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: tabulate_games (-i_am_white) (-i_am_black) filename\n";
+"usage: tabulate_games (-verbose) (-i_am_white) (-i_am_black) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -21,6 +21,7 @@ double chess_win_pct(int wins,int draws,int losses);
 int main(int argc,char **argv)
 {
   int curr_arg;
+  bool bVerbose;
   bool bIAmWhite;
   bool bIAmBlack;
   int retval;
@@ -31,17 +32,24 @@ int main(int argc,char **argv)
   int draws;
   int losses;
   int total_games;
+  int wins_sum_elo_delta;
+  int draws_sum_elo_delta;
+  int losses_sum_elo_delta;
+  double dwork;
 
-  if ((argc < 2) || (argc > 4)) {
+  if ((argc < 2) || (argc > 5)) {
     printf(usage);
     return 1;
   }
 
+  bVerbose = false;
   bIAmWhite = false;
   bIAmBlack = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-i_am_white"))
+    if (!strcmp(argv[curr_arg],"-verbose"))
+      bVerbose = true;
+    else if (!strcmp(argv[curr_arg],"-i_am_white"))
       bIAmWhite = true;
     else if (!strcmp(argv[curr_arg],"-i_am_black"))
       bIAmBlack = true;
@@ -67,6 +75,9 @@ int main(int argc,char **argv)
   wins = 0;
   draws = 0;
   losses = 0;
+  wins_sum_elo_delta = 0;
+  draws_sum_elo_delta = 0;
+  losses_sum_elo_delta = 0;
 
   for ( ; ; ) {
     GetLine(fptr,filename,&filename_len,MAX_FILENAME_LEN);
@@ -94,14 +105,17 @@ int main(int argc,char **argv)
     switch(curr_game.result) {
       case RESULT_WIN:
         wins++;
+        wins_sum_elo_delta += curr_game.my_elo_delta;
 
         break;
       case RESULT_DRAW:
         draws++;
+        draws_sum_elo_delta += curr_game.my_elo_delta;
 
         break;
       case RESULT_LOSS:
         losses++;
+        losses_sum_elo_delta += curr_game.my_elo_delta;
 
         break;
     }
@@ -111,9 +125,34 @@ int main(int argc,char **argv)
 
   total_games = wins + draws + losses;
 
-  printf("%5d wins\n",wins);
-  printf("%5d draws\n",draws);
-  printf("%5d losses\n",losses);
+  if (!bVerbose) {
+    printf("%5d wins\n",wins);
+    printf("%5d draws\n",draws);
+    printf("%5d losses\n",losses);
+  }
+  else {
+    if (wins)
+      dwork = (double)wins_sum_elo_delta / (double)wins;
+    else
+      dwork = (double)0;
+
+    printf("%5d wins %d %lf\n",wins,wins_sum_elo_delta,dwork);
+
+    if (draws)
+      dwork = (double)draws_sum_elo_delta / (double)draws;
+    else
+      dwork = (double)0;
+
+    printf("%5d draws %d %lf\n",draws,draws_sum_elo_delta,dwork);
+
+    if (losses)
+      dwork = (double)losses_sum_elo_delta / (double)losses;
+    else
+      dwork = (double)0;
+
+    printf("%5d losses %d %lf\n",losses,losses_sum_elo_delta,dwork);
+  }
+
   printf("\n%5d games\n",total_games);
   printf("\n%6.2lf%%\n",chess_win_pct(wins,draws,losses));
 
