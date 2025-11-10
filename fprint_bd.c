@@ -497,7 +497,7 @@ int main(int argc,char **argv)
     if (bSite)
       printf("%s\n",curr_game.site);
     else if (bCurrMove)
-      printf("%d %s\n",curr_game.curr_move+1,filename);
+      printf("%d %s\n",curr_game.curr_move,filename);
     else
       printf("%s\n",filename);
   }
@@ -714,7 +714,7 @@ int main(int argc,char **argv)
           if (bSite)
             printf("%s\n",curr_game.site);
           else if (bCurrMove)
-            printf("%d %s\n",curr_game.curr_move+1,filename);
+            printf("%d %s\n",curr_game.curr_move,filename);
           else
             printf("%s\n",filename);
 
@@ -953,7 +953,7 @@ int main(int argc,char **argv)
         if (bSite)
           printf("%s\n",curr_game.site);
         else if (bCurrMove)
-          printf("%d %s\n",curr_game.curr_move+1,filename);
+          printf("%d %s\n",curr_game.curr_move,filename);
         else
           printf("%s\n",filename);
       }
