@@ -21,7 +21,7 @@ static char usage[] =
 "  (-truncate_filename) (-only_stalemates) (-no_queens) (-mate_in_one) (-only_wins) (-only_draws) (-only_losses)\n"
 "  (-ecoeco) (-search_specific_movemove) (-site) (-mirrored_board) (-mirrored_min_num_movesval)\n"
 "  (-century_wins) (-century_draws) (-century_losses) (-my_total_forceval) (-opponent_total_forceval)\n"
-"  (-white_pigs) (-black_pigs) (-exchange_sac) (-curr_move) filename\n";
+"  (-white_pigs) (-black_pigs) (-exchange_sac) (-curr_move) (-queenside_castles) (-kingside_castles) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -104,8 +104,10 @@ int main(int argc,char **argv)
   bool bBlackPigs;
   bool bExchangeSac;
   bool bCurrMove;
+  bool bKingsideCastles;
+  bool bQueensideCastles;
 
-  if ((argc < 2) || (argc > 60)) {
+  if ((argc < 2) || (argc > 62)) {
     printf(usage);
     return 1;
   }
@@ -166,6 +168,8 @@ int main(int argc,char **argv)
   bBlackPigs = false;
   bExchangeSac = false;
   bCurrMove = false;
+  bKingsideCastles = false;
+  bQueensideCastles = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -332,6 +336,10 @@ int main(int argc,char **argv)
       bExchangeSac = true;
     else if (!strcmp(argv[curr_arg],"-curr_move"))
       bCurrMove = true;
+    else if (!strcmp(argv[curr_arg],"-kingside_castles"))
+      bKingsideCastles = true;
+    else if (!strcmp(argv[curr_arg],"-queenside_castles"))
+      bQueensideCastles = true;
     else
       break;
   }
@@ -492,7 +500,7 @@ int main(int argc,char **argv)
     (num_black_pieces == -1) && !bOppositeColoredBishops && !bSameColoredBishops && !bTwoBishops &&
     !bOppositeSideCastling && !bSameSideCastling && !bLessThan2Castles && !bOnlyStalemates && !bMateInOne &&
     !bMirroredBoard && (my_total_force == -1) && (opponent_total_force == -1) &&
-    !bWhitePigs && !bBlackPigs && !bExchangeSac) {
+    !bWhitePigs && !bBlackPigs && !bExchangeSac && !bKingsideCastles && !bQueensideCastles) {
 
     if (bSite)
       printf("%s\n",curr_game.site);
@@ -703,12 +711,22 @@ int main(int argc,char **argv)
           continue;
       }
 
+      if (bKingsideCastles) {
+        if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_KINGSIDE_CASTLE))
+          continue;
+      }
+
+      if (bQueensideCastles) {
+        if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_QUEENSIDE_CASTLE))
+          continue;
+      }
+
       if (bOnlyChecks || bOnlyNoChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles || bOnlyPromotions ||
         bOnlyUnderpromotions || bOnlyNoPromotions || bOnlyCaptures || bOnlyEnPassants || bMultipleQueens || bNoQueens ||
         bHaveMatchBoard || bHaveMatchForce || bMine || bNotMine || bOppositeColoredBishops || bSameColoredBishops ||
         bTwoBishops || bOppositeSideCastling || bSameSideCastling || bLessThan2Castles || bOnlyStalemates || bMateInOne ||
         bMirroredBoard || (my_total_force != -1) || (opponent_total_force != -1) ||
-        bWhitePigs || bBlackPigs || bExchangeSac) {
+        bWhitePigs || bBlackPigs || bExchangeSac || bKingsideCastles || bQueensideCastles) {
 
         if (!bPrintedFilename) {
           if (bSite)
@@ -940,6 +958,16 @@ int main(int argc,char **argv)
         bSkip = true;
     }
 
+    if (!bSkip && bKingsideCastles) {
+      if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_KINGSIDE_CASTLE))
+        bSkip = true;
+    }
+
+    if (!bSkip && bQueensideCastles) {
+      if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_QUEENSIDE_CASTLE))
+        bSkip = true;
+    }
+
     if (!bSkip) {
       if (bOnlyChecks || bOnlyNoChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles ||
         bOnlyPromotions || bOnlyUnderpromotions || bOnlyNoPromotions ||
@@ -948,7 +976,7 @@ int main(int argc,char **argv)
         bOppositeColoredBishops || bSameColoredBishops || bTwoBishops || bOppositeSideCastling ||
         bSameSideCastling || bLessThan2Castles || bOnlyStalemates || bMateInOne ||
         bMirroredBoard || (my_total_force != -1) || (opponent_total_force != -1) ||
-        bWhitePigs || bBlackPigs || bExchangeSac) {
+        bWhitePigs || bBlackPigs || bExchangeSac || bKingsideCastles || bQueensideCastles) {
 
         if (bSite)
           printf("%s\n",curr_game.site);
