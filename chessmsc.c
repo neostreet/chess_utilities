@@ -825,3 +825,18 @@ void position_game(struct game *gamept,int move)
 
   calculate_seirawan_counts(gamept);
 }
+
+double chess_win_pct(int wins,int draws,int losses)
+{
+  int games;
+  double win_pct;
+
+  games = wins + draws + losses;
+
+  if (!games)
+    win_pct = (double)0;
+  else
+    win_pct = ((double)wins + ((double)draws / (double) 2)) / (double)games * (double)100;
+
+  return win_pct;
+}
