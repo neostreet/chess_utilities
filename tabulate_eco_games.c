@@ -16,8 +16,6 @@ static char usage[] =
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
 
-double chess_win_pct(int wins,int draws,int losses);
-
 int main(int argc,char **argv)
 {
   int n;
@@ -137,16 +135,4 @@ int main(int argc,char **argv)
   printf("\n%6.2lf%%\n",chess_win_pct(wins,draws,losses));
 
   return 0;
-}
-
-double chess_win_pct(int wins,int draws,int losses)
-{
-  int games;
-  double win_pct;
-
-  games = wins + draws + losses;
-
-  win_pct = ((double)wins + ((double)draws / (double) 2)) / (double)games * (double)100;
-
-  return win_pct;
 }
