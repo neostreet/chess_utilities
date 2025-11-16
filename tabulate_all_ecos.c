@@ -34,8 +34,6 @@ static char usage[] =
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
 
-double chess_win_pct(int wins,int draws,int losses);
-
 int read_ecos(char *ecos_file,char **ecos_pt,int *num_ecos_pt);
 int find_eco(char *eco,char *ecos,int num_ecos);
 
@@ -218,21 +216,6 @@ int main(int argc,char **argv)
   }
 
   return 0;
-}
-
-double chess_win_pct(int wins,int draws,int losses)
-{
-  int games;
-  double win_pct;
-
-  games = wins + draws + losses;
-
-  if (!games)
-    win_pct = (double)0;
-  else
-    win_pct = ((double)wins + ((double)draws / (double) 2)) / (double)games * (double)100;
-
-  return win_pct;
 }
 
 int read_ecos(char *ecos_file,char **ecos_pt,int *num_ecos_pt)
