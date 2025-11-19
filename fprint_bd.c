@@ -22,7 +22,7 @@ static char usage[] =
 "  (-ecoeco) (-search_specific_movemove) (-site) (-mirrored_board) (-mirrored_min_num_movesval)\n"
 "  (-century_wins) (-century_draws) (-century_losses) (-my_total_forceval) (-opponent_total_forceval)\n"
 "  (-white_pigs) (-black_pigs) (-exchange_sac) (-curr_move) (-queenside_castles) (-kingside_castles)\n"
-"  (-queen_sac) (-only_datedate) filename\n";
+"  (-queen_sac) (-only_datedate) (-elo_delta) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -110,8 +110,9 @@ int main(int argc,char **argv)
   bool bQueenSac;
   bool bOnlyDate;
   char *date_ptr;
+  bool bEloDelta;
 
-  if ((argc < 2) || (argc > 64)) {
+  if ((argc < 2) || (argc > 65)) {
     printf(usage);
     return 1;
   }
@@ -176,6 +177,7 @@ int main(int argc,char **argv)
   bQueensideCastles = false;
   bQueenSac = false;
   bOnlyDate = false;
+  bEloDelta = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -352,6 +354,8 @@ int main(int argc,char **argv)
       bOnlyDate = true;
       date_ptr = &argv[curr_arg][10];
     }
+    else if (!strcmp(argv[curr_arg],"-elo_delta"))
+      bEloDelta = true;
     else
       break;
   }
@@ -519,6 +523,8 @@ int main(int argc,char **argv)
       printf("%s\n",curr_game.site);
     else if (bCurrMove)
       printf("%d %s\n",curr_game.curr_move,filename);
+    else if (bEloDelta)
+      printf("%d %s\n",curr_game.my_elo_delta,filename);
     else
       printf("%s\n",filename);
   }
@@ -757,6 +763,8 @@ int main(int argc,char **argv)
             printf("%s\n",curr_game.site);
           else if (bCurrMove)
             printf("%d %s\n",curr_game.curr_move,filename);
+          else if (bEloDelta)
+            printf("%d %s\n",curr_game.my_elo_delta,filename);
           else
             printf("%s\n",filename);
 
@@ -1017,6 +1025,8 @@ int main(int argc,char **argv)
           printf("%s\n",curr_game.site);
         else if (bCurrMove)
           printf("%d %s\n",curr_game.curr_move,filename);
+        else if (bEloDelta)
+          printf("%d %s\n",curr_game.my_elo_delta,filename);
         else
           printf("%s\n",filename);
       }
