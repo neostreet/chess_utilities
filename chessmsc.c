@@ -774,6 +774,11 @@ bool queen_sac(struct game *gamept)
   return true;
 }
 
+bool four_knights(struct game *gamept)
+{
+  return false; // for now
+}
+
 int get_enemy_king_file_and_rank(struct game *gamept,int *file_pt,int *rank_pt)
 {
   int m;
