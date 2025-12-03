@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_opponent_games opponent filename\n";
+"usage: find_opponent_games (-verbose) opponent filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -22,6 +22,8 @@ static int Contains(bool bCaseSens,char *line,int line_len,
 int main(int argc,char **argv)
 {
   int n;
+  int curr_arg;
+  bool bVerbose;
   int opponent_name_len;
   int retval;
   FILE *fptr;
@@ -30,16 +32,30 @@ int main(int argc,char **argv)
   int title_len;
   int ix;
 
-  if (argc != 3) {
+  if ((argc < 3) || (argc > 4)) {
     printf(usage);
     return 1;
   }
 
-  opponent_name_len = strlen(argv[1]);
+  bVerbose =  false;
 
-  if ((fptr = fopen(argv[2],"r")) == NULL) {
-    printf(couldnt_open,argv[2]);
+  for (curr_arg = 1; curr_arg < argc; curr_arg++) {
+    if (!strcmp(argv[curr_arg],"-verbose"))
+      bVerbose = true;
+    else
+      break;
+  }
+
+  if (argc - curr_arg != 2) {
+    printf(usage);
     return 2;
+  }
+
+  opponent_name_len = strlen(argv[curr_arg]);
+
+  if ((fptr = fopen(argv[curr_arg+1],"r")) == NULL) {
+    printf(couldnt_open,argv[curr_arg+1]);
+    return 3;
   }
 
   for ( ; ; ) {
@@ -63,10 +79,13 @@ int main(int argc,char **argv)
 
     if (Contains(true,
       curr_game.title,title_len,
-      argv[1],opponent_name_len,
+      argv[curr_arg],opponent_name_len,
       &ix)) {
 
-      printf("%s\n",filename);
+      if (!bVerbose)
+        printf("%s\n",filename);
+      else
+        printf("%s %s\n",filename,curr_game.date);
     }
   }
 
