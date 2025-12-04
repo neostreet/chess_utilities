@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: is_win (-i_am_white) (-i_am_black) (-terse) filename\n";
+"usage: is_win (-i_am_white) (-i_am_black) (-terse_modemode) (-unexpected) (-unexpected_gap) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -21,28 +21,36 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bIAmWhite;
   bool bIAmBlack;
-  bool bTerse;
+  int terse_mode;
+  bool bUnexpected;
+  int unexpected_gap;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 5)) {
+  if ((argc < 2) || (argc > 7)) {
     printf(usage);
     return 1;
   }
 
   bIAmWhite = false;
   bIAmBlack = false;
-  bTerse = false;
+  terse_mode = 0;
+  bUnexpected = false;
+  unexpected_gap = 30;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-i_am_white"))
       bIAmWhite = true;
     else if (!strcmp(argv[curr_arg],"-i_am_black"))
       bIAmBlack = true;
-    else if (!strcmp(argv[curr_arg],"-terse"))
-      bTerse = true;
+    else if (!strncmp(argv[curr_arg],"-terse_mode",11))
+      sscanf(&argv[curr_arg][11],"%d",&terse_mode);
+    else if (!strcmp(argv[curr_arg],"-unexpected"))
+      bUnexpected = true;
+    else if (!strncmp(argv[curr_arg],"-unexpected_gap",15))
+      sscanf(&argv[curr_arg][15],"%d",&unexpected_gap);
     else
       break;
   }
@@ -86,15 +94,32 @@ int main(int argc,char **argv)
       continue;
 
     if (curr_game.result == RESULT_WIN) {
-      if (!bTerse)
-        printf("1 %s\n",filename);
-      else
+      if (bUnexpected) {
+        if (curr_game.opponent_elo_before - curr_game.my_elo_before < unexpected_gap)
+          continue;
+      }
+
+      if (!terse_mode) {
+        if (!bUnexpected)
+          printf("1 %s\n",filename);
+        else {
+          printf("%s %d (%d %d)\n",filename,
+            curr_game.opponent_elo_before - curr_game.my_elo_before,
+            curr_game.opponent_elo_before,curr_game.my_elo_before);
+        }
+      }
+      else if (terse_mode == 1)
         printf("1\n");
+      else if (terse_mode == 2)
+        printf("%s\n",filename);
     }
     else {
-      if (!bTerse)
+      if (bUnexpected)
+        continue;
+
+      if (!terse_mode)
         printf("0 %s\n",filename);
-      else
+      else if (terse_mode == 1)
         printf("0\n");
     }
   }
