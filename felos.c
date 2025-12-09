@@ -76,31 +76,21 @@ int main(int argc,char **argv)
     }
 
     if (!bTerse) {
-      if (!bAfter) {
-        if (curr_game.my_elo_before >= ge_elo_val) {
-          printf("%d %d %d %d %s\n",
-            curr_game.my_elo_before,curr_game.my_elo_delta,
-            curr_game.opponent_elo_before,curr_game.opponent_elo_delta,
-            filename);
-        }
-      }
-      else {
-        if (curr_game.my_elo_before + curr_game.my_elo_delta >= ge_elo_val) {
-          printf("%d %d %d %d %s\n",
-            curr_game.my_elo_before,curr_game.my_elo_delta,
-            curr_game.opponent_elo_before,curr_game.opponent_elo_delta,
-            filename);
-        }
+      if (curr_game.my_elo_before + curr_game.my_elo_delta >= ge_elo_val) {
+        printf("%d %d %d %d %s %s\n",
+          curr_game.my_elo_before,curr_game.my_elo_delta,
+          curr_game.opponent_elo_before,curr_game.opponent_elo_delta,
+          filename,curr_game.date);
       }
     }
     else {
       if (!bAfter) {
-        if (curr_game.my_elo_before >= ge_elo_val)
-          printf("%d %s\n",curr_game.my_elo_before,filename);
+        if (curr_game.my_elo_before + curr_game.my_elo_delta >= ge_elo_val)
+          printf("%d %s %s\n",curr_game.my_elo_before,filename,curr_game.date);
       }
       else {
         if (curr_game.my_elo_before + curr_game.my_elo_delta >= ge_elo_val)
-          printf("%d %s\n",curr_game.my_elo_before + curr_game.my_elo_delta,filename);
+          printf("%d %s %s\n",curr_game.my_elo_before + curr_game.my_elo_delta,filename,curr_game.date);
       }
     }
   }
