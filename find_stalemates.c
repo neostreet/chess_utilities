@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_stalemates (-mine) (-not_mine) filename\n";
+"usage: find_stalemates (-mine) (-not_mine) (-i_am_white) (-i_am_black) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -22,24 +22,32 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bMine;
   bool bNotMine;
+  bool bIAmWhite;
+  bool bIAmBlack;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 4)) {
+  if ((argc < 2) || (argc > 6)) {
     printf(usage);
     return 1;
   }
 
   bMine = false;
   bNotMine = false;
+  bIAmWhite = false;
+  bIAmBlack = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-mine"))
       bMine = true;
     else if (!strcmp(argv[curr_arg],"-not_mine"))
       bNotMine = true;
+    else if (!strcmp(argv[curr_arg],"-i_am_white"))
+      bIAmWhite = true;
+    else if (!strcmp(argv[curr_arg],"-i_am_black"))
+      bIAmBlack = true;
     else
       break;
   }
@@ -54,9 +62,14 @@ int main(int argc,char **argv)
     return 3;
   }
 
+  if (bIAmWhite and bIAmBlack) {
+    printf("can't specify both -i_am_white and -i_am_black\n");
+    return 4;
+  }
+
   if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 4;
+    return 5;
   }
 
   for ( ; ; ) {
@@ -96,6 +109,12 @@ int main(int argc,char **argv)
           continue;
       }
     }
+
+    if (bIAmWhite && curr_game.orientation)
+      continue;
+
+    if (bIAmBlack && !curr_game.orientation)
+      continue;
 
     if (curr_game.moves[curr_game.num_moves-1].special_move_info & SPECIAL_MOVE_STALEMATE)
       printf("%s\n",filename);
