@@ -47,7 +47,7 @@ int main(int argc,char **argv)
   bytes_to_read = (int)statbuf.st_size;
 
   if (bytes_to_read % 4) {
-    printf("length of %s must be evenly divisible by 4\n");
+    printf("length of %s must be evenly divisible by 4\n",argv[1]);
     return 4;
   }
 
