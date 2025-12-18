@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_eco_games (-i_am_white) (-i_am_black) eco filename\n";
+"usage: find_eco_games (-i_am_white) (-i_am_black) (-verbose) eco filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -22,24 +22,28 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bIAmWhite;
   bool bIAmBlack;
+  bool bVerbose;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if ((argc < 3) || (argc > 5)) {
+  if ((argc < 3) || (argc > 6)) {
     printf(usage);
     return 1;
   }
 
   bIAmWhite = false;
   bIAmBlack = false;
+  bVerbose = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-i_am_white"))
       bIAmWhite = true;
     else if (!strcmp(argv[curr_arg],"-i_am_black"))
       bIAmBlack = true;
+    else if (!strcmp(argv[curr_arg],"-verbose"))
+      bVerbose = true;
     else
       break;
   }
@@ -82,8 +86,12 @@ int main(int argc,char **argv)
     if (bIAmBlack && !curr_game.orientation)
       continue;
 
-    if (!strcmp(curr_game.eco,argv[curr_arg]))
-      printf("%s\n",filename);
+    if (!strcmp(curr_game.eco,argv[curr_arg])) {
+      if (!bVerbose)
+        printf("%s\n",filename);
+      else
+        printf("%s %s\n",filename,curr_game.date);
+    }
   }
 
   fclose(fptr);
