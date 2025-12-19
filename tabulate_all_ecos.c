@@ -19,17 +19,18 @@ struct stats {
   int wins;
   int draws;
   int losses;
+  int white;
+  int black;
   int total_games;
   double win_pct;
 };
 
-#define MAX_ECOS 500
-static struct stats eco_stats[MAX_ECOS];
-static int ixs[MAX_ECOS];
+static struct stats *eco_stats;
+static int *ixs;
 
 static char usage[] =
 "usage: tabulate_all_ecos (-i_am_white) (-i_am_black) (-terse) (-no_sort) (-debug)\n"
-"  (-min_gamesmin_games) ecos filename\n";
+"  (-min_gamesmin_games) (-not_both_colors) ecos filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -54,7 +55,9 @@ int main(int argc,char **argv)
   bool bNoSort;
   bool bDebug;
   int min_games;
+  bool bNotBothColors;
   char *ecos;
+  int bytes_to_malloc;
   int num_ecos;
   int eco_ix;
   int retval;
@@ -63,7 +66,7 @@ int main(int argc,char **argv)
   struct game curr_game;
   char *cpt;
 
-  if ((argc < 3) || (argc > 9)) {
+  if ((argc < 3) || (argc > 10)) {
     printf(usage);
     return 1;
   }
@@ -74,6 +77,7 @@ int main(int argc,char **argv)
   bNoSort = false;
   bDebug = false;
   min_games = 0;
+  bNotBothColors = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-i_am_white"))
@@ -88,6 +92,8 @@ int main(int argc,char **argv)
       bDebug = true;
     else if (!strncmp(argv[curr_arg],"-min_games",10))
       sscanf(&argv[curr_arg][10],"%d",&min_games);
+    else if (!strcmp(argv[curr_arg],"-not_both_colors"))
+      bNotBothColors = true;
     else
       break;
   }
@@ -109,22 +115,32 @@ int main(int argc,char **argv)
     return 4;
   }
 
-  if (num_ecos > MAX_ECOS) {
-    printf("%d ecos exceeds MAX_ECOS of %d\n",num_ecos,MAX_ECOS);
-    free(ecos);
+  bytes_to_malloc = num_ecos * sizeof(struct stats);
+
+  if ((eco_stats = (struct stats *)malloc(bytes_to_malloc)) == NULL) {
+    printf("malloc of %d bytes failedd\n",bytes_to_malloc);
     return 5;
+  }
+
+  bytes_to_malloc = num_ecos * sizeof(int);
+
+  if ((ixs = (int *)malloc(bytes_to_malloc)) == NULL) {
+    printf("malloc of %d bytes failedd\n",bytes_to_malloc);
+    return 6;
   }
 
   if ((fptr = fopen(argv[curr_arg+1],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg+1]);
     free(ecos);
-    return 6;
+    return 7;
   }
 
   for (n = 0; n < num_ecos; n++) {
     eco_stats[n].wins = 0;
     eco_stats[n].draws = 0;
     eco_stats[n].losses = 0;
+    eco_stats[n].white = 0;
+    eco_stats[n].black = 0;
   }
 
   for ( ; ; ) {
@@ -171,6 +187,11 @@ int main(int argc,char **argv)
 
         break;
     }
+
+    if (!curr_game.orientation)
+      eco_stats[eco_ix].white++;
+    else
+      eco_stats[eco_ix].black++;
   }
 
   fclose(fptr);
@@ -194,6 +215,11 @@ int main(int argc,char **argv)
     if (eco_stats[ixs[n]].total_games < min_games)
       continue;
 
+    if (bNotBothColors) {
+      if (eco_stats[ixs[n]].white && eco_stats[ixs[n]].black)
+        continue;
+    }
+
     cpt = &ecos[ixs[n] * 3];
 
     for (m = 0; m < 3; m++)
@@ -205,13 +231,16 @@ int main(int argc,char **argv)
       printf("  %5d wins\n",eco_stats[ixs[n]].wins);
       printf("  %5d draws\n",eco_stats[ixs[n]].draws);
       printf("  %5d losses\n",eco_stats[ixs[n]].losses);
+      printf("  %5d white\n",eco_stats[ixs[n]].white);
+      printf("  %5d black\n",eco_stats[ixs[n]].black);
       printf("  %5d games\n",eco_stats[ixs[n]].total_games);
       printf(" %6.2lf%%\n",eco_stats[ixs[n]].win_pct);
     }
     else {
-      printf("%5.2lf%% %s %d wins %d draws %d losses %d games\n",
-        eco_stats[ixs[n]].win_pct,work_eco,eco_stats[ixs[n]].wins,eco_stats[ixs[n]].draws,
-        eco_stats[ixs[n]].losses,eco_stats[ixs[n]].total_games);
+      printf("%5.2lf%% %s %d wins %d draws %d losses %d white %d black %d games\n",
+        eco_stats[ixs[n]].win_pct,work_eco,
+        eco_stats[ixs[n]].wins,eco_stats[ixs[n]].draws,eco_stats[ixs[n]].losses,
+        eco_stats[ixs[n]].white,eco_stats[ixs[n]].black,eco_stats[ixs[n]].total_games);
     }
   }
 
