@@ -30,7 +30,7 @@ static int *ixs;
 
 static char usage[] =
 "usage: tabulate_all_ecos (-i_am_white) (-i_am_black) (-terse) (-no_sort) (-debug)\n"
-"  (-min_gamesmin_games) (-not_both_colors) ecos filename\n";
+"  (-min_gamesmin_games) (-not_both_colors) (-no_white) (-no_black) ecos filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -56,6 +56,8 @@ int main(int argc,char **argv)
   bool bDebug;
   int min_games;
   bool bNotBothColors;
+  bool bNoWhite;
+  bool bNoBlack;
   char *ecos;
   int bytes_to_malloc;
   int num_ecos;
@@ -66,7 +68,7 @@ int main(int argc,char **argv)
   struct game curr_game;
   char *cpt;
 
-  if ((argc < 3) || (argc > 10)) {
+  if ((argc < 3) || (argc > 12)) {
     printf(usage);
     return 1;
   }
@@ -78,6 +80,8 @@ int main(int argc,char **argv)
   bDebug = false;
   min_games = 0;
   bNotBothColors = false;
+  bNoWhite = false;
+  bNoBlack = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-i_am_white"))
@@ -94,6 +98,10 @@ int main(int argc,char **argv)
       sscanf(&argv[curr_arg][10],"%d",&min_games);
     else if (!strcmp(argv[curr_arg],"-not_both_colors"))
       bNotBothColors = true;
+    else if (!strcmp(argv[curr_arg],"-no_white"))
+      bNoWhite = true;
+    else if (!strcmp(argv[curr_arg],"-no_black"))
+      bNoBlack = true;
     else
       break;
   }
@@ -103,36 +111,41 @@ int main(int argc,char **argv)
     return 2;
   }
 
+  if (bNotBothColors + bNoWhite + bNoBlack > 1) {
+    printf("can't specify more than one of -not_both_colors, -no_white, and -no_black\n");
+    return 3;
+  }
+
   if (argc - curr_arg != 2) {
     printf(usage);
-    return 3;
+    return 4;
   }
 
   retval = read_ecos(argv[curr_arg],&ecos,&num_ecos);
 
   if (retval) {
     printf("read_ecos() failed; retval = %d\n",retval);
-    return 4;
+    return 5;
   }
 
   bytes_to_malloc = num_ecos * sizeof(struct stats);
 
   if ((eco_stats = (struct stats *)malloc(bytes_to_malloc)) == NULL) {
     printf("malloc of %d bytes failedd\n",bytes_to_malloc);
-    return 5;
+    return 6;
   }
 
   bytes_to_malloc = num_ecos * sizeof(int);
 
   if ((ixs = (int *)malloc(bytes_to_malloc)) == NULL) {
     printf("malloc of %d bytes failedd\n",bytes_to_malloc);
-    return 6;
+    return 7;
   }
 
   if ((fptr = fopen(argv[curr_arg+1],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg+1]);
     free(ecos);
-    return 7;
+    return 8;
   }
 
   for (n = 0; n < num_ecos; n++) {
@@ -217,6 +230,14 @@ int main(int argc,char **argv)
 
     if (bNotBothColors) {
       if (eco_stats[ixs[n]].white && eco_stats[ixs[n]].black)
+        continue;
+    }
+    else if (bNoWhite) {
+      if (eco_stats[ixs[n]].white)
+        continue;
+    }
+    else if (bNoBlack) {
+      if (eco_stats[ixs[n]].black)
         continue;
     }
 
