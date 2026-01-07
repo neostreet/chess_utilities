@@ -13,7 +13,7 @@ static char filename[MAX_FILENAME_LEN];
 static char usage[] =
 "usage: find_mates (-debug) (-verbose) (-mine) (-not_mine) (-mating_squaresquare)\n"
 "  (-mated_squaresquare) (-mate_distancedistance) (-mating_piecepiece) (-discovered) (-back_rank)\n"
-"  [white | black] filename\n";
+"  (-mated_king_not_on_back_rank) [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -39,6 +39,7 @@ int main(int argc,char **argv)
   int mating_piece;
   bool bDiscovered;
   bool bBackRank;
+  bool bMatedKingNotOnBackRank;
   int by_white;
   int retval;
   FILE *fptr;
@@ -48,7 +49,7 @@ int main(int argc,char **argv)
   int match_count;
   int last_piece;
 
-  if ((argc < 3) || (argc > 13)) {
+  if ((argc < 3) || (argc > 14)) {
     printf(usage);
     return 1;
   }
@@ -63,6 +64,7 @@ int main(int argc,char **argv)
   mating_piece = 0;
   bDiscovered = false;
   bBackRank = false;
+  bMatedKingNotOnBackRank = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -101,6 +103,8 @@ int main(int argc,char **argv)
       bDiscovered = true;
     else if (!strcmp(argv[curr_arg],"-back_rank"))
       bBackRank = true;
+    else if (!strcmp(argv[curr_arg],"-mated_king_not_on_back_rank"))
+      bMatedKingNotOnBackRank = true;
     else
       break;
   }
@@ -207,6 +211,11 @@ int main(int argc,char **argv)
 
       if (bBackRank) {
         if (!back_rank_mate(&curr_game))
+          continue;
+      }
+
+      if (bMatedKingNotOnBackRank) {
+        if (!mated_king_not_on_back_rank(&curr_game))
           continue;
       }
 
