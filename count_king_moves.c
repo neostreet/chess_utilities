@@ -11,7 +11,8 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: count_king_moves (-i_am_white) (-i_am_black) [white | black] filename\n";
+"usage: count_king_moves (-i_am_white) (-i_am_black)\n"
+"  (-only_wins) (-only_draws) (-only_losses) [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -22,25 +23,37 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bIAmWhite;
   bool bIAmBlack;
+  bool bOnlyWins;
+  bool bOnlyDraws;
+  bool bOnlyLosses;
   int by_white;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if ((argc < 3) || (argc > 5)) {
+  if ((argc < 3) || (argc > 8)) {
     printf(usage);
     return 1;
   }
 
   bIAmWhite = false;
   bIAmBlack = false;
+  bOnlyWins = false;
+  bOnlyDraws = false;
+  bOnlyLosses = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-i_am_white"))
       bIAmWhite = true;
     else if (!strcmp(argv[curr_arg],"-i_am_black"))
       bIAmBlack = true;
+    else if (!strcmp(argv[curr_arg],"-only_wins"))
+      bOnlyWins = true;
+    else if (!strcmp(argv[curr_arg],"-only_draws"))
+      bOnlyDraws = true;
+    else if (!strcmp(argv[curr_arg],"-only_losses"))
+      bOnlyLosses = true;
     else
       break;
   }
@@ -55,6 +68,11 @@ int main(int argc,char **argv)
     return 3;
   }
 
+  if (bOnlyWins + bOnlyDraws + bOnlyLosses > 1) {
+    printf("can only speciry one of -only_wins, -only_draws, and -only_losses\n");
+    return 4;
+  }
+
   by_white = -1;
 
   if (!strcmp(argv[curr_arg],"white"))
@@ -64,12 +82,12 @@ int main(int argc,char **argv)
 
   if (by_white == -1) {
     printf(usage);
-    return 4;
+    return 5;
   }
 
   if ((fptr = fopen(argv[curr_arg+1],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg+1]);
-    return 5;
+    return 6;
   }
 
   for ( ; ; ) {
@@ -94,6 +112,19 @@ int main(int argc,char **argv)
 
     if (bIAmBlack && !curr_game.orientation)
       continue;
+
+    if (bOnlyWins) {
+      if (curr_game.result != RESULT_WIN)
+        continue;
+    }
+    else if (bOnlyDraws) {
+      if (curr_game.result != RESULT_DRAW)
+        continue;
+    }
+    else if (bOnlyLosses) {
+      if (curr_game.result != RESULT_LOSS)
+        continue;
+    }
 
     if (by_white)
       printf("%d %s\n",curr_game.white_pieces[4].move_count,filename);
