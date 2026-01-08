@@ -11,7 +11,8 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: count_queen_moves (-binary_format) (-i_am_white) (-i_am_black) [white | black] filename\n";
+"usage: count_queen_moves (-verbose) (-i_am_white) (-i_am_black)\n"
+"  (-only_wins) (-only_draws) (-only_losses) [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -20,31 +21,44 @@ int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
-  bool bBinaryFormat;
+  bool bVerbose;
   bool bIAmWhite;
   bool bIAmBlack;
+  bool bOnlyWins;
+  bool bOnlyDraws;
+  bool bOnlyLosses;
   int by_white;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
+  char result;
 
-  if ((argc < 3) || (argc > 6)) {
+  if ((argc < 3) || (argc > 9)) {
     printf(usage);
     return 1;
   }
 
-  bBinaryFormat = false;
+  bVerbose = false;
   bIAmWhite = false;
   bIAmBlack = false;
+  bOnlyWins = false;
+  bOnlyDraws = false;
+  bOnlyLosses = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-binary_format"))
-      bBinaryFormat = true;
+    if (!strcmp(argv[curr_arg],"-verbose"))
+      bVerbose = true;
     else if (!strcmp(argv[curr_arg],"-i_am_white"))
       bIAmWhite = true;
     else if (!strcmp(argv[curr_arg],"-i_am_black"))
       bIAmBlack = true;
+    else if (!strcmp(argv[curr_arg],"-only_wins"))
+      bOnlyWins = true;
+    else if (!strcmp(argv[curr_arg],"-only_draws"))
+      bOnlyDraws = true;
+    else if (!strcmp(argv[curr_arg],"-only_losses"))
+      bOnlyLosses = true;
     else
       break;
   }
@@ -59,6 +73,11 @@ int main(int argc,char **argv)
     return 3;
   }
 
+  if (bOnlyWins + bOnlyDraws + bOnlyLosses > 1) {
+    printf("can only speciry one of -only_wins, -only_draws, and -only_losses\n");
+    return 4;
+  }
+
   by_white = -1;
 
   if (!strcmp(argv[curr_arg],"white"))
@@ -68,12 +87,12 @@ int main(int argc,char **argv)
 
   if (by_white == -1) {
     printf(usage);
-    return 4;
+    return 5;
   }
 
   if ((fptr = fopen(argv[curr_arg+1],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg+1]);
-    return 5;
+    return 6;
   }
 
   for ( ; ; ) {
@@ -84,25 +103,13 @@ int main(int argc,char **argv)
 
     bzero(&curr_game,sizeof (struct game));
 
-    if (!bBinaryFormat) {
-      retval = read_game(filename,&curr_game);
+    retval = read_game(filename,&curr_game);
 
-      if (retval) {
-        printf("read_game of %s failed: %d\n",filename,retval);
-        printf("curr_move = %d\n",curr_game.curr_move);
+    if (retval) {
+      printf("read_game of %s failed: %d\n",filename,retval);
+      printf("curr_move = %d\n",curr_game.curr_move);
 
-        continue;
-      }
-    }
-    else {
-      retval = read_binary_game(filename,&curr_game);
-
-      if (retval) {
-        printf("read_binary_game of %s failed: %d\n",filename,retval);
-        printf("curr_move = %d\n",curr_game.curr_move);
-
-        continue;
-      }
+      continue;
     }
 
     if (bIAmWhite && curr_game.orientation)
@@ -111,10 +118,50 @@ int main(int argc,char **argv)
     if (bIAmBlack && !curr_game.orientation)
       continue;
 
-    if (by_white)
-      printf("%d %s\n",curr_game.white_pieces[3].move_count,filename);
-    else
-      printf("%d %s\n",curr_game.black_pieces[11].move_count,filename);
+    if (bOnlyWins) {
+      if (curr_game.result != RESULT_WIN)
+        continue;
+    }
+    else if (bOnlyDraws) {
+      if (curr_game.result != RESULT_DRAW)
+        continue;
+    }
+    else if (bOnlyLosses) {
+      if (curr_game.result != RESULT_LOSS)
+        continue;
+    }
+
+    if (!bVerbose) {
+      if (by_white)
+        printf("%d %s\n",curr_game.white_pieces[3].move_count,filename);
+      else
+        printf("%d %s\n",curr_game.black_pieces[11].move_count,filename);
+    }
+    else {
+      switch(curr_game.result) {
+        case RESULT_WIN:
+          result = 'W';
+
+          break;
+        case RESULT_DRAW:
+          result = 'D';
+
+          break;
+        case RESULT_LOSS:
+          result = 'L';
+
+          break;
+      }
+
+      if (by_white) {
+        printf("%d %c %s %s\n",curr_game.white_pieces[3].move_count,
+          result,filename,curr_game.date);
+      }
+      else {
+        printf("%d %c %s %s\n",curr_game.black_pieces[11].move_count,
+          result,filename,curr_game.date);
+      }
+    }
   }
 
   fclose(fptr);
