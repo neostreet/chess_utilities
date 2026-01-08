@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: count_king_moves (-i_am_white) (-i_am_black)\n"
+"usage: count_king_moves (-verbose) (-i_am_white) (-i_am_black)\n"
 "  (-only_wins) (-only_draws) (-only_losses) [white | black] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
@@ -21,6 +21,7 @@ int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
+  bool bVerbose;
   bool bIAmWhite;
   bool bIAmBlack;
   bool bOnlyWins;
@@ -31,12 +32,14 @@ int main(int argc,char **argv)
   FILE *fptr;
   int filename_len;
   struct game curr_game;
+  char result;
 
-  if ((argc < 3) || (argc > 8)) {
+  if ((argc < 3) || (argc > 9)) {
     printf(usage);
     return 1;
   }
 
+  bVerbose = false;
   bIAmWhite = false;
   bIAmBlack = false;
   bOnlyWins = false;
@@ -44,7 +47,9 @@ int main(int argc,char **argv)
   bOnlyLosses = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-i_am_white"))
+    if (!strcmp(argv[curr_arg],"-verbose"))
+      bVerbose = true;
+    else if (!strcmp(argv[curr_arg],"-i_am_white"))
       bIAmWhite = true;
     else if (!strcmp(argv[curr_arg],"-i_am_black"))
       bIAmBlack = true;
@@ -126,10 +131,37 @@ int main(int argc,char **argv)
         continue;
     }
 
-    if (by_white)
-      printf("%d %s\n",curr_game.white_pieces[4].move_count,filename);
-    else
-      printf("%d %s\n",curr_game.black_pieces[12].move_count,filename);
+    if (!bVerbose) {
+      if (by_white)
+        printf("%d %s\n",curr_game.white_pieces[4].move_count,filename);
+      else
+        printf("%d %s\n",curr_game.black_pieces[12].move_count,filename);
+    }
+    else {
+      switch(curr_game.result) {
+        case RESULT_WIN:
+          result = 'W';
+
+          break;
+        case RESULT_DRAW:
+          result = 'D';
+
+          break;
+        case RESULT_LOSS:
+          result = 'L';
+
+          break;
+      }
+
+      if (by_white) {
+        printf("%d %c %s %s\n",curr_game.white_pieces[4].move_count,
+          result,filename,curr_game.date);
+      }
+      else {
+        printf("%d %c %s %s\n",curr_game.black_pieces[12].move_count,
+          result,filename,curr_game.date);
+      }
+    }
   }
 
   fclose(fptr);
