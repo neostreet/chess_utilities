@@ -87,13 +87,13 @@ int main(int argc,char **argv)
 
     if ((curr_game.result == RESULT_LOSS) || (curr_game.result == RESULT_DRAW)) {
       if (!bTerse)
-        printf("1 %s\n",filename);
+        printf("1 %s %s\n",filename,curr_game.date);
       else
         printf("1\n");
     }
     else {
       if (!bTerse)
-        printf("0 %s\n",filename);
+        printf("0 %s %s\n",filename,curr_game.date);
       else
         printf("0\n");
     }
