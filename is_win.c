@@ -101,7 +101,7 @@ int main(int argc,char **argv)
 
       if (!terse_mode) {
         if (!bUnexpected)
-          printf("1 %s\n",filename);
+          printf("1 %s %s\n",filename,curr_game.date);
         else {
           printf("%s %d (%d %d)\n",filename,
             curr_game.opponent_elo_before - curr_game.my_elo_before,
@@ -118,7 +118,7 @@ int main(int argc,char **argv)
         continue;
 
       if (!terse_mode)
-        printf("0 %s\n",filename);
+        printf("0 %s %s\n",filename,curr_game.date);
       else if (terse_mode == 1)
         printf("0\n");
     }
