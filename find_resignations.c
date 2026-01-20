@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_resignations (-mine) (-not_mine) (-i_am_white) (-i_am_black) filename\n";
+"usage: find_resignations (-mine) (-not_mine) (-i_am_white) (-i_am_black) (-before_move) (-after_move) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -24,12 +24,14 @@ int main(int argc,char **argv)
   bool bNotMine;
   bool bIAmWhite;
   bool bIAmBlack;
+  bool bBeforeMove;
+  bool bAfterMove;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 6)) {
+  if ((argc < 2) || (argc > 8)) {
     printf(usage);
     return 1;
   }
@@ -38,6 +40,8 @@ int main(int argc,char **argv)
   bNotMine = false;
   bIAmWhite = false;
   bIAmBlack = false;
+  bBeforeMove = false;
+  bAfterMove = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-mine"))
@@ -48,6 +52,10 @@ int main(int argc,char **argv)
       bIAmWhite = true;
     else if (!strcmp(argv[curr_arg],"-i_am_black"))
       bIAmBlack = true;
+    else if (!strcmp(argv[curr_arg],"-before_move"))
+      bBeforeMove = true;
+    else if (!strcmp(argv[curr_arg],"-after_move"))
+      bAfterMove = true;
     else
       break;
   }
@@ -67,9 +75,14 @@ int main(int argc,char **argv)
     return 4;
   }
 
+  if (bBeforeMove && bAfterMove) {
+    printf("can't specify both -before_move and -after_move\n");
+    return 5;
+  }
+
   if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 5;
+    return 6;
   }
 
   for ( ; ; ) {
@@ -112,6 +125,27 @@ int main(int argc,char **argv)
 
     if (bIAmBlack && !curr_game.orientation)
       continue;
+
+    if (bBeforeMove) {
+      if (!curr_game.orientation) {
+        if (curr_game.num_moves % 2)
+          continue;
+      }
+      else {
+        if (!(curr_game.num_moves % 2))
+          continue;
+      }
+    }
+    else if (bAfterMove) {
+      if (curr_game.orientation) {
+        if (curr_game.num_moves % 2)
+          continue;
+      }
+      else {
+        if (!(curr_game.num_moves % 2))
+          continue;
+      }
+    }
 
     printf("%s\n",filename);
   }
