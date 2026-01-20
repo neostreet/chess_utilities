@@ -124,23 +124,47 @@ int main(int argc,char **argv)
       continue;
 
     if (bBeforeMove) {
-      if (!curr_game.orientation) {
-        if (curr_game.num_moves % 2)
-          continue;
+      if (bMine) {
+        if (!curr_game.orientation) {
+          if (curr_game.num_moves % 2)
+            continue;
+        }
+        else {
+          if (!(curr_game.num_moves % 2))
+            continue;
+        }
       }
       else {
-        if (!(curr_game.num_moves % 2))
-          continue;
+        if (curr_game.orientation) {
+          if (curr_game.num_moves % 2)
+            continue;
+        }
+        else {
+          if (!(curr_game.num_moves % 2))
+            continue;
+        }
       }
     }
     else if (bAfterMove) {
-      if (curr_game.orientation) {
-        if (curr_game.num_moves % 2)
-          continue;
+      if (bMine) {
+        if (curr_game.orientation) {
+          if (curr_game.num_moves % 2)
+            continue;
+        }
+        else {
+          if (!(curr_game.num_moves % 2))
+            continue;
+        }
       }
       else {
-        if (!(curr_game.num_moves % 2))
-          continue;
+        if (!curr_game.orientation) {
+          if (curr_game.num_moves % 2)
+            continue;
+        }
+        else {
+          if (!(curr_game.num_moves % 2))
+            continue;
+        }
       }
     }
 
