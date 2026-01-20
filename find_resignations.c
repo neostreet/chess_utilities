@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_resignations (-mine) (-not_mine) (-i_am_white) (-i_am_black) (-before_move) (-after_move) filename\n";
+"usage: find_resignations (-i_am_white) (-i_am_black) (-before_move) (-after_move) [mine | opponent] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -20,35 +20,28 @@ int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
-  bool bMine;
-  bool bNotMine;
   bool bIAmWhite;
   bool bIAmBlack;
   bool bBeforeMove;
   bool bAfterMove;
+  bool bMine;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 8)) {
+  if ((argc < 3) || (argc > 7)) {
     printf(usage);
     return 1;
   }
 
-  bMine = false;
-  bNotMine = false;
   bIAmWhite = false;
   bIAmBlack = false;
   bBeforeMove = false;
   bAfterMove = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-mine"))
-      bMine = true;
-    else if (!strcmp(argv[curr_arg],"-not_mine"))
-      bNotMine = true;
-    else if (!strcmp(argv[curr_arg],"-i_am_white"))
+    if (!strcmp(argv[curr_arg],"-i_am_white"))
       bIAmWhite = true;
     else if (!strcmp(argv[curr_arg],"-i_am_black"))
       bIAmBlack = true;
@@ -60,28 +53,32 @@ int main(int argc,char **argv)
       break;
   }
 
-  if (argc - curr_arg != 1) {
+  if (argc - curr_arg != 2) {
     printf(usage);
     return 2;
   }
 
-  if (bMine && bNotMine) {
-    printf("can't specify both -mine and -not_mine\n");
-    return 3;
-  }
-
   if (bIAmWhite and bIAmBlack) {
     printf("can't specify both -i_am_white and -i_am_black\n");
-    return 4;
+    return 3;
   }
 
   if (bBeforeMove && bAfterMove) {
     printf("can't specify both -before_move and -after_move\n");
+    return 4;
+  }
+
+  if (!strcmp(argv[curr_arg],"mine"))
+    bMine = true;
+  else if (!strcmp(argv[curr_arg],"opponent"))
+    bMine = false;
+  else  {
+    printf(usage);
     return 5;
   }
 
-  if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
-    printf(couldnt_open,argv[curr_arg]);
+  if ((fptr = fopen(argv[curr_arg + 1],"r")) == NULL) {
+    printf(couldnt_open,argv[curr_arg + 1]);
     return 6;
   }
 
@@ -115,7 +112,7 @@ int main(int argc,char **argv)
       if (curr_game.result == RESULT_WIN)
           continue;
     }
-    else if (bNotMine) {
+    else {
       if (curr_game.result == RESULT_LOSS)
           continue;
     }
