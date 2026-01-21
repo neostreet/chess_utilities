@@ -109,11 +109,6 @@ int main(int argc,char **argv)
       continue;
     }
 
-    if (bAfterOpponentCapture) {
-      if (!(curr_game.moves[curr_game.num_moves-1].special_move_info & SPECIAL_MOVE_CAPTURE))
-        continue;
-    }
-
     if (curr_game.moves[curr_game.num_moves-1].special_move_info & SPECIAL_MOVE_MATE)
       continue;
 
@@ -181,6 +176,11 @@ int main(int argc,char **argv)
             continue;
         }
       }
+    }
+
+    if (bAfterOpponentCapture) {
+      if (!(curr_game.moves[curr_game.num_moves-1].special_move_info & SPECIAL_MOVE_CAPTURE))
+        continue;
     }
 
     printf("%s\n",filename);
