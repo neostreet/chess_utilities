@@ -11,7 +11,8 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_resignations (-i_am_white) (-i_am_black) (-before_move) (-after_move) [mine | opponent] filename\n";
+"usage: find_resignations (-i_am_white) (-i_am_black) (-before_move) (-after_move)\n"
+"  (-after_opponent_capture) [mine | opponent] filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -24,13 +25,14 @@ int main(int argc,char **argv)
   bool bIAmBlack;
   bool bBeforeMove;
   bool bAfterMove;
+  bool bAfterOpponentCapture;
   bool bMine;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if ((argc < 3) || (argc > 7)) {
+  if ((argc < 3) || (argc > 8)) {
     printf(usage);
     return 1;
   }
@@ -39,6 +41,7 @@ int main(int argc,char **argv)
   bIAmBlack = false;
   bBeforeMove = false;
   bAfterMove = false;
+  bAfterOpponentCapture = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-i_am_white"))
@@ -49,6 +52,8 @@ int main(int argc,char **argv)
       bBeforeMove = true;
     else if (!strcmp(argv[curr_arg],"-after_move"))
       bAfterMove = true;
+    else if (!strcmp(argv[curr_arg],"-after_opponent_capture"))
+      bAfterOpponentCapture = true;
     else
       break;
   }
@@ -77,6 +82,11 @@ int main(int argc,char **argv)
     return 5;
   }
 
+  if (bAfterOpponentCapture) {
+    bBeforeMove = true;
+    bAfterMove = false;
+  }
+
   if ((fptr = fopen(argv[curr_arg + 1],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg + 1]);
     return 6;
@@ -97,6 +107,11 @@ int main(int argc,char **argv)
       printf("curr_move = %d\n",curr_game.curr_move);
 
       continue;
+    }
+
+    if (bAfterOpponentCapture) {
+      if (!(curr_game.moves[curr_game.num_moves-1].special_move_info & SPECIAL_MOVE_CAPTURE))
+        continue;
     }
 
     if (curr_game.moves[curr_game.num_moves-1].special_move_info & SPECIAL_MOVE_MATE)
