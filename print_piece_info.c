@@ -8,7 +8,7 @@
 #include "chess.mac"
 
 static char usage[] =
-"usage: print_piece_info (-verbose) filename\n";
+"usage: print_piece_info (-only_remaining) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -18,7 +18,7 @@ void GetLine(FILE *fptr,char *line,int *line_len,int maxllen);
 int main(int argc,char **argv)
 {
   int curr_arg;
-  bool bVerbose;
+  bool bOnlyRemaining;
   int retval;
   struct game curr_game;
 
@@ -27,11 +27,11 @@ int main(int argc,char **argv)
     return 1;
   }
 
-  bVerbose = false;
+  bOnlyRemaining = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-verbose"))
-      bVerbose = true;
+    if (!strcmp(argv[curr_arg],"-only_remaining"))
+     bOnlyRemaining = true;
     else
       break;
   }
@@ -55,7 +55,7 @@ int main(int argc,char **argv)
   print_bd(&curr_game);
   putchar(0x0a);
 
-  print_piece_info(&curr_game);
+  print_piece_info(&curr_game,bOnlyRemaining);
 
   return 0;
 }
