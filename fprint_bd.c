@@ -788,6 +788,7 @@ int main(int argc,char **argv)
         putchar(0x0a);
 
       printf("curr_move = %d\n",curr_game.curr_move+1);
+      printf("White force count = %d, Black force count = %d\n",force_count[WHITE],force_count[BLACK]);
 
       if (!bMoveNumberOnly) {
         putchar(0x0a);
@@ -1047,6 +1048,7 @@ int main(int argc,char **argv)
 
       if (!bTerse) {
         printf("curr_move = %d\n",curr_game.curr_move+1);
+        printf("White force count = %d, Black force count = %d\n",force_count[WHITE],force_count[BLACK]);
         putchar(0x0a);
         print_bd(&curr_game);
         print_special_moves(&curr_game);
