@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: felos (-terse) (-after) (-ge_eloval) filename\n";
+"usage: felos (-terse) (-after) (-ge_eloval) (-le_eloval) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -22,28 +22,40 @@ int main(int argc,char **argv)
   int curr_arg;
   bool bTerse;
   bool bAfter;
+  bool bGeElo;
+  bool bLeElo;
   int ge_elo_val;
+  int le_elo_val;
   int retval;
   FILE *fptr;
   int filename_len;
+  int elo_after;
+  bool bPrint;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 5)) {
+  if ((argc < 2) || (argc > 6)) {
     printf(usage);
     return 1;
   }
 
   bTerse = false;
   bAfter = false;
-  ge_elo_val = -1;
+  bGeElo = false;
+  bLeElo = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-terse"))
       bTerse = true;
     else if (!strcmp(argv[curr_arg],"-after"))
       bAfter = true;
-    else if (!strncmp(argv[curr_arg],"-ge_elo",7))
+    else if (!strncmp(argv[curr_arg],"-ge_elo",7)) {
       sscanf(&argv[curr_arg][7],"%d",&ge_elo_val);
+      bGeElo = true;
+    }
+    else if (!strncmp(argv[curr_arg],"-le_elo",7)) {
+      sscanf(&argv[curr_arg][7],"%d",&le_elo_val);
+      bLeElo = true;
+    }
     else
       break;
   }
@@ -53,9 +65,14 @@ int main(int argc,char **argv)
     return 2;
   }
 
+  if (bGeElo && bLeElo) {
+    printf("can't specify both -ge_elo and -le_elo\n");
+    return 3;
+  }
+
   if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 3;
+    return 4;
   }
 
   for ( ; ; ) {
@@ -75,22 +92,31 @@ int main(int argc,char **argv)
       continue;
     }
 
-    if (!bTerse) {
-      if (curr_game.my_elo_before + curr_game.my_elo_delta >= ge_elo_val) {
+    elo_after = curr_game.my_elo_before + curr_game.my_elo_delta;
+
+    bPrint = true;
+
+    if (bGeElo) {
+      if (elo_after < ge_elo_val)
+        bPrint = false;
+    }
+    else if (bLeElo) {
+      if (elo_after > le_elo_val)
+        bPrint = false;
+    }
+
+    if (bPrint) {
+      if (!bTerse) {
         printf("%d %d %d %d %s %s\n",
           curr_game.my_elo_before,curr_game.my_elo_delta,
           curr_game.opponent_elo_before,curr_game.opponent_elo_delta,
           filename,curr_game.date);
       }
-    }
-    else {
-      if (!bAfter) {
-        if (curr_game.my_elo_before + curr_game.my_elo_delta >= ge_elo_val)
-          printf("%d %s %s\n",curr_game.my_elo_before,filename,curr_game.date);
-      }
       else {
-        if (curr_game.my_elo_before + curr_game.my_elo_delta >= ge_elo_val)
-          printf("%d %s %s\n",curr_game.my_elo_before + curr_game.my_elo_delta,filename,curr_game.date);
+        if (!bAfter)
+          printf("%d %s %s\n",curr_game.my_elo_before,filename,curr_game.date);
+        else
+          printf("%d %s %s\n",elo_after,filename,curr_game.date);
       }
     }
   }
