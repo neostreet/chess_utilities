@@ -153,12 +153,12 @@ int main(int argc,char **argv)
     else if (bPlusMinus) {
       switch (curr_game.result) {
         case RESULT_WIN:
-          plus_minus += 1;;
+          plus_minus += 1;
 
           break;
 
         case RESULT_LOSS:
-          plus_minus -= 1;;
+          plus_minus -= 1;
 
           break;
       }
