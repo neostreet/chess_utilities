@@ -11,7 +11,8 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: fresult (-my_wins) (-my_draws) (-my_losses) (-decode) (-points) (-plus_minus) filename\n";
+"usage: fresult (-my_wins) (-my_draws) (-my_losses) (-decode) (-points) (-plus_minus)\n"
+"  (-geval) (-ltval) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -26,6 +27,11 @@ int main(int argc,char **argv)
   bool bDecode;
   bool bPoints;
   bool bPlusMinus;
+  bool bGeVal;
+  bool bLtVal;
+  int geval;
+  int ltval;
+  bool bPrint;
   int plus_minus;
   int retval;
   FILE *fptr;
@@ -33,7 +39,7 @@ int main(int argc,char **argv)
   struct game curr_game;
   bool bPrintedFilename;
 
-  if ((argc < 2) || (argc > 8)) {
+  if ((argc < 2) || (argc > 10)) {
     printf(usage);
     return 1;
   }
@@ -44,6 +50,8 @@ int main(int argc,char **argv)
   bDecode = false;
   bPoints = false;
   bPlusMinus = false;
+  bGeVal = false;
+  bLtVal = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-my_wins"))
@@ -58,6 +66,14 @@ int main(int argc,char **argv)
       bPoints = true;
     else if (!strcmp(argv[curr_arg],"-plus_minus"))
       bPlusMinus = true;
+    else if (!strncmp(argv[curr_arg],"-ge",3)) {
+      sscanf(&argv[curr_arg][3],"%d",&geval);
+      bGeVal = true;
+    }
+    else if (!strncmp(argv[curr_arg],"-lt",3)) {
+      sscanf(&argv[curr_arg][3],"%d",&ltval);
+      bLtVal = true;
+    }
     else
       break;
   }
@@ -77,9 +93,14 @@ int main(int argc,char **argv)
     return 4;
   }
 
+  if (bGeVal && bLtVal) {
+    printf("can't specify both -ge and -lt\n");
+    return 5;
+  }
+
   if ((fptr = fopen(argv[curr_arg],"r")) == NULL) {
     printf(couldnt_open,argv[curr_arg]);
-    return 5;
+    return 6;
   }
 
   if (bPlusMinus)
@@ -163,7 +184,19 @@ int main(int argc,char **argv)
           break;
       }
 
-      printf("%d %s %s\n",plus_minus,filename,curr_game.date);
+      bPrint = true;
+
+      if (bGeVal) {
+        if (plus_minus < geval)
+          bPrint = false;
+      }
+      else if (bLtVal) {
+        if (plus_minus >= ltval)
+          bPrint = false;
+      }
+
+      if (bPrint)
+        printf("%d %s %s\n",plus_minus,filename,curr_game.date);
     }
     else
       printf("%d %s %s\n",curr_game.result,filename,curr_game.date);
