@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: find_mates_in_x (-mine) (-not_mine) (-i_am_white) (-i_am_black) moves filename\n";
+"usage: find_mates_in_x (-mine) (-not_mine) (-i_am_white) (-i_am_black) (-exact) moves filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -24,6 +24,7 @@ int main(int argc,char **argv)
   bool bNotMine;
   bool bIAmWhite;
   bool bIAmBlack;
+  bool bExact;
   int moves;
   bool bFound;
   int ix;
@@ -32,7 +33,7 @@ int main(int argc,char **argv)
   int filename_len;
   struct game curr_game;
 
-  if ((argc < 3) || (argc > 7)) {
+  if ((argc < 3) || (argc > 8)) {
     printf(usage);
     return 1;
   }
@@ -41,6 +42,7 @@ int main(int argc,char **argv)
   bNotMine = false;
   bIAmWhite = false;
   bIAmBlack = false;
+  bExact = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-mine"))
@@ -51,6 +53,8 @@ int main(int argc,char **argv)
       bIAmWhite = true;
     else if (!strcmp(argv[curr_arg],"-i_am_black"))
       bIAmBlack = true;
+    else if (!strcmp(argv[curr_arg],"-exact"))
+      bExact = true;
     else
       break;
   }
@@ -117,6 +121,17 @@ int main(int argc,char **argv)
 
         if (n == moves - 1)
           bFound = true;
+      }
+
+      if (bFound && bExact) {
+        if (moves == 1) {
+          if (curr_game.moves[curr_game.num_moves-3].special_move_info & SPECIAL_MOVE_CHECK)
+            bFound = false;
+        }
+        else {
+          if (curr_game.moves[ix].special_move_info & SPECIAL_MOVE_CHECK)
+            bFound = false;
+        }
       }
     }
 
