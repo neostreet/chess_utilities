@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: felos (-terse) (-after) (-ge_eloval) (-le_eloval) filename\n";
+"usage: felos (-terse_modemode) (-after) (-ge_eloval) (-le_eloval) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -20,7 +20,7 @@ int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
-  bool bTerse;
+  int terse_mode;
   bool bAfter;
   bool bGeElo;
   bool bLeElo;
@@ -38,14 +38,14 @@ int main(int argc,char **argv)
     return 1;
   }
 
-  bTerse = false;
+  terse_mode = 0;
   bAfter = false;
   bGeElo = false;
   bLeElo = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-terse"))
-      bTerse = true;
+    if (!strncmp(argv[curr_arg],"-terse_mode",11))
+      sscanf(&argv[curr_arg][11],"%d",&terse_mode);
     else if (!strcmp(argv[curr_arg],"-after"))
       bAfter = true;
     else if (!strncmp(argv[curr_arg],"-ge_elo",7)) {
@@ -106,13 +106,19 @@ int main(int argc,char **argv)
     }
 
     if (bPrint) {
-      if (!bTerse) {
+      if (!terse_mode) {
         printf("%d %d %d %d %s %s\n",
           curr_game.my_elo_before,curr_game.my_elo_delta,
           curr_game.opponent_elo_before,curr_game.opponent_elo_delta,
           filename,curr_game.date);
       }
-      else {
+      else if (terse_mode == 1) {
+        if (!bAfter)
+          printf("%d\n",curr_game.my_elo_before);
+        else
+          printf("%d\n",elo_after);
+      }
+      else if (terse_mode == 2) {
         if (!bAfter)
           printf("%d %s %s\n",curr_game.my_elo_before,filename,curr_game.date);
         else
