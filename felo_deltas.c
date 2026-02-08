@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: felo_deltas (-terse) filename\n";
+"usage: felo_deltas (-terse_modemode) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -20,7 +20,7 @@ int main(int argc,char **argv)
 {
   int n;
   int curr_arg;
-  bool bTerse;
+  int terse_mode;
   int retval;
   FILE *fptr;
   int filename_len;
@@ -31,11 +31,11 @@ int main(int argc,char **argv)
     return 1;
   }
 
-  bTerse = false;
+  terse_mode = 0;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
-    if (!strcmp(argv[curr_arg],"-terse"))
-      bTerse = true;
+    if (!strncmp(argv[curr_arg],"-terse_mode",11))
+      sscanf(&argv[curr_arg][11],"%d",&terse_mode);
     else
       break;
   }
@@ -67,7 +67,7 @@ int main(int argc,char **argv)
       continue;
     }
 
-    if (!bTerse)
+    if (!terse_mode)
       printf("%d %s %s\n",curr_game.my_elo_delta,filename,curr_game.date);
     else
       printf("%d\n",curr_game.my_elo_delta);
