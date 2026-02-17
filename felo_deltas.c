@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: felo_deltas (-terse_modemode) filename\n";
+"usage: felo_deltas (-terse_modemode) (-opponent) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -21,21 +21,26 @@ int main(int argc,char **argv)
   int n;
   int curr_arg;
   int terse_mode;
+  bool bOpponent;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
+  int elo_delta;
 
-  if ((argc < 2) || (argc > 3)) {
+  if ((argc < 2) || (argc > 4)) {
     printf(usage);
     return 1;
   }
 
   terse_mode = 0;
+  bOpponent = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strncmp(argv[curr_arg],"-terse_mode",11))
       sscanf(&argv[curr_arg][11],"%d",&terse_mode);
+    else if (!strcmp(argv[curr_arg],"-opponent"))
+      bOpponent = true;
     else
       break;
   }
@@ -67,10 +72,15 @@ int main(int argc,char **argv)
       continue;
     }
 
+    if (!bOpponent)
+      elo_delta = curr_game.my_elo_delta;
+    else
+      elo_delta = curr_game.opponent_elo_delta;
+
     if (!terse_mode)
-      printf("%d %s %s\n",curr_game.my_elo_delta,filename,curr_game.date);
+      printf("%d %s %s\n",elo_delta,filename,curr_game.date);
     else if (terse_mode == 1)
-      printf("%d\n",curr_game.my_elo_delta);
+      printf("%d\n",elo_delta);
     else if (terse_mode == 2)
       printf("%s\n",filename);
   }
