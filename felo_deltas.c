@@ -69,8 +69,10 @@ int main(int argc,char **argv)
 
     if (!terse_mode)
       printf("%d %s %s\n",curr_game.my_elo_delta,filename,curr_game.date);
-    else
+    else if (terse_mode == 1)
       printf("%d\n",curr_game.my_elo_delta);
+    else if (terse_mode == 2)
+      printf("%s\n",filename);
   }
 
   fclose(fptr);
