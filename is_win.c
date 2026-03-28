@@ -11,7 +11,7 @@
 static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
-"usage: is_win (-i_am_white) (-i_am_black) (-terse_modemode) (-unexpected) (-unexpected_gap) filename\n";
+"usage: is_win (-i_am_white) (-i_am_black) (-terse_modemode) (-unexpected) (-unexpected_gap) (-date) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -24,12 +24,13 @@ int main(int argc,char **argv)
   int terse_mode;
   bool bUnexpected;
   int unexpected_gap;
+  bool bDate;
   int retval;
   FILE *fptr;
   int filename_len;
   struct game curr_game;
 
-  if ((argc < 2) || (argc > 7)) {
+  if ((argc < 2) || (argc > 8)) {
     printf(usage);
     return 1;
   }
@@ -39,6 +40,7 @@ int main(int argc,char **argv)
   terse_mode = 0;
   bUnexpected = false;
   unexpected_gap = 30;
+  bDate = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-i_am_white"))
@@ -51,6 +53,8 @@ int main(int argc,char **argv)
       bUnexpected = true;
     else if (!strncmp(argv[curr_arg],"-unexpected_gap",15))
       sscanf(&argv[curr_arg][15],"%d",&unexpected_gap);
+    else if (!strcmp(argv[curr_arg],"-date"))
+      bDate = true;
     else
       break;
   }
@@ -108,8 +112,12 @@ int main(int argc,char **argv)
             curr_game.opponent_elo_before,curr_game.my_elo_before);
         }
       }
-      else if (terse_mode == 1)
-        printf("1\n");
+      else if (terse_mode == 1) {
+        if (!bDate)
+          printf("1\n");
+        else
+          printf("%s\t1\n",curr_game.date);
+      }
       else if (terse_mode == 2)
         printf("%s\n",filename);
     }
@@ -119,8 +127,12 @@ int main(int argc,char **argv)
 
       if (!terse_mode)
         printf("0 %s %s\n",filename,curr_game.date);
-      else if (terse_mode == 1)
-        printf("0\n");
+      else if (terse_mode == 1) {
+        if (!bDate)
+          printf("0\n");
+        else
+          printf("%s\t0\n",curr_game.date);
+      }
     }
   }
 
