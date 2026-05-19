@@ -97,7 +97,7 @@ int main(int argc,char **argv)
         continue;
     }
 
-    if (!bVerbose || !bCentury)
+    if (!bVerbose)
       printf("%s\n",filename);
     else {
       printf("%d (%d %d) %s %s\n",
