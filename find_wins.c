@@ -100,10 +100,10 @@ int main(int argc,char **argv)
     if (!bVerbose || !bCentury)
       printf("%s\n",filename);
     else {
-      printf("%d (%d %d) %s\n",
+      printf("%d (%d %d) %s %s\n",
         curr_game.opponent_elo_before - curr_game.my_elo_before,
         curr_game.opponent_elo_before,curr_game.my_elo_before,
-        filename);
+        filename,curr_game.date);
     }
   }
 
