@@ -15,7 +15,7 @@ static char usage[] =
 "  (-init_bin_boardfilename) (-board_binfilename) (-num_white_piecesnum) (-num_black_piecesnum)\n"
 "  (-match_boardfilename) (-match_forcefilename) (-match_force2filename) (-only_checks) (-only_mates) (-only_castles)\n"
 "  (-only_promotions) (-only_captures) (-only_en_passants) (-multiple_queens) (-move_number_only)\n"
-"  (-mine) (-not_mine) (-search_all_moves) (-exact_match) (-only_no_promotions) (-only_underpromotions)\n"
+"  (-mine) (-not_mine) (-search_all_moves) (-exact_match) (-only_queen_promotions) (-only_no_promotions) (-only_under_promotions)\n"
 "  (-print_piece_counts) (-print_move_counts) (-only_no_checks) (-only_no_mates) (-opposite_colored_bishops)\n"
 "  (-same_colored_bishops (-two_bishops) (-opposite_side_castling) (-same_side_castling) (-less_than_2_castles)\n"
 "  (-truncate_filename) (-only_stalemates) (-no_queens) (-mate_in_one) (-only_wins) (-only_draws) (-only_losses)\n"
@@ -49,9 +49,10 @@ int main(int argc,char **argv)
   bool bOnlyMates;
   bool bOnlyNoMates;
   bool bOnlyCastles;
-  bool bOnlyPromotions;
-  bool bOnlyUnderpromotions;
-  bool bOnlyNoPromotions;
+  int only_promotions;
+  int only_queen_promotions;
+  int only_under_promotions;
+  int only_no_promotions;
   bool bOnlyCaptures;
   bool bOnlyEnPassants;
   bool bMultipleQueens;
@@ -117,7 +118,7 @@ int main(int argc,char **argv)
   bool bForceDiffLe;
   int force_diff_leval;
 
-  if ((argc < 2) || (argc > 68)) {
+  if ((argc < 2) || (argc > 69)) {
     printf(usage);
     return 1;
   }
@@ -138,9 +139,10 @@ int main(int argc,char **argv)
   bOnlyMates = false;
   bOnlyNoMates = false;
   bOnlyCastles = false;
-  bOnlyPromotions = false;
-  bOnlyUnderpromotions = false;
-  bOnlyNoPromotions = false;
+  only_promotions = 0;
+  only_queen_promotions = 0;
+  only_under_promotions = 0;
+  only_no_promotions = 0;
   bOnlyCaptures = false;
   bOnlyEnPassants = false;
   bMultipleQueens = false;
@@ -269,11 +271,13 @@ int main(int argc,char **argv)
     else if (!strcmp(argv[curr_arg],"-only_castles"))
       bOnlyCastles = true;
     else if (!strcmp(argv[curr_arg],"-only_promotions"))
-      bOnlyPromotions = true;
-    else if (!strcmp(argv[curr_arg],"-only_underpromotions"))
-      bOnlyUnderpromotions = true;
+      only_promotions = 1;
+    else if (!strcmp(argv[curr_arg],"-only_queen_promotions"))
+      only_queen_promotions = 1;
+    else if (!strcmp(argv[curr_arg],"-only_under_promotions"))
+      only_under_promotions = 1;
     else if (!strcmp(argv[curr_arg],"-only_no_promotions"))
-      bOnlyNoPromotions = true;
+      only_no_promotions = 1;
     else if (!strcmp(argv[curr_arg],"-only_captures"))
       bOnlyCaptures = true;
     else if (!strcmp(argv[curr_arg],"-only_en_passants"))
@@ -398,64 +402,54 @@ int main(int argc,char **argv)
     return 10;
   }
 
-  if (bOnlyPromotions && bOnlyNoPromotions) {
-    printf("can't specify both -only_promotions and -only_no_promotions\n");
+  if (only_promotions + only_queen_promotions + only_under_promotions + only_no_promotions > 1) {
+    printf("can't specify more than one of -only_promotions, -only_queen_promotions, -only_under_promotions, and -only_no_promotions\n");
     return 11;
-  }
-
-  if (bOnlyPromotions && bOnlyUnderpromotions) {
-    printf("can't specify both -only_promotions and -only_underpromotions\n");
-    return 12;
-  }
-
-  if (bOnlyNoPromotions && bOnlyUnderpromotions) {
-    printf("can't specify both -only_no_promotions and -only_underpromotions\n");
-    return 13;
   }
 
   if (bIAmWhite && bIAmBlack) {
     printf("can't specify both -i_am_white and -i_am_black\n");
-    return 14;
+    return 12;
   }
 
   if (bOnlyWins && bOnlyDraws) {
     printf("can't specify both -only_wins and -only_draws\n");
-    return 15;
+    return 13;
   }
 
   if (bOnlyWins && bOnlyLosses) {
     printf("can't specify both -only_wins and -only_losses\n");
-    return 16;
+    return 14;
   }
 
   if (bOnlyDraws && bOnlyLosses) {
     printf("can't specify both -only_draws and -only_losses\n");
-    return 17;
+    return 15;
   }
 
   if (bSearchAllMoves && (specific_move != -1)) {
     printf("can't specify both -only_draws and -only_losses\n");
-    return 18;
+    return 16;
   }
 
   if (bWhitePigs && bBlackPigs) {
     printf("can't specify both -white_pigs and -black_pigs\n");
-    return 19;
+    return 17;
   }
 
   if (bForceDiffGe && bForceDiffLe) {
     printf("can't specify both -force_diff_ge and -force_diff_le\n");
-    return 20;
+    return 18;
   }
 
   if (argc - curr_arg != 1) {
     printf(usage);
-    return 21;
+    return 19;
   }
 
   if ((fptr = fopen(argv[argc-1],"r")) == NULL) {
     printf(couldnt_open,argv[argc-1]);
-    return 22;
+    return 20;
   }
 
   for ( ; ; ) {
@@ -534,7 +528,7 @@ int main(int argc,char **argv)
     continue;
 
   if (!bOnlyChecks && !bOnlyNoChecks && !bOnlyMates && !bOnlyNoMates && !bOnlyCastles && !bOnlyCaptures &&
-    !bOnlyEnPassants && !bMultipleQueens && !bNoQueens && !bOnlyPromotions && !bOnlyUnderpromotions && !bOnlyNoPromotions &&
+    !bOnlyEnPassants && !bMultipleQueens && !bNoQueens && !only_promotions && !only_queen_promotions && !only_under_promotions && !only_no_promotions &&
     !bMine && !bNotMine && !bHaveMatchBoard && !bHaveMatchForce && (num_white_pieces == -1) &&
     (num_black_pieces == -1) && !bOppositeColoredBishops && !bSameColoredBishops && !bTwoBishops &&
     !bOppositeSideCastling && !bSameSideCastling && !bLessThan2Castles && !bOnlyStalemates && !bMateInOne &&
@@ -644,17 +638,22 @@ int main(int argc,char **argv)
           continue;
       }
 
-      if (bOnlyPromotions) {
+      if (only_promotions) {
         if (!(curr_game.moves[curr_game.curr_move].special_move_info & (SPECIAL_MOVE_PROMOTION_QUEEN | SPECIAL_MOVE_PROMOTION_ROOK | SPECIAL_MOVE_PROMOTION_KNIGHT | SPECIAL_MOVE_PROMOTION_BISHOP)))
           continue;
       }
 
-      if (bOnlyUnderpromotions) {
+      if (only_queen_promotions) {
+        if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_PROMOTION_QUEEN))
+          continue;
+      }
+
+      if (only_under_promotions) {
         if (!(curr_game.moves[curr_game.curr_move].special_move_info & (SPECIAL_MOVE_PROMOTION_ROOK | SPECIAL_MOVE_PROMOTION_KNIGHT | SPECIAL_MOVE_PROMOTION_BISHOP)))
           continue;
       }
 
-      if (bOnlyNoPromotions) {
+      if (only_no_promotions) {
         if (curr_game.moves[curr_game.curr_move].special_move_info & (SPECIAL_MOVE_PROMOTION_QUEEN | SPECIAL_MOVE_PROMOTION_ROOK | SPECIAL_MOVE_PROMOTION_KNIGHT | SPECIAL_MOVE_PROMOTION_BISHOP))
           continue;
       }
@@ -789,8 +788,8 @@ int main(int argc,char **argv)
           continue;
       }
 
-      if (bOnlyChecks || bOnlyNoChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles || bOnlyPromotions ||
-        bOnlyUnderpromotions || bOnlyNoPromotions || bOnlyCaptures || bOnlyEnPassants || bMultipleQueens || bNoQueens ||
+      if (bOnlyChecks || bOnlyNoChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles || only_promotions || only_queen_promotions ||
+        only_under_promotions || only_no_promotions || bOnlyCaptures || bOnlyEnPassants || bMultipleQueens || bNoQueens ||
         bHaveMatchBoard || bHaveMatchForce || bMine || bNotMine || bOppositeColoredBishops || bSameColoredBishops ||
         bTwoBishops || bOppositeSideCastling || bSameSideCastling || bLessThan2Castles || bOnlyStalemates || bMateInOne ||
         bMirroredBoard || (my_total_force != -1) || (opponent_total_force != -1) ||
@@ -920,17 +919,22 @@ int main(int argc,char **argv)
         bSkip = true;
     }
 
-    if (!bSkip && bOnlyPromotions) {
+    if (!bSkip && only_promotions) {
       if (!(curr_game.moves[curr_game.curr_move].special_move_info & (SPECIAL_MOVE_PROMOTION_QUEEN | SPECIAL_MOVE_PROMOTION_ROOK | SPECIAL_MOVE_PROMOTION_KNIGHT | SPECIAL_MOVE_PROMOTION_BISHOP)))
         bSkip = true;
     }
 
-    if (!bSkip && bOnlyUnderpromotions) {
+    if (!bSkip && only_queen_promotions) {
+      if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_PROMOTION_QUEEN))
+        bSkip = true;
+    }
+
+    if (!bSkip && only_under_promotions) {
       if (!(curr_game.moves[curr_game.curr_move].special_move_info & (SPECIAL_MOVE_PROMOTION_ROOK | SPECIAL_MOVE_PROMOTION_KNIGHT | SPECIAL_MOVE_PROMOTION_BISHOP)))
         bSkip = true;
     }
 
-    if (!bSkip && bOnlyNoPromotions) {
+    if (!bSkip && only_no_promotions) {
       if (curr_game.moves[curr_game.curr_move].special_move_info & (SPECIAL_MOVE_PROMOTION_QUEEN | SPECIAL_MOVE_PROMOTION_ROOK | SPECIAL_MOVE_PROMOTION_KNIGHT | SPECIAL_MOVE_PROMOTION_BISHOP))
         bSkip = true;
     }
@@ -1067,7 +1071,7 @@ int main(int argc,char **argv)
 
     if (!bSkip) {
       if (bOnlyChecks || bOnlyNoChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles ||
-        bOnlyPromotions || bOnlyUnderpromotions || bOnlyNoPromotions ||
+        only_promotions || only_queen_promotions || only_under_promotions || only_no_promotions ||
         bOnlyCaptures || bMultipleQueens || bNoQueens || bHaveMatchBoard || bHaveMatchForce ||
         bMine || bNotMine || (num_white_pieces != -1) || (num_black_pieces != -1) ||
         bOppositeColoredBishops || bSameColoredBishops || bTwoBishops || bOppositeSideCastling ||
