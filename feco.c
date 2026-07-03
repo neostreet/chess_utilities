@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "chess.h"
@@ -17,6 +18,16 @@ static char usage[] =
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
 
+struct eco_and_count {
+  char *eco;
+  int count;
+};
+
+static struct eco_and_count *contig_ecos;
+static int *ixs;
+
+int elem_compare(const void *elem1,const void *elem2);
+
 int main(int argc,char **argv)
 {
   int n;
@@ -33,6 +44,7 @@ int main(int argc,char **argv)
   struct info_list ecos;
   struct info_list_elem *work_elem;
   int ix;
+  int bytes_to_malloc;
 
   if ((argc < 2) || (argc > 6)) {
     printf(usage);
@@ -116,16 +128,56 @@ int main(int argc,char **argv)
   fclose(fptr);
 
   if (bAggregate) {
+    bytes_to_malloc = ecos.num_elems * sizeof(struct eco_and_count);
+
+    if ((contig_ecos = (struct eco_and_count *)malloc(bytes_to_malloc)) == NULL) {
+      printf("malloc of %d bytes failed\n",bytes_to_malloc);
+      return 5;
+    }
+
     work_elem = ecos.first_elem;
 
     for (n = 0; n < ecos.num_elems; n++) {
-      printf("%s %d\n",work_elem->str,work_elem->int1);
-
+      contig_ecos[n].eco = work_elem->str;
+      contig_ecos[n].count = work_elem->int1;
       work_elem = work_elem->next_elem;
     }
 
+    bytes_to_malloc = ecos.num_elems * sizeof(int);
+
+    if ((ixs = (int *)malloc(bytes_to_malloc)) == NULL) {
+      printf("malloc of %d bytes failed\n",bytes_to_malloc);
+      return 6;
+    }
+
+    for (n = 0; n < ecos.num_elems; n++)
+      ixs[n] = n;
+
+    qsort(ixs,ecos.num_elems,sizeof (int),elem_compare);
+
+    for (n = 0; n < ecos.num_elems; n++)
+      printf("%4d %s\n",contig_ecos[ixs[n]].count,contig_ecos[ixs[n]].eco);
+
     free_info_list(&ecos);
+    free(contig_ecos);
+    free(ixs);
   }
 
   return 0;
+}
+
+int elem_compare(const void *elem1,const void *elem2)
+{
+  int ix1;
+  int ix2;
+
+  ix1 = *(int *)elem1;
+  ix2 = *(int *)elem2;
+
+  if (contig_ecos[ix2].count > contig_ecos[ix1].count)
+    return 1;
+  else if (contig_ecos[ix2].count < contig_ecos[ix1].count)
+    return -1;
+  else
+    return 0;
 }
