@@ -22,7 +22,8 @@ static char usage[] =
 "  (-ecoeco) (-search_specific_movemove) (-site) (-mirrored_board) (-mirrored_min_num_movesval)\n"
 "  (-century_wins) (-century_draws) (-century_losses) (-my_total_forceval) (-opponent_total_forceval)\n"
 "  (-white_pigs) (-black_pigs) (-exchange_sac) (-curr_move) (-queenside_castles) (-kingside_castles)\n"
-"  (-queen_sac) (-only_datedate) (-elo_delta) (-four_knights) (-force_diff_geval) (-force_diff_leval) filename\n";
+"  (-queen_sac) (-only_datedate) (-elo_delta) (-four_knights) (-force_diff_geval) (-force_diff_leval)\n"
+"  (-only_double_checks) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -45,6 +46,7 @@ int main(int argc,char **argv)
   int num_white_pieces;
   int num_black_pieces;
   bool bOnlyChecks;
+  bool bOnlyDoubleChecks;
   bool bOnlyMates;
   bool bOnlyNoMates;
   bool bOnlyCastles;
@@ -116,7 +118,7 @@ int main(int argc,char **argv)
   bool bForceDiffLe;
   int force_diff_leval;
 
-  if ((argc < 2) || (argc > 67)) {
+  if ((argc < 2) || (argc > 68)) {
     printf(usage);
     return 1;
   }
@@ -133,6 +135,7 @@ int main(int argc,char **argv)
   num_white_pieces = -1;
   num_black_pieces = -1;
   bOnlyChecks = false;
+  bOnlyDoubleChecks = false;
   bOnlyMates = false;
   bOnlyNoMates = false;
   bOnlyCastles = false;
@@ -258,6 +261,8 @@ int main(int argc,char **argv)
     }
     else if (!strcmp(argv[curr_arg],"-only_checks"))
       bOnlyChecks = true;
+    else if (!strcmp(argv[curr_arg],"-only_double_checks"))
+      bOnlyDoubleChecks = true;
     else if (!strcmp(argv[curr_arg],"-only_mates"))
       bOnlyMates = true;
     else if (!strcmp(argv[curr_arg],"-only_no_mates"))
@@ -519,7 +524,7 @@ int main(int argc,char **argv)
   if (bIAmBlack && !curr_game.orientation)
     continue;
 
-  if (!bOnlyChecks && !bOnlyMates && !bOnlyNoMates && !bOnlyCastles && !bOnlyCaptures &&
+  if (!bOnlyChecks && !bOnlyDoubleChecks && !bOnlyMates && !bOnlyNoMates && !bOnlyCastles && !bOnlyCaptures &&
     !bOnlyEnPassants && !bMultipleQueens && !bNoQueens && !only_promotions && !only_queen_promotions && !only_under_promotions &&
     !bMine && !bNotMine && !bHaveMatchBoard && !bHaveMatchForce && (num_white_pieces == -1) &&
     (num_black_pieces == -1) && !bOppositeColoredBishops && !bSameColoredBishops && !bTwoBishops &&
@@ -597,6 +602,11 @@ int main(int argc,char **argv)
 
       if (bOnlyChecks) {
         if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK))
+          continue;
+      }
+
+      if (bOnlyDoubleChecks) {
+        if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_DOUBLE_CHECK))
           continue;
       }
 
@@ -770,7 +780,7 @@ int main(int argc,char **argv)
           continue;
       }
 
-      if (bOnlyChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles || only_promotions || only_queen_promotions ||
+      if (bOnlyChecks || bOnlyDoubleChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles || only_promotions || only_queen_promotions ||
         only_under_promotions || bOnlyCaptures || bOnlyEnPassants || bMultipleQueens || bNoQueens ||
         bHaveMatchBoard || bHaveMatchForce || bMine || bNotMine || bOppositeColoredBishops || bSameColoredBishops ||
         bTwoBishops || bOppositeSideCastling || bSameSideCastling || bLessThan2Castles || bOnlyStalemates || bMateInOne ||
@@ -868,6 +878,11 @@ int main(int argc,char **argv)
 
     if (!bSkip && bOnlyChecks) {
       if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_CHECK))
+        bSkip = true;
+    }
+
+    if (!bSkip && bOnlyDoubleChecks) {
+      if (!(curr_game.moves[curr_game.curr_move].special_move_info & SPECIAL_MOVE_DOUBLE_CHECK))
         bSkip = true;
     }
 
@@ -1042,7 +1057,7 @@ int main(int argc,char **argv)
     }
 
     if (!bSkip) {
-      if (bOnlyChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles ||
+      if (bOnlyChecks || bOnlyDoubleChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles ||
         only_promotions || only_queen_promotions || only_under_promotions ||
         bOnlyCaptures || bMultipleQueens || bNoQueens || bHaveMatchBoard || bHaveMatchForce ||
         bMine || bNotMine || (num_white_pieces != -1) || (num_black_pieces != -1) ||
