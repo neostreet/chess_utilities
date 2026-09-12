@@ -74,12 +74,14 @@ int main(int argc,char **argv)
     print_piece_info2(curr_game.white_pieces,true,bAbbrev,bOnlyRemaining);
   else {
     for (n = 0; n < NUM_PIECES_PER_PLAYER; n++) {
-      printf("  %d %d %d %d %d\n",
+      printf("  %d %d %d %d %d%s\n",
         curr_game.white_pieces[n].piece_id,
         curr_game.white_pieces[n].current_board_position,
         curr_game.white_pieces[n].move_count,
         curr_game.white_pieces[n].original_piece_id,
-        curr_game.white_pieces[n].original_board_position);
+        curr_game.white_pieces[n].original_board_position,
+        ((curr_game.white_pieces[n].piece_id != curr_game.white_pieces[n].original_piece_id) ? " *" : "")
+        );
     }
   }
 
@@ -89,12 +91,14 @@ int main(int argc,char **argv)
     print_piece_info2(curr_game.black_pieces,false,bAbbrev,bOnlyRemaining);
   else {
     for (n = 0; n < NUM_PIECES_PER_PLAYER; n++) {
-      printf("  %d %d %d %d %d\n",
+      printf("  %d %d %d %d %d%s\n",
         curr_game.black_pieces[n].piece_id,
         curr_game.black_pieces[n].current_board_position,
         curr_game.black_pieces[n].move_count,
         curr_game.black_pieces[n].original_piece_id,
-        curr_game.black_pieces[n].original_board_position);
+        curr_game.black_pieces[n].original_board_position,
+        ((curr_game.black_pieces[n].piece_id != curr_game.black_pieces[n].original_piece_id) ? " *" : "")
+        );
     }
   }
 
