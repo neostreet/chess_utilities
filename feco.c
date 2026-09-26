@@ -45,6 +45,8 @@ int main(int argc,char **argv)
   struct info_list_elem *work_elem;
   int ix;
   int bytes_to_malloc;
+  int num_games;
+  double pct;
 
   if ((argc < 2) || (argc > 6)) {
     printf(usage);
@@ -87,6 +89,8 @@ int main(int argc,char **argv)
   if (bAggregate)
     ecos.num_elems = 0;
 
+  num_games = 0;
+
   for ( ; ; ) {
     GetLine(fptr,filename,&filename_len,MAX_FILENAME_LEN);
 
@@ -109,6 +113,8 @@ int main(int argc,char **argv)
 
     if (bIAmBlack && !curr_game.orientation)
       continue;
+
+    num_games++;
 
     if (bAggregate) {
       if (member_of_info_list(&ecos,curr_game.eco,&ix)) {
@@ -155,8 +161,14 @@ int main(int argc,char **argv)
 
     qsort(ixs,ecos.num_elems,sizeof (int),elem_compare);
 
-    for (n = 0; n < ecos.num_elems; n++)
-      printf("%4d %s\n",contig_ecos[ixs[n]].count,contig_ecos[ixs[n]].eco);
+    for (n = 0; n < ecos.num_elems; n++) {
+      if (bTerse)
+        printf("%4d %s\n",contig_ecos[ixs[n]].count,contig_ecos[ixs[n]].eco);
+      else {
+        pct = (double)contig_ecos[ixs[n]].count / (double)num_games * (double)100;
+        printf("%4d %s (%5.2lf)\n",contig_ecos[ixs[n]].count,contig_ecos[ixs[n]].eco,pct);
+      }
+    }
 
     free_info_list(&ecos);
     free(contig_ecos);
