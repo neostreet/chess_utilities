@@ -12,7 +12,7 @@ static char filename[MAX_FILENAME_LEN];
 
 static char usage[] =
 "usage: fresult (-my_wins) (-my_draws) (-my_losses) (-decode) (-points) (-plus_minus)\n"
-"  (-geval) (-ltval) filename\n";
+"  (-geval) (-ltval) (-opponent_elo_before) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -31,6 +31,7 @@ int main(int argc,char **argv)
   bool bLtVal;
   int geval;
   int ltval;
+  bool bOpponentEloBefore;
   bool bPrint;
   int plus_minus;
   int retval;
@@ -39,7 +40,7 @@ int main(int argc,char **argv)
   struct game curr_game;
   bool bPrintedFilename;
 
-  if ((argc < 2) || (argc > 10)) {
+  if ((argc < 2) || (argc > 11)) {
     printf(usage);
     return 1;
   }
@@ -52,6 +53,7 @@ int main(int argc,char **argv)
   bPlusMinus = false;
   bGeVal = false;
   bLtVal = false;
+  bOpponentEloBefore = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-my_wins"))
@@ -74,6 +76,8 @@ int main(int argc,char **argv)
       sscanf(&argv[curr_arg][3],"%d",&ltval);
       bLtVal = true;
     }
+    else if (!strcmp(argv[curr_arg],"-opponent_elo_before"))
+      bOpponentEloBefore = true;
     else
       break;
   }
@@ -124,31 +128,52 @@ int main(int argc,char **argv)
     }
 
     if (bMyWins) {
-      if (curr_game.result == RESULT_WIN)
-        printf("%s %s\n",filename,curr_game.date);
+      if (curr_game.result == RESULT_WIN) {
+        if (!bOpponentEloBefore)
+          printf("%s %s\n",filename,curr_game.date);
+        else
+          printf("%s %d %s\n",filename,curr_game.opponent_elo_before,curr_game.date);
+      }
     }
     else if (bMyDraws) {
-      if (curr_game.result == RESULT_DRAW)
-        printf("%s %s\n",filename,curr_game.date);
+      if (curr_game.result == RESULT_DRAW) {
+        if (!bOpponentEloBefore)
+          printf("%s %s\n",filename,curr_game.date);
+        else
+          printf("%s %d %s\n",filename,curr_game.opponent_elo_before,curr_game.date);
+      }
     }
     else if (bMyLosses) {
-      if (curr_game.result == RESULT_LOSS)
-        printf("%s %s\n",filename,curr_game.date);
+      if (curr_game.result == RESULT_LOSS) {
+        if (!bOpponentEloBefore)
+          printf("%s %s\n",filename,curr_game.date);
+        else
+          printf("%s %d %s\n",filename,curr_game.opponent_elo_before,curr_game.date);
+      }
     }
     else if (bDecode) {
       switch (curr_game.result) {
         case RESULT_WIN:
-          printf("win %s %s\n",filename,curr_game.date);
+          if (!bOpponentEloBefore)
+            printf("win %s %s\n",filename,curr_game.date);
+          else
+            printf("win %s %d %s\n",filename,curr_game.opponent_elo_before,curr_game.date);
 
           break;
 
         case RESULT_DRAW:
-          printf("draw %s %s\n",filename,curr_game.date);
+          if (!bOpponentEloBefore)
+            printf("draw %s %s\n",filename,curr_game.date);
+          else
+            printf("draw %s %d %s\n",filename,curr_game.opponent_elo_before,curr_game.date);
 
           break;
 
         case RESULT_LOSS:
-          printf("loss %s %s\n",filename,curr_game.date);
+          if (!bOpponentEloBefore)
+            printf("loss %s %s\n",filename,curr_game.date);
+          else
+            printf("loss %s %d %s\n",filename,curr_game.opponent_elo_before,curr_game.date);
 
           break;
       }
@@ -156,17 +181,26 @@ int main(int argc,char **argv)
     else if (bPoints) {
       switch (curr_game.result) {
         case RESULT_WIN:
-          printf("1 %s %s\n",filename,curr_game.date);
+          if (!bOpponentEloBefore)
+            printf("1 %s %s\n",filename,curr_game.date);
+          else
+            printf("1 %s %d %s\n",filename,curr_game.opponent_elo_before,curr_game.date);
 
           break;
 
         case RESULT_DRAW:
-          printf(".5 %s %s\n",filename,curr_game.date);
+          if (!bOpponentEloBefore)
+            printf(".5 %s %s\n",filename,curr_game.date);
+          else
+            printf(".5 %s %d %s\n",filename,curr_game.opponent_elo_before,curr_game.date);
 
           break;
 
         case RESULT_LOSS:
-          printf("0 %s %s\n",filename,curr_game.date);
+          if (!bOpponentEloBefore)
+            printf("0 %s %s\n",filename,curr_game.date);
+          else
+            printf("0 %s %d %s\n",filename,curr_game.opponent_elo_before,curr_game.date);
 
           break;
       }
@@ -195,11 +229,19 @@ int main(int argc,char **argv)
           bPrint = false;
       }
 
-      if (bPrint)
-        printf("%d %s %s\n",plus_minus,filename,curr_game.date);
+      if (bPrint) {
+        if (!bOpponentEloBefore)
+          printf("%d %s %s\n",plus_minus,filename,curr_game.date);
+        else
+          printf("%d %s %d %s\n",plus_minus,filename,curr_game.opponent_elo_before,curr_game.date);
+      }
     }
-    else
-      printf("%d %s %s\n",curr_game.result,filename,curr_game.date);
+    else {
+      if (!bOpponentEloBefore)
+        printf("%d %s %s\n",curr_game.result,filename,curr_game.date);
+      else
+        printf("%d %s %d %s\n",curr_game.result,filename,curr_game.opponent_elo_before,curr_game.date);
+    }
   }
 
   fclose(fptr);
