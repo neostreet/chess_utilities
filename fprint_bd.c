@@ -23,7 +23,7 @@ static char usage[] =
 "  (-century_wins) (-century_draws) (-century_losses) (-my_total_forceval) (-opponent_total_forceval)\n"
 "  (-white_pigs) (-black_pigs) (-exchange_sac) (-curr_move) (-queenside_castles) (-kingside_castles)\n"
 "  (-queen_sac) (-only_datedate) (-elo_delta) (-four_knights) (-force_diff_geval) (-force_diff_leval)\n"
-"  (-only_double_checks) (-force_bits_hexval) filename\n";
+"  (-only_double_checks) (-force_bits_hexval) (-long_king_walk) filename\n";
 
 char couldnt_get_status[] = "couldn't get status of %s\n";
 char couldnt_open[] = "couldn't open %s\n";
@@ -118,8 +118,9 @@ int main(int argc,char **argv)
   bool bForceDiffLe;
   int force_diff_leval;
   int force_bits;
+  bool bLongKingWalk;
 
-  if ((argc < 2) || (argc > 69)) {
+  if ((argc < 2) || (argc > 70)) {
     printf(usage);
     return 1;
   }
@@ -189,6 +190,7 @@ int main(int argc,char **argv)
   bForceDiffGe = false;
   bForceDiffLe = false;
   force_bits = 0;
+  bLongKingWalk = false;
 
   for (curr_arg = 1; curr_arg < argc; curr_arg++) {
     if (!strcmp(argv[curr_arg],"-debug"))
@@ -379,6 +381,8 @@ int main(int argc,char **argv)
     }
     else if (!strncmp(argv[curr_arg],"-force_bits_",12))
       sscanf(&argv[curr_arg][12],"%x",&force_bits);
+    else if (!strcmp(argv[curr_arg],"-long_king_walk"))
+      bLongKingWalk = true;
     else
       break;
   }
@@ -535,7 +539,7 @@ int main(int argc,char **argv)
     !bOppositeSideCastling && !bSameSideCastling && !bLessThan2Castles && !bOnlyStalemates && !bMateInOne &&
     !bMirroredBoard && (my_total_force == -1) && (opponent_total_force == -1) &&
     !bWhitePigs && !bBlackPigs && !bExchangeSac && !bKingsideCastles && !bQueensideCastles &&
-    !bQueenSac && !bOnlyDate && !bFourKnights && !bForceDiffGe && !bForceDiffLe && !force_bits) {
+    !bQueenSac && !bOnlyDate && !bFourKnights && !bForceDiffGe && !bForceDiffLe && !force_bits && !bLongKingWalk) {
 
     if (bSite)
       printf("%s\n",curr_game.site);
@@ -789,13 +793,18 @@ int main(int argc,char **argv)
           continue;
       }
 
+      if (bLongKingWalk) {
+        if (!long_king_walk(&curr_game))
+          continue;
+      }
+
       if (bOnlyChecks || bOnlyDoubleChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles || only_promotions || only_queen_promotions ||
         only_under_promotions || bOnlyCaptures || bOnlyEnPassants || bMultipleQueens || bNoQueens ||
         bHaveMatchBoard || bHaveMatchForce || bMine || bNotMine || bOppositeColoredBishops || bSameColoredBishops ||
         bTwoBishops || bOppositeSideCastling || bSameSideCastling || bLessThan2Castles || bOnlyStalemates || bMateInOne ||
         bMirroredBoard || (my_total_force != -1) || (opponent_total_force != -1) ||
         bWhitePigs || bBlackPigs || bExchangeSac || bKingsideCastles || bQueensideCastles ||
-        bQueenSac || bOnlyDate || bFourKnights || bForceDiffGe || bForceDiffLe || force_bits) {
+        bQueenSac || bOnlyDate || bFourKnights || bForceDiffGe || bForceDiffLe || force_bits || bLongKingWalk) {
 
         if (!bPrintedFilename) {
           if (bSite)
@@ -1070,6 +1079,11 @@ int main(int argc,char **argv)
         bSkip = true;
     }
 
+    if (!bSkip && bLongKingWalk) {
+      if (!long_king_walk(&curr_game))
+        bSkip = true;
+    }
+
     if (!bSkip) {
       if (bOnlyChecks || bOnlyDoubleChecks || bOnlyMates || bOnlyNoMates || bOnlyCastles ||
         only_promotions || only_queen_promotions || only_under_promotions ||
@@ -1079,7 +1093,7 @@ int main(int argc,char **argv)
         bSameSideCastling || bLessThan2Castles || bOnlyStalemates || bMateInOne ||
         bMirroredBoard || (my_total_force != -1) || (opponent_total_force != -1) ||
         bWhitePigs || bBlackPigs || bExchangeSac || bKingsideCastles || bQueensideCastles ||
-        bQueenSac || bOnlyDate || bFourKnights || bForceDiffGe || bForceDiffLe || force_bits) {
+        bQueenSac || bOnlyDate || bFourKnights || bForceDiffGe || bForceDiffLe || force_bits || bLongKingWalk) {
 
         if (bSite)
           printf("%s\n",curr_game.site);
